@@ -1,0 +1,381 @@
+const LobbyBase = require("./LobbyBase");
+const LobbyState = require("../../utility/LobbyState");
+const Vector2 = require("../../dto/Vector2");
+const Bullet = require("../gamePlay/serverObjects/Bullet");
+const TankAI = require("../aiManagement/TankAI");
+const AIBase = require("../aiManagement/AIBase");
+const Connection = require("../playerManagement/Connection");
+
+module.exports = class GameLobby extends LobbyBase {
+  constructor(settings = GameLobbySettings) {
+    super();
+    this.settings = settings;
+    this.lobbyState = new LobbyState();
+    this.bullets = [];
+    this.endGameLobby = function () {};
+  }
+  onUpdate() {
+    super.onUpdate();
+    const lobby = this;
+    // let serverItems = lobby.serverItems;
+
+    lobby.updateBullets();
+    lobby.updateDeadPlayers();
+    lobby.updateAIDead();
+    lobby.onUpdateAI();
+    //
+
+    //Clos lobby because no one is here
+    if (lobby.connections.length == 0) {
+      lobby.endGameLobby();
+    }
+  }
+
+  onUpdateAI() {
+    let aiList = this.serverItems.filter((item) => {
+      return item instanceof AIBase;
+    });
+    aiList.forEach((ai) => {
+      //Update each ai unity, passing in a function for those that need to update other connections
+      ai.onObtainTarget(this.connections);
+
+      ai.onUpdate(
+        (data) => {
+          this.connections.forEach((connection) => {
+            let socket = connection.socket;
+            socket.emit("updateAI", data);
+          });
+        },
+        (data) => {
+          this.onFireBullet(undefined, data, true, ai.id);
+        },
+        (data) => {
+          this.connections.forEach((connection) => {
+            let socket = connection.socket;
+            socket.emit("updateHealthAI", data);
+          });
+        }
+      );
+    });
+  }
+
+  canEnterLobby(connection = Connection) {
+    let lobby = this;
+    let maxPlayerCount = lobby.settings.maxPlayers;
+    let currentPlayerCount = lobby.connections.length;
+
+    if (currentPlayerCount + 1 > maxPlayerCount) {
+      return false;
+    }
+    return true;
+  }
+  onEnterLobby(connection = Connection) {
+    let lobby = this;
+    let socket = connection.socket;
+    super.onEnterLobby(connection);
+    if (lobby.connections.length == lobby.settings.maxPlayers) {
+      console.log("We have enough players we can start the game");
+      lobby.lobbyState.currentState = lobby.lobbyState.GAME;
+      lobby.onSpawnAllPlayersIntoGame();
+      lobby.onSpawnAIIntoGame();
+    }
+    const returnData = {
+      state: lobby.lobbyState.currentState,
+    };
+
+    socket.emit("loadGame");
+    socket.emit("lobbyUpdate", returnData);
+    socket.broadcast.to(lobby.id).emit("lobbyUpdate", returnData);
+  }
+  onLeaveLobby(connection = Connection) {}
+  onSpawnAllPlayersIntoGame() {
+    let lobby = this;
+    let connections = lobby.connections;
+
+    connections.forEach((connection) => {
+      lobby.addPlayer(connection);
+    });
+  }
+  onSpawnAIIntoGame() {
+    const tankAi = {
+      speed: 0.15,
+      rotationSpeed: 0.3,
+      damage: 20,
+      health: 160,
+      attackSpeed: 1,
+      bulletSpeed: 1, // 100 ms
+      shootingRange: 6,
+    };
+    this.onServerSpawn(
+      new TankAI("01", new Vector2(-6, 2), 4, tankAi),
+      new Vector2(-6, 2)
+    );
+  }
+  onUnspawnAllAIInGame(connection = Connection) {
+    let lobby = this;
+    let serverItems = lobby.serverItems;
+
+    //Remove all server items from the client, but still leave them in the server others
+    serverItems.forEach((serverItem) => {
+      connection.socket.emit("serverUnspawn", {
+        id: serverItem.id,
+      });
+    });
+  }
+  updateDeadPlayers() {
+    let lobby = this;
+    let connections = lobby.connections;
+
+    connections.forEach((connection) => {
+      let player = connection.player;
+
+      if (player.isDead) {
+        let isRespawn = player.respawnCounter();
+        if (isRespawn) {
+          let socket = connection.socket;
+          let returnData = {
+            id: player.id,
+            // position: lobby.getRandomSpawn(),
+            position: { x: 0, y: 0 },
+          };
+
+          socket.emit("playerRespawn", returnData);
+          socket.broadcast.to(lobby.id).emit("playerRespawn", returnData);
+        }
+      }
+    });
+
+    let aiList = lobby.serverItems.filter((item) => {
+      return item instanceof AIBase;
+    });
+    aiList.forEach((ai) => {
+      if (ai.isDead) {
+        let isRespawn = ai.respawnCounter();
+        if (isRespawn) {
+          let socket = connections[0].socket;
+          let returnData = {
+            id: ai.id,
+            position: {
+              x: ai.position.x,
+              y: ai.position.y,
+            },
+          };
+
+          socket.emit("playerRespawn", returnData);
+          socket.broadcast.to(lobby.id).emit("playerRespawn", returnData);
+        }
+      }
+    });
+  }
+  updateBullets() {
+    let lobby = this;
+    let bullets = lobby.bullets;
+    bullets.forEach((bullet) => {
+      const isDestroy = bullet.onUpdate();
+      if (isDestroy) {
+        lobby.despawnBullet(bullet);
+      }
+    });
+  }
+  onFireBullet(connection = Connection, data, isAI = false, aiId) {
+    const { activator, position, direction } = data;
+    const activeBy = this.connections.find((c) => {
+      return c.player.id === activator;
+    });
+
+    if (!isAI) {
+      let bullet = new Bullet(position, activeBy?.player?.tank, direction);
+      this.bullets.push(bullet);
+      const returnData = {
+        name: "Bullet",
+        id: bullet.id,
+        activator,
+        direction,
+        position,
+        bulletSpeed: activeBy?.player?.tank?.bulletSpeed || bullet.speed,
+      };
+      connection.socket.emit("serverSpawn", returnData);
+      connection.socket.broadcast.to(this.id).emit("serverSpawn", returnData); //Only broadcast to those in the same lobby as us
+    } else if (this.connections.length > 0) {
+      // get tank by aiid
+      const tankAi = this.serverItems.find((item) => {
+        return item.id == aiId;
+      });
+      let bullet = new Bullet(position, tankAi.tank, {
+        x: -direction.x,
+        y: -direction.y,
+      });
+      this.bullets.push(bullet);
+      const returnData = {
+        name: "Bullet",
+        id: bullet.id,
+        activator,
+        direction: { x: -direction.x, y: -direction.y },
+        position,
+        bulletSpeed: tankAi.tank.bulletSpeed || bullet.speed,
+      };
+      this.connections[0].socket.emit("serverSpawn", returnData);
+      this.connections[0].socket.broadcast
+        .to(this.id)
+        .emit("serverSpawn", returnData); //Broadcast to everyone that the ai spawned a bullet for
+    }
+  }
+  onCollisionDestroy(connection = Connection, data) {
+    const lobby = this;
+    const returnBullet = this.bullets.filter((e) => e.id == data.id);
+    console.log(returnBullet.length);
+    returnBullet.forEach((bullet) => {
+      //new
+
+      bullet.isDestroyed = true;
+      let enemyId = data?.enemyId;
+
+      let connection1 = lobby.connections.find((c) => {
+        return c.player.id === enemyId;
+      });
+
+      const ai = lobby.serverItems.find((s) => {
+        return s.id === enemyId;
+      });
+
+      const subjectOfAttack = connection1?.player ? connection1?.player : ai;
+      if (!subjectOfAttack) {
+        return;
+      }
+      let isDead = subjectOfAttack.dealDamage(bullet?.tank?.damage || 5);
+      console.log("health ", subjectOfAttack.health);
+
+      if (isDead) {
+        let returnData = {
+          id: subjectOfAttack.id,
+        };
+        connection.socket.emit("playerDied", returnData);
+        connection.socket.broadcast.to(lobby.id).emit("playerDied", returnData);
+      } else {
+        let returnData = {
+          id: subjectOfAttack.id,
+          health: subjectOfAttack.health,
+        };
+        connection.socket.emit("playerAttacked", returnData);
+        connection.socket.broadcast
+          .to(lobby.id)
+          .emit("playerAttacked", returnData);
+      }
+    });
+  }
+  despawnBullet(bullet = Bullet) {
+    let index = this.bullets.indexOf(bullet);
+    if (index > -1) {
+      this.bullets.splice(index, 1);
+    }
+    let returnData = { id: bullet.id };
+    const lobby = this;
+    lobby.connections.forEach((connection) => {
+      connection.socket.emit("serverUnSpawn", returnData);
+    });
+  }
+  addPlayer(connection = Connection) {
+    let lobby = this;
+    let connections = lobby.connections;
+    let socket = connection.socket;
+
+    // let randomPosition = lobby.getRandomSpawn();
+    // connection.player.position = new Vector2(
+    //   randomPosition.x,
+    //   randomPosition.y
+    // );
+    connection.player.position = new Vector2(0, 0);
+
+    //
+    const tank = {
+      id: "001",
+      level: 1,
+      armor: 20,
+      speed: 4,
+      rotationSpeed: 60,
+      damage: 15,
+      health: 80,
+      attackSpeed: 1,
+      bulletSpeed: 1, // 100 ms
+      shootingRange: 6,
+    };
+    connection.player.tank = tank;
+    connection.player.health = tank.health;
+    const returnData = {
+      id: connection.player.id,
+      position: connection.player.position,
+      tank,
+    };
+
+    socket.emit("spawn", returnData); //tell myself I have spawned
+    socket.broadcast.to(lobby.id).emit("spawn", returnData); // Tell other
+
+    // tell another to me
+    connections.forEach((c) => {
+      if (c.player.id != connection.player.id) {
+        socket.emit("spawn", {
+          id: c.player.id,
+          position: c.player.position,
+          tank,
+        });
+      }
+    });
+  }
+  updateDeadPlayers() {
+    let lobby = this;
+    let connections = lobby.connections;
+    connections.forEach((connection) => {
+      let player = connection.player;
+      if (player.isDead) {
+        let isRespawn = player.respawnCounter();
+        if (isRespawn) {
+          let returnData = {
+            id: player.id,
+            position: {
+              x: player.position.x,
+              y: player.position.y,
+            },
+          };
+          connection.socket.emit("playerRespawn", returnData);
+          connection.socket.broadcast
+            .to(lobby.id)
+            .emit("playerRespawn", returnData);
+        }
+      }
+    });
+  }
+  updateAIDead() {
+    const lobby = this;
+    const connections = this.connections;
+    let aiList = lobby.serverItems.filter((item) => {
+      return item instanceof AIBase;
+    });
+    aiList.forEach((ai) => {
+      if (ai.isDead) {
+        let isRespawn = ai.respawnCounter();
+        if (isRespawn) {
+          let socket = connections[0].socket;
+          let returnData = {
+            id: ai.id,
+            position: {
+              x: ai.position.x,
+              y: ai.position.y,
+            },
+          };
+
+          socket.emit("playerRespawn", returnData);
+          socket.broadcast.to(lobby.id).emit("playerRespawn", returnData);
+        }
+      }
+    });
+  }
+  removePlayer(connection = Connection) {
+    let lobby = this;
+
+    connection.socket.broadcast.to(lobby.id).emit("disconnected", {
+      id: connection.player.id,
+    });
+  }
+  getRandomSpawn() {}
+  getRndInteger(min, max) {}
+};

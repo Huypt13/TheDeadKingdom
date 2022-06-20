@@ -7,6 +7,7 @@ class Player {
     this.id = id;
     this.position = new Vector2();
     this.lobby = 0; // Id cua lobby
+    this.team = 0;
     this.tankRotation = 0;
     this.berrelRotaion = 0;
     this.tank;

@@ -20,7 +20,9 @@ public class TankGeneral : MonoBehaviour
 
     private BulletData bulletData;
     private Cooldown shootingCooldown;
-
+    [SerializeField]
+    private Rigidbody2D rb;
+    List<RaycastHit2D> castCollisions = new List<RaycastHit2D>();
     [Header("Class References")]
     [SerializeField]
     private NetworkIdentity networkIdentity;
@@ -56,6 +58,13 @@ public class TankGeneral : MonoBehaviour
         }
     }
 
+    private void LateUpdate()
+    {
+        if (networkIdentity.IsControlling())
+        {
+            Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, -10);
+        }
+    }
     public float GetLastRotation()
     {
         return lastRotation;
@@ -70,8 +79,12 @@ public class TankGeneral : MonoBehaviour
     {
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
-
-        transform.position += -transform.up * vertical * speed * Time.deltaTime;
+        //    int count = rb.Cast(-transform.up * vertical, castCollisions, speed * Time.deltaTime);
+        int count = 0;
+        if (count == 0)
+        {
+            transform.position += -transform.up * vertical * speed * Time.deltaTime;
+        }
         transform.Rotate(new Vector3(0, 0, -horizontal * rotation * Time.deltaTime));
     }
     private void BarrelRotation()

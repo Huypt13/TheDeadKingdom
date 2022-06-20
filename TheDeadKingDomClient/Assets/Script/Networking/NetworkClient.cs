@@ -3,9 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using SocketIO;
 using UnityEngine;
+using Cinemachine;
 
 public class NetworkClient : SocketIOComponent
 {
+
     public const float SERVER_UPDATE_TIME = 10;
     public static Dictionary<string, NetworkIdentity> serverObjects;
     public static string ClientID
@@ -58,8 +60,9 @@ public class NetworkClient : SocketIOComponent
             //Handling all spawning all players
             //Passed Data
 
-            string id = E.data["id"].ToString().RemoveQuotes();
-            string tankId = E.data["tank"]["id"].str.RemoveQuotes();
+            string id = E.data["id"].str;
+            float team = E.data["team"].f;
+            string tankId = E.data["tank"]["id"].str;
             float tankLevel = E.data["tank"]["level"].f;
             float health = E.data["tank"]["health"].f;
             float speed = E.data["tank"]["speed"].f;
@@ -75,6 +78,7 @@ public class NetworkClient : SocketIOComponent
                 go.name = string.Format("Player ({0})", id);
                 go.transform.position = new Vector3(x, y, 0);
                 NetworkIdentity ni = go.GetComponent<NetworkIdentity>();
+                ni.Team = team;
                 ni.SetControllerId(id);
                 ni.SetSocketReference(this);
                 TankGeneral tg = go.GetComponent<TankGeneral>();
@@ -83,14 +87,16 @@ public class NetworkClient : SocketIOComponent
 
                 GameObject h = Instantiate(healthComponent, networkContainer);
                 var healthBar = h.transform.GetComponentInChildren<HealthBar>();
+                if (ClientID == id)
+                {
+                    healthBar.setIsMyHealth(true);
+                }
+
+                healthBar.team = team;
                 healthBar.SetHealth(health);
                 healthBar.SetMaxHealth(health);
-                healthBar.setIsMyHealth(true);
+
                 healthBar.setMyGamTransform(go.transform);
-                if (id == ClientID)
-                {
-                    healthBar.fill.color = new Color(51, 196, 56);
-                }
                 h.name = $"Health : {id}";
                 ni.setHealthBar(healthBar);
 
@@ -100,7 +106,6 @@ public class NetworkClient : SocketIOComponent
         // update healthAI
         On("updateHealthAI", (E) =>
         {
-            Debug.Log("hoi mau");
             string id = E.data["id"].ToString().Replace("\"", "");
             float health = E.data["health"].f;
             var ni = serverObjects[id];
@@ -152,15 +157,18 @@ public class NetworkClient : SocketIOComponent
 
                     serverObjects.Add(id, ni);
                 }
-                if (name == "AI_Tank")
+                if (name == "AI_Tank" || name == "AI_TOWER")
                 {
                     string aiId = E.data["aiId"].str;
+                    float team = E.data["team"].f;
 
-                    ServerObjectData sod = serverSpawnables.GetObjectByName($"AI_{aiId}");
+                    float health = E.data["health"].f;
+                    ServerObjectData sod = serverSpawnables.GetObjectByName($"{name}_{aiId}");
                     GameObject spawnedObject = Instantiate(sod.Prefab, networkContainer);
-                    spawnedObject.name = "boss: " + id + " - type: " + aiId;
+                    spawnedObject.name = $"{name}: " + id + " - type: " + aiId;
                     spawnedObject.transform.position = new Vector3(x, y, 0);
                     NetworkIdentity ni = spawnedObject.GetComponent<NetworkIdentity>();
+                    ni.Team = team;
                     ni.SetControllerId(id);
                     ni.SetSocketReference(this);
                     serverObjects.Add(id, ni);
@@ -168,9 +176,9 @@ public class NetworkClient : SocketIOComponent
 
                     GameObject h = Instantiate(healthComponent, networkContainer);
                     var healthBar = h.transform.GetComponentInChildren<HealthBar>();
-
-                    healthBar.SetMaxHealth(100);
                     healthBar.setIsMyHealth(false);
+                    healthBar.team = team;
+                    healthBar.SetMaxHealth(health);
                     healthBar.setMyGamTransform(spawnedObject.transform);
                     h.name = $"Health : {id}";
                     ni.setHealthBar(healthBar);
@@ -191,9 +199,11 @@ public class NetworkClient : SocketIOComponent
             var ni = serverObjects[id];
             float x = e.data["position"]["x"].f;
             float y = e.data["position"]["y"].f;
+            float health = e.data["health"].f;
+
             ni.transform.position = new Vector3(x, y, 0);
             ni.gameObject.SetActive(true);
-            ni.getHealthBar().SetHealth(100);
+            ni.getHealthBar().SetHealth(health);
             ni.getHealthBar().transform.parent.gameObject.SetActive(true);
         });
 
@@ -279,7 +289,6 @@ public class NetworkClient : SocketIOComponent
             float y = E.data["position"]["y"].f;
             float tankRotation = E.data["tankRotation"].f;
             float barrelRotation = E.data["barrelRotation"].f;
-
             NetworkIdentity ni = serverObjects[id];
             //  ni.transform.position = new Vector3(x, y, 0);
             StartCoroutine(AIPositionSmoothing(ni.transform, new Vector3(x, y, 0)));
@@ -290,6 +299,20 @@ public class NetworkClient : SocketIOComponent
             }
 
         });
+        On("updateTower", (E) =>
+        {
+
+            string id = E.data["id"].ToString().Replace("\"", "");
+            float barrelRotation = E.data["barrelRotation"].f;
+            NetworkIdentity ni = serverObjects[id];
+            //  ni.transform.position = new Vector3(x, y, 0);
+            if (ni.gameObject.activeInHierarchy)
+            {
+                ni.GetComponent<AiManager>().SetBarrelRotation(barrelRotation + 180);
+            }
+
+        });
+
 
 
         On("lobbyUpdate", (e) =>

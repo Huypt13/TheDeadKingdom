@@ -8,8 +8,11 @@ public class HealthBar : MonoBehaviour
 
     public Slider slider;
     public bool isMyHealth;
+    public float team;
     public Gradient myGradient;
     public Gradient gradient;
+    public Gradient gradient2;
+    public Gradient gradient0;
     public Image fill;
     private Transform myGameTransform;
 
@@ -27,8 +30,18 @@ public class HealthBar : MonoBehaviour
         slider.value = health;
         if (isMyHealth)
             fill.color = myGradient.Evaluate(1f);
-        else
+        else if (team == 1)
             fill.color = gradient.Evaluate(1f);
+        else if (team == 2)
+        {
+            fill.color = gradient2.Evaluate(1f);
+
+        }
+        else
+        {
+            fill.color = gradient0.Evaluate(1f);
+
+        }
     }
 
     public void SetHealth(float health)
@@ -37,15 +50,25 @@ public class HealthBar : MonoBehaviour
 
         if (isMyHealth)
             fill.color = myGradient.Evaluate(slider.normalizedValue);
-        else
+        else if (team == 1)
             fill.color = gradient.Evaluate(slider.normalizedValue);
+        else if (team == 2)
+        {
+            fill.color = gradient2.Evaluate(slider.normalizedValue);
+
+        }
+        else
+        {
+            fill.color = gradient0.Evaluate(slider.normalizedValue);
+
+        }
     }
     public void DestroyHealthBar()
     {
         DestroyImmediate(transform.parent.gameObject);
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         // transform.localPosition = new Vector3(-960, -540, 0);
 

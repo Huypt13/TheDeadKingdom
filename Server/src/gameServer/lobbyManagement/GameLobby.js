@@ -5,6 +5,7 @@ const Bullet = require("../gamePlay/serverObjects/Bullet");
 const TankAI = require("../aiManagement/TankAI");
 const AIBase = require("../aiManagement/AIBase");
 const Connection = require("../playerManagement/Connection");
+const TowerAI = require("../aiManagement/TowerAI");
 
 module.exports = class GameLobby extends LobbyBase {
   constructor(settings = GameLobbySettings) {
@@ -41,10 +42,17 @@ module.exports = class GameLobby extends LobbyBase {
 
       ai.onUpdate(
         (data) => {
-          this.connections.forEach((connection) => {
-            let socket = connection.socket;
-            socket.emit("updateAI", data);
-          });
+          if (data?.username == "AI_TOWER") {
+            this.connections.forEach((connection) => {
+              let socket = connection.socket;
+              socket.emit("updateTower", data);
+            });
+          } else {
+            this.connections.forEach((connection) => {
+              let socket = connection.socket;
+              socket.emit("updateAI", data);
+            });
+          }
         },
         (data) => {
           this.onFireBullet(undefined, data, true, ai.id);
@@ -107,9 +115,24 @@ module.exports = class GameLobby extends LobbyBase {
       shootingRange: 6,
     };
     this.onServerSpawn(
-      new TankAI("01", new Vector2(-6, 2), 4, tankAi),
+      new TankAI("01", new Vector2(-6, 2), 4, tankAi, 1),
       new Vector2(-6, 2)
     );
+    this.onServerSpawn(
+      new TankAI("01", new Vector2(-6, 4), 4, tankAi, 2),
+      new Vector2(-6, 4)
+    );
+    this.onServerSpawn(
+      new TankAI("01", new Vector2(-3, 4), 4, tankAi, 2),
+      new Vector2(-3, 4)
+    );
+    // this.onServerSpawn(
+    //   new TankAI("01", new Vector2(-6, 6), 4, tankAi, 0),
+    //   new Vector2(5, 2)
+    // );
+    // this.onServerSpawn(new TowerAI("01", tankAi, 1), new Vector2(-3, 0));
+    // this.onServerSpawn(new TowerAI("01", tankAi, 0), new Vector2(-5, 0));
+    // this.onServerSpawn(new TowerAI("01", tankAi, 2), new Vector2(-1, 0));
   }
   onUnspawnAllAIInGame(connection = Connection) {
     let lobby = this;
@@ -122,51 +145,7 @@ module.exports = class GameLobby extends LobbyBase {
       });
     });
   }
-  updateDeadPlayers() {
-    let lobby = this;
-    let connections = lobby.connections;
 
-    connections.forEach((connection) => {
-      let player = connection.player;
-
-      if (player.isDead) {
-        let isRespawn = player.respawnCounter();
-        if (isRespawn) {
-          let socket = connection.socket;
-          let returnData = {
-            id: player.id,
-            // position: lobby.getRandomSpawn(),
-            position: { x: 0, y: 0 },
-          };
-
-          socket.emit("playerRespawn", returnData);
-          socket.broadcast.to(lobby.id).emit("playerRespawn", returnData);
-        }
-      }
-    });
-
-    let aiList = lobby.serverItems.filter((item) => {
-      return item instanceof AIBase;
-    });
-    aiList.forEach((ai) => {
-      if (ai.isDead) {
-        let isRespawn = ai.respawnCounter();
-        if (isRespawn) {
-          let socket = connections[0].socket;
-          let returnData = {
-            id: ai.id,
-            position: {
-              x: ai.position.x,
-              y: ai.position.y,
-            },
-          };
-
-          socket.emit("playerRespawn", returnData);
-          socket.broadcast.to(lobby.id).emit("playerRespawn", returnData);
-        }
-      }
-    });
-  }
   updateBullets() {
     let lobby = this;
     let bullets = lobby.bullets;
@@ -185,10 +164,13 @@ module.exports = class GameLobby extends LobbyBase {
 
     if (!isAI) {
       let bullet = new Bullet(position, activeBy?.player?.tank, direction);
+      bullet.activator = activator;
+      bullet.team = activeBy?.player?.team;
       this.bullets.push(bullet);
       const returnData = {
         name: "Bullet",
         id: bullet.id,
+        team: bullet.team,
         activator,
         direction,
         position,
@@ -205,9 +187,12 @@ module.exports = class GameLobby extends LobbyBase {
         x: -direction.x,
         y: -direction.y,
       });
+      bullet.activator = activator;
+      bullet.team = tankAi?.team;
       this.bullets.push(bullet);
       const returnData = {
         name: "Bullet",
+        team: bullet.team,
         id: bullet.id,
         activator,
         direction: { x: -direction.x, y: -direction.y },
@@ -239,10 +224,15 @@ module.exports = class GameLobby extends LobbyBase {
       });
 
       const subjectOfAttack = connection1?.player ? connection1?.player : ai;
+
       if (!subjectOfAttack) {
         return;
       }
-      let isDead = subjectOfAttack.dealDamage(bullet?.tank?.damage || 5);
+      let isDead = false;
+      if (subjectOfAttack.team != bullet.team) {
+        isDead = subjectOfAttack.dealDamage(bullet?.tank?.damage || 5);
+      }
+
       console.log("health ", subjectOfAttack.health);
 
       if (isDead) {
@@ -292,18 +282,23 @@ module.exports = class GameLobby extends LobbyBase {
       level: 1,
       armor: 20,
       speed: 4,
-      rotationSpeed: 60,
+      rotationSpeed: 180,
       damage: 15,
-      health: 80,
-      attackSpeed: 1,
+      health: 800,
+      attackSpeed: 0.5, // time hoi ban ko phai attack
       bulletSpeed: 1, // 100 ms
       shootingRange: 6,
     };
     connection.player.tank = tank;
     connection.player.health = tank.health;
+    console.log(
+      `spawn player ${connection.player.id} team ${connection.player.team}`,
+      this.connections.length
+    );
     const returnData = {
       id: connection.player.id,
       position: connection.player.position,
+      team: connection.player.team,
       tank,
     };
 
@@ -335,6 +330,7 @@ module.exports = class GameLobby extends LobbyBase {
               x: player.position.x,
               y: player.position.y,
             },
+            health: player.tank.health,
           };
           connection.socket.emit("playerRespawn", returnData);
           connection.socket.broadcast
@@ -351,20 +347,23 @@ module.exports = class GameLobby extends LobbyBase {
       return item instanceof AIBase;
     });
     aiList.forEach((ai) => {
-      if (ai.isDead) {
-        let isRespawn = ai.respawnCounter();
-        if (isRespawn) {
-          let socket = connections[0].socket;
-          let returnData = {
-            id: ai.id,
-            position: {
-              x: ai.position.x,
-              y: ai.position.y,
-            },
-          };
+      if (ai.username != "AI_TOWER") {
+        if (ai.isDead) {
+          let isRespawn = ai.respawnCounter();
+          if (isRespawn) {
+            let socket = connections[0].socket;
+            let returnData = {
+              id: ai.id,
+              position: {
+                x: ai.position.x,
+                y: ai.position.y,
+              },
+              health: ai.maxhealth,
+            };
 
-          socket.emit("playerRespawn", returnData);
-          socket.broadcast.to(lobby.id).emit("playerRespawn", returnData);
+            socket.emit("playerRespawn", returnData);
+            socket.broadcast.to(lobby.id).emit("playerRespawn", returnData);
+          }
         }
       }
     });

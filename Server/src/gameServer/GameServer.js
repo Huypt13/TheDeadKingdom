@@ -66,15 +66,15 @@ class GameServer {
 
     // leave lobby
     const currentLobbyId = connection.player.lobby;
-    server.lobbys[currentLobbyId].onLeaveLobby(connection);
+    gameServer.lobbys[currentLobbyId].onLeaveLobby(connection);
 
     // check de close lobby
     if (
-      currentLobbyIndex != server.generalServerID &&
-      server.lobbys[currentLobbyIndex] != undefined &&
-      server.lobbys[currentLobbyIndex].connections.length == 0
+      currentLobbyId != gameServer.generalServerID &&
+      gameServer.lobbys[currentLobbyId] != undefined &&
+      gameServer.lobbys[currentLobbyId].connections.length == 0
     ) {
-      server.closeDownLobby(currentLobbyId);
+      gameServer.closeDownLobby(currentLobbyId);
     }
   }
   onSwitchLobby(connection = Connection, lobbyID) {

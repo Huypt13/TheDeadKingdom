@@ -4,14 +4,13 @@ const AIBase = require("./AIBase");
 const Vector2 = require("../../dto/Vector2");
 
 module.exports = class TankAI extends AIBase {
-  constructor(Id, OldPosition, Zone, TankAi) {
-    super();
+  constructor(Id, OldPosition, Zone, TankAi, Team) {
+    super(TankAi.health, OldPosition, Team);
     this.id = shortid.generate();
     this.aiId = Id;
     this.username = "AI_Tank";
     this.target;
     this.hasTarget = false;
-    this.oldPosition = OldPosition;
     this.zone = Zone;
     this.tank = { ...TankAi };
     this.iscommback = false;
@@ -21,7 +20,7 @@ module.exports = class TankAI extends AIBase {
     //Shooting
     this.canShoot = false;
     this.currentTime = Number(0);
-    this.reloadTime = Number(3);
+    this.reloadTime = Number(TankAi.attackSpeed);
   }
 
   onUpdate(onUpdateAI, onFireBullet, onUpdateHealthAi) {
@@ -29,17 +28,20 @@ module.exports = class TankAI extends AIBase {
     let zoneChange = ai.position.Distance(this.oldPosition);
 
     if (!ai.hasTarget || zoneChange > this.zone) {
-      if (!this.iscommback) {
-        console.log("hoi mau");
+      if (!this.iscommback && zoneChange != 0) {
         this.health = this.tank.health;
         onUpdateHealthAi({ id: this.id, health: this.tank.health });
       }
       this.iscommback = true;
     }
     if (this.iscommback) {
-      if (zoneChange <= 0.2) {
-        this.position = new Vector2(this.oldPosition.x, this.oldPosition.y);
+      if (zoneChange <= 0.1) {
+        if (zoneChange != 0) {
+          this.health = this.tank.health;
+          onUpdateHealthAi({ id: this.id, health: this.tank.health });
+        }
         this.iscommback = false;
+        this.position = new Vector2(this.oldPosition.x, this.oldPosition.y);
       }
       this.onComebackOldPos();
       let direction = new Vector2();
@@ -137,10 +139,6 @@ module.exports = class TankAI extends AIBase {
   }
 
   onObtainTarget(connections) {
-    // if ((this.iscommback = true)) {
-    // //  this.hasTarget = false;
-    //   return;
-    // }
     const ai = this;
 
     let minConnection = { position: new Vector2(1e5, 1e5) };
@@ -150,7 +148,8 @@ module.exports = class TankAI extends AIBase {
       if (
         ai.position.Distance(player.position) <
           minConnection.position.Distance(ai.position) &&
-        !player.isDead
+        !player.isDead &&
+        player.team != this.team
       ) {
         target = connection;
         minConnection.position = player.position;
@@ -161,6 +160,7 @@ module.exports = class TankAI extends AIBase {
       this.tank.shootingRange + 1
     ) {
       ai.hasTarget = false;
+      ai.target = null;
       return;
     }
     ai.hasTarget = true;

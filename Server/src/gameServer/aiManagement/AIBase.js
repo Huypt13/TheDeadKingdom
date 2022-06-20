@@ -2,12 +2,14 @@ const ServerItem = require("../../utility/ServerItem");
 const Vector2 = require("../../dto/Vector2");
 
 module.exports = class AIBase extends ServerItem {
-  constructor() {
+  constructor(Maxhealth, OldPosition, Team) {
     super();
+    this.team = Team || 0;
     this.username = "AI_Base";
-    this.health = new Number(100);
+    this.oldPosition = OldPosition;
+    this.health = Maxhealth;
+    this.maxhealth = Maxhealth;
     this.isDead = false;
-    this.tank;
     this.respawnTicker = new Number(0);
     this.respawnTime = new Number(0);
   }
@@ -31,8 +33,8 @@ module.exports = class AIBase extends ServerItem {
         this.isDead = false;
         this.respawnTicker = new Number(0);
         this.respawnTime = new Number(0);
-        this.health = new Number(100);
-        this.position = new Vector2(-7, 3);
+        this.health = this.maxhealth;
+        this.position = new Vector2(this.oldPosition.x, this.oldPosition.y);
 
         return true;
       }
@@ -43,6 +45,7 @@ module.exports = class AIBase extends ServerItem {
 
   dealDamage(amount = Number) {
     //Adjust Health on getting hit
+
     this.health = this.health - amount;
 
     //Check if we are dead

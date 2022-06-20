@@ -8,16 +8,22 @@ using System.Collections.Generic;
 public class NetworkIdentity : MonoBehaviour
 {
     private string id;
+    private float team;
     private bool isControlling;
     private SocketIOComponent socket;
     private HealthBar healthBar;
     [SerializeField]
     GameObject bullet;
+
+    public float Team { get => team; set => team = value; }
+
     // private HealthBar healthBar;
     private void Awake()
     {
         isControlling = false;
     }
+
+
     public void SetControllerId(String Id)
     {
         id = Id;

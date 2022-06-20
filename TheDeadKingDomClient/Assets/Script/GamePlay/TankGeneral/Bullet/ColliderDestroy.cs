@@ -32,7 +32,7 @@ public class ColliderDestroy : MonoBehaviour
             return;
         }
 
-        // dan cham nhau
+        // bullet cham nhau
 
         if (ni.GetComponent<WhoActivatedMe>() != null)
         {
@@ -43,25 +43,47 @@ public class ColliderDestroy : MonoBehaviour
 
         var niActive = NetworkClient.serverObjects[whoActiveMe.GetActivator()];
 
-        if (ni.GetComponent<AiManager>() == null || niActive.GetComponent<AiManager>() == null)
+        if (!(ni.GetComponent<AiManager>() != null && niActive.GetComponent<AiManager>() != null))
         {
             // ko phai cham chinh minh
             if (ni.GetId() != whoActiveMe.GetActivator())
             {
-
-
-
-                networkIdentity.GetSocket().Emit("collisionDestroy", new JSONObject(JsonUtility.ToJson(new IDData()
+                if (ni.Team == niActive.Team)
                 {
-                    id = networkIdentity.GetId(),
-                    enemyId = ni.GetId()
-                })));
-                Destroy(gameObject);
-                NetworkClient.serverObjects.Remove(networkIdentity.GetId());
+                    return;
+                }
+
+                // client bi ban , thi client trung dan gui request
+
+                if (ni.IsControlling())
+                {
+                    Destroy(gameObject);
+                    NetworkClient.serverObjects.Remove(networkIdentity.GetId());
+                    networkIdentity.GetSocket().Emit("collisionDestroy", new JSONObject(JsonUtility.ToJson(new IDData()
+                    {
+                        id = networkIdentity.GetId(),
+                        enemyId = ni.GetId()
+                    })));
+                    return;
+                }
+
+                //  ai trung dan , firer gui request
+
+                if (niActive.IsControlling() && ni.GetComponent<AiManager>() != null)
+                {
+                    Destroy(gameObject);
+                    NetworkClient.serverObjects.Remove(networkIdentity.GetId());
+                    networkIdentity.GetSocket().Emit("collisionDestroy", new JSONObject(JsonUtility.ToJson(new IDData()
+                    {
+                        id = networkIdentity.GetId(),
+                        enemyId = ni.GetId()
+                    })));
+                    return;
+                }
+
             }
         }
 
-        // nguoi ban nguoi
 
 
 

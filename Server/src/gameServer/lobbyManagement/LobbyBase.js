@@ -22,7 +22,7 @@ module.exports = class LobbyBase {
     );
 
     lobby.connections.push(connection);
-
+    player.team = 2 - (this.connections.length % 2); // team 1 2
     player.lobby = lobby.id;
     connection.lobby = lobby;
   }
@@ -34,7 +34,7 @@ module.exports = class LobbyBase {
       this.connections.splice(index, 1);
     }
   }
-  onServerSpawn(item = ServerItem, position = Vector2) {
+  onServerSpawn(item, position = Vector2) {
     let lobby = this;
     let serverItems = lobby.serverItems;
     let connections = lobby.connections;
@@ -44,13 +44,14 @@ module.exports = class LobbyBase {
     //Set item into the array
     serverItems.push(item);
     //Tell everyone in the room
-    console.log("onserver spawn", item.aiId);
-
+    console.log("onserver spawn", item.aiId, item?.team);
     connections.forEach((connection) => {
       connection.socket.emit("serverSpawn", {
         id: item.id,
-        aiId: item.aiId,
+        aiId: item?.aiId,
         name: item.username,
+        health: item?.health,
+        team: item?.team || 0,
         position,
       });
     });

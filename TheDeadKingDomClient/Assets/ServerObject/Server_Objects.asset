@@ -15,5 +15,9 @@ MonoBehaviour:
   Objects:
   - Name: Tank_001_1
     Prefab: {fileID: 694932519919396962, guid: 8b73319b478374b47802372514f2b894, type: 3}
-  - Name: AI_01
+  - Name: AI_Tank_01
     Prefab: {fileID: 694932519919396962, guid: bfdee147f2ca74ae6a624f8de2976ac4, type: 3}
+  - Name: AI_TOWER_01
+    Prefab: {fileID: 6665555187601314377, guid: c18563d6f43b8430ba6f9dd95067f4fe, type: 3}
+  - Name: Machine
+    Prefab: {fileID: 4308920396418801268, guid: f71461bb29c294a7396f0128224b210f, type: 3}

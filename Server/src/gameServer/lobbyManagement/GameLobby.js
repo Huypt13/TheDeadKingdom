@@ -15,6 +15,8 @@ module.exports = class GameLobby extends LobbyBase {
     this.lobbyState = new LobbyState();
     this.bullets = [];
     this.waitingTime = 0;
+    this.matchTime = 0; // time tran dau
+    this.sendTime = 0; // time gui time tran dau xuong client
     this.endGameLobby = function () {};
   }
   async onUpdate() {
@@ -26,6 +28,7 @@ module.exports = class GameLobby extends LobbyBase {
     lobby.updateDeadPlayers();
     lobby.updateAIDead();
     lobby.onUpdateAI();
+    lobby.onMatchTime();
     await lobby.onJoinGame();
     //
 
@@ -34,6 +37,33 @@ module.exports = class GameLobby extends LobbyBase {
       lobby.endGameLobby();
     }
   }
+
+  onMatchTime() {
+    if (this.lobbyState.currentState == this.lobbyState.GAME) {
+      this.matchTime += +0.1;
+      this.sendTime++;
+      if (this.sendTime == 10) {
+        this.sendTime = 0;
+        this.connections[0].socket.emit("updateTime", {
+          matchTime: this.matchTime,
+        });
+        this.connections[0].socket.broadcast
+          .to(this.id)
+          .emit("updateTime", { matchTime: this.matchTime });
+      }
+    }
+  }
+
+  onWinning() {
+    if ((this.lobbyState.currentState = this.lobbyState.GAME)) {
+      if (this.settings.gameMode == "CountKill") {
+        onCountKillWin();
+      }
+    }
+  }
+
+  onCountKillWin() {}
+
   async onJoinGame() {
     if (this.lobbyState.currentState == this.lobbyState.WAITING) {
       this.waitingTime += +0.1;
@@ -41,8 +71,17 @@ module.exports = class GameLobby extends LobbyBase {
         this.waitingTime = 0;
         this.lobbyState.currentState = this.lobbyState.GAME;
         if (this.connections.length > 0) {
+          console.log("join game");
           this.connections[0].socket.emit("loadGame");
           this.connections[0].socket.broadcast.to(this.id).emit("loadGame");
+          const returnData = {
+            state: this.lobbyState.currentState,
+          };
+          this.connections[0].socket.emit("lobbyUpdate", returnData);
+          this.connections[0].socket.broadcast
+            .to(this.id)
+            .emit("lobbyUpdate", returnData);
+
           await this.onSpawnAllPlayersIntoGame();
           this.onSpawnAIIntoGame();
         }

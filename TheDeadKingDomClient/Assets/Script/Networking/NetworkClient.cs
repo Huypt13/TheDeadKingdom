@@ -10,7 +10,6 @@ public class NetworkClient : SocketIOComponent
 
     public const float SERVER_UPDATE_TIME = 10;
     public static Dictionary<string, NetworkIdentity> serverObjects;
-    public static List<JSONObject> players;
     public static string ClientID
     {
         get;
@@ -27,6 +26,7 @@ public class NetworkClient : SocketIOComponent
     public static Action<SocketIOEvent> OnGameStateChange = (E) => { };
     public static Action<SocketIOEvent> OnChangeHero = (E) => { };
     public static Action<SocketIOEvent> OnUpdatePlayer = (E) => { };
+    public static Action<SocketIOEvent> OnTimeUpdate = (E) => { };
 
     public override void Start()
     {
@@ -119,6 +119,11 @@ public class NetworkClient : SocketIOComponent
 
         });
 
+        On("updateTime", (E) =>
+        {
+            //      float time = E.data["matchTime"].f;
+            OnTimeUpdate.Invoke(E);
+        });
         // spawn bullet
         On("serverSpawn", (E) =>
         {
@@ -335,7 +340,6 @@ public class NetworkClient : SocketIOComponent
         On("lobbyUpdate", (e) =>
         {
             Debug.Log("Lobby update " + e.data["state"].str);
-            players = e.data["players"].list;
 
             OnGameStateChange.Invoke(e);
 
@@ -379,5 +383,26 @@ public class NetworkClient : SocketIOComponent
 
         yield return null;
     }
+    public void OnQuit()
+    {
+        Emit("quitGame");
+        ReturnToMainMenu();
+    }
 
+    private void ReturnToMainMenu()
+    {
+        foreach (var keyValuePair in serverObjects)
+        {
+            if (keyValuePair.Value != null)
+            {
+                Destroy(keyValuePair.Value.gameObject);
+            }
+        }
+        serverObjects.Clear();
+        SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
+        {
+            SceneManagement.Instance.UnLoadLevel(SceneList.LEVEL);
+            FindObjectOfType<MenuManager>().OnSignInComplete();
+        });
+    }
 }

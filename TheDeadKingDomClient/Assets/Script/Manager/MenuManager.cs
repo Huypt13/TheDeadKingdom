@@ -151,16 +151,18 @@ public class MenuManager : MonoBehaviour
                     ci.id = access_token;
                     ci.username = myName;
                     SocketReference.Emit("clientJoin", new JSONObject(JsonUtility.ToJson(ci)));
-                    message.gameObject.SetActive(false);
-                    signInContainer.SetActive(false);
-                    joinContainer.SetActive(true);
-                    queueButton.interactable = true;
-
+                    OnSignInComplete();
                 }
             }
         }
     }
-
+    public void OnSignInComplete()
+    {
+        message.gameObject.SetActive(false);
+        signInContainer.SetActive(false);
+        joinContainer.SetActive(true);
+        queueButton.interactable = true;
+    }
 
     public void CreateAccount()
     {

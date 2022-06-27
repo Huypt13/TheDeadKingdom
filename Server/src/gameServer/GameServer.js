@@ -111,7 +111,9 @@ class GameServer {
     //All game lobbies full or we have never created one
     if (!lobbyFound) {
       console.log("Making a new game lobby");
-      let gamelobby = new GameLobby(new GameLobbySetting("FFA", 2, 1, null));
+      let gamelobby = new GameLobby(
+        new GameLobbySetting("CountKill", 1, 1, null)
+      );
       gamelobby.endGameLobby = () => {
         console.log("end lobby");
         this.closeDownLobby(gamelobby.id);

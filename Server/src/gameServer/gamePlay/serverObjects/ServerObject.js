@@ -4,7 +4,7 @@ const Vector2 = require("../../../dto/Vector2");
 module.exports = class ServerObject {
   constructor() {
     this.id = shortID.generate();
-    this.username = "ServerObject";
+    this.name = "ServerObject";
     this.position = new Vector2();
   }
 };

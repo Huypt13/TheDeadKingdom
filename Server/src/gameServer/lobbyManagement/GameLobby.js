@@ -6,6 +6,7 @@ const TankAI = require("../aiManagement/TankAI");
 const AIBase = require("../aiManagement/AIBase");
 const Connection = require("../playerManagement/Connection");
 const TowerAI = require("../aiManagement/TowerAI");
+const Potion = require("../gamePlay/serverObjects/Potion");
 
 module.exports = class GameLobby extends LobbyBase {
   constructor(settings = GameLobbySettings) {
@@ -13,7 +14,8 @@ module.exports = class GameLobby extends LobbyBase {
     this.settings = settings;
     this.lobbyState = new LobbyState();
     this.bullets = [];
-    this.endGameLobby = function () {};
+    this.potions = [];
+    this.endGameLobby = function () { };
   }
   onUpdate() {
     super.onUpdate();
@@ -24,6 +26,8 @@ module.exports = class GameLobby extends LobbyBase {
     lobby.updateDeadPlayers();
     lobby.updateAIDead();
     lobby.onUpdateAI();
+    lobby.OnUpdateEffectCooldown();
+    lobby.OnUpdateEffectTime();
     //
 
     //Clos lobby because no one is here
@@ -33,38 +37,75 @@ module.exports = class GameLobby extends LobbyBase {
   }
 
   onUpdateAI() {
-    let aiList = this.serverItems.filter((item) => {
+    const lobby = this;
+    let aiList = lobby.serverItems.filter((item) => {
       return item instanceof AIBase;
     });
     aiList.forEach((ai) => {
       //Update each ai unity, passing in a function for those that need to update other connections
-      ai.onObtainTarget(this.connections);
+      ai.onObtainTarget(lobby.connections);
 
       ai.onUpdate(
         (data) => {
           if (data?.username == "AI_TOWER") {
-            this.connections.forEach((connection) => {
+            lobby.connections.forEach((connection) => {
               let socket = connection.socket;
               socket.emit("updateTower", data);
             });
           } else {
-            this.connections.forEach((connection) => {
+            lobby.connections.forEach((connection) => {
               let socket = connection.socket;
               socket.emit("updateAI", data);
             });
           }
         },
         (data) => {
-          this.onFireBullet(undefined, data, true, ai.id);
+          lobby.onFireBullet(undefined, data, true, ai.id);
         },
         (data) => {
-          this.connections.forEach((connection) => {
+          lobby.connections.forEach((connection) => {
             let socket = connection.socket;
             socket.emit("updateHealthAI", data);
           });
         }
       );
     });
+  }
+  OnUpdateEffectCooldown() {
+    for (let item of this.serverItems) {
+      if (item?.isActive != undefined&& !item.isActive) {
+        if(item.coolDown()){
+          for (let connection of this.connections)
+          connection.socket.emit("stopLoading", item.id);
+        }
+      }
+    }
+  }
+
+  OnUpdateEffectTime() {
+    for (let connection of this.connections) {
+      if (connection.player.effect.healing.value != 0) {
+        this.HealHp(connection);
+      }
+
+    }
+
+  }
+
+  HealHp(connection = Connection) {
+
+    const isFinish = connection.player.healHp();
+    const returnData = { id: connection.player.id, health: connection.player.health }
+    connection.socket.emit("playerAttacked", returnData);
+    connection.socket.broadcast.to(this.id).emit("playerAttacked", returnData);
+    if (isFinish) {
+      const healing = connection.player.effect.healing;
+      for (let property in healing) {
+        healing[property] = 0;
+      }
+      connection.socket.emit("HpStopHeal", connection.player.id);
+      connection.socket.broadcast.to(this.id).emit("HpStopHeal", connection.player.id);
+    }
   }
 
   canEnterLobby(connection = Connection) {
@@ -95,7 +136,7 @@ module.exports = class GameLobby extends LobbyBase {
     socket.emit("lobbyUpdate", returnData);
     socket.broadcast.to(lobby.id).emit("lobbyUpdate", returnData);
   }
-  onLeaveLobby(connection = Connection) {}
+  onLeaveLobby(connection = Connection) { }
   onSpawnAllPlayersIntoGame() {
     let lobby = this;
     let connections = lobby.connections;
@@ -105,6 +146,7 @@ module.exports = class GameLobby extends LobbyBase {
     });
   }
   onSpawnAIIntoGame() {
+    const lobby = this;
     const tankAi = {
       speed: 0.15,
       rotationSpeed: 0.3,
@@ -114,25 +156,32 @@ module.exports = class GameLobby extends LobbyBase {
       bulletSpeed: 1, // 100 ms
       shootingRange: 6,
     };
-    this.onServerSpawn(
+    lobby.onServerSpawn(
       new TankAI("01", new Vector2(-6, 2), 4, tankAi, 1),
       new Vector2(-6, 2)
     );
-    this.onServerSpawn(
+    lobby.onServerSpawn(
       new TankAI("01", new Vector2(-6, 4), 4, tankAi, 2),
       new Vector2(-6, 4)
     );
-    this.onServerSpawn(
+    lobby.onServerSpawn(
       new TankAI("01", new Vector2(-3, 4), 4, tankAi, 2),
       new Vector2(-3, 4)
     );
-    // this.onServerSpawn(
-    //   new TankAI("01", new Vector2(-6, 6), 4, tankAi, 0),
-    //   new Vector2(5, 2)
-    // );
-    // this.onServerSpawn(new TowerAI("01", tankAi, 1), new Vector2(-3, 0));
-    // this.onServerSpawn(new TowerAI("01", tankAi, 0), new Vector2(-5, 0));
-    // this.onServerSpawn(new TowerAI("01", tankAi, 2), new Vector2(-1, 0));
+    lobby.onServerSpawn(
+      new TankAI("01", new Vector2(-6, 6), 4, tankAi, 0),
+      new Vector2(5, 2)
+    );
+    lobby.onServerSpawn(new TowerAI("01", tankAi, 1), new Vector2(-3, 0));
+    lobby.onServerSpawn(new TowerAI("01", tankAi, 0), new Vector2(-5, 0));
+    lobby.onServerSpawn(new TowerAI("01", tankAi, 2), new Vector2(-1, 0));
+    const potion = new Potion();
+    potion.username = "Hp_Potion";
+    const potion2 = new Potion();
+    potion2.username = "Hp_Potion2";
+    lobby.onServerSpawn(potion, new Vector2(7, -5, 0));
+    lobby.onServerSpawn(potion2, new Vector2(7, -1, 0));
+
   }
   onUnspawnAllAIInGame(connection = Connection) {
     let lobby = this;
@@ -157,8 +206,9 @@ module.exports = class GameLobby extends LobbyBase {
     });
   }
   onFireBullet(connection = Connection, data, isAI = false, aiId) {
+    let lobby = this;
     const { activator, position, direction } = data;
-    const activeBy = this.connections.find((c) => {
+    const activeBy = lobby.connections.find((c) => {
       return c.player.id === activator;
     });
 
@@ -166,7 +216,7 @@ module.exports = class GameLobby extends LobbyBase {
       let bullet = new Bullet(position, activeBy?.player?.tank, direction);
       bullet.activator = activator;
       bullet.team = activeBy?.player?.team;
-      this.bullets.push(bullet);
+      lobby.bullets.push(bullet);
       const returnData = {
         name: "Bullet",
         id: bullet.id,
@@ -177,10 +227,10 @@ module.exports = class GameLobby extends LobbyBase {
         bulletSpeed: activeBy?.player?.tank?.bulletSpeed || bullet.speed,
       };
       connection.socket.emit("serverSpawn", returnData);
-      connection.socket.broadcast.to(this.id).emit("serverSpawn", returnData); //Only broadcast to those in the same lobby as us
-    } else if (this.connections.length > 0) {
+      connection.socket.broadcast.to(lobby.id).emit("serverSpawn", returnData); //Only broadcast to those in the same lobby as us
+    } else if (lobby.connections.length > 0) {
       // get tank by aiid
-      const tankAi = this.serverItems.find((item) => {
+      const tankAi = lobby.serverItems.find((item) => {
         return item.id == aiId;
       });
       let bullet = new Bullet(position, tankAi.tank, {
@@ -189,7 +239,7 @@ module.exports = class GameLobby extends LobbyBase {
       });
       bullet.activator = activator;
       bullet.team = tankAi?.team;
-      this.bullets.push(bullet);
+      lobby.bullets.push(bullet);
       const returnData = {
         name: "Bullet",
         team: bullet.team,
@@ -199,15 +249,15 @@ module.exports = class GameLobby extends LobbyBase {
         position,
         bulletSpeed: tankAi.tank.bulletSpeed || bullet.speed,
       };
-      this.connections[0].socket.emit("serverSpawn", returnData);
-      this.connections[0].socket.broadcast
-        .to(this.id)
+      lobby.connections[0].socket.emit("serverSpawn", returnData);
+      lobby.connections[0].socket.broadcast
+        .to(lobby.id)
         .emit("serverSpawn", returnData); //Broadcast to everyone that the ai spawned a bullet for
     }
   }
   onCollisionDestroy(connection = Connection, data) {
     const lobby = this;
-    const returnBullet = this.bullets.filter((e) => e.id == data.id);
+    const returnBullet = lobby.bullets.filter((e) => e.id == data.id);
     console.log(returnBullet.length);
     returnBullet.forEach((bullet) => {
       //new
@@ -223,8 +273,7 @@ module.exports = class GameLobby extends LobbyBase {
         return s.id === enemyId;
       });
 
-      const subjectOfAttack = connection1?.player ? connection1?.player : ai;
-
+      const subjectOfAttack = connection1?.player ? connection1?.player : lobby.potions[enemyId] ? lobby.potions[enemyId] : ai;
       if (!subjectOfAttack) {
         return;
       }
@@ -253,7 +302,24 @@ module.exports = class GameLobby extends LobbyBase {
       }
     });
   }
+
+  onCollisionHealHpEffects(connection = Connection, potionId) {
+    const lobby = this;
+    const potion = lobby.serverItems.find(item => item.id == potionId);
+    if (!potion.isActive || connection.player.health === connection.player.maxHealth) return;
+    const player = connection.player;
+    connection.socket.emit("HpHeal", player.id);
+    connection.socket.broadcast.to(this.id).emit("HpHeal", player.id);
+    potion.isActive = false;
+    const healing = player.effect.healing;
+    for (let property in healing) {
+      healing[property] = potion.healing[property];
+    }
+  }
+
+
   despawnBullet(bullet = Bullet) {
+
     let index = this.bullets.indexOf(bullet);
     if (index > -1) {
       this.bullets.splice(index, 1);
@@ -293,7 +359,7 @@ module.exports = class GameLobby extends LobbyBase {
     connection.player.health = tank.health;
     console.log(
       `spawn player ${connection.player.id} team ${connection.player.team}`,
-      this.connections.length
+      lobby.connections.length
     );
     const returnData = {
       id: connection.player.id,
@@ -317,7 +383,7 @@ module.exports = class GameLobby extends LobbyBase {
     });
   }
   updateDeadPlayers() {
-    let lobby = this;
+    let lobby = this
     let connections = lobby.connections;
     connections.forEach((connection) => {
       let player = connection.player;
@@ -339,10 +405,11 @@ module.exports = class GameLobby extends LobbyBase {
         }
       }
     });
+
   }
   updateAIDead() {
-    const lobby = this;
-    const connections = this.connections;
+    const lobby = this
+    const connections = lobby.connections;
     let aiList = lobby.serverItems.filter((item) => {
       return item instanceof AIBase;
     });
@@ -367,14 +434,25 @@ module.exports = class GameLobby extends LobbyBase {
         }
       }
     });
+
+    for (let item of lobby.serverItems) {
+      if (!(item instanceof AIBase) && item.isDead) {
+        if (!item.reSpawn()) {
+          for (let connection of lobby.connections) {
+            connection.socket.emit("playerRespawn", item);
+            connection.socket.broadcast.to(lobby.id).emit("playerRespawn", item);
+          }
+        };
+      }
+    }
   }
   removePlayer(connection = Connection) {
-    let lobby = this;
+    let lobby = this
 
     connection.socket.broadcast.to(lobby.id).emit("disconnected", {
       id: connection.player.id,
     });
   }
-  getRandomSpawn() {}
-  getRndInteger(min, max) {}
+  getRandomSpawn() { }
+  getRndInteger(min, max) { }
 };

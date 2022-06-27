@@ -29,6 +29,17 @@ class Connection {
     socket.on("collisionDestroy", (data) => {
       this.lobby.onCollisionDestroy(this, data);
     });
+    // Health box (itemid, playerid)
+    // => //
+    // item effect
+
+    // skill
+  //
+  //
+    socket.on("onCollisionHealHpEffects", (data) => {
+      const id = data.id;
+      this.lobby.onCollisionHealHpEffects(this, id);
+    })
     socket.on("updatePosition", ({ position }) => {
       player.position = new Vector2(position.x, position.y);
       socket.broadcast.to(this.lobby.id).emit("updatePosition", player);

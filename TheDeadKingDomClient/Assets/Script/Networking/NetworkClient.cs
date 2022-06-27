@@ -1,30 +1,55 @@
+using SocketIO;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using SocketIO;
 using UnityEngine;
-using Cinemachine;
 
+/// <summary>
+/// Defines the <see cref="NetworkClient" />.
+/// </summary>
 public class NetworkClient : SocketIOComponent
 {
-
+    /// <summary>
+    /// Defines the SERVER_UPDATE_TIME.
+    /// </summary>
     public const float SERVER_UPDATE_TIME = 10;
-    public static Dictionary<string, NetworkIdentity> serverObjects;
-    public static string ClientID
-    {
-        get;
-        private set;
-    }
 
+    /// <summary>
+    /// Defines the serverObjects.
+    /// </summary>
+    public static Dictionary<string, NetworkIdentity> serverObjects;
+
+    /// <summary>
+    /// Gets the ClientID.
+    /// </summary>
+    public static string ClientID { get; private set; }
+
+    /// <summary>
+    /// Defines the serverSpawnables.
+    /// </summary>
     [SerializeField]
     private ServerObjects serverSpawnables;
 
+    /// <summary>
+    /// Defines the healthComponent.
+    /// </summary>
     [SerializeField]
     private GameObject healthComponent;
+
+    /// <summary>
+    /// Defines the networkContainer.
+    /// </summary>
     [SerializeField]
     private Transform networkContainer;
+
+    /// <summary>
+    /// Defines the onGameStateChange.
+    /// </summary>
     public static Action<SocketIOEvent> onGameStateChange = (E) => { };
 
+    /// <summary>
+    /// The Start.
+    /// </summary>
     public override void Start()
     {
         base.Start();
@@ -33,11 +58,17 @@ public class NetworkClient : SocketIOComponent
     }
 
     // Update is called once per frame
+    /// <summary>
+    /// The Update.
+    /// </summary>
     public override void Update()
     {
         base.Update();
     }
 
+    /// <summary>
+    /// The setupEvents.
+    /// </summary>
     private void setupEvents()
     {
         On("open", (E) =>
@@ -183,8 +214,34 @@ public class NetworkClient : SocketIOComponent
                     h.name = $"Health : {id}";
                     ni.setHealthBar(healthBar);
                 }
+                if(name == "Hp_Potion" || name == "Hp_Potion2")
+                {
+                    float health = E.data["health"].f;
+                    float team = E.data["team"].f;
+                    ServerObjectData sod1 = serverSpawnables.GetObjectByName(name);
+                    GameObject spawnedObject1 = Instantiate(sod1.Prefab, networkContainer);
+                    spawnedObject1.transform.position = new Vector3(x, y, 0);
+                    NetworkIdentity ni1 = spawnedObject1.GetComponent<NetworkIdentity>();
+                    ni1.SetControllerId(id);
+                    ni1.SetSocketReference(this);
+                    serverObjects.Add(id, ni1);
+                    GameObject h = Instantiate(healthComponent, spawnedObject1.transform);
+                    h.SetActive(false);
+                    var healthBar = h.transform.GetComponentInChildren<HealthBar>();
+                    if (ClientID == id)
+                    {
+                        healthBar.setIsMyHealth(true);
+                    }
 
+                    healthBar.team = team;
+                    healthBar.SetHealth(health);
+                    healthBar.SetMaxHealth(health);
 
+                    healthBar.setMyGamTransform(spawnedObject1.transform);
+                    h.name = $"Health : {id}";
+                    ni1.setHealthBar(healthBar);
+
+                }
             }
         });
 
@@ -204,9 +261,15 @@ public class NetworkClient : SocketIOComponent
             ni.transform.position = new Vector3(x, y, 0);
             ni.gameObject.SetActive(true);
             ni.getHealthBar().SetHealth(health);
-            ni.getHealthBar().transform.parent.gameObject.SetActive(true);
+            if(ni.gameObject.tag == "hpBox")
+            ni.gameObject.transform.GetChild(1).gameObject.SetActive(false);
         });
-
+        On("stopLoading", (e) =>
+        {
+            string id = e.data.ToString().Replace("\"", "");
+            var ni = serverObjects[id];
+            ni.gameObject.transform.GetChild(0).gameObject.SetActive(false);
+        });
 
         // unspawn bullet
         On("serverUnSpawn", (E) =>
@@ -252,7 +315,7 @@ public class NetworkClient : SocketIOComponent
                 ni.GetComponent<AiManager>().StopCoroutines();
             }
 
-            ni.getHealthBar().transform.parent.gameObject.SetActive(false);
+            ni.getHealthBar()?.transform.parent.gameObject.SetActive(false);
             ni.gameObject.SetActive(false);
         });
 
@@ -320,6 +383,18 @@ public class NetworkClient : SocketIOComponent
             Debug.Log("Lobby update" + e.data["state"].str);
             onGameStateChange.Invoke(e);
         });
+        On("HpHeal", (E) =>
+        {
+            string playerId = (E.data.str).RemoveQuotes();
+            Transform effect = serverObjects[playerId].transform.Find("Immunity Area Effect");
+            effect.gameObject.SetActive(true);
+        });
+        On("HpStopHeal", (E) =>
+        {
+            string playerId = (E.data.str).RemoveQuotes();
+            Transform effect = serverObjects[playerId].transform.Find("Immunity Area Effect");
+            effect.gameObject.SetActive(false);
+        });
 
         On("disconnected", (E) =>
         {
@@ -331,7 +406,12 @@ public class NetworkClient : SocketIOComponent
         });
     }
 
-
+    /// <summary>
+    /// The AIPositionSmoothing.
+    /// </summary>
+    /// <param name="aiTransform">The aiTransform<see cref="Transform"/>.</param>
+    /// <param name="goalPosition">The goalPosition<see cref="Vector3"/>.</param>
+    /// <returns>The <see cref="IEnumerator"/>.</returns>
     private IEnumerator AIPositionSmoothing(Transform aiTransform, Vector3 goalPosition)
     {
         float count = 0.1f; //In sync with server update
@@ -358,5 +438,4 @@ public class NetworkClient : SocketIOComponent
 
         yield return null;
     }
-
 }

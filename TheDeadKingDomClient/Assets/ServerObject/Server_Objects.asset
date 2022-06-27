@@ -21,3 +21,7 @@ MonoBehaviour:
     Prefab: {fileID: 6665555187601314377, guid: c18563d6f43b8430ba6f9dd95067f4fe, type: 3}
   - Name: Machine
     Prefab: {fileID: 4308920396418801268, guid: f71461bb29c294a7396f0128224b210f, type: 3}
+  - Name: Hp_Potion
+    Prefab: {fileID: 5854600893969177446, guid: 028bd1d92e6e9984ba7e37492b96b21a, type: 3}
+  - Name: Hp_Potion2
+    Prefab: {fileID: 5854600893969177446, guid: 9623fe7e3c141cf4b8650459a245e873, type: 3}

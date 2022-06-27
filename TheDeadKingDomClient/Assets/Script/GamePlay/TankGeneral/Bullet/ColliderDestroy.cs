@@ -16,9 +16,9 @@ public class ColliderDestroy : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
 
-
         NetworkIdentity ni = collision?.gameObject?.GetComponent<NetworkIdentity>();
-
+        string enemyName = collision?.gameObject?.name.Substring(0, 5);
+      
         // cham cay
         if (ni == null)
         {
@@ -48,6 +48,7 @@ public class ColliderDestroy : MonoBehaviour
             // ko phai cham chinh minh
             if (ni.GetId() != whoActiveMe.GetActivator())
             {
+                
                 if (ni.Team == niActive.Team)
                 {
                     return;
@@ -56,6 +57,17 @@ public class ColliderDestroy : MonoBehaviour
                 // client bi ban , thi client trung dan gui request
 
                 if (ni.IsControlling())
+                {
+                    Destroy(gameObject);
+                    NetworkClient.serverObjects.Remove(networkIdentity.GetId());
+                    networkIdentity.GetSocket().Emit("collisionDestroy", new JSONObject(JsonUtility.ToJson(new IDData()
+                    {
+                        id = networkIdentity.GetId(),
+                        enemyId = ni.GetId()
+                    })));
+                    return;
+                }
+                if(enemyName == "hpBox")
                 {
                     Destroy(gameObject);
                     NetworkClient.serverObjects.Remove(networkIdentity.GetId());

@@ -7,6 +7,7 @@ class UserController {
     const user = await UserService.getUser(userinfor);
     if (user) {
       return ApiResponse.successResponseWithData(res, "Success", {
+        // tra ve token ms dung
         id: user?._id,
         username: user?.username,
       });

@@ -1,8 +1,8 @@
 const User = require("./User.Schema");
 
 class UserService {
-  async getAllUsers() {
-    return await User.find({});
+  async getById(_id) {
+    return await User.findOne({ _id });
   }
   async getUser({ username, password }) {
     return await User.findOne({ username, password });

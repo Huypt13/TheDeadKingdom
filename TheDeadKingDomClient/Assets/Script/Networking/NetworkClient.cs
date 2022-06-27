@@ -10,6 +10,7 @@ public class NetworkClient : SocketIOComponent
 
     public const float SERVER_UPDATE_TIME = 10;
     public static Dictionary<string, NetworkIdentity> serverObjects;
+    public static List<JSONObject> players;
     public static string ClientID
     {
         get;
@@ -23,7 +24,9 @@ public class NetworkClient : SocketIOComponent
     private GameObject healthComponent;
     [SerializeField]
     private Transform networkContainer;
-    public static Action<SocketIOEvent> onGameStateChange = (E) => { };
+    public static Action<SocketIOEvent> OnGameStateChange = (E) => { };
+    public static Action<SocketIOEvent> OnChangeHero = (E) => { };
+    public static Action<SocketIOEvent> OnUpdatePlayer = (E) => { };
 
     public override void Start()
     {
@@ -62,7 +65,7 @@ public class NetworkClient : SocketIOComponent
 
             string id = E.data["id"].str;
             float team = E.data["team"].f;
-            string tankId = E.data["tank"]["id"].str;
+            string tankId = E.data["tank"]["typeId"].str;
             float tankLevel = E.data["tank"]["level"].f;
             float health = E.data["tank"]["health"].f;
             float speed = E.data["tank"]["speed"].f;
@@ -270,13 +273,24 @@ public class NetworkClient : SocketIOComponent
             healthBar.SetHealth(health);
 
         });
+        On("loadWating", (E) =>
+        {
+            Debug.Log("Switching to waiting choose hero");
+            SceneManagement.Instance.LoadLevel(SceneList.WAITING, (levelName) =>
+           {
+               OnUpdatePlayer.Invoke(E);
+               SceneManagement.Instance.UnLoadLevel(SceneList.MAIN_MENU);
+           });
+
+
+        });
 
         On("loadGame", (E) =>
         {
-            Debug.Log("Switching to game");
+            Debug.Log("Join game");
             SceneManagement.Instance.LoadLevel(SceneList.LEVEL, (levelName) =>
             {
-                SceneManagement.Instance.UnLoadLevel(SceneList.MAIN_MENU);
+                SceneManagement.Instance.UnLoadLevel(SceneList.WAITING);
             });
         });
 
@@ -313,12 +327,19 @@ public class NetworkClient : SocketIOComponent
 
         });
 
-
+        On("updateHero", (e) =>
+        {
+            OnChangeHero.Invoke(e);
+        });
 
         On("lobbyUpdate", (e) =>
         {
-            Debug.Log("Lobby update" + e.data["state"].str);
-            onGameStateChange.Invoke(e);
+            Debug.Log("Lobby update " + e.data["state"].str);
+            players = e.data["players"].list;
+
+            OnGameStateChange.Invoke(e);
+
+
         });
 
         On("disconnected", (E) =>

@@ -18,11 +18,11 @@ class GameServer {
     this.startLobby.id = this.generalServerID;
     this.lobbys[this.generalServerID] = this.startLobby;
   }
-  onUpdate() {
+  async onUpdate() {
     // update all lobby each 100ms
 
     for (let id in this.lobbys) {
-      this.lobbys[id].onUpdate();
+      await this.lobbys[id].onUpdate();
     }
   }
 
@@ -111,15 +111,16 @@ class GameServer {
     //All game lobbies full or we have never created one
     if (!lobbyFound) {
       console.log("Making a new game lobby");
-      let gamelobby = new GameLobby(new GameLobbySetting("FFA", 1, 1, null));
-      gamelobby.endGameLobby = function () {
-        server.closeDownLobby(gamelobby.id);
+      let gamelobby = new GameLobby(new GameLobbySetting("FFA", 2, 1, null));
+      gamelobby.endGameLobby = () => {
+        console.log("end lobby");
+        this.closeDownLobby(gamelobby.id);
       };
       this.lobbys[gamelobby.id] = gamelobby;
       this.onSwitchLobby(connection, gamelobby.id);
     }
   }
-  onCloseDownLobby(id) {
+  closeDownLobby(id) {
     console.log(`closing ${id}`);
     delete this.lobbys[id];
   }

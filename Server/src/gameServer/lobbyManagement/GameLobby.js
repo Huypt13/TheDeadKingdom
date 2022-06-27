@@ -6,6 +6,7 @@ const TankAI = require("../aiManagement/TankAI");
 const AIBase = require("../aiManagement/AIBase");
 const Connection = require("../playerManagement/Connection");
 const TowerAI = require("../aiManagement/TowerAI");
+const TankService = require("../../api/hero/Tank.service");
 
 module.exports = class GameLobby extends LobbyBase {
   constructor(settings = GameLobbySettings) {
@@ -13,9 +14,10 @@ module.exports = class GameLobby extends LobbyBase {
     this.settings = settings;
     this.lobbyState = new LobbyState();
     this.bullets = [];
+    this.waitingTime = 0;
     this.endGameLobby = function () {};
   }
-  onUpdate() {
+  async onUpdate() {
     super.onUpdate();
     const lobby = this;
     // let serverItems = lobby.serverItems;
@@ -24,11 +26,27 @@ module.exports = class GameLobby extends LobbyBase {
     lobby.updateDeadPlayers();
     lobby.updateAIDead();
     lobby.onUpdateAI();
+    await lobby.onJoinGame();
     //
 
     //Clos lobby because no one is here
     if (lobby.connections.length == 0) {
       lobby.endGameLobby();
+    }
+  }
+  async onJoinGame() {
+    if (this.lobbyState.currentState == this.lobbyState.WAITING) {
+      this.waitingTime += +0.1;
+      if (this.waitingTime > 10) {
+        this.waitingTime = 0;
+        this.lobbyState.currentState = this.lobbyState.GAME;
+        if (this.connections.length > 0) {
+          this.connections[0].socket.emit("loadGame");
+          this.connections[0].socket.broadcast.to(this.id).emit("loadGame");
+          await this.onSpawnAllPlayersIntoGame();
+          this.onSpawnAIIntoGame();
+        }
+      }
     }
   }
 
@@ -77,32 +95,79 @@ module.exports = class GameLobby extends LobbyBase {
     }
     return true;
   }
+  async someOneChooseHero(connection, tankId) {
+    // check tank dc chon chua
+
+    // neu tank chua dc chon
+
+    connection.player.tank = await TankService.getByTankId(tankId);
+    const returnData = {
+      id: connection.player.id,
+      username: connection.player.username,
+      typeId: connection.player.tank.typeId,
+      level: connection.player.tank.level,
+    };
+    connection.socket.emit("updateHero", returnData);
+    connection.socket.broadcast.to(this.id).emit("updateHero", returnData);
+  }
   onEnterLobby(connection = Connection) {
     let lobby = this;
     let socket = connection.socket;
     super.onEnterLobby(connection);
+
+    // du nguoi thi vao chon tuong
     if (lobby.connections.length == lobby.settings.maxPlayers) {
-      console.log("We have enough players we can start the game");
-      lobby.lobbyState.currentState = lobby.lobbyState.GAME;
-      lobby.onSpawnAllPlayersIntoGame();
-      lobby.onSpawnAIIntoGame();
+      console.log("We have enough players we can start choose hero");
+      lobby.lobbyState.currentState = lobby.lobbyState.WAITING;
+      const returnData1 = {
+        players: lobby.connections.map((e) => {
+          return {
+            username: e.player.username,
+            id: e.player.id,
+            team: e.player.team,
+          };
+        }),
+      };
+
+      console.log(returnData1);
+      socket.emit("loadWating", returnData1);
+      socket.broadcast.to(lobby.id).emit("loadWating", returnData1);
     }
     const returnData = {
       state: lobby.lobbyState.currentState,
     };
-
-    socket.emit("loadGame");
     socket.emit("lobbyUpdate", returnData);
     socket.broadcast.to(lobby.id).emit("lobbyUpdate", returnData);
   }
-  onLeaveLobby(connection = Connection) {}
-  onSpawnAllPlayersIntoGame() {
+  onLeaveLobby(connection = Connection) {
+    let lobby = this;
+
+    super.onLeaveLobby(connection);
+
+    lobby.removePlayer(connection);
+    lobby.onUnspawnAllAIInGame(connection);
+    if (lobby.connections.length < lobby.settings.minPlayers) {
+      lobby.connections.forEach((connection) => {
+        if (connection != undefined) {
+          connection.socket.emit("unloadGame");
+          connection.server.onSwitchLobby(
+            connection,
+            connection.server.generalServerID
+          );
+        }
+      });
+    }
+  }
+  async onSpawnAllPlayersIntoGame() {
     let lobby = this;
     let connections = lobby.connections;
 
-    connections.forEach((connection) => {
-      lobby.addPlayer(connection);
-    });
+    for (const connection of connections) {
+      const addSuccess = await lobby.addPlayer(connection);
+      if (!addSuccess) {
+        // huy room thong bao cho ng dung
+      }
+    }
   }
   onSpawnAIIntoGame() {
     const tankAi = {
@@ -264,7 +329,7 @@ module.exports = class GameLobby extends LobbyBase {
       connection.socket.emit("serverUnSpawn", returnData);
     });
   }
-  addPlayer(connection = Connection) {
+  async addPlayer(connection = Connection) {
     let lobby = this;
     let connections = lobby.connections;
     let socket = connection.socket;
@@ -276,20 +341,33 @@ module.exports = class GameLobby extends LobbyBase {
     // );
     connection.player.position = new Vector2(0, 0);
 
-    //
-    const tank = {
-      id: "001",
-      level: 1,
-      armor: 20,
-      speed: 4,
-      rotationSpeed: 180,
-      damage: 15,
-      health: 800,
-      attackSpeed: 0.5, // time hoi ban ko phai attack
-      bulletSpeed: 1, // 100 ms
-      shootingRange: 6,
-    };
-    connection.player.tank = tank;
+    let tank = connection.player?.tank;
+
+    if (!tank) {
+      const tankList = await TankService.getTankByUserId(connection.player.id);
+      if (!tankList[0]?.tankList) {
+        return false;
+      }
+      for (const tankRemain of tankList[0]?.tankList) {
+        if (tankRemain.remaining > 0) {
+          tank = tankRemain.tank;
+          connection.player.tank = tankRemain.tank;
+          console.log(tank);
+          break;
+        }
+      }
+    }
+    if (!tank) {
+      return false;
+    }
+    const tankUser = await TankService.getByTankUserById(
+      tank._id,
+      connection.player.id
+    );
+    if (!tankUser || tankUser?.remaining <= 0) {
+      return false;
+    }
+
     connection.player.health = tank.health;
     console.log(
       `spawn player ${connection.player.id} team ${connection.player.team}`,
@@ -301,7 +379,7 @@ module.exports = class GameLobby extends LobbyBase {
       team: connection.player.team,
       tank,
     };
-
+    console.log("return data spawn player", returnData);
     socket.emit("spawn", returnData); //tell myself I have spawned
     socket.broadcast.to(lobby.id).emit("spawn", returnData); // Tell other
 
@@ -315,6 +393,7 @@ module.exports = class GameLobby extends LobbyBase {
         });
       }
     });
+    return true;
   }
   updateDeadPlayers() {
     let lobby = this;

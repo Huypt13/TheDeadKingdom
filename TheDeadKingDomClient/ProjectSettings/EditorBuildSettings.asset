@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Online.unity
     guid: bc58bc951594c4c1b91caab964702025
   - enabled: 1
+    path: Assets/Scenes/Waiting.unity
+    guid: 13155e256b7324dd385030397c631fe5
+  - enabled: 1
     path: Assets/Scenes/Level.unity
     guid: 020f4f2e57c8549a3a032c7eda66bd46
   m_configObjects: {}

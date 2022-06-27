@@ -30,7 +30,10 @@ public class MenuManager : MonoBehaviour
 
     private string username;
     private string password;
+    private bool iswaiting = false;
     private SocketIOComponent socketReference;
+    public static List<TankRemain> myTankList;
+
     public SocketIOComponent SocketReference
     {
         get
@@ -54,11 +57,62 @@ public class MenuManager : MonoBehaviour
     public void OnQueue()
     {
         //   Debug.LogError("on queue");
-        Debug.Log("Join game");
-        Debug.Log(SocketReference);
-        SocketReference.Emit("joinGame");
+        Text text = queueButton.GetComponentInChildren<Text>();
+        if (!iswaiting)
+        {
+            text.text = "Waiting";
+            StartCoroutine(GetListTank(uri));
+
+        }
+        else
+        {
+            text.text = "joingame";
+            SocketReference.Emit("quitGame");
+
+        }
+        iswaiting = !iswaiting;
+        // SocketReference.Emit("joinGame");
     }
 
+    private IEnumerator GetListTank(string uri)
+    {
+        using (UnityWebRequest request = UnityWebRequest.Get(uri + "/tank"))
+        {
+            request.SetRequestHeader("x-access-token", access_token);
+            yield return request.SendWebRequest();
+
+            if (request.isNetworkError)
+            {
+                Debug.Log("Error: " + request.error);
+            }
+            else
+            {
+
+                var jo = JObject.Parse(request.downloadHandler.text);
+                myTankList = jo["data"]["tankList"].ToObject<List<TankRemain>>();
+                bool canJoin = false;
+                myTankList.ForEach((e) =>
+                {
+                    if (e.remaining > 0)
+                    {
+                        canJoin = true;
+                    }
+                });
+                if (canJoin)
+                {
+                    SocketReference.Emit("joinGame");
+                }
+                else
+                {
+                    message.gameObject.SetActive(true);
+                    message.text = "Not enough tank";
+                    Text text = queueButton.GetComponentInChildren<Text>();
+                    text.text = "joingame";
+                    iswaiting = false;
+                }
+            }
+        }
+    }
 
     public void Login()
     {
@@ -83,7 +137,7 @@ public class MenuManager : MonoBehaviour
             {
                 var jo = JObject.Parse(request.downloadHandler.text);
                 Debug.Log(jo["status"].ToString());
-                if (jo["status"].ToString() == "error")
+                if (jo["status"].ToString() == "0")
                 {
                     Debug.Log("kaka");
                     message.gameObject.SetActive(true);

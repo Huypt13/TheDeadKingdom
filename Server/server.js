@@ -8,6 +8,10 @@ const UserRouter = require("./src/api/user/User.router");
 const UserServices = require("./src/api/user/User.service");
 const Database = require("./src/api/database/Database");
 const Bullet = require("./src/gameServer/gamePlay/serverObjects/Bullet");
+const Tank = require("./src/api/hero/Tank.service");
+
+const Authentication = require("./src/api/middlewares/Authentication.midleware");
+const TankRouter = require("./src/api/hero/Tank.router");
 
 const app = express();
 const server = require("http").createServer(app);
@@ -20,8 +24,8 @@ app.get("/", (req, res) => {
 const io = require("socket.io")(server);
 const gameServer = new GameServer();
 // update game server
-setInterval(() => {
-  gameServer.onUpdate();
+setInterval(async () => {
+  await gameServer.onUpdate();
 }, 100);
 
 io.on("connection", (socket) => {
@@ -39,25 +43,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 app.use("/user", UserRouter);
-
+app.use("/tank", Authentication, TankRouter);
 Database.connect();
 server.listen(8080);
 
 //console.log(GameMechanism.getDame({ armor: 99 }, 1000));
 
 // const a = (async () => {
-//   console.log(await UserServices.getAllUsers());
+//   console.log(
+//     JSON.stringify(await Tank.getTankByUserId("6296d13fb263c0630e920031"))
+//   );
 // })();
-
-// const bullet = new Bullet(
-//   { x: 0, y: 0 },
-//   { bulletSpeed: 1, shootingRange: 3 },
-//   { x: 1, y: 1 }
-// );
-
-// console.log(bullet.position, bullet.oldPosition);
-// bullet.onUpdate();
-// console.log(
-//   bullet.position,
-//   bullet.oldPosition,
-// );

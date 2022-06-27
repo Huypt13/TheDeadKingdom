@@ -10,6 +10,7 @@ module.exports = class Bullet extends ServerObject {
     this.shootingRange = Tank?.shootingRange || 3;
     this.isDestroyed = false;
     this.tank = { ...Tank };
+    this.team = 0;
     this.activator = "";
     this.position = { ...Position };
     this.oldPosition = { ...Position };

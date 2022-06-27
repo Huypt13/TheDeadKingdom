@@ -21,6 +21,10 @@ class Connection {
       gameServer.onAttemptToJoinGame(this);
     });
 
+    // choose hero
+    socket.on("chooseHero", (data) => {
+      connection.lobby.someOneChooseHero(connection, data);
+    });
     // in game
     // general
     socket.on("fireBullet", (data) => {
@@ -40,7 +44,7 @@ class Connection {
       socket.broadcast.to(this.lobby.id).emit("updateRotation", player);
     });
     socket.on("quitGame", (data) => {
-      server.onSwitchLobby(this, server.generalServerID);
+      gameServer.onSwitchLobby(this, gameServer.generalServerID);
     });
     // skill
   }

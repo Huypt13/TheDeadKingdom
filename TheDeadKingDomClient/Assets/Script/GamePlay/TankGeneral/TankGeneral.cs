@@ -48,7 +48,7 @@ public class TankGeneral : MonoBehaviour
 
     }
 
-    void Update()
+    private void FixedUpdate()
     {
         if (networkIdentity.IsControlling())
         {
@@ -80,11 +80,23 @@ public class TankGeneral : MonoBehaviour
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
         //    int count = rb.Cast(-transform.up * vertical, castCollisions, speed * Time.deltaTime);
-        int count = 0;
-        if (count == 0)
-        {
-            transform.position += -transform.up * vertical * speed * Time.deltaTime;
-        }
+        //int count = 0;
+        //if (count == 0)
+        //{
+        //Debug.Log(LayerMask.GetMask("Tree"));
+        //if (Physics2D.Raycast(transform.position, transform.TransformDirection(transform.up*vertical), speed * Time.fixedDeltaTime + 0.1f, LayerMask.GetMask("Tree")))
+        //{
+        //    // Debug.DrawRay(transform.position, -transform.up *vertical* hit.distance, Color.yellow);
+        //    Debug.DrawRay(transform.position, transform.up * 10, Color.yellow);
+        //    Debug.Log("Hit");
+        //}
+        //else
+        //{
+        //    Debug.DrawRay(transform.position, transform.up * 10, Color.white);
+        transform.position += transform.up * vertical * speed * Time.deltaTime;
+        //    Debug.Log("Did not Hit");
+        //}
+        //}
         transform.Rotate(new Vector3(0, 0, -horizontal * rotation * Time.deltaTime));
     }
     private void BarrelRotation()

@@ -1,0 +1,102 @@
+{
+  "typeId": "001",
+  "level": 1,
+  "armor": 20,
+  "speed": 4,
+  "rotationSpeed": 180,
+  "damage": 15,
+  "health": 800,
+  "attackSpeed": 0.5,
+  "bulletSpeed": 1,
+  "shootingRange": 6,
+  "skill1": {
+    "damage": 200,
+    "healing": 0,
+    "range": 20,
+
+    "slowled": {
+      "value": 0,
+      "time": 0
+    },
+    "stunned": 0,
+    "tiedUp": 0,
+    "burned": {
+      "value": 0,
+      "times": 0,
+      "waiting": 0
+    },
+
+    "healingTime": {
+      "value": 0,
+      "times": 0,
+      "waiting": 0
+    },
+
+    "speedUp": {
+      "value": 0,
+      "time": 0
+    },
+
+    "virtualBlood": {
+      "value": 0,
+      "time": 0
+    },
+    "damagedUp": {
+      "value": 0,
+      "time": 0
+    },
+    "armorUp": {
+      "value": 0,
+      "time": 0
+    },
+    "attackSpeedUp": {
+      "value": 0,
+      "time": 0
+    }
+  },
+  "skill2": {
+    "damage": 0,
+    "healing": 0,
+    "range": 0,
+
+    "slowled": {
+      "value": 0,
+      "time": 0
+    },
+    "stunned": 0,
+    "tiedUp": 0,
+    "burned": {
+      "value": 0,
+      "times": 0,
+      "waiting": 0
+    },
+
+    "healingTime": {
+      "value": 0,
+      "times": 0,
+      "waiting": 0
+    },
+
+    "speedUp": {
+      "value": 0,
+      "time": 0
+    },
+
+    "virtualBlood": {
+      "value": 400,
+      "time": 15
+    },
+    "damagedUp": {
+      "value": 0.5,
+      "time": 15
+    },
+    "armorUp": {
+      "value": 0.5,
+      "time": 15
+    },
+    "attackSpeedUp": {
+      "value": 0.5,
+      "time": 15
+    }
+  }
+}

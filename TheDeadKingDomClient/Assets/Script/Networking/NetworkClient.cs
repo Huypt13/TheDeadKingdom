@@ -15,6 +15,7 @@ public class NetworkClient : SocketIOComponent
         get;
         private set;
     }
+    public static float MyTeam;
 
     [SerializeField]
     private ServerObjects serverSpawnables;
@@ -27,6 +28,9 @@ public class NetworkClient : SocketIOComponent
     public static Action<SocketIOEvent> OnChangeHero = (E) => { };
     public static Action<SocketIOEvent> OnUpdatePlayer = (E) => { };
     public static Action<SocketIOEvent> OnTimeUpdate = (E) => { };
+    public static Action<SocketIOEvent> OnKillDeadUpdate = (E) => { };
+    public static Action<SocketIOEvent> OnResultMatch = (E) => { };
+
 
     public override void Start()
     {
@@ -93,6 +97,7 @@ public class NetworkClient : SocketIOComponent
                 if (ClientID == id)
                 {
                     healthBar.setIsMyHealth(true);
+
                 }
 
                 healthBar.team = team;
@@ -213,6 +218,22 @@ public class NetworkClient : SocketIOComponent
             ni.gameObject.SetActive(true);
             ni.getHealthBar().SetHealth(health);
             ni.getHealthBar().transform.parent.gameObject.SetActive(true);
+        });
+
+
+        // update kill
+        On("killUpdate", (e) =>
+        {
+            float kill1 = e.data["kill1"].f;
+            float kill2 = e.data["kill2"].f;
+            OnKillDeadUpdate.Invoke(e);
+        });
+
+        //
+
+        On("rsmatch", (e) =>
+        {
+            Debug.Log("winner");
         });
 
 

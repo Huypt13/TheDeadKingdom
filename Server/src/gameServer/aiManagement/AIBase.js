@@ -12,6 +12,7 @@ module.exports = class AIBase extends ServerItem {
     this.isDead = false;
     this.respawnTicker = new Number(0);
     this.respawnTime = new Number(0);
+    this.kill = 0;
   }
 
   onUpdate(onUpdateAI) {

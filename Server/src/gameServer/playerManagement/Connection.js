@@ -1,4 +1,5 @@
 const Vector2 = require("../../dto/Vector2");
+const GameLobby = require("../lobbyManagement/GameLobby");
 
 class Connection {
   constructor() {
@@ -14,6 +15,7 @@ class Connection {
     const connection = this;
 
     socket.on("disconnect", () => {
+      console.log("disconnect cmnr");
       gameServer.onDisconnected(connection);
     });
     socket.on("joinGame", () => {
@@ -28,20 +30,25 @@ class Connection {
     // in game
     // general
     socket.on("fireBullet", (data) => {
-      connection.lobby.onFireBullet(connection, data, false);
+      if (connection.lobby instanceof GameLobby)
+        connection.lobby.onFireBullet(connection, data, false);
     });
     socket.on("collisionDestroy", (data) => {
-      this.lobby.onCollisionDestroy(this, data);
+      if (connection.lobby instanceof GameLobby)
+        this.lobby.onCollisionDestroy(this, data);
     });
     socket.on("updatePosition", ({ position }) => {
-      player.position = new Vector2(position.x, position.y);
-      socket.broadcast.to(this.lobby.id).emit("updatePosition", player);
+      if (connection.lobby instanceof GameLobby) {
+        player.position = new Vector2(position.x, position.y);
+        socket.broadcast.to(this.lobby.id).emit("updatePosition", player);
+      }
     });
     socket.on("updateRotation", (data) => {
-      player.tankRotation = data.tankRotation;
-      player.barrelRotation = data.barrelRotation;
-
-      socket.broadcast.to(this.lobby.id).emit("updateRotation", player);
+      if (connection.lobby instanceof GameLobby) {
+        player.tankRotation = data.tankRotation;
+        player.barrelRotation = data.barrelRotation;
+        socket.broadcast.to(this.lobby.id).emit("updateRotation", player);
+      }
     });
     socket.on("quitGame", (data) => {
       gameServer.onSwitchLobby(this, gameServer.generalServerID);

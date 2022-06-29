@@ -15,12 +15,17 @@ public class GameUI : MonoBehaviour
 
     [SerializeField]
     private Transform timeTransform;
-
+    [SerializeField]
+    private Transform killDeadTransform;
     public void Start()
     {
-
+        string kill1 = (NetworkClient.MyTeam == 1) ? $"<color=red><b>0</b></color>" : 0 + "";
+        string kill2 = (NetworkClient.MyTeam == 2) ? $"<color=red><b>0</b></color>" : 0 + "";
+        Text text = killDeadTransform.GetComponent<Text>();
+        text.text = $"{kill1} - {kill2}";
         NetworkClient.OnGameStateChange += OnGameStateChange;
         NetworkClient.OnTimeUpdate += OnTimeUpdate;
+        NetworkClient.OnKillDeadUpdate += OnKillDeadUpdate;
         //Initial Turn off screens
         gameLobbyContainer.SetActive(false);
     }
@@ -52,6 +57,14 @@ public class GameUI : MonoBehaviour
         TimeSpan t = TimeSpan.FromSeconds(time);
         DateTime dateTime = DateTime.Today.Add(t);
         text.text = dateTime.ToString("mm:ss");
+    }
+    private void OnKillDeadUpdate(SocketIOEvent E)
+    {
+
+        string kill1 = (NetworkClient.MyTeam == 1) ? $"<color=red><b>{E.data["kill1"].f}</b></color>" : E.data["kill1"].f + "";
+        string kill2 = (NetworkClient.MyTeam == 2) ? $"<color=red><b>{E.data["kill2"].f}</b></color>" : E.data["kill2"].f + "";
+        Text text = killDeadTransform.GetComponent<Text>();
+        text.text = $"{kill1} - {kill2}";
     }
 
     public void OnQuit()

@@ -111,9 +111,12 @@ class GameServer {
     //All game lobbies full or we have never created one
     if (!lobbyFound) {
       console.log("Making a new game lobby");
+      // random type
+
       let gamelobby = new GameLobby(
         new GameLobbySetting("CountKill", 1, 1, null)
       );
+      // random map
       gamelobby.endGameLobby = () => {
         console.log("end lobby");
         this.closeDownLobby(gamelobby.id);

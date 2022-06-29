@@ -67,6 +67,12 @@ public class WaitingSceneManagement : MonoBehaviour
         {
             Debug.Log(player["username"].str);
             Debug.Log(player["id"].str);
+
+            if (NetworkClient.ClientID == player["id"].str)
+            {
+                NetworkClient.MyTeam = player["team"].f;
+            }
+            // 
             Font arial;
             arial = (Font)Resources.GetBuiltinResource(typeof(Font), "Arial.ttf");
 
@@ -95,6 +101,9 @@ public class WaitingSceneManagement : MonoBehaviour
             text.fontSize = 48;
             text.alignment = TextAnchor.MiddleCenter;
             playerText.Add(player["id"].str, textGO);
+
+
+
             // Provide Text position and size using RectTransform.
 
             if (player["team"].f == 1)

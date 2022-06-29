@@ -7,6 +7,7 @@ const AIBase = require("../aiManagement/AIBase");
 const Connection = require("../playerManagement/Connection");
 const TowerAI = require("../aiManagement/TowerAI");
 const TankService = require("../../api/hero/Tank.service");
+const Player = require("../playerManagement/Player");
 
 module.exports = class GameLobby extends LobbyBase {
   constructor(settings = GameLobbySettings) {
@@ -17,6 +18,10 @@ module.exports = class GameLobby extends LobbyBase {
     this.waitingTime = 0;
     this.matchTime = 0; // time tran dau
     this.sendTime = 0; // time gui time tran dau xuong client
+    this.teamWin = 0;
+    this.ai1Kill = 0;
+    this.ai2Kill = 0;
+    this.isSendRs = 0;
     this.endGameLobby = function () {};
   }
   async onUpdate() {
@@ -24,11 +29,14 @@ module.exports = class GameLobby extends LobbyBase {
     const lobby = this;
     // let serverItems = lobby.serverItems;
 
-    lobby.updateBullets();
-    lobby.updateDeadPlayers();
-    lobby.updateAIDead();
-    lobby.onUpdateAI();
-    lobby.onMatchTime();
+    if (this.lobbyState.currentState == this.lobbyState.GAME) {
+      lobby.updateBullets();
+      lobby.updateDeadPlayers();
+      lobby.updateAIDead();
+      lobby.onUpdateAI();
+      lobby.onMatchTime();
+    }
+    lobby.onWinning();
     await lobby.onJoinGame();
     //
 
@@ -55,14 +63,89 @@ module.exports = class GameLobby extends LobbyBase {
   }
 
   onWinning() {
-    if ((this.lobbyState.currentState = this.lobbyState.GAME)) {
+    if (this.lobbyState.currentState == this.lobbyState.GAME) {
       if (this.settings.gameMode == "CountKill") {
-        onCountKillWin();
+        this.onCountKillWin();
+      }
+      this.onSendResult();
+    }
+    //
+  }
+  onCountKillWin() {
+    if (this.matchTime >= 11) {
+      this.lobbyState.currentState = this.lobbyState.ENDGAME;
+      this.matchTime = 0;
+      let { team1Kill, team2Kill } = this.getTeamKill();
+      if (team1Kill + this.ai1Kill > team2Kill + this.ai2Kill) {
+        this.teamWin = 1;
+      } else if (team1Kill + this.ai1Kill < team2Kill + this.ai2Kill) {
+        this.teamWin = 2;
+      } else {
+        this.teamWin = Math.floor(Math.random() * 2) + 1;
       }
     }
   }
 
-  onCountKillWin() {}
+  killUpdate() {
+    let { team1Kill, team2Kill } = this.getTeamKill();
+    const returnData = {
+      kill1: team1Kill + this.ai1Kill,
+      kill2: team2Kill + this.ai2Kill,
+    };
+    this.connections[0].socket.emit("killUpdate", returnData);
+    this.connections[0].socket.broadcast
+      .to(this.id)
+      .emit("killUpdate", returnData);
+  }
+
+  getTeamKill() {
+    return this.connections.reduce(
+      (pre, connection) => {
+        const { team, kill } = connection.player;
+        return {
+          team1Kill: (pre.team1Kill += (team == 1 ? 1 : 0) * kill),
+          team2Kill: (pre.team2Kill += (team == 2 ? 1 : 0) * kill),
+        };
+      },
+      {
+        team1Kill: 0,
+        team2Kill: 0,
+      }
+    );
+  }
+
+  onSendResult() {
+    if (
+      this.lobbyState.currentState == this.lobbyState.ENDGAME &&
+      this.isSendRs == 0
+    ) {
+      console.log("send rs");
+      this.isSendRs = 1;
+      let returnData = {
+        playerRs: this.connections.map((connection) => {
+          return {
+            id: connection.player.id,
+            kill: connection.player.kill,
+            team: connection.player.team,
+          };
+        }),
+      };
+      this.connections.forEach((connection) => {
+        if (connection.player.team == this.teamWin) {
+          returnData = { ...returnData, result: "win" };
+        } else {
+          returnData = { ...returnData, result: "lose" };
+        }
+        connection.socket.emit("rsmatch", returnData);
+      });
+      this.connections.forEach((connection) => {
+        connection.gameServer.onSwitchLobby(
+          connection,
+          connection.gameServer.generalServerID
+        );
+      });
+    }
+  }
 
   async onJoinGame() {
     if (this.lobbyState.currentState == this.lobbyState.WAITING) {
@@ -189,9 +272,9 @@ module.exports = class GameLobby extends LobbyBase {
       lobby.connections.forEach((connection) => {
         if (connection != undefined) {
           connection.socket.emit("unloadGame");
-          connection.server.onSwitchLobby(
+          connection.gameServer.onSwitchLobby(
             connection,
-            connection.server.generalServerID
+            connection.gameServer.generalServerID
           );
         }
       });
@@ -334,12 +417,36 @@ module.exports = class GameLobby extends LobbyBase {
       }
       let isDead = false;
       if (subjectOfAttack.team != bullet.team) {
-        isDead = subjectOfAttack.dealDamage(bullet?.tank?.damage || 5);
+        isDead = subjectOfAttack.dealDamage(bullet?.tank?.damage);
       }
 
       console.log("health ", subjectOfAttack.health);
 
       if (isDead) {
+        // ng chet la player hoac tank ai
+        if (
+          subjectOfAttack instanceof Player ||
+          subjectOfAttack instanceof TankAI
+        ) {
+          const con = this.connections.find((c) => {
+            return c.player.id === bullet.activator;
+          });
+          if (con) {
+            con.player.kill++;
+          } else {
+            if (subjectOfAttack.team == 1) {
+              this.ai2Kill++;
+            }
+            if (subjectOfAttack.team == 2) {
+              this.ai1Kill++;
+            }
+          }
+          if (subjectOfAttack instanceof Player) {
+            subjectOfAttack.dead++;
+          }
+          this.killUpdate();
+        }
+
         let returnData = {
           id: subjectOfAttack.id,
         };

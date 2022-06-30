@@ -56,7 +56,7 @@ public class MenuManager : MonoBehaviour
     // join game
     public void OnQueue()
     {
-        //   Debug.LogError("on queue");
+        Debug.Log("on queue " + access_token);
         Text text = queueButton.GetComponentInChildren<Text>();
         if (!iswaiting)
         {
@@ -163,6 +163,7 @@ public class MenuManager : MonoBehaviour
         signInContainer.SetActive(false);
         joinContainer.SetActive(true);
         queueButton.interactable = true;
+        iswaiting = false;
     }
 
     public void CreateAccount()

@@ -75,7 +75,7 @@ module.exports = class GameLobby extends LobbyBase {
     //
   }
   onCountKillWin() {
-    if (this.matchTime >= 300) {
+    if (this.matchTime >= 30) {
       this.lobbyState.currentState = this.lobbyState.ENDGAME;
       this.matchTime = 0;
       let { team1Kill, team2Kill } = this.getTeamKill();
@@ -122,17 +122,26 @@ module.exports = class GameLobby extends LobbyBase {
       this.lobbyState.currentState == this.lobbyState.ENDGAME &&
       this.isSendRs == 0
     ) {
-      console.log("send rs");
+      const returnData1 = {
+        state: this.lobbyState.currentState,
+      };
+      this.connections[0].socket.emit("lobbyUpdate", returnData1);
+      this.connections[0].socket.broadcast
+        .to(this.id)
+        .emit("lobbyUpdate", returnData1);
       this.isSendRs = 1;
       let returnData = {
         playerRs: this.connections.map((connection) => {
           return {
             id: connection.player.id,
+            username: connection.player.username,
             kill: connection.player.kill,
+            dead: connection.player.dead,
             team: connection.player.team,
           };
         }),
       };
+      console.log("lb rs", returnData);
       this.connections.forEach((connection) => {
         if (connection.player.team == this.teamWin) {
           returnData = { ...returnData, result: "win" };
@@ -157,6 +166,7 @@ module.exports = class GameLobby extends LobbyBase {
         this.waitingTime = 0;
         this.lobbyState.currentState = this.lobbyState.GAME;
         if (this.connections.length > 0) {
+          this.onJoinGameInit();
           console.log("join game");
           this.connections[0].socket.emit("loadGame");
           this.connections[0].socket.broadcast.to(this.id).emit("loadGame");
@@ -173,6 +183,17 @@ module.exports = class GameLobby extends LobbyBase {
         }
       }
     }
+  }
+  onJoinGameInit() {
+    this.connections.forEach((connection) => {
+      connection.player.kill = 0;
+      connection.player.dead = 0;
+      this.isDead = false;
+      this.respawnTicker = 0;
+      this.respawnTime = 0;
+      this.tankRotation = 0;
+      this.berrelRotaion = 0;
+    });
   }
 
   onUpdateAI() {
@@ -254,9 +275,9 @@ module.exports = class GameLobby extends LobbyBase {
         }),
       };
 
-      console.log(returnData1);
-      socket.emit("loadWating", returnData1);
-      socket.broadcast.to(lobby.id).emit("loadWating", returnData1);
+      console.log("load waiting", returnData1);
+      socket.emit("loadWaiting", returnData1);
+      socket.broadcast.to(lobby.id).emit("loadWaiting", returnData1);
     }
     const returnData = {
       state: lobby.lobbyState.currentState,
@@ -379,6 +400,7 @@ module.exports = class GameLobby extends LobbyBase {
 
     if (!isAI) {
       let bullet = new Bullet(position, activeBy?.player?.tank, direction);
+
       bullet.activator = activator;
       bullet.team = activeBy?.player?.team;
       this.bullets.push(bullet);
@@ -423,7 +445,6 @@ module.exports = class GameLobby extends LobbyBase {
   onCollisionDestroy(connection = Connection, data) {
     const lobby = this;
     const returnBullet = this.bullets.filter((e) => e.id == data.id);
-    console.log(returnBullet.length);
     returnBullet.forEach((bullet) => {
       //new
 
@@ -444,6 +465,8 @@ module.exports = class GameLobby extends LobbyBase {
         return;
       }
       let isDead = false;
+      console.log("health before", subjectOfAttack.health);
+      console.log(bullet?.tank?.damage);
       if (subjectOfAttack.team != bullet.team) {
         isDead = subjectOfAttack.dealDamage(bullet?.tank?.damage);
       }

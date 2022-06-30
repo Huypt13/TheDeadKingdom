@@ -20,7 +20,7 @@ public class WaitingSceneManagement : MonoBehaviour
     [SerializeField]
     private Transform Team2;
 
-    public static Dictionary<string, GameObject> playerText;
+    private Dictionary<string, GameObject> playerText;
 
     public SocketIOComponent SocketReference
     {
@@ -31,13 +31,12 @@ public class WaitingSceneManagement : MonoBehaviour
     }
     void Start()
     {
-        Debug.Log("load waiting");
-        playerText = new Dictionary<string, GameObject>();
+
         InvokeRepeating("setTime", 0f, 1f);
 
         LoadListTank();
-        NetworkClient.OnUpdatePlayer += UpdatePlayer;
-        NetworkClient.OnChangeHero += ChangeHero;
+        NetworkClient.OnUpdatePlayer = UpdatePlayer;
+        NetworkClient.OnChangeHero = ChangeHero;
 
     }
     void setTime()
@@ -54,19 +53,17 @@ public class WaitingSceneManagement : MonoBehaviour
         Debug.Log("change hero" + id + "." + typeId + "." + level);
         GameObject textGO = playerText[id];
         Text text = textGO.GetComponent<Text>();
-        Debug.Log("aa " + text.text);
         text.text = $"{e.data["username"].str} - {typeId} - {level}";
     }
     private void UpdatePlayer(SocketIOEvent e)
     {
-        Debug.Log("update player");
+        playerText = new Dictionary<string, GameObject>();
+
         var players = e.data["players"].list;
 
         int index = 0;
         players.ForEach((player) =>
         {
-            Debug.Log(player["username"].str);
-            Debug.Log(player["id"].str);
 
             if (NetworkClient.ClientID == player["id"].str)
             {
@@ -100,6 +97,7 @@ public class WaitingSceneManagement : MonoBehaviour
             text.text = player["username"].str;
             text.fontSize = 48;
             text.alignment = TextAnchor.MiddleCenter;
+            Debug.Log(playerText.Count);
             playerText.Add(player["id"].str, textGO);
 
 
@@ -137,7 +135,6 @@ public class WaitingSceneManagement : MonoBehaviour
     }
     public void ChooseHero()
     {
-        Debug.Log(myHero.text);
         SocketReference.Emit("chooseHero", myHero.text);
     }
 }

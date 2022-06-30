@@ -34,10 +34,10 @@ class TankService {
     ]);
   }
   async getByTankId(id) {
-    return await Tank.findOne({ _id: id });
+    return await Tank.findOne({ _id: id }).lean();
   }
   async getByTankUserById(id, userId) {
-    return await TankUser.findOne({ tankId: id, userId });
+    return await TankUser.findOne({ tankId: id, userId }).lean();
   }
 }
 

@@ -224,8 +224,6 @@ public class NetworkClient : SocketIOComponent
         // update kill
         On("killUpdate", (e) =>
         {
-            float kill1 = e.data["kill1"].f;
-            float kill2 = e.data["kill2"].f;
             OnKillDeadUpdate.Invoke(e);
         });
 
@@ -233,7 +231,26 @@ public class NetworkClient : SocketIOComponent
 
         On("rsmatch", (e) =>
         {
-            Debug.Log("winner");
+
+            foreach (var keyValuePair in serverObjects)
+            {
+                if (keyValuePair.Value != null)
+                {
+                    Destroy(keyValuePair.Value.gameObject);
+                }
+            }
+            serverObjects.Clear();
+            foreach (Transform child in networkContainer)
+            {
+                GameObject.Destroy(child.gameObject);
+            }
+
+            SceneManagement.Instance.LoadLevel(SceneList.MATCHRS, (levelName) =>
+            {
+                OnResultMatch.Invoke(e);
+                SceneManagement.Instance.UnLoadLevel(SceneList.LEVEL);
+            });
+
         });
 
 
@@ -299,7 +316,7 @@ public class NetworkClient : SocketIOComponent
             healthBar.SetHealth(health);
 
         });
-        On("loadWating", (E) =>
+        On("loadWaiting", (E) =>
         {
             Debug.Log("Switching to waiting choose hero");
             SceneManagement.Instance.LoadLevel(SceneList.WAITING, (levelName) =>

@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Level.unity
     guid: 020f4f2e57c8549a3a032c7eda66bd46
+  - enabled: 1
+    path: Assets/Scenes/MatchRs.unity
+    guid: 50633c6c219254f02a773987eac7e1b9
   m_configObjects: {}

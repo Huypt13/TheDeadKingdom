@@ -23,9 +23,9 @@ public class GameUI : MonoBehaviour
         string kill2 = (NetworkClient.MyTeam == 2) ? $"<color=red><b>0</b></color>" : 0 + "";
         Text text = killDeadTransform.GetComponent<Text>();
         text.text = $"{kill1} - {kill2}";
-        NetworkClient.OnGameStateChange += OnGameStateChange;
+        NetworkClient.OnGameStateChange = OnGameStateChange;
         NetworkClient.OnTimeUpdate += OnTimeUpdate;
-        NetworkClient.OnKillDeadUpdate += OnKillDeadUpdate;
+        NetworkClient.OnKillDeadUpdate = OnKillDeadUpdate;
         //Initial Turn off screens
         gameLobbyContainer.SetActive(false);
     }
@@ -34,6 +34,7 @@ public class GameUI : MonoBehaviour
     {
         string state = e.data["state"].str;
         Debug.Log(state);
+        InitKillDead();
         switch (state)
         {
             case "Game":
@@ -49,6 +50,14 @@ public class GameUI : MonoBehaviour
                 gameLobbyContainer.SetActive(false);
                 break;
         }
+    }
+
+    private void InitKillDead()
+    {
+        string kill1 = (NetworkClient.MyTeam == 1) ? $"<color=red><b>0</b></color>" : 0 + "";
+        string kill2 = (NetworkClient.MyTeam == 2) ? $"<color=red><b>0</b></color>" : 0 + "";
+        Text text = killDeadTransform.GetComponent<Text>();
+        text.text = $"{kill1} - {kill2}";
     }
     private void OnTimeUpdate(SocketIOEvent E)
     {
@@ -66,6 +75,7 @@ public class GameUI : MonoBehaviour
         Text text = killDeadTransform.GetComponent<Text>();
         text.text = $"{kill1} - {kill2}";
     }
+
 
     public void OnQuit()
     {

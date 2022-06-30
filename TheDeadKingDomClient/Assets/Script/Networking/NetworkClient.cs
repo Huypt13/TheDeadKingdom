@@ -196,8 +196,34 @@ public class NetworkClient : SocketIOComponent
                     h.name = $"Health : {id}";
                     ni.setHealthBar(healthBar);
                 }
+                if (name == "Hp_Potion")
+                {
+                    float health = E.data["health"].f;
+                    float team = E.data["team"].f;
+                    ServerObjectData sod1 = serverSpawnables.GetObjectByName(name+"_"+team);
+                    GameObject spawnedObject1 = Instantiate(sod1.Prefab, networkContainer);
+                    spawnedObject1.transform.position = new Vector3(x, y, 0);
+                    NetworkIdentity ni1 = spawnedObject1.GetComponent<NetworkIdentity>();
+                    ni1.SetControllerId(id);
+                    ni1.SetSocketReference(this);
+                    serverObjects.Add(id, ni1);
+                    GameObject h = Instantiate(healthComponent, spawnedObject1.transform);
+                    h.SetActive(false);
+                    var healthBar = h.transform.GetComponentInChildren<HealthBar>();
+                    if (ClientID == id)
+                    {
+                        healthBar.setIsMyHealth(true);
+                    }
 
+                    healthBar.team = team;
+                    healthBar.SetHealth(health);
+                    healthBar.SetMaxHealth(health);
 
+                    healthBar.setMyGamTransform(spawnedObject1.transform);
+                    h.name = $"Health : {id}";
+                    ni1.setHealthBar(healthBar);
+
+                }
             }
         });
 
@@ -216,10 +242,24 @@ public class NetworkClient : SocketIOComponent
 
             ni.transform.position = new Vector3(x, y, 0);
             ni.gameObject.SetActive(true);
+            if (ni.gameObject.tag != "HpBox")
+            ni.getHealthBar()?.transform.parent.gameObject.SetActive(true);
             ni.getHealthBar().SetHealth(health);
-            ni.getHealthBar().transform.parent.gameObject.SetActive(true);
         });
-
+        On("stopLoading", (e) =>
+        {
+            string id = e.data.ToString().Replace("\"", "");
+            var ni = serverObjects[id];
+            Debug.Log("stop");
+            ni.gameObject.transform.GetChild(0).gameObject.SetActive(false);
+        });
+        On("startLoadingCoolDown", (e) =>
+        {
+            string id = e.data.ToString().Replace("\"", "");
+            var ni = serverObjects[id];
+            Debug.Log("start");
+            ni.gameObject.transform.GetChild(0).gameObject.SetActive(true);
+        });
 
         // update kill
         On("killUpdate", (e) =>
@@ -268,6 +308,18 @@ public class NetworkClient : SocketIOComponent
             NetworkIdentity ni = serverObjects[id];
             ni.transform.localEulerAngles = new Vector3(0, 0, tankRotation);
             ni.GetComponent<TankGeneral>().SetRotation(barrelRotation);
+        });
+        On("HpHeal", (E) =>
+        {
+            string playerId = (E.data.str).RemoveQuotes();
+            Transform effect = serverObjects[playerId].transform.Find("Immunity Area Effect");
+            effect.gameObject.SetActive(true);
+        });
+        On("HpStopHeal", (E) =>
+        {
+            string playerId = (E.data.str).RemoveQuotes();
+            Transform effect = serverObjects[playerId].transform.Find("Immunity Area Effect");
+            effect.gameObject.SetActive(false);
         });
 
 

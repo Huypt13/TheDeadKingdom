@@ -190,7 +190,7 @@ MonoBehaviour:
   pingInterval: 25
   pingTimeout: 60
   serverSpawnables: {fileID: 11400000, guid: d75d0eadca12147309fc5ab7eb5cdf3e, type: 2}
-  healthComponent: {fileID: 8083527502334416079, guid: 12e04c5ea19f74078a5439fd597544ee, type: 3}
+  healthComponent: {fileID: 8083527502334416079, guid: 7643330dc513c1c43b579eeee6c0beb3, type: 3}
   networkContainer: {fileID: 109464434}
 --- !u!4 &183631610
 Transform:

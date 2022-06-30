@@ -18,7 +18,7 @@ public class ColliderDestroy : MonoBehaviour
 
 
         NetworkIdentity ni = collision?.gameObject?.GetComponent<NetworkIdentity>();
-
+        string enemyName = collision?.gameObject?.name.Substring(0, 5);
         // cham cay
         if (ni == null)
         {
@@ -74,6 +74,18 @@ public class ColliderDestroy : MonoBehaviour
                     Destroy(gameObject);
                     NetworkClient.serverObjects.Remove(networkIdentity.GetId());
                     networkIdentity.GetSocket().Emit("collisionDestroy", new JSONObject(JsonUtility.ToJson(new IDData()
+                    {
+                        id = networkIdentity.GetId(),
+                        enemyId = ni.GetId()
+                    })));
+                    return;
+                }
+
+                if (enemyName == "hpBox")
+                {
+                    Destroy(gameObject);
+                    NetworkClient.serverObjects.Remove(networkIdentity.GetId());
+                    networkIdentity.GetSocket().Emit("collisionDestroyHpBox", new JSONObject(JsonUtility.ToJson(new IDData()
                     {
                         id = networkIdentity.GetId(),
                         enemyId = ni.GetId()

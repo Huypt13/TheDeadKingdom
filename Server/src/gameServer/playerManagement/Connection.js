@@ -53,6 +53,17 @@ class Connection {
     socket.on("quitGame", (data) => {
       gameServer.onSwitchLobby(this, gameServer.generalServerID);
     });
+    socket.on("onCollisionHealHpEffects", (data) => {
+      if (connection.lobby instanceof GameLobby) {
+        const id = data.id;
+        this.lobby.onCollisionHealHpEffects(this, id);
+      }
+      
+    });
+    socket.on("collisionDestroyHpBox", (data) => {
+      if (connection.lobby instanceof GameLobby)
+        this.lobby.onCollisionDestroyHpBox(this, data);
+    });
     // skill
   }
 }

@@ -90,6 +90,7 @@ public class MenuManager : MonoBehaviour
 
                 var jo = JObject.Parse(request.downloadHandler.text);
                 myTankList = jo["data"]["tankList"].ToObject<List<TankRemain>>();
+                Debug.Log(myTankList.Count);
                 bool canJoin = false;
                 myTankList.ForEach((e) =>
                 {

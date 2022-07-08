@@ -11,7 +11,7 @@ contract TankNFT is ERC721URIStorage {
     Counters.Counter private _tokenIds;
     address contractAddress;
 
-    constructor(address NFTMarket) ERC721("NFTToken", "DKT") {
+    constructor(address NFTMarket) ERC721("TankNFTToken", "DKT") {
         contractAddress = NFTMarket;
     }
 
@@ -27,5 +27,22 @@ contract TankNFT is ERC721URIStorage {
 
         emit NFTMinted(newTokenId);
         return newTokenId;
+    }
+
+    function getMyNfts(address _ownerAddress)
+        public
+        view
+        returns (uint256[] memory)
+    {
+        uint256 nftCount = _tokenIds.current();
+        uint256[] memory nfts = new uint256[](balanceOf(_ownerAddress));
+        uint256 nftIndex = 0;
+        for (uint256 i = 0; i < nftCount; i++) {
+            if (ownerOf(i + 1) == _ownerAddress) {
+                nfts[nftIndex] = i + 1;
+                nftIndex++;
+            }
+        }
+        return nfts;
     }
 }

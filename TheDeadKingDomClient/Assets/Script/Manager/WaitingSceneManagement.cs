@@ -14,7 +14,7 @@ public class WaitingSceneManagement : MonoBehaviour
     [SerializeField]
     private Text myHero;
     private SocketIOComponent socketReference;
-    public int time = 10;
+    public float time = 10;
     [SerializeField]
     private Transform Team1;
     [SerializeField]

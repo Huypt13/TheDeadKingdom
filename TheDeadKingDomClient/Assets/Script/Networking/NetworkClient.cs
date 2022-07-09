@@ -86,6 +86,7 @@ public class NetworkClient : SocketIOComponent
                 go.transform.position = new Vector3(x, y, 0);
                 NetworkIdentity ni = go.GetComponent<NetworkIdentity>();
                 ni.Team = team;
+                ni.TypeId = tankId;
                 ni.SetControllerId(id);
                 ni.SetSocketReference(this);
                 TankGeneral tg = go.GetComponent<TankGeneral>();
@@ -109,6 +110,63 @@ public class NetworkClient : SocketIOComponent
                 ni.setHealthBar(healthBar);
 
             }
+        });
+
+        On("skillEffectAnimation", (E) =>
+        {
+            string enemyId = E.data["enemyId"].str;
+            string efId = E.data["efId"].str;
+            var ni = serverObjects[enemyId];
+            var efAni = ni.GetComponent<EffectAnimation>();
+            var niSkill = serverObjects[efId];
+            Debug.Log("ani " + efId);
+            efAni.SetEffectAnimation(efId, niSkill.GetComponent<EffectSkill>().Effect);
+            bool remove = E.data["remove"].b;
+            if (remove)
+            {
+                Destroy(niSkill.gameObject);
+            }
+        });
+
+        On("endEffectAnimation", (E) =>
+        {
+            Debug.Log("endEffectAnimation");
+            string id = E.data["id"].str;
+            var endEf = E.data["endEf"].list;
+            var ni = serverObjects[id];
+            var efAni = ni.GetComponent<EffectAnimation>();
+            endEf.ForEach(e =>
+            {
+                Debug.Log("remove " + e["id"].str);
+                efAni.RemoveEffect(e["id"].str);
+            });
+        });
+        On("changeAttackSpeed", (E) =>
+        {
+            string id = E.data["id"].str;
+            float attackSpeed = E.data["attackSpeed"].f;
+            var ni = serverObjects[id];
+            var tg = ni.GetComponent<TankGeneral>();
+            tg.AttackSpeed = attackSpeed;
+            Debug.Log("Change attackSpeed " + attackSpeed);
+        });
+        On("isStunned", (E) =>
+        {
+            string id = E.data["id"].str;
+            bool stunned = E.data["stunned"].b;
+            Debug.Log(id + " stunned " + stunned);
+            var ni = serverObjects[id];
+            var tg = ni.GetComponent<TankGeneral>();
+            tg.Stunned = stunned;
+        });
+        On("changeSpeed", (E) =>
+        {
+            string id = E.data["id"].str;
+            float speed = E.data["speed"].f;
+            var ni = serverObjects[id];
+            var tg = ni.GetComponent<TankGeneral>();
+            tg.Speed = speed;
+            Debug.Log("Change speed " + speed);
         });
 
         // update healthAI
@@ -200,7 +258,7 @@ public class NetworkClient : SocketIOComponent
                 {
                     float health = E.data["health"].f;
                     float team = E.data["team"].f;
-                    ServerObjectData sod1 = serverSpawnables.GetObjectByName(name+"_"+team);
+                    ServerObjectData sod1 = serverSpawnables.GetObjectByName(name + "_" + team);
                     GameObject spawnedObject1 = Instantiate(sod1.Prefab, networkContainer);
                     spawnedObject1.transform.position = new Vector3(x, y, 0);
                     NetworkIdentity ni1 = spawnedObject1.GetComponent<NetworkIdentity>();
@@ -226,7 +284,79 @@ public class NetworkClient : SocketIOComponent
                 }
             }
         });
+        On("skillSpawn", (E) =>
+        {
+            string name = E.data["name"].str;
+            string id = E.data["id"].str;
+            var num = E.data["num"].f;
+            var typeId = E.data["typeId"].str;
+            Debug.LogFormat($"Server wants us to spawn a '{name}'");
+            if (name == "OrientationSkill")
+            {
+                float x = E.data["position"]["x"].f;
+                float y = E.data["position"]["y"].f;
+                float directionX = E.data["direction"]["x"].f;
+                float directionY = E.data["direction"]["y"].f;
+                string activator = E.data["activator"].str;
+                float skillSpeed = E.data["skillSpeed"].f;
 
+                var netIdenPlayer = serverObjects[activator];
+
+
+                GameObject spawnedObject = null;
+                NetworkIdentity ni = null;
+                if (num == 1 && typeId == "001")
+                {
+                    spawnedObject = Instantiate(netIdenPlayer.GetSkill1(), networkContainer);
+                    spawnedObject.transform.position = new Vector3(x, y, 0);
+                    ni = spawnedObject.GetComponent<NetworkIdentity>();
+                    ni.SetControllerId(id);
+                    ni.SetSocketReference(this);
+
+
+                    var skill1_001 = spawnedObject.GetComponent<Skill1_001>();
+                    skill1_001.ActiveBy = activator;
+                }
+                if (num == 2 && typeId == "001")
+                {
+                    spawnedObject = Instantiate(netIdenPlayer.GetSkill2(), networkContainer);
+                    spawnedObject.transform.position = new Vector3(x, y, 0);
+                    ni = spawnedObject.GetComponent<NetworkIdentity>();
+                    ni.SetControllerId(id);
+                    ni.SetSocketReference(this);
+
+
+                    var skill2_001 = spawnedObject.GetComponent<Skill2_001>();
+                    skill2_001.ActiveBy = activator;
+                }
+
+                float rot = Mathf.Atan2(directionY, directionX) * Mathf.Rad2Deg;
+                Vector3 currentRotation = new Vector3(0, 0, rot + 90);
+                spawnedObject.transform.rotation = Quaternion.Euler(currentRotation);
+
+                Projectile projectile = spawnedObject.GetComponent<Projectile>();
+                projectile.Direction = new Vector2(directionX, directionY);
+                projectile.Speed = skillSpeed;
+
+                serverObjects.Add(id, ni);
+            }
+
+            if (name == "skillBuff")
+            {
+
+                var playerImpacted = E.data["playerImpacted"].list;
+                playerImpacted.ForEach(playid =>
+                {
+                    var ni = serverObjects[playid.str];
+                    if (typeId == "001" && num == 3)
+                    {
+
+                        var efAni = ni.GetComponent<EffectAnimation>();
+                        efAni.SetEffectAnimation(id, ni.GetSkill3());
+                    }
+                });
+            }
+        });
 
 
 
@@ -243,7 +373,7 @@ public class NetworkClient : SocketIOComponent
             ni.transform.position = new Vector3(x, y, 0);
             ni.gameObject.SetActive(true);
             if (ni.gameObject.tag != "HpBox")
-            ni.getHealthBar()?.transform.parent.gameObject.SetActive(true);
+                ni.getHealthBar()?.transform.parent.gameObject.SetActive(true);
             ni.getHealthBar().SetHealth(health);
         });
         On("stopLoading", (e) =>
@@ -302,7 +432,15 @@ public class NetworkClient : SocketIOComponent
             serverObjects.Remove(id);
             DestroyImmediate(ni.gameObject);
         });
+        // unspawn skill1
+        On("severUnspawnSkill", (E) =>
+        {
+            string id = E.data["id"].str;
+            NetworkIdentity ni = serverObjects[id];
+            serverObjects.Remove(id);
+            DestroyImmediate(ni.gameObject);
 
+        });
 
         // update pos player
         On("updatePosition", (E) =>
@@ -374,6 +512,7 @@ public class NetworkClient : SocketIOComponent
             SceneManagement.Instance.LoadLevel(SceneList.WAITING, (levelName) =>
            {
                OnUpdatePlayer.Invoke(E);
+               FindObjectOfType<WaitingSceneManagement>().time = E.data["time"].f;
                SceneManagement.Instance.UnLoadLevel(SceneList.MAIN_MENU);
            });
 
@@ -435,7 +574,14 @@ public class NetworkClient : SocketIOComponent
 
 
         });
-
+        On("unloadGame", (E) =>
+        {
+            ReturnToMainMenu();
+        });
+        On("errorPickTank", (E) =>
+        {
+            ReturnToMainMenuWithError("Error pick tank");
+        });
         On("disconnected", (E) =>
         {
             string id = E.data["id"].ToString().RemoveQuotes();
@@ -489,10 +635,36 @@ public class NetworkClient : SocketIOComponent
             }
         }
         serverObjects.Clear();
+        foreach (Transform child in networkContainer)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
         SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
         {
             SceneManagement.Instance.UnLoadLevel(SceneList.LEVEL);
             FindObjectOfType<MenuManager>().OnSignInComplete();
+        });
+    }
+
+    private void ReturnToMainMenuWithError(string error)
+    {
+        foreach (var keyValuePair in serverObjects)
+        {
+            if (keyValuePair.Value != null)
+            {
+                Destroy(keyValuePair.Value.gameObject);
+            }
+        }
+        serverObjects.Clear();
+        foreach (Transform child in networkContainer)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+        SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
+        {
+            SceneManagement.Instance.UnLoadLevel(SceneList.LEVEL);
+            FindObjectOfType<MenuManager>().OnSignInComplete();
+            FindObjectOfType<MenuManager>().message.text = error;
         });
     }
 }

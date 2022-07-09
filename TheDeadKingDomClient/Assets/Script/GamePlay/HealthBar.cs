@@ -9,7 +9,9 @@ public class HealthBar : MonoBehaviour
     public Slider slider;
     public bool isMyHealth;
     public float team;
-    public Gradient myGradient;
+    public Gradient myGradient1;
+    public Gradient myGradient2;
+
     public Gradient gradient;
     public Gradient gradient2;
     public Gradient gradient0;
@@ -28,8 +30,10 @@ public class HealthBar : MonoBehaviour
     {
         slider.maxValue = health;
         slider.value = health;
-        if (isMyHealth)
-            fill.color = myGradient.Evaluate(1f);
+        if (isMyHealth && team == 1)
+            fill.color = myGradient1.Evaluate(1f);
+        else if (isMyHealth && team == 2)
+            fill.color = myGradient2.Evaluate(1f);
         else if (team == 1)
             fill.color = gradient.Evaluate(1f);
         else if (team == 2)
@@ -48,8 +52,10 @@ public class HealthBar : MonoBehaviour
     {
         slider.value = health;
 
-        if (isMyHealth)
-            fill.color = myGradient.Evaluate(slider.normalizedValue);
+        if (isMyHealth && team == 1)
+            fill.color = myGradient1.Evaluate(slider.normalizedValue);
+        else if (isMyHealth && team == 2)
+            fill.color = myGradient2.Evaluate(slider.normalizedValue);
         else if (team == 1)
             fill.color = gradient.Evaluate(slider.normalizedValue);
         else if (team == 2)

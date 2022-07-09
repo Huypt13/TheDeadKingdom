@@ -5,10 +5,15 @@ const Bullet = require("../gamePlay/serverObjects/Bullet");
 const TankAI = require("../aiManagement/TankAI");
 const AIBase = require("../aiManagement/AIBase");
 const Connection = require("../playerManagement/Connection");
-const TowerAI = require("../aiManagement/TowerAI");
 const TankService = require("../../api/hero/Tank.service");
 const Player = require("../playerManagement/Player");
 const Potion = require("../gamePlay/serverObjects/Potion");
+const GameInfor = require("../../helper/GameInfor.helper");
+const SkillOrientation = require("../gamePlay/serverObjects/SkillOrientation");
+const Skill001 = require("./GameLobbyFunction/001/Skill001");
+
+const LobbyEffect = require("./GameLobbyFunction/LobbyEffect");
+const SkillBuff = require("../gamePlay/serverObjects/SkillBuff");
 
 module.exports = class GameLobby extends LobbyBase {
   constructor(settings = GameLobbySettings) {
@@ -16,6 +21,7 @@ module.exports = class GameLobby extends LobbyBase {
     this.settings = settings;
     this.lobbyState = new LobbyState();
     this.bullets = [];
+    this.skill = [];
     this.waitingTime = 0;
     this.matchTime = 0; // time tran dau
     this.sendTime = 0; // time gui time tran dau xuong client
@@ -32,6 +38,7 @@ module.exports = class GameLobby extends LobbyBase {
 
     if (this.lobbyState.currentState == this.lobbyState.GAME) {
       lobby.updateBullets();
+      lobby.updateSkills();
       lobby.updateDeadPlayers();
       lobby.updateAIDead();
       lobby.onUpdateAI();
@@ -50,6 +57,9 @@ module.exports = class GameLobby extends LobbyBase {
   }
 
   onMatchTime() {
+    if (this.lobbyState.currentState != this.lobbyState.GAME) {
+      console.log(this.lobbyState.currentState);
+    }
     if (this.lobbyState.currentState == this.lobbyState.GAME) {
       this.matchTime += +0.1;
       this.sendTime++;
@@ -75,7 +85,8 @@ module.exports = class GameLobby extends LobbyBase {
     //
   }
   onCountKillWin() {
-    if (this.matchTime >= 30) {
+    if (this.matchTime >= GameInfor.CountKillTime - 0.1) {
+      console.log("count kill win");
       this.lobbyState.currentState = this.lobbyState.ENDGAME;
       this.matchTime = 0;
       let { team1Kill, team2Kill } = this.getTeamKill();
@@ -141,28 +152,45 @@ module.exports = class GameLobby extends LobbyBase {
           };
         }),
       };
-      console.log("lb rs", returnData);
+      let { team1Kill, team2Kill } = this.getTeamKill();
       this.connections.forEach((connection) => {
         if (connection.player.team == this.teamWin) {
-          returnData = { ...returnData, result: "win" };
+          returnData = {
+            ...returnData,
+            result: "win",
+            kill1: team1Kill + this.ai1Kill,
+            kill2: team2Kill + this.ai2Kill,
+          };
         } else {
-          returnData = { ...returnData, result: "lose" };
+          returnData = {
+            ...returnData,
+            result: "lose",
+            kill1: team1Kill + this.ai1Kill,
+            kill2: team2Kill + this.ai2Kill,
+          };
         }
         connection.socket.emit("rsmatch", returnData);
       });
-      this.connections.forEach((connection) => {
+      console.log(
+        "out room",
+        this.connections.length,
+        this?.connections[1]?.player.id
+      );
+      while (this.connections.length > 0) {
+        const connection = this.connections[0];
+        console.log("out room", connection.player.id);
         connection.gameServer.onSwitchLobby(
           connection,
           connection.gameServer.generalServerID
         );
-      });
+      }
     }
   }
 
   async onJoinGame() {
     if (this.lobbyState.currentState == this.lobbyState.WAITING) {
       this.waitingTime += +0.1;
-      if (this.waitingTime > 10) {
+      if (this.waitingTime > GameInfor.WaitChoolseTime) {
         this.waitingTime = 0;
         this.lobbyState.currentState = this.lobbyState.GAME;
         if (this.connections.length > 0) {
@@ -186,13 +214,7 @@ module.exports = class GameLobby extends LobbyBase {
   }
   onJoinGameInit() {
     this.connections.forEach((connection) => {
-      connection.player.kill = 0;
-      connection.player.dead = 0;
-      this.isDead = false;
-      this.respawnTicker = 0;
-      this.respawnTime = 0;
-      this.tankRotation = 0;
-      this.berrelRotaion = 0;
+      connection.player.setInitValue();
     });
   }
 
@@ -247,6 +269,7 @@ module.exports = class GameLobby extends LobbyBase {
     // neu tank chua dc chon
 
     connection.player.tank = await TankService.getByTankId(tankId);
+    connection.player.startTank = { ...connection.player.tank };
     const returnData = {
       id: connection.player.id,
       username: connection.player.username,
@@ -273,6 +296,7 @@ module.exports = class GameLobby extends LobbyBase {
             team: e.player.team,
           };
         }),
+        time: GameInfor.WaitChoolseTime,
       };
 
       console.log("load waiting", returnData1);
@@ -293,7 +317,8 @@ module.exports = class GameLobby extends LobbyBase {
     lobby.removePlayer(connection);
     lobby.onUnspawnAllAIInGame(connection);
     if (lobby.connections.length < lobby.settings.minPlayers) {
-      lobby.connections.forEach((connection) => {
+      while (this.connections.length > 0) {
+        const connection = this.connections[0];
         if (connection != undefined) {
           connection.socket.emit("unloadGame");
           connection.gameServer.onSwitchLobby(
@@ -301,17 +326,38 @@ module.exports = class GameLobby extends LobbyBase {
             connection.gameServer.generalServerID
           );
         }
-      });
+      }
     }
   }
   async onSpawnAllPlayersIntoGame() {
     let lobby = this;
     let connections = lobby.connections;
-
+    let canplay = true;
     for (const connection of connections) {
       const addSuccess = await lobby.addPlayer(connection);
+      console.log("spawn player", connection.player.id, addSuccess);
       if (!addSuccess) {
         // huy room thong bao cho ng dung
+        canplay = false;
+        break;
+      }
+    }
+    if (!canplay) {
+      this.lobbyState.currentState = this.lobbyState.ERROR;
+      const returnData1 = {
+        state: this.lobbyState.currentState,
+      };
+      this.connections[0].socket.emit("lobbyUpdate", returnData1);
+      this.connections[0].socket.broadcast
+        .to(this.id)
+        .emit("lobbyUpdate", returnData1);
+      while (this.connections.length > 0) {
+        const connection = this.connections[0];
+        connection.socket.emit("errorPickTank");
+        connection.gameServer.onSwitchLobby(
+          connection,
+          connection.gameServer.generalServerID
+        );
       }
     }
   }
@@ -319,24 +365,24 @@ module.exports = class GameLobby extends LobbyBase {
     const tankAi = {
       speed: 0.15,
       rotationSpeed: 0.3,
-      damage: 20,
-      health: 160,
+      damage: 80,
+      health: 1000,
       attackSpeed: 1,
       bulletSpeed: 1, // 100 ms
       shootingRange: 6,
     };
+    // this.onServerSpawn(
+    //   new TankAI("01", new Vector2(-6, 2), 4, tankAi, 1),
+    //   new Vector2(-6, 2)
+    // );
     this.onServerSpawn(
-      new TankAI("01", new Vector2(-6, 2), 4, tankAi, 1),
-      new Vector2(-6, 2)
-    );
-    this.onServerSpawn(
-      new TankAI("01", new Vector2(-6, 4), 4, tankAi, 2),
+      new TankAI("01", new Vector2(-6, 4), 4, tankAi, 0),
       new Vector2(-6, 4)
     );
-    this.onServerSpawn(
-      new TankAI("01", new Vector2(-3, 4), 4, tankAi, 2),
-      new Vector2(-3, 4)
-    );
+    // this.onServerSpawn(
+    //   new TankAI("01", new Vector2(-3, 4), 4, tankAi, 2),
+    //   new Vector2(-3, 4)
+    // );
     // this.onServerSpawn(
     //   new TankAI("01", new Vector2(-6, 6), 4, tankAi, 0),
     //   new Vector2(5, 2)
@@ -344,9 +390,9 @@ module.exports = class GameLobby extends LobbyBase {
     // this.onServerSpawn(new TowerAI("01", tankAi, 1), new Vector2(-3, 0));
     // this.onServerSpawn(new TowerAI("01", tankAi, 0), new Vector2(-5, 0));
     // this.onServerSpawn(new TowerAI("01", tankAi, 2), new Vector2(-1, 0));
-   
+
     this.onServerSpawn(new Potion(1), new Vector2(7, -5));
-    this.onServerSpawn(new Potion(2), new Vector2(7, -1)) ;
+    this.onServerSpawn(new Potion(2), new Vector2(7, -1));
   }
   onUnspawnAllAIInGame(connection = Connection) {
     let lobby = this;
@@ -371,27 +417,22 @@ module.exports = class GameLobby extends LobbyBase {
     });
   }
 
-  OnUpdateEffectCooldown() {
-    for (let item of this.serverItems) {
-      if (item?.isActive != undefined&& !item.isActive) {
-        if(item.coolDown()){
-          for (let connection of this.connections)
-          connection.socket.emit("stopLoading", item.id);
-         
+  updateSkills() {
+    // skill 1 type 001
+    this.skill.forEach((skill) => {
+      if (skill instanceof SkillOrientation) {
+        if (skill.onUpdate()) {
+          this.despawnSkill(skill);
         }
       }
-    }
-  }
-
-  OnUpdateEffectTime() {
-    for (let connection of this.connections) {
-      if (connection.player.effect.healing.value != 0) {
-        this.HealHp(connection);
+      if (skill instanceof SkillBuff) {
+        if (skill.onUpdate()) {
+          this.endSkillBuff(skill);
+        }
       }
-
-    }
-
+    });
   }
+
   onFireBullet(connection = Connection, data, isAI = false, aiId) {
     const { activator, position, direction } = data;
     const activeBy = this.connections.find((c) => {
@@ -400,7 +441,6 @@ module.exports = class GameLobby extends LobbyBase {
 
     if (!isAI) {
       let bullet = new Bullet(position, activeBy?.player?.tank, direction);
-
       bullet.activator = activator;
       bullet.team = activeBy?.player?.team;
       this.bullets.push(bullet);
@@ -442,6 +482,121 @@ module.exports = class GameLobby extends LobbyBase {
         .emit("serverSpawn", returnData); //Broadcast to everyone that the ai spawned a bullet for
     }
   }
+
+  createOrientationSkill(data, activeBy, connection, skill) {
+    const { position, direction, activator, typeId, num } = data;
+    let skillObject = new SkillOrientation(position, direction, skill);
+
+    skillObject.activator = activator;
+    skillObject.team = activeBy?.player?.team;
+
+    this.skill.push(skillObject);
+    const returnData = {
+      name: `OrientationSkill`,
+      num,
+      typeId,
+      id: skillObject.id,
+      team: skillObject.team,
+      activator,
+      direction,
+      position,
+      skillSpeed: skillObject.speed,
+    };
+
+    connection.socket.emit("skillSpawn", returnData);
+    connection.socket.broadcast.to(this.id).emit("skillSpawn", returnData);
+  }
+
+  createBuffSkill(connection, playerImpacted, timeRemain, typeId, num) {
+    const skillBuff = new SkillBuff();
+    skillBuff.playerImpacted = playerImpacted;
+    skillBuff.timeRemain = timeRemain;
+    this.skill.push(skillBuff);
+    const returnData = {
+      name: "skillBuff",
+      id: skillBuff.id,
+      typeId,
+      num,
+      playerImpacted,
+    };
+    connection.socket.emit("skillSpawn", returnData);
+    connection.socket.broadcast.to(this.id).emit("skillSpawn", returnData);
+  }
+
+  onSkill(connection, data) {
+    const { typeId, activator, num } = data;
+    const activeBy = this.connections.find((c) => {
+      return c.player.id === activator;
+    });
+
+    if (typeId === "001" && num === 1) {
+      this.createOrientationSkill(
+        data,
+        activeBy,
+        connection,
+        activeBy?.player?.tank?.skill1
+      );
+    } else if (typeId === "001" && num === 2) {
+      this.createOrientationSkill(
+        data,
+        activeBy,
+        connection,
+        activeBy?.player?.tank?.skill2
+      );
+    } else if (typeId === "001" && num === 3) {
+      this.createBuffSkill(
+        connection,
+        [connection.player.id],
+        connection.player.startTank.skill3.damagedUp.time,
+        typeId,
+        num
+      );
+    }
+    Skill001.Skill3Handler(
+      connection,
+      connection.player.startTank.skill3,
+      this
+    );
+  }
+  onTouchSkill(connection, data) {
+    const { typeId, num } = data;
+    if (typeId == "001" && num === 1) {
+      Skill001.Skill1Handler(connection, data, this);
+    }
+    if (typeId == "001" && num === 2) {
+      Skill001.Skill2Handler(connection, data, this);
+    }
+  }
+
+  deadUpdate(connection, subjectOfAttack, activator) {
+    if (
+      subjectOfAttack instanceof Player ||
+      subjectOfAttack instanceof TankAI
+    ) {
+      const con = this.connections.find((c) => {
+        return c.player.id === activator;
+      });
+      if (con) {
+        con.player.kill++;
+      } else {
+        if (subjectOfAttack.team == 1) {
+          this.ai2Kill++;
+        }
+        if (subjectOfAttack.team == 2) {
+          this.ai1Kill++;
+        }
+      }
+      if (subjectOfAttack instanceof Player) {
+        subjectOfAttack.dead++;
+      }
+      this.killUpdate();
+    }
+    let returnData = {
+      id: subjectOfAttack.id,
+    };
+    connection.socket.emit("playerDied", returnData);
+    connection.socket.broadcast.to(this.id).emit("playerDied", returnData);
+  }
   onCollisionDestroy(connection = Connection, data) {
     const lobby = this;
     const returnBullet = this.bullets.filter((e) => e.id == data.id);
@@ -475,34 +630,7 @@ module.exports = class GameLobby extends LobbyBase {
 
       if (isDead) {
         // ng chet la player hoac tank ai
-        if (
-          subjectOfAttack instanceof Player ||
-          subjectOfAttack instanceof TankAI
-        ) {
-          const con = this.connections.find((c) => {
-            return c.player.id === bullet.activator;
-          });
-          if (con) {
-            con.player.kill++;
-          } else {
-            if (subjectOfAttack.team == 1) {
-              this.ai2Kill++;
-            }
-            if (subjectOfAttack.team == 2) {
-              this.ai1Kill++;
-            }
-          }
-          if (subjectOfAttack instanceof Player) {
-            subjectOfAttack.dead++;
-          }
-          this.killUpdate();
-        }
-
-        let returnData = {
-          id: subjectOfAttack.id,
-        };
-        connection.socket.emit("playerDied", returnData);
-        connection.socket.broadcast.to(lobby.id).emit("playerDied", returnData);
+        this.deadUpdate(connection, subjectOfAttack, bullet?.activator);
       } else {
         let returnData = {
           id: subjectOfAttack.id,
@@ -516,15 +644,15 @@ module.exports = class GameLobby extends LobbyBase {
     });
   }
   onCollisionDestroyHpBox(connection = Connection, data) {
-    
     let lobby = this;
     let id = data?.id;
     let enemyId = data?.enemyId;
-    const potion = this.serverItems.find(item => item.id == enemyId);
-    if(!potion || potion.team == connection.player.team) return;
+    const potion = this.serverItems.find((item) => item.id == enemyId);
+    if (!potion || potion.team == connection.player.team) return;
     const returnBullet = lobby.bullets.filter((e) => e.id == id);
     returnBullet.forEach((bullet) => {
-    let isDead = false;
+      bullet.isDestroyed = true;
+      let isDead = false;
       if (potion.team != bullet.team) {
         isDead = potion.dealDamage(bullet?.tank?.damage || 5);
       }
@@ -558,6 +686,37 @@ module.exports = class GameLobby extends LobbyBase {
       connection.socket.emit("serverUnSpawn", returnData);
     });
   }
+  despawnSkill(skill) {
+    let index = this.skill.indexOf(skill);
+    if (index > -1) {
+      this.skill.splice(index, 1);
+    }
+    this.connections.forEach((connection) => {
+      connection.socket.emit("severUnspawnSkill", {
+        id: skill.id,
+      });
+    });
+  }
+
+  endSkillBuff(skill) {
+    let index = this.skill.indexOf(skill);
+    if (index > -1) {
+      this.skill.splice(index, 1);
+    }
+    console.log(skill);
+    skill.playerImpacted.forEach((id) => {
+      if (this.connections.length > 0) {
+        this.connections[0].socket.emit("endEffectAnimation", {
+          endEf: [{ id: skill.id }],
+          id,
+        });
+        this.connections[0].socket.broadcast
+          .to(this.id)
+          .emit("endEffectAnimation", { endEf: [{ id: skill.id }], id });
+      }
+    });
+  }
+
   async addPlayer(connection = Connection) {
     let lobby = this;
     let connections = lobby.connections;
@@ -575,18 +734,20 @@ module.exports = class GameLobby extends LobbyBase {
     if (!tank) {
       const tankList = await TankService.getTankByUserId(connection.player.id);
       if (!tankList[0]?.tankList) {
+        console.log(connection.player.id, "ko co tank");
         return false;
       }
       for (const tankRemain of tankList[0]?.tankList) {
         if (tankRemain.remaining > 0) {
           tank = tankRemain.tank;
-          connection.player.tank = tankRemain.tank;
-          console.log(tank);
+          connection.player.tank = { ...tankRemain.tank };
+          connection.player.startTank = { ...tankRemain.tank };
           break;
         }
       }
     }
     if (!tank) {
+      console.log(connection.player.id, "ko co tank remain >0");
       return false;
     }
     const tankUser = await TankService.getByTankUserById(
@@ -594,6 +755,7 @@ module.exports = class GameLobby extends LobbyBase {
       connection.player.id
     );
     if (!tankUser || tankUser?.remaining <= 0) {
+      console.log("chon tank check remain fail", connection.player.id);
       return false;
     }
 
@@ -608,7 +770,6 @@ module.exports = class GameLobby extends LobbyBase {
       team: connection.player.team,
       tank,
     };
-    console.log("return data spawn player", returnData);
     socket.emit("spawn", returnData); //tell myself I have spawned
     socket.broadcast.to(lobby.id).emit("spawn", returnData); // Tell other
 
@@ -676,13 +837,15 @@ module.exports = class GameLobby extends LobbyBase {
       }
     });
     for (let item of lobby.serverItems) {
-      if (!(item instanceof AIBase) && item.isDead) {
+      if (item instanceof Potion && item.isDead) {
         if (!item.reSpawn()) {
           for (let connection of lobby.connections) {
             connection.socket.emit("playerRespawn", item);
-            connection.socket.broadcast.to(lobby.id).emit("playerRespawn", item);
+            connection.socket.broadcast
+              .to(lobby.id)
+              .emit("playerRespawn", item);
           }
-        };
+        }
       }
     }
   }
@@ -693,28 +856,21 @@ module.exports = class GameLobby extends LobbyBase {
       id: connection.player.id,
     });
   }
-  HealHp(connection = Connection) {
 
-    const isFinish = connection.player.healHp();
-    const returnData = { id: connection.player.id, health: connection.player.health }
-    connection.socket.emit("playerAttacked", returnData);
-    connection.socket.broadcast.to(this.id).emit("playerAttacked", returnData);
-    if (isFinish) {
-      const healing = connection.player.effect.healing;
-      for (let property in healing) {
-        healing[property] = 0;
-      }
-      connection.socket.emit("HpStopHeal", connection.player.id);
-      connection.socket.broadcast.to(this.id).emit("HpStopHeal", connection.player.id);
-    }
-  }
   onCollisionHealHpEffects(connection = Connection, potionId) {
     const lobby = this;
-    const potion = lobby.serverItems.find(item => item.id == potionId);
-    console.log(connection.player.health +"||"+ connection.player.maxHealth)
-    if (!potion.isActive || connection.player.health === connection.player.maxHealth || connection.player.team != potion.team) return;
+    const potion = lobby.serverItems.find((item) => item.id == potionId);
+    console.log(connection.player.health + "||" + connection.player.maxHealth);
+    if (
+      !potion.isActive ||
+      connection.player.health === connection.player.maxHealth ||
+      connection.player.team != potion.team
+    )
+      return;
     connection.socket.emit("startLoadingCoolDown", potion.id);
-    connection.socket.broadcast.to(this.id).emit("startLoadingCoolDown", potion.id);
+    connection.socket.broadcast
+      .to(this.id)
+      .emit("startLoadingCoolDown", potion.id);
     const player = connection.player;
     connection.socket.emit("HpHeal", player.id);
     connection.socket.broadcast.to(this.id).emit("HpHeal", player.id);
@@ -724,6 +880,39 @@ module.exports = class GameLobby extends LobbyBase {
       healing[property] = potion.healing[property];
     }
   }
+  OnUpdateEffectCooldown() {
+    for (let item of this.serverItems) {
+      if (item?.isActive != undefined && !item.isActive) {
+        if (item.coolDown()) {
+          for (let connection of this.connections)
+            connection.socket.emit("stopLoading", item.id);
+        }
+      }
+    }
+  }
+  OnUpdateEffectTime() {
+    for (let connection of this.connections) {
+      if (connection.player.effect.healing.value != 0) {
+        LobbyEffect.healHp(connection, this);
+      }
+      if (connection.player.effect.slowled.length > 0) {
+        LobbyEffect.onSlowEffect(connection, this);
+      }
+      if (connection.player.effect.stunned.length > 0) {
+        LobbyEffect.onStunnedEffect(connection, this);
+      }
+      if (connection.player.effect.damagedUp.length > 0) {
+        LobbyEffect.onDamagedUpEffect(connection, this);
+      }
+      if (connection.player.effect.armorUp.length > 0) {
+        LobbyEffect.onArmordUpEffect(connection, this);
+      }
+      if (connection.player.effect.attackSpeedUp.length > 0) {
+        LobbyEffect.onAttackSpeedEffect(connection, this);
+      }
+    }
+  }
+
   getRandomSpawn() {}
   getRndInteger(min, max) {}
 };

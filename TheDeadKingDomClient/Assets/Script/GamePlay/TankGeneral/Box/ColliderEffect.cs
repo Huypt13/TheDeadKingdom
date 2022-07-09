@@ -8,14 +8,10 @@ public class ColliderEffect : MonoBehaviour
 {
     public void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("hello");
         NetworkIdentity ni = collision.gameObject.GetComponent<NetworkIdentity>();
-        string targetName = collision.gameObject.name;
-       
-        string target = targetName.Substring(0, 6);
-        if (target != "Bullet" && ni.IsControlling())
+
+        if (ni.GetComponent<WhoActivatedMe>() == null && ni.IsControlling())
         {
-            Debug.Log("hello1");
             //transform.gameObject.SetActive(false);
             ni.GetSocket().Emit("onCollisionHealHpEffects", new JSONObject(JsonUtility.ToJson(new Potion()
             {
@@ -23,7 +19,7 @@ public class ColliderEffect : MonoBehaviour
             }
         )));
         }
-        if (target == "Bullet")
+        if (ni.GetComponent<WhoActivatedMe>() != null)
         {
             transform.GetChild(1).gameObject.SetActive(true);
             StartCoroutine(DoEvent());
@@ -39,5 +35,5 @@ public class ColliderEffect : MonoBehaviour
     }
 
 
-  
+
 }

@@ -18,7 +18,6 @@ public class ColliderDestroy : MonoBehaviour
 
 
         NetworkIdentity ni = collision?.gameObject?.GetComponent<NetworkIdentity>();
-        string enemyName = collision?.gameObject?.name.Substring(0, 5);
         // cham cay
         if (ni == null)
         {
@@ -52,12 +51,12 @@ public class ColliderDestroy : MonoBehaviour
                 {
                     return;
                 }
-
+                // destroy luon vi neu cho server tra ve se bi delay
+                Destroy(gameObject);
                 // client bi ban , thi client trung dan gui request
 
                 if (ni.IsControlling())
                 {
-                    Destroy(gameObject);
                     NetworkClient.serverObjects.Remove(networkIdentity.GetId());
                     networkIdentity.GetSocket().Emit("collisionDestroy", new JSONObject(JsonUtility.ToJson(new IDData()
                     {
@@ -71,7 +70,6 @@ public class ColliderDestroy : MonoBehaviour
 
                 if (niActive.IsControlling() && ni.GetComponent<AiManager>() != null)
                 {
-                    Destroy(gameObject);
                     NetworkClient.serverObjects.Remove(networkIdentity.GetId());
                     networkIdentity.GetSocket().Emit("collisionDestroy", new JSONObject(JsonUtility.ToJson(new IDData()
                     {
@@ -81,9 +79,9 @@ public class ColliderDestroy : MonoBehaviour
                     return;
                 }
 
-                if (enemyName == "hpBox")
+                // ban trung hop mau firer gui reques
+                if (ni.GetComponent<ColliderEffect>() != null && niActive.IsControlling())
                 {
-                    Destroy(gameObject);
                     NetworkClient.serverObjects.Remove(networkIdentity.GetId());
                     networkIdentity.GetSocket().Emit("collisionDestroyHpBox", new JSONObject(JsonUtility.ToJson(new IDData()
                     {

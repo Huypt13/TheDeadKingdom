@@ -114,13 +114,16 @@ contract Marketplace is ReentrancyGuard {
         uint256 price = nftMarketItem.price;
         uint256 marketFee = (price * platformFee) / deno;
 
+        uint256 allowance = tokenAddress.allowance(msg.sender, address(this));
+        require(allowance >= price, "Check the token allowance");
+
         tokenAddress.transferFrom(msg.sender, address(this), price);
-        // tokenAddress.transferFrom(msg.sender, address(this), marketFee);
-        tokenAddress.transferFrom(msg.sender, marketOwner, marketFee);
-        tokenAddress.transferFrom(
-            address(this),
-            nftMarketItem.seller,
-            price - marketFee
+
+        tokenAddress.transfer(nftMarketItem.seller, price - marketFee);
+
+        tokenAddress.transfer(
+            marketOwner,
+            tokenAddress.balanceOf(address(this))
         );
 
         nftMarketItem.buyer = payable(msg.sender);
@@ -129,7 +132,7 @@ contract Marketplace is ReentrancyGuard {
         IERC721(nftMarketItem.nftContract).transferFrom(
             address(this),
             msg.sender,
-            _marketItemId
+            nftMarketItem.tokenId
         );
 
         nftMarketItem.isSelling = false;

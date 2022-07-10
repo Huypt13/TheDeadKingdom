@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract DeathKingdomCoin is ERC20, Ownable {
     constructor() ERC20("DeathKingdomCoin", "DKC") {
-        _mint(msg.sender, 1000000000000000000 * 100000000);
+        _mint(msg.sender, 100000000 * 10**decimals());
     }
 
     // function mint(address to, uint256 amount) public onlyOwner {

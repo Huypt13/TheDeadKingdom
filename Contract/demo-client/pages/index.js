@@ -3,9 +3,9 @@ import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import Web3 from 'web3'
 import Web3Modal from 'web3modal'
-import DeathKingdomCoin from '../../client/contracts/DeathKingdomCoin.json'
-import TankNFT from '../../client/contracts/TankNFT.json'
-import Marketplace from '../../client/contracts/Marketplace.json'
+import DeathKingdomCoin from '../contracts/DeathKingdomCoin.json'
+import TankNFT from '../contracts/TankNFT.json'
+import Marketplace from '../contracts/Marketplace.json'
 import BigNumber from 'big-number'
 import { useEffect, useState } from 'react';
 
@@ -18,14 +18,14 @@ export default function Home() {
   var marketplaceContract;
 
   async function setWeb3Value() {
-    const web3Modal = new Web3Modal()
-    const provider = await web3Modal.connect()
+    const web3Modal = new Web3Modal();
+    const provider = await web3Modal.connect();
 
-    web3 = new Web3(provider)
+    web3 = new Web3(provider);
 
     // web3 = new Web3('HTTP://127.0.0.1:7545');
 
-    networkId = await web3.eth.net.getId()
+    networkId = await web3.eth.net.getId();
     accounts = await web3.eth.getAccounts();
     deathKingdomCoinContract = new web3.eth.Contract(DeathKingdomCoin.abi, DeathKingdomCoin.networks[networkId].address);
     tankNFTContract = new web3.eth.Contract(TankNFT.abi, TankNFT.networks[networkId].address);
@@ -35,7 +35,12 @@ export default function Home() {
   setWeb3Value();
 
   async function mintNFT() {
-    await tankNFTContract.methods.createToken("tokenURI").send({ from: accounts[0] });
+    await tankNFTContract.methods.createToken().send({ from: accounts[0] })
+      .on('receipt', function (receipt) {
+        console.log(receipt.status);
+        console.log(receipt.events);
+        console.log(receipt.events.NFTMinted.returnValues);
+      });
   }
 
   async function transferDKC(amount = 1) {
@@ -44,16 +49,10 @@ export default function Home() {
     console.log(a);
   }
 
-  async function sellNFT(price = 0.1) {
-    await marketplaceContract.methods.listNft(TankNFT.networks[networkId].address, 1, new BigNumber(price * Math.pow(10, 18))).send({ from: accounts[0] });
+  async function getBalance() {
+    let balance = await deathKingdomCoinContract.methods.balanceOf(accounts[0]).call({ from: accounts[0] });
 
-    console.log(await marketplaceContract.methods.platformFee().call());
-
-  }
-  async function buyNFT() {
-    await marketplaceContract.methods.buyNft(1).send({ from: accounts[0] });
-
-    console.log(accounts[0]);
+    console.log(balance);
   }
 
   async function getListingNfts() {
@@ -67,6 +66,11 @@ export default function Home() {
     console.log(myNfts);
   }
 
+  async function getMyListingNfts() {
+    const myNfts = await marketplaceContract.methods.getMyListingNfts().call({ from: accounts[0] });
+    console.log(myNfts);
+  }
+
 
   return (
     <div className={styles.container}>
@@ -76,11 +80,11 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <button type="button" onClick={() => mintNFT()}>MintNFT</button>
-      <button type="button" onClick={() => sellNFT()}>SellNFT</button>
-      <button type="button" onClick={() => buyNFT()}>BuyNFT</button>
-      <button type="button" onClick={() => getMyNfts()}>getMyNfts</button>
-      <button type="button" onClick={() => getListingNfts()}>getListingNfts</button>
+      <button type="button" className="mt-4 w-full bg-teal-400 text-white font-bold py-2 px-12 rounded" onClick={() => mintNFT()}>MintNFT</button>
+      <button type="button" className="mt-4 w-full bg-teal-400 text-white font-bold py-2 px-12 rounded" onClick={() => getBalance()}>GetBalance</button>
+      <button type="button" className="mt-4 w-full bg-teal-400 text-white font-bold py-2 px-12 rounded" onClick={() => getMyNfts()}>getMyNfts</button>
+      <button type="button" className="mt-4 w-full bg-teal-400 text-white font-bold py-2 px-12 rounded" onClick={() => getListingNfts()}>getListingNfts</button>
+      <button type="button" className="mt-4 w-full bg-teal-400 text-white font-bold py-2 px-12 rounded" onClick={() => getMyListingNfts()}>getMyListingNfts</button>
       <br></br>
 
     </div>

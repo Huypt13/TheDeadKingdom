@@ -1,19 +1,23 @@
 const DeathKingdomCoin = artifacts.require("DeathKingdomCoin");
 const Marketplace = artifacts.require("Marketplace");
 const TankNFT = artifacts.require("TankNFT");
+const BigNumber = require('big-number')
 
 contract('Marketplace', (accounts) => {
-    console.log(accounts);
-    // console.log("========================" + mkp.address);
+    let marketplace;
+    let tankNFT;
+    let deathKingdomCoin;
+    beforeEach(async () => {
+        marketplace = await Marketplace.deployed();
+        tankNFT = await TankNFT.deployed();
+        deathKingdomCoin = await DeathKingdomCoin.deployed();
+    });
+    it("Marketplace Test", async () => {
+        let nft1 = await tankNFT.createToken({ from: accounts[1] });
+        let nft2 = await tankNFT.createToken({ from: accounts[1] });
 
-    it("test text", async () => {
-        const marketplace = await Marketplace.deployed();
-        const tankNFT = await TankNFT.deployed();
-        const deathKingdomCoin = await DeathKingdomCoin.deployed();
+        console.log(nft1.toString());
 
-        console.log(deathKingdomCoin.balanceOf(accounts[0]));
-
-        assert.equal(deathKingdomCoin.balanceOf.call(accounts[0]), 1000000000000000000 * 100000000, "Start balance");
     })
 })
 

@@ -6,6 +6,7 @@ TagManager:
   tags:
   - HpBox
   - HealBarHpBox
+  - WoodBox
   layers:
   - Default
   - TransparentFX

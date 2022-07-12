@@ -224,6 +224,53 @@ public class NetworkClient : SocketIOComponent
                     ni1.setHealthBar(healthBar);
 
                 }
+                if (name == "buffItem")
+                {
+                    string type = E.data["type"].ToString().RemoveQuotes();
+                    ServerObjectData sod1 = serverSpawnables.GetObjectByName(name + "_" + type);
+                    Debug.Log(name + "_" + type);
+                    GameObject spawnedObject1 = Instantiate(sod1.Prefab, networkContainer);
+                    spawnedObject1.transform.position = new Vector3(x, y, 0);
+                    NetworkIdentity ni1 = spawnedObject1.GetComponent<NetworkIdentity>();
+                    ni1.SetControllerId(id);
+                    ni1.SetSocketReference(this);
+                    serverObjects.Add(id, ni1);
+                }
+                if(name == "WoodBox")
+                {
+                    float health = E.data["health"].f;
+                    ServerObjectData sod1 = serverSpawnables.GetObjectByName(name);
+                    GameObject spawnedObject1 = Instantiate(sod1.Prefab, networkContainer);
+                    spawnedObject1.transform.position = new Vector3(x, y, 0);
+                    NetworkIdentity ni1 = spawnedObject1.GetComponent<NetworkIdentity>();
+                    ni1.SetControllerId(id);
+                    ni1.SetSocketReference(this);
+                    serverObjects.Add(id, ni1);
+                    GameObject h = Instantiate(healthComponent, spawnedObject1.transform);
+                    h.SetActive(false);
+                    var healthBar = h.transform.GetComponentInChildren<HealthBar>();
+                    if (ClientID == id)
+                    {
+                        healthBar.setIsMyHealth(true);
+                    }
+
+                    healthBar.SetHealth(health);
+                    healthBar.SetMaxHealth(health);
+
+                    healthBar.setMyGamTransform(spawnedObject1.transform);
+                    h.name = $"Health : {id}";
+                    ni1.setHealthBar(healthBar);
+                }
+                if(name == "Helipad")
+                {
+                    ServerObjectData sod1 = serverSpawnables.GetObjectByName(name);
+                    GameObject spawnedObject1 = Instantiate(sod1.Prefab, networkContainer);
+                    spawnedObject1.transform.position = new Vector3(x, y, 0);
+                    NetworkIdentity ni1 = spawnedObject1.GetComponent<NetworkIdentity>();
+                    ni1.SetControllerId(id);
+                    ni1.SetSocketReference(this);
+                    serverObjects.Add(id, ni1);
+                }
             }
         });
 
@@ -298,7 +345,7 @@ public class NetworkClient : SocketIOComponent
         On("serverUnSpawn", (E) =>
         {
             string id = E.data["id"].ToString().RemoveQuotes();
-            NetworkIdentity ni = serverObjects[id];
+            NetworkIdentity ni = serverObjects[id];          
             serverObjects.Remove(id);
             DestroyImmediate(ni.gameObject);
         });
@@ -338,6 +385,7 @@ public class NetworkClient : SocketIOComponent
             Transform effect = serverObjects[playerId].transform.Find("Immunity Area Effect");
             effect.gameObject.SetActive(false);
         });
+       
 
 
         // update player died

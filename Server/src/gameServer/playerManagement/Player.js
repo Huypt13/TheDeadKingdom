@@ -15,6 +15,8 @@ class Player {
     this.isDead = false;
     this.respawnTicker = 0;
     this.respawnTime = 0;
+    this.healTicker = 0;
+    this.healTime = 0;
     this.kill = 0;
     this.dead = 0;
     this.maxHealth = 800;
@@ -68,7 +70,7 @@ class Player {
     }
   }
   dealDamage(amount) {
-    console.log(`DealDame ${GameMechanism.getDame(this.tank, amount)}`);
+    // console.log(`DealDame ${GameMechanism.getDame(this.tank, amount)}`);
     this.health -= GameMechanism.getDame(this.tank, amount);
     if (this.health <= 0) {
       this.isDead = true;
@@ -95,18 +97,18 @@ class Player {
   }
   healHp() {
  
-    this.respawnTicker += 1;
-    if (this.respawnTicker >= (this.effect.healing.waiting-0.01)* 10) {
+    this.healTicker += 1;
+    if (this.healTicker >= (this.effect.healing.waiting-0.01)* 10) {
       this.health += this.effect.healing.value;
       if (this.health >= this.maxHealth) {
         this.health = this.maxHealth;
         return true;
       }
-      this.respawnTicker = 0;
-      this.respawnTime += 1;
-      if (this.respawnTime >= this.effect.healing.times) {
-        this.respawnTicker = 0;
-        this.respawnTime = 0;
+      this.healTicker = 0;
+      this.healTime += 1;
+      if (this.healTime >= this.effect.healing.times) {
+        this.healTicker = 0;
+        this.healTime = 0;
         return true;
       }
     }

@@ -64,6 +64,35 @@ class Connection {
       if (connection.lobby instanceof GameLobby)
         this.lobby.onCollisionDestroyHpBox(this, data);
     });
+    socket.on('collisionDestroyWoodBox', (data) => {
+      if (connection.lobby instanceof GameLobby)
+      this.lobby.onCollisionDestroyWoodBox(this, data);
+    });
+    // socket.on('collisionEffectBuffArmorItem', (data) => {
+    //   if (connection.lobby instanceof GameLobby){
+    //     const id = data.id;
+    //     this.lobby.collisionEffectBuffArmorItem(this, id);
+    //   }
+    // });
+    // socket.on('collisionEffectTripleBulletItem', (data) => {
+    //   if (connection.lobby instanceof GameLobby){
+    //     const id = data.id;
+    //     this.lobby.collisionEffectTripleBulletItem(this, id);
+    //   }
+    // });
+    // socket.on('collisionEffectHealItem', (data) => {
+    //   if (connection.lobby instanceof GameLobby){
+    //     const id = data.id;
+    //     this.lobby.collisionEffectHealItem(this, id);
+    //   }
+    // });
+    // socket.on('collisionEffectFastSpeedItem', (data) => {
+    //   if (connection.lobby instanceof GameLobby){
+    //     const id = data.id;
+    //     this.lobby.collisionEffectFastSpeedItem(this, id);
+    //   }
+    // });
+
     // skill
   }
 }

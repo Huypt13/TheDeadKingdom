@@ -25,3 +25,15 @@ MonoBehaviour:
     Prefab: {fileID: 3179618275572778288, guid: 2f5fee66b11c2954d81634a019d7f2ea, type: 3}
   - Name: Hp_Potion_2
     Prefab: {fileID: 3179618275572778288, guid: 13dba4b32d510f14cbe91d7f382b4f69, type: 3}
+  - Name: buffItem_Hp
+    Prefab: {fileID: 951066480273024931, guid: c5de2606f1b533342b388437835513c8, type: 3}
+  - Name: buffItem_Speed
+    Prefab: {fileID: 9189018206323813231, guid: 32d15de06540fe54f9248185f7f6daa5, type: 3}
+  - Name: WoodBox
+    Prefab: {fileID: 5827310782098950646, guid: 46bc00af3873cd0429b63f2608c407f4, type: 3}
+  - Name: Helipad
+    Prefab: {fileID: 3447365066614579900, guid: e69adb899fc9b384bb528c8a65bde0d8, type: 3}
+  - Name: buffItem_Armor
+    Prefab: {fileID: 9189018206323813231, guid: 32d15de06540fe54f9248185f7f6daa5, type: 3}
+  - Name: buffItem_tripleBullet
+    Prefab: {fileID: 9189018206323813231, guid: 32d15de06540fe54f9248185f7f6daa5, type: 3}

@@ -111,6 +111,18 @@ public class NetworkClient : SocketIOComponent
 
             }
         });
+        On("deadPlayerReset", (E) =>
+        {
+            string id = E.data["id"].str;
+            float speed = E.data["speed"].f;
+            float attackSpeed = E.data["attackSpeed"].f;
+            var ni = serverObjects[id];
+            TankGeneral tg = ni.GetComponent<TankGeneral>();
+            tg.Speed = speed;
+            tg.AttackSpeed = attackSpeed;
+
+        });
+
 
         On("skillEffectAnimation", (E) =>
         {
@@ -126,13 +138,19 @@ public class NetworkClient : SocketIOComponent
             {
                 Destroy(niSkill.gameObject);
             }
+            if (E.data["time"] != null)
+            {
+                float time = E.data["time"].f;
+                StartCoroutine(RemoveEfAftertime(efAni, efId, time));
+            }
         });
+
 
         On("endEffectAnimation", (E) =>
         {
             Debug.Log("endEffectAnimation");
-            string id = E.data["id"].str;
-            var endEf = E.data["endEf"].list;
+            string id = E.data["id"].str;  //
+            var endEf = E.data["endEf"].list;  // 
             var ni = serverObjects[id];
             var efAni = ni.GetComponent<EffectAnimation>();
             endEf.ForEach(e =>
@@ -141,6 +159,8 @@ public class NetworkClient : SocketIOComponent
                 efAni.RemoveEffect(e["id"].str);
             });
         });
+
+
         On("changeAttackSpeed", (E) =>
         {
             string id = E.data["id"].str;
@@ -149,6 +169,14 @@ public class NetworkClient : SocketIOComponent
             var tg = ni.GetComponent<TankGeneral>();
             tg.AttackSpeed = attackSpeed;
             Debug.Log("Change attackSpeed " + attackSpeed);
+        });
+
+        On("removeAllEffect", (E) =>
+        {
+            string id = E.data["id"].str;
+            var ni = serverObjects[id];
+            var efAni = ni.GetComponent<EffectAnimation>();
+            efAni.RemoveALlEf();
         });
         On("isStunned", (E) =>
         {
@@ -290,7 +318,7 @@ public class NetworkClient : SocketIOComponent
             string id = E.data["id"].str;
             var num = E.data["num"].f;
             var typeId = E.data["typeId"].str;
-            Debug.LogFormat($"Server wants us to spawn a '{name}'");
+            Debug.LogFormat($"Server wants us to spawn a '{name}' ${num} ${typeId}");
             if (name == "OrientationSkill")
             {
                 float x = E.data["position"]["x"].f;
@@ -308,28 +336,26 @@ public class NetworkClient : SocketIOComponent
                 if (num == 1 && typeId == "001")
                 {
                     spawnedObject = Instantiate(netIdenPlayer.GetSkill1(), networkContainer);
-                    spawnedObject.transform.position = new Vector3(x, y, 0);
-                    ni = spawnedObject.GetComponent<NetworkIdentity>();
-                    ni.SetControllerId(id);
-                    ni.SetSocketReference(this);
-
-
                     var skill1_001 = spawnedObject.GetComponent<Skill1_001>();
                     skill1_001.ActiveBy = activator;
                 }
                 if (num == 2 && typeId == "001")
                 {
                     spawnedObject = Instantiate(netIdenPlayer.GetSkill2(), networkContainer);
-                    spawnedObject.transform.position = new Vector3(x, y, 0);
-                    ni = spawnedObject.GetComponent<NetworkIdentity>();
-                    ni.SetControllerId(id);
-                    ni.SetSocketReference(this);
-
-
                     var skill2_001 = spawnedObject.GetComponent<Skill2_001>();
                     skill2_001.ActiveBy = activator;
                 }
+                if (num == 1 && typeId == "002")
+                {
+                    spawnedObject = Instantiate(netIdenPlayer.GetSkill1(), networkContainer);
+                    var skill = spawnedObject.GetComponent<Skill1_002>();
+                    skill.ActiveBy = activator;
+                }
+                spawnedObject.transform.position = new Vector3(x, y, 0);
+                ni = spawnedObject.GetComponent<NetworkIdentity>();
+                ni.SetControllerId(id);
 
+                ni.SetSocketReference(this);
                 float rot = Mathf.Atan2(directionY, directionX) * Mathf.Rad2Deg;
                 Vector3 currentRotation = new Vector3(0, 0, rot + 90);
                 spawnedObject.transform.rotation = Quaternion.Euler(currentRotation);
@@ -355,6 +381,36 @@ public class NetworkClient : SocketIOComponent
                         efAni.SetEffectAnimation(id, ni.GetSkill3());
                     }
                 });
+            }
+            if (name == "skillRegion")
+            {
+                string activator = E.data["activator"].str;
+                var netIdenPlayer = serverObjects[activator];
+                float x = E.data["position"]["x"].f;
+                float y = E.data["position"]["y"].f;
+                GameObject spawnedObject = null;
+                NetworkIdentity ni = null;
+                if (typeId == "002" && num == 3)
+                {
+                    spawnedObject = Instantiate(netIdenPlayer.GetSkill3(), networkContainer);
+                    var skill = spawnedObject.GetComponent<Skill3_002>();
+                    skill.ActiveBy = activator;
+                }
+                if (typeId == "002" && num == 2)
+                {
+                    spawnedObject = Instantiate(netIdenPlayer.GetSkill2(), networkContainer);
+                    var skill = spawnedObject.GetComponent<Skill2_002>();
+                    skill.ActiveBy = activator;
+                }
+                spawnedObject.transform.position = new Vector3(x, y, 0);
+                ni = spawnedObject.GetComponent<NetworkIdentity>();
+                ni.SetControllerId(id);
+                ni.SetSocketReference(this);
+
+                Debug.Log("spawn skill " + id);
+
+                serverObjects.Add(id, ni);
+
             }
         });
 
@@ -439,7 +495,6 @@ public class NetworkClient : SocketIOComponent
             NetworkIdentity ni = serverObjects[id];
             serverObjects.Remove(id);
             DestroyImmediate(ni.gameObject);
-
         });
 
         // update pos player
@@ -666,5 +721,11 @@ public class NetworkClient : SocketIOComponent
             FindObjectOfType<MenuManager>().OnSignInComplete();
             FindObjectOfType<MenuManager>().message.text = error;
         });
+    }
+
+    private IEnumerator RemoveEfAftertime(EffectAnimation efAni, string id, float t)
+    {
+        yield return new WaitForSeconds(t);
+        efAni.RemoveEffect(id);
     }
 }

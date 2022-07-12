@@ -16,7 +16,7 @@ public class Skill2_001 : MonoBehaviour
         NetworkIdentity ni = collision?.gameObject?.GetComponent<NetworkIdentity>();
 
         // cham nhau
-        if (ni.GetComponent<Skill1_001>() != null)
+        if (ni.tag == "BulletThrough")
         {
             return;
         }
@@ -35,7 +35,7 @@ public class Skill2_001 : MonoBehaviour
             if (ni.IsControlling())
             {
                 gameObject.SetActive(false);
-                networkIdentity.GetSocket().Emit("touchSkill", new JSONObject(JsonUtility.ToJson(new Skill1Data()
+                networkIdentity.GetSocket().Emit("touchSkill", new JSONObject(JsonUtility.ToJson(new TouchData()
                 {
                     id = networkIdentity.GetId(),
                     num = 2,
@@ -54,7 +54,7 @@ public class Skill2_001 : MonoBehaviour
             {
 
                 gameObject.SetActive(false);
-                networkIdentity.GetSocket().Emit("touchSkill", new JSONObject(JsonUtility.ToJson(new Skill1Data()
+                networkIdentity.GetSocket().Emit("touchSkill", new JSONObject(JsonUtility.ToJson(new TouchData()
                 {
                     id = networkIdentity.GetId(),
                     num = 2,

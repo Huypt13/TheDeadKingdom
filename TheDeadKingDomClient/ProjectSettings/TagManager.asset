@@ -6,11 +6,12 @@ TagManager:
   tags:
   - HpBox
   - HealBarHpBox
+  - BulletThrough
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - BulletThrough
   - Water
   - UI
   - Tree

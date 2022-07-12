@@ -25,4 +25,14 @@ public class EffectAnimation : MonoBehaviour
         }
     }
 
+    public void RemoveALlEf()
+    {
+        var ni = GetComponent<NetworkIdentity>();
+
+        foreach (Transform child in ni.GetEffectZone().transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+    }
+
 }

@@ -50,11 +50,7 @@ class Player {
       slowled: [], // lam cham  vd {id : xxx ,value : 0.2 , time : 10}
       stunned: [], // thoi gian bi lam choang ko dung dc chieu ko ban dc
       tiedUp: [], // thoi gian bi troi van dung dc chieu vs ban dc
-      burned: {
-        value: 0, // dame moi lan dot
-        times: 0, // so lan dot
-        waiting: 0, // time giua moi lan dot
-      },
+      burned: [],
       // hieu ung co loi
 
       healing: {
@@ -122,6 +118,44 @@ class Player {
       }
     }
     return false;
+  }
+  onBurnCounter(lobby) {
+    let endEf = []; // list effect ket thuc trong lan update
+    let healthChange = false;
+    this.effect.burned.forEach((burn) => {
+      burn.countTime += 0.1;
+      if (burn.countTime >= burn.waiting - 0.01) {
+        healthChange = true;
+        burn.countTime = 0;
+        burn.times--;
+        if (burn.times <= 0) {
+          endEf.push(burn);
+        } else {
+          this.health -= GameMechanism.getDame(this.tank, burn.value);
+          if (this.health <= 0) {
+            this.isDead = true;
+            const activator = lobby.skill.find((sk) => {
+              sk.id == burn.id;
+            })?.activator;
+            lobby.deadUpdate(lobby.connections[0], this, activator);
+            return;
+          }
+        }
+      }
+    });
+    if (endEf.length > 0) {
+      endEf.forEach((ef) => {
+        let index = this.effect.burned.indexOf(ef);
+        if (index > -1) {
+          console.log("remove burn index", index, ef.id);
+          this.effect.burned.splice(index, 1);
+        }
+      });
+    }
+    return {
+      endEf,
+      healthChange,
+    };
   }
   onSlowCounter() {
     let endEf = []; // list hieu ung ket thuc
@@ -219,6 +253,7 @@ class Player {
       endEf,
     };
   }
+
   onStunnedCounter() {
     let endEf = []; // list hieu ung ket thuc
     this.effect.stunned.forEach((ef) => {
@@ -241,7 +276,67 @@ class Player {
     };
   }
 
-  deadResetEffect() {}
+  onSkillCounter() {
+    //skill1
+    //skill2
+    //skill3
+  }
+
+  deadResetEffect() {
+    this.tankRotation = 0;
+    this.berrelRotaion = 0;
+    this.respawnCount = {
+      healing: 0,
+      slowled: 0,
+      stunned: 0,
+      tiedUp: 0,
+      burned: 0,
+      speedUp: 0,
+      virtualBlood: 0,
+      damagedUp: 0,
+      armorUp: 0,
+      attackSpeedUp: 0,
+    };
+    this.respawnCountTime = {
+      healing: 0,
+      slowled: 0,
+      stunned: 0,
+      tiedUp: 0,
+      burned: 0,
+      speedUp: 0,
+      virtualBlood: 0,
+      damagedUp: 0,
+      armorUp: 0,
+      attackSpeedUp: 0,
+    };
+    this.tank = { ...this.startTank };
+    this.effect = {
+      // bat loi
+      slowled: [], // lam cham  vd {value : 0.2 , time : 10}
+      stunned: [], // thoi gian bi lam choang ko dung dc chieu ko ban dc
+      tiedUp: [], // thoi gian bi troi van dung dc chieu vs ban dc
+      burned: [],
+      // hieu ung co loi
+
+      healing: {
+        value: 0, // value mau moi lan hoi
+        times: 0, // so lan hoi mau
+        waiting: 0, // time giua moi lan hoi mau
+      },
+
+      // tang toc do di chuyen
+      speedUp: [],
+
+      // tang mau ao
+      virtualBlood: [],
+      // tang dame
+      damagedUp: [],
+      // tang giap
+      armorUp: [],
+      // tang toc danh
+      attackSpeedUp: [],
+    };
+  }
   setInitValue() {
     this.kill = 0;
     this.dead = 0;
@@ -279,11 +374,7 @@ class Player {
       slowled: [], // lam cham  vd {value : 0.2 , time : 10}
       stunned: [], // thoi gian bi lam choang ko dung dc chieu ko ban dc
       tiedUp: [], // thoi gian bi troi van dung dc chieu vs ban dc
-      burned: {
-        value: 0, // dame moi lan dot
-        times: 0, // so lan dot
-        waiting: 0, // time giua moi lan dot
-      },
+      burned: [],
       // hieu ung co loi
 
       healing: {

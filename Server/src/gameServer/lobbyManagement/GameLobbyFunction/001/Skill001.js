@@ -32,7 +32,7 @@ function Skill1Handler(connection, data, lobby) {
       id: subjectOfAttack.id,
       health: subjectOfAttack.health,
     };
-    console.log("skill dame", returnData);
+    console.log("skill dame 1 001", returnData);
     connection.socket.emit("playerAttacked", returnData);
     connection.socket.broadcast.to(lobby.id).emit("playerAttacked", returnData);
 
@@ -107,7 +107,7 @@ function Skill2Handler(connection, data, lobby) {
       id: subjectOfAttack.id,
       health: subjectOfAttack.health,
     };
-    console.log("skill dame", returnData);
+    console.log("skill dame 2 001", returnData);
     connection.socket.emit("playerAttacked", returnData);
     connection.socket.broadcast.to(lobby.id).emit("playerAttacked", returnData);
 

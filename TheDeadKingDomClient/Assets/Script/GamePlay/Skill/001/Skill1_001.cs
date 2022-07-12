@@ -17,10 +17,11 @@ public class Skill1_001 : MonoBehaviour
         NetworkIdentity ni = collision?.gameObject?.GetComponent<NetworkIdentity>();
 
         // cham nhau
-        if (ni.GetComponent<Skill1_001>() != null)
+        if (ni.tag == "BulletThrough")
         {
             return;
         }
+
 
         // ko phai cham chinh minh
 
@@ -35,7 +36,7 @@ public class Skill1_001 : MonoBehaviour
             // client trung dan gui request
             if (ni.IsControlling())
             {
-                networkIdentity.GetSocket().Emit("touchSkill", new JSONObject(JsonUtility.ToJson(new Skill1Data()
+                networkIdentity.GetSocket().Emit("touchSkill", new JSONObject(JsonUtility.ToJson(new TouchData()
                 {
                     id = networkIdentity.GetId(),
                     num = 1,
@@ -52,7 +53,7 @@ public class Skill1_001 : MonoBehaviour
 
             if (niActive.IsControlling() && ni.GetComponent<AiManager>() != null)
             {
-                networkIdentity.GetSocket().Emit("touchSkill", new JSONObject(JsonUtility.ToJson(new Skill1Data()
+                networkIdentity.GetSocket().Emit("touchSkill", new JSONObject(JsonUtility.ToJson(new TouchData()
                 {
                     id = networkIdentity.GetId(),
                     num = 1,
@@ -68,12 +69,4 @@ public class Skill1_001 : MonoBehaviour
     }
 
 }
-[Serializable]
-public class Skill1Data
-{
-    public string id;
-    public float num;
-    public string typeId;
-    public string enemyId;
-    public string typeEnemy;
-}
+

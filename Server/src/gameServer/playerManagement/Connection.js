@@ -45,7 +45,11 @@ class Connection {
         this.lobby.onTouchSkill(this, data);
       }
     });
-
+    socket.on("exitSkill", (data) => {
+      if (connection.lobby instanceof GameLobby) {
+        this.lobby.onExitSkill(this, data);
+      }
+    });
     socket.on("collisionDestroy", (data) => {
       if (connection.lobby instanceof GameLobby)
         this.lobby.onCollisionDestroy(this, data);

@@ -11,11 +11,11 @@ public class TankSkill001 : MonoBehaviour
 
     [SerializeField]
     private NetworkIdentity networkIdentity;
-    Skill1001Data sk1;
+    SkillOrientationData sk1;
     // Start is called before the first frame update
     void Start()
     {
-        sk1 = new Skill1001Data();
+        sk1 = new SkillOrientationData();
         sk1.direction = new Position();
         sk1.position = new Position();
     }
@@ -94,13 +94,3 @@ public class TankSkill001 : MonoBehaviour
     // skill space cuong hoa cong giap speep toc danh mau ao
 }
 
-[Serializable]
-class Skill1001Data
-{
-    public string id;
-    public float num;
-    public string typeId;
-    public string activator;
-    public Position position;
-    public Position direction;
-}

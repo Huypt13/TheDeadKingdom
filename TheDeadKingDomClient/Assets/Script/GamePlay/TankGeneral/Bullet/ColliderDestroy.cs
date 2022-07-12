@@ -33,10 +33,11 @@ public class ColliderDestroy : MonoBehaviour
 
         // bullet cham nhau
 
-        if (ni.GetComponent<WhoActivatedMe>() != null)
+        if (ni.tag == "BulletThrough")
         {
             return;
         }
+
 
         // khong phai ai ban nhau
 

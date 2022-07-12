@@ -121,6 +121,29 @@ function onAttackSpeedEffect(connection, lobby) {
     });
   }
 }
+
+function onBurnedEffect(connection, lobby) {
+  const { endEf, healthChange } = connection.player.onBurnCounter(lobby);
+  if (healthChange) {
+    let returnData = {
+      id: connection.player.id,
+      health: connection.player.health,
+    };
+    connection.socket.emit("playerAttacked", returnData);
+    connection.socket.broadcast.to(lobby.id).emit("playerAttacked", returnData);
+
+    if (endEf.length > 0) {
+      connection.socket.emit("endEffectAnimation", {
+        endEf,
+        id: connection.player.id,
+      });
+      connection.socket.broadcast.to(lobby.id).emit("endEffectAnimation", {
+        endEf,
+        id: connection.player.id,
+      });
+    }
+  }
+}
 module.exports = {
   healHp,
   onSlowEffect,
@@ -128,4 +151,5 @@ module.exports = {
   onDamagedUpEffect,
   onArmordUpEffect,
   onAttackSpeedEffect,
+  onBurnedEffect,
 };

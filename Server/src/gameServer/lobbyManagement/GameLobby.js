@@ -14,6 +14,8 @@ const Skill001 = require("./GameLobbyFunction/001/Skill001");
 
 const LobbyEffect = require("./GameLobbyFunction/LobbyEffect");
 const SkillBuff = require("../gamePlay/serverObjects/SkillBuff");
+const Skill002 = require("./GameLobbyFunction/002/Skill002");
+const SkillRegion = require("../gamePlay/serverObjects/SkillRegion");
 
 module.exports = class GameLobby extends LobbyBase {
   constructor(settings = GameLobbySettings) {
@@ -430,6 +432,11 @@ module.exports = class GameLobby extends LobbyBase {
           this.endSkillBuff(skill);
         }
       }
+      if (skill instanceof SkillRegion) {
+        if (skill.onUpdate()) {
+          this.despawnSkill(skill);
+        }
+      }
     });
   }
 
@@ -506,7 +513,25 @@ module.exports = class GameLobby extends LobbyBase {
     connection.socket.emit("skillSpawn", returnData);
     connection.socket.broadcast.to(this.id).emit("skillSpawn", returnData);
   }
+  createRegionSkill(data, activeBy, connection, skill, timeRemain) {
+    const { position, activator, typeId, num } = data;
+    let skillObj = new SkillRegion(position, skill);
+    skillObj.activator = activator;
+    skillObj.team = activeBy?.player?.team;
+    skillObj.timeRemain = timeRemain;
+    this.skill.push(skillObj);
 
+    const returnData = {
+      name: "skillRegion",
+      activator,
+      id: skillObj.id,
+      typeId,
+      num,
+      position,
+    };
+    connection.socket.emit("skillSpawn", returnData);
+    connection.socket.broadcast.to(this.id).emit("skillSpawn", returnData);
+  }
   createBuffSkill(connection, playerImpacted, timeRemain, typeId, num) {
     const skillBuff = new SkillBuff();
     skillBuff.playerImpacted = playerImpacted;
@@ -551,12 +576,35 @@ module.exports = class GameLobby extends LobbyBase {
         typeId,
         num
       );
+      Skill001.Skill3Handler(
+        connection,
+        connection.player.startTank.skill3,
+        this
+      );
+    } else if (typeId === "002" && num === 1) {
+      this.createOrientationSkill(
+        data,
+        activeBy,
+        connection,
+        activeBy?.player?.tank?.skill1
+      );
+    } else if (typeId === "002" && num === 2) {
+      this.createRegionSkill(
+        data,
+        activeBy,
+        connection,
+        activeBy?.player?.tank?.skill2,
+        activeBy?.player?.tank?.skill2.slowled.time
+      );
+    } else if (typeId === "002" && num === 3) {
+      this.createRegionSkill(
+        data,
+        activeBy,
+        connection,
+        activeBy?.player?.tank?.skill3,
+        0.5
+      );
     }
-    Skill001.Skill3Handler(
-      connection,
-      connection.player.startTank.skill3,
-      this
-    );
   }
   onTouchSkill(connection, data) {
     const { typeId, num } = data;
@@ -566,8 +614,23 @@ module.exports = class GameLobby extends LobbyBase {
     if (typeId == "001" && num === 2) {
       Skill001.Skill2Handler(connection, data, this);
     }
+    if (typeId == "002" && num === 1) {
+      Skill002.Skill1Handler(connection, data, this);
+    }
+    if (typeId == "002" && num === 2) {
+      Skill002.Skill2Handler(connection, data, this);
+    }
+    if (typeId == "002" && num === 3) {
+      Skill002.Skill3Handler(connection, data, this);
+    }
   }
+  onExitSkill(connection, data) {
+    const { typeId, num } = data;
 
+    if (typeId == "002" && num === 2) {
+      Skill002.Skill2Exit(connection, data, this);
+    }
+  }
   deadUpdate(connection, subjectOfAttack, activator) {
     if (
       subjectOfAttack instanceof Player ||
@@ -791,6 +854,23 @@ module.exports = class GameLobby extends LobbyBase {
     connections.forEach((connection) => {
       let player = connection.player;
       if (player.isDead) {
+        player.deadResetEffect();
+        connection.socket.emit("removeAllEffect", { id: player.id });
+        connection.socket.broadcast
+          .to(this.id)
+          .emit("removeAllEffect", { id: player.id });
+
+        connection.socket.emit("deadPlayerReset", {
+          id: player.id,
+          speed: player.startTank.speed,
+          attackSpeed: player.startTank.attackSpeed,
+        });
+        connection.socket.broadcast.to(this.id).emit("deadPlayerReset", {
+          id: player.id,
+          speed: player.startTank.speed,
+          attackSpeed: player.startTank.attackSpeed,
+        });
+
         let isRespawn = player.respawnCounter();
         if (isRespawn) {
           let returnData = {
@@ -909,6 +989,9 @@ module.exports = class GameLobby extends LobbyBase {
       }
       if (connection.player.effect.attackSpeedUp.length > 0) {
         LobbyEffect.onAttackSpeedEffect(connection, this);
+      }
+      if (connection.player.effect.burned.length > 0) {
+        LobbyEffect.onBurnedEffect(connection, this);
       }
     }
   }

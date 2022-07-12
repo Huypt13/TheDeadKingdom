@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 587911536024407657}
   m_Layer: 0
   m_Name: Bullet _ 001 _ LV2
-  m_TagString: Untagged
+  m_TagString: BulletThrough
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -32,7 +32,7 @@ Transform:
   m_GameObject: {fileID: 4147309264590899289}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.45, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -79,7 +79,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 52786b274c91b9343b42f43961fa9e13, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c143aadfc38d40f4aabc25fd7408b9ad, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -148,6 +148,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bullet: {fileID: 0}
+  effectZone: {fileID: 0}
+  skill1: {fileID: 0}
+  skill2: {fileID: 0}
+  skill3: {fileID: 0}
 --- !u!70 &7787227297416949685
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -161,8 +165,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.0136027485, y: -0.0006299168}
-  m_Size: {x: 0.3988448, y: 0.3988448}
+  m_Offset: {x: -0.0136027485, y: 0.01364287}
+  m_Size: {x: 0.3988448, y: 0.8981941}
   m_Direction: 0
 --- !u!114 &587911536024407657
 MonoBehaviour:

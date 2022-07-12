@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 587911536024407657}
   m_Layer: 0
   m_Name: Bullet_Boss _ 01
-  m_TagString: Untagged
+  m_TagString: BulletThrough
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -148,6 +148,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bullet: {fileID: 0}
+  effectZone: {fileID: 0}
+  skill1: {fileID: 0}
+  skill2: {fileID: 0}
+  skill3: {fileID: 0}
 --- !u!70 &7787227297416949685
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

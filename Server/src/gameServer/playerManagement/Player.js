@@ -159,6 +159,7 @@ class Player {
   }
   onSlowCounter() {
     let endEf = []; // list hieu ung ket thuc
+    // {0.5 , 5}  {0.3, 10} , {-0.3,4}
     let totalSlowed = 0;
     this.effect.slowled.forEach((ef) => {
       ef.time -= 0.1;

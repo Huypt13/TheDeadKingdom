@@ -21,3 +21,9 @@ MonoBehaviour:
     Prefab: {fileID: 6665555187601314377, guid: c18563d6f43b8430ba6f9dd95067f4fe, type: 3}
   - Name: Tank_001_2
     Prefab: {fileID: 694932519919396962, guid: a39a73ff658d14096ab659a3252e194b, type: 3}
+  - Name: Hp_Potion_1
+    Prefab: {fileID: 3179618275572778288, guid: 2f5fee66b11c2954d81634a019d7f2ea, type: 3}
+  - Name: Hp_Potion_2
+    Prefab: {fileID: 3179618275572778288, guid: 13dba4b32d510f14cbe91d7f382b4f69, type: 3}
+  - Name: Tank_002_1
+    Prefab: {fileID: 6619692362034631719, guid: 64ad1105d55db49be9c29717e96f0e46, type: 3}

@@ -6,7 +6,6 @@ class TankController {
     const { user } = res.locals;
     console.log(user._id);
     const tankList = await TankService.getTankByUserId(user._id.toString());
-    console.log(tankList);
     return ApiResponse.successResponseWithData(res, "Ok", {
       tankList: tankList[0]?.tankList ? tankList[0]?.tankList : [],
     });

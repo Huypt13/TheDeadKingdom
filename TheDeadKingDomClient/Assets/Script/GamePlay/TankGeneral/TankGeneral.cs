@@ -10,7 +10,8 @@ public class TankGeneral : MonoBehaviour
     private float rotation = 60;
     private float attackSpeed = 1;
     private float health = 100;
-
+    private bool stunned = false;// choang
+    private bool tiedUp = false;  // troi
     [Header("Object References")]
     [SerializeField]
     private Transform barrelPivot;
@@ -27,11 +28,24 @@ public class TankGeneral : MonoBehaviour
     [SerializeField]
     private NetworkIdentity networkIdentity;
 
+    public float Speed { get => speed; set => speed = value; }
+    public bool Stunned { get => stunned; set => stunned = value; }
+    public bool TiedUp { get => tiedUp; set => tiedUp = value; }
+    public float AttackSpeed
+    {
+        get => attackSpeed;
+        set
+        {
+            attackSpeed = value;
+            shootingCooldown = new Cooldown(AttackSpeed);
+        }
+    }
+
     void Start()
     {
 
         // thiet lap lay tu bach-end
-        shootingCooldown = new Cooldown(attackSpeed);
+        shootingCooldown = new Cooldown(AttackSpeed);
         bulletData = new BulletData();
         bulletData.position = new Position();
         bulletData.direction = new Position();
@@ -40,11 +54,11 @@ public class TankGeneral : MonoBehaviour
 
     public void SetInitValue(float speed1, float rotation1, float attackSpeed1, float health1)
     {
-        speed = speed1;
+        Speed = speed1;
         rotation = rotation1;
-        attackSpeed = attackSpeed1;
+        AttackSpeed = attackSpeed1;
         health = health1;
-        shootingCooldown = new Cooldown(attackSpeed);
+        shootingCooldown = new Cooldown(AttackSpeed);
 
     }
 
@@ -52,9 +66,12 @@ public class TankGeneral : MonoBehaviour
     {
         if (networkIdentity.IsControlling())
         {
-            TankMovement();
+            if (!Stunned && !TiedUp)
+                TankMovement();
+
+            if (!Stunned)
+                Shooting();
             BarrelRotation();
-            Shooting();
         }
     }
 
@@ -93,7 +110,7 @@ public class TankGeneral : MonoBehaviour
         //else
         //{
         //    Debug.DrawRay(transform.position, transform.up * 10, Color.white);
-        transform.position += transform.up * vertical * speed * Time.deltaTime;
+        transform.position += transform.up * vertical * Speed * Time.deltaTime;
         //    Debug.Log("Did not Hit");
         //}
         //}

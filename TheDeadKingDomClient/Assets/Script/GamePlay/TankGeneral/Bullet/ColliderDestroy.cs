@@ -18,7 +18,6 @@ public class ColliderDestroy : MonoBehaviour
 
 
         NetworkIdentity ni = collision?.gameObject?.GetComponent<NetworkIdentity>();
-
         // cham cay
         if (ni == null)
         {
@@ -34,10 +33,11 @@ public class ColliderDestroy : MonoBehaviour
 
         // bullet cham nhau
 
-        if (ni.GetComponent<WhoActivatedMe>() != null)
+        if (ni.tag == "BulletThrough")
         {
             return;
         }
+
 
         // khong phai ai ban nhau
 
@@ -52,12 +52,12 @@ public class ColliderDestroy : MonoBehaviour
                 {
                     return;
                 }
-
+                // destroy luon vi neu cho server tra ve se bi delay
+                Destroy(gameObject);
                 // client bi ban , thi client trung dan gui request
 
                 if (ni.IsControlling())
                 {
-                    Destroy(gameObject);
                     NetworkClient.serverObjects.Remove(networkIdentity.GetId());
                     networkIdentity.GetSocket().Emit("collisionDestroy", new JSONObject(JsonUtility.ToJson(new IDData()
                     {
@@ -71,9 +71,20 @@ public class ColliderDestroy : MonoBehaviour
 
                 if (niActive.IsControlling() && ni.GetComponent<AiManager>() != null)
                 {
-                    Destroy(gameObject);
                     NetworkClient.serverObjects.Remove(networkIdentity.GetId());
                     networkIdentity.GetSocket().Emit("collisionDestroy", new JSONObject(JsonUtility.ToJson(new IDData()
+                    {
+                        id = networkIdentity.GetId(),
+                        enemyId = ni.GetId()
+                    })));
+                    return;
+                }
+
+                // ban trung hop mau firer gui reques
+                if (ni.GetComponent<ColliderEffect>() != null && niActive.IsControlling())
+                {
+                    NetworkClient.serverObjects.Remove(networkIdentity.GetId());
+                    networkIdentity.GetSocket().Emit("collisionDestroyHpBox", new JSONObject(JsonUtility.ToJson(new IDData()
                     {
                         id = networkIdentity.GetId(),
                         enemyId = ni.GetId()

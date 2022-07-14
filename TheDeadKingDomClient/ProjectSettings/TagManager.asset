@@ -3,12 +3,15 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - HpBox
+  - HealBarHpBox
+  - BulletThrough
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - BulletThrough
   - Water
   - UI
   - Tree

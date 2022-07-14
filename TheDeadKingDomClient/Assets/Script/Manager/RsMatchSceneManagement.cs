@@ -27,6 +27,8 @@ public class RsMatchSceneManagement : MonoBehaviour
     private void UpdateRs(SocketIOEvent e)
     {
         string rs = e.data["result"].str;
+        float kill1 = e.data["kill1"].f;
+        float kill2 = e.data["kill2"].f;
         var playersRs = e.data["playerRs"].list;
         string text1 = "";
         string text2 = "";
@@ -46,7 +48,7 @@ public class RsMatchSceneManagement : MonoBehaviour
             }
         });
         if (result != null)
-            result.GetComponent<Text>().text = $"{rs} \n\n {text1} \n\n\n {text2}";
+            result.GetComponent<Text>().text = $"{rs}  {kill1}- {kill2} \n\n {text1} \n\n\n {text2}";
     }
 
     public void GoToMenu()
@@ -54,8 +56,6 @@ public class RsMatchSceneManagement : MonoBehaviour
         SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
         {
             SceneManagement.Instance.UnLoadLevel(SceneList.MATCHRS);
-            //    NetworkClient.OnResultMatch.EndInvoke(null);
-            //    NetworkClient.OnGameStateChange.EndInvoke(null);
             FindObjectOfType<MenuManager>().OnSignInComplete();
         });
     }

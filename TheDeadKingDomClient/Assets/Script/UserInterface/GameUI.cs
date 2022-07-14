@@ -46,6 +46,9 @@ public class GameUI : MonoBehaviour
             case "Lobby":
                 gameLobbyContainer.SetActive(false);
                 break;
+            case "Error":
+                gameLobbyContainer.SetActive(false);
+                break;
             default:
                 gameLobbyContainer.SetActive(false);
                 break;

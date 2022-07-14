@@ -12,10 +12,21 @@ public class NetworkIdentity : MonoBehaviour
     private bool isControlling;
     private SocketIOComponent socket;
     private HealthBar healthBar;
-    [SerializeField]
-    GameObject bullet;
 
+    [SerializeField]
+    private GameObject bullet;
+    [SerializeField]
+    private GameObject effectZone;
+    [SerializeField]
+    private GameObject skill1;
+    [SerializeField]
+    private GameObject skill2;
+    [SerializeField]
+    private GameObject skill3;
+
+    private string typeId;
     public float Team { get => team; set => team = value; }
+    public string TypeId { get => typeId; set => typeId = value; }
 
     // private HealthBar healthBar;
     private void Awake()
@@ -48,6 +59,23 @@ public class NetworkIdentity : MonoBehaviour
     public GameObject GetBullet()
     {
         return bullet;
+    }
+    public GameObject GetSkill1()
+    {
+        return skill1;
+    }
+    public GameObject GetSkill2()
+    {
+        return skill2;
+    }
+    public GameObject GetSkill3()
+    {
+        return skill3;
+    }
+
+    public GameObject GetEffectZone()
+    {
+        return effectZone;
     }
     public bool IsControlling()
     {

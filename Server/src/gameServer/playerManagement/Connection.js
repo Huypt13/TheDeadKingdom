@@ -25,13 +25,30 @@ class Connection {
 
     // choose hero
     socket.on("chooseHero", (data) => {
-      connection.lobby.someOneChooseHero(connection, data);
+      if (connection.lobby instanceof GameLobby)
+        connection.lobby.someOneChooseHero(connection, data);
     });
     // in game
     // general
     socket.on("fireBullet", (data) => {
       if (connection.lobby instanceof GameLobby)
         connection.lobby.onFireBullet(connection, data, false);
+    });
+    // nhan skill 1
+    socket.on("skill", (data) => {
+      if (connection.lobby instanceof GameLobby) {
+        connection.lobby.onSkill(connection, data);
+      }
+    });
+    socket.on("touchSkill", (data) => {
+      if (connection.lobby instanceof GameLobby) {
+        this.lobby.onTouchSkill(this, data);
+      }
+    });
+    socket.on("exitSkill", (data) => {
+      if (connection.lobby instanceof GameLobby) {
+        this.lobby.onExitSkill(this, data);
+      }
     });
     socket.on("collisionDestroy", (data) => {
       if (connection.lobby instanceof GameLobby)
@@ -58,7 +75,6 @@ class Connection {
         const id = data.id;
         this.lobby.onCollisionHealHpEffects(this, id);
       }
-      
     });
     socket.on("collisionDestroyHpBox", (data) => {
       if (connection.lobby instanceof GameLobby)

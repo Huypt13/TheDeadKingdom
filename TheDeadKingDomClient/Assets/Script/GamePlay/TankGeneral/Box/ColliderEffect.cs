@@ -8,13 +8,9 @@ public class ColliderEffect : MonoBehaviour
 {
     public void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("hello");
         NetworkIdentity ni = collision.gameObject.GetComponent<NetworkIdentity>();
-      
-       
         if (ni.GetComponent<WhoActivatedMe>() == null && ni.IsControlling())
         {
-            Debug.Log("hello1");
             //transform.gameObject.SetActive(false);
             ni.GetSocket().Emit("onCollisionHealHpEffects", new JSONObject(JsonUtility.ToJson(new Potion()
             {

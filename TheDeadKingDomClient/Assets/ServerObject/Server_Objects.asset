@@ -25,6 +25,7 @@ MonoBehaviour:
     Prefab: {fileID: 3179618275572778288, guid: 2f5fee66b11c2954d81634a019d7f2ea, type: 3}
   - Name: Hp_Potion_2
     Prefab: {fileID: 3179618275572778288, guid: 13dba4b32d510f14cbe91d7f382b4f69, type: 3}
+<<<<<<< HEAD
   - Name: buffItem_Hp
     Prefab: {fileID: 951066480273024931, guid: c5de2606f1b533342b388437835513c8, type: 3}
   - Name: buffItem_Speed
@@ -37,3 +38,7 @@ MonoBehaviour:
     Prefab: {fileID: 9189018206323813231, guid: 32d15de06540fe54f9248185f7f6daa5, type: 3}
   - Name: buffItem_tripleBullet
     Prefab: {fileID: 9189018206323813231, guid: 32d15de06540fe54f9248185f7f6daa5, type: 3}
+=======
+  - Name: Tank_002_1
+    Prefab: {fileID: 6619692362034631719, guid: 64ad1105d55db49be9c29717e96f0e46, type: 3}
+>>>>>>> d11d57ffccc83270397f5e8cb00adb95997f4915

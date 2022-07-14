@@ -33,10 +33,11 @@ public class ColliderDestroy : MonoBehaviour
 
         // bullet cham nhau
 
-        if (ni.GetComponent<WhoActivatedMe>() != null)
+        if (ni.tag == "BulletThrough")
         {
             return;
         }
+
 
         // khong phai ai ban nhau
 
@@ -51,12 +52,12 @@ public class ColliderDestroy : MonoBehaviour
                 {
                     return;
                 }
-
+                // destroy luon vi neu cho server tra ve se bi delay
+                Destroy(gameObject);
                 // client bi ban , thi client trung dan gui request
 
                 if (ni.IsControlling())
                 {
-                    Destroy(gameObject);
                     NetworkClient.serverObjects.Remove(networkIdentity.GetId());
                     networkIdentity.GetSocket().Emit("collisionDestroy", new JSONObject(JsonUtility.ToJson(new IDData()
                     {
@@ -70,7 +71,6 @@ public class ColliderDestroy : MonoBehaviour
 
                 if (niActive.IsControlling() && ni.GetComponent<AiManager>() != null)
                 {
-                    Destroy(gameObject);
                     NetworkClient.serverObjects.Remove(networkIdentity.GetId());
                     networkIdentity.GetSocket().Emit("collisionDestroy", new JSONObject(JsonUtility.ToJson(new IDData()
                     {
@@ -80,6 +80,7 @@ public class ColliderDestroy : MonoBehaviour
                     return;
                 }
 
+                // ban trung hop mau firer gui reques
                 if (ni.tag == "HpBox" && niActive.IsControlling())
                 {
                     Destroy(gameObject);
@@ -104,6 +105,7 @@ public class ColliderDestroy : MonoBehaviour
                         })));
                     
                 }
+
 
             }
         }

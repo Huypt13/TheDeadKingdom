@@ -5,6 +5,7 @@ const LobbyBase = require("./lobbyManagement/LobbyBase");
 const Player = require("./playerManagement/Player");
 const GameLobby = require("./lobbyManagement/GameLobby");
 const GameLobbySetting = require("./lobbyManagement/GameLobbySetting");
+const GameInfor = require("../helper/GameInfor.helper");
 
 // server game manage all lobby , all connections
 // co the tao nhieu server
@@ -83,15 +84,19 @@ class GameServer {
 
     connection.socket.join(lobbyID); // Join the new lobby's socket channel
     connection.lobby = lobbys[lobbyID]; //assign reference to the new lobby
-
     lobbys[connection.player.lobby].onLeaveLobby(connection);
     lobbys[lobbyID].onEnterLobby(connection);
   }
+
   onAttemptToJoinGame(connection = Connection) {
     let lobbyFound = false;
     let gameLobbies = [];
     for (let id in this.lobbys) {
-      if (this.lobbys[id] instanceof GameLobby) {
+      if (
+        this.lobbys[id] instanceof GameLobby &&
+        this.lobbys[id].lobbyState.currentState ==
+          this.lobbys[id].lobbyState.LOBBY
+      ) {
         gameLobbies.push(this.lobbys[id]);
       }
     }
@@ -114,7 +119,12 @@ class GameServer {
       // random type
 
       let gamelobby = new GameLobby(
-        new GameLobbySetting("CountKill", 1, 1, null)
+        new GameLobbySetting(
+          "CountKill",
+          GameInfor.CountKillMaxPlayer,
+          GameInfor.CountKillMinPlayer,
+          null
+        )
       );
       // random map
       gamelobby.endGameLobby = () => {

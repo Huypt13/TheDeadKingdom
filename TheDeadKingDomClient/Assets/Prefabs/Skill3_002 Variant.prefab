@@ -17,7 +17,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1980452560423550, guid: 1b2ec506d1f91204583551b636401423, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4976254876163916, guid: 1b2ec506d1f91204583551b636401423, type: 3}
       propertyPath: m_RootOrder
@@ -135,6 +135,19 @@ CircleCollider2D:
   m_Offset: {x: -0.05986762, y: 0.05957985}
   serializedVersion: 2
   m_Radius: 3.7963707
+--- !u!114 &2132556721109604419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4641337269299924825}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd112a0ae11a843dcaf7c4e926ae78bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effect: {fileID: 1480453176265101687, guid: af81e5f851d0f47a1bd86d6372123f32, type: 3}
 --- !u!114 &2963674673363563278
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,16 +178,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   networkIdentity: {fileID: 2963674673363563278}
---- !u!114 &2132556721109604419
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4641337269299924825}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd112a0ae11a843dcaf7c4e926ae78bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  effect: {fileID: 1480453176265101687, guid: af81e5f851d0f47a1bd86d6372123f32, type: 3}

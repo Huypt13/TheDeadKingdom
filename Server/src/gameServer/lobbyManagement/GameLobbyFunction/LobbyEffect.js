@@ -64,6 +64,30 @@ function onStunnedEffect(connection, lobby) {
     connection.socket.broadcast.to(lobby.id).emit("isStunned", returnData1);
   }
 }
+
+function onTiedUpEffect(connection, lobby) {
+  const { tiedUp, endEf } = connection.player.onTiedupCounter();
+
+  if (endEf.length > 0) {
+    connection.socket.emit("endEffectAnimation", {
+      endEf,
+      id: connection.player.id,
+    });
+    connection.socket.broadcast.to(lobby.id).emit("endEffectAnimation", {
+      endEf,
+      id: connection.player.id,
+    });
+  }
+  if (!tiedUp) {
+    const returnData1 = {
+      id: connection.player.id,
+      tiedUp,
+    };
+    console.log("end tiedUp ", tiedUp);
+    connection.socket.emit("isTiedUp", returnData1);
+    connection.socket.broadcast.to(lobby.id).emit("isTiedUp", returnData1);
+  }
+}
 function onDamagedUpEffect(connection, lobby) {
   const { endEf } = connection.player.onDamagedUpCounter();
 
@@ -144,6 +168,35 @@ function onBurnedEffect(connection, lobby) {
     }
   }
 }
+
+function onAutoMoveEffect(connection, lobby) {
+  const { endEf } = connection.player.onAutoMoveCounter(lobby);
+
+  if (endEf.length > 0) {
+    connection.socket.emit("endEffectAnimation", {
+      endEf,
+      id: connection.player.id,
+    });
+    connection.socket.broadcast.to(lobby.id).emit("endEffectAnimation", {
+      endEf,
+      id: connection.player.id,
+    });
+  }
+}
+function onFoucusEffect(connection, lobby) {
+  const { endEf } = connection.player.onFocusOnCounter(lobby);
+
+  if (endEf.length > 0) {
+    connection.socket.emit("endEffectAnimation", {
+      endEf,
+      id: connection.player.id,
+    });
+    connection.socket.broadcast.to(lobby.id).emit("endEffectAnimation", {
+      endEf,
+      id: connection.player.id,
+    });
+  }
+}
 module.exports = {
   healHp,
   onSlowEffect,
@@ -152,4 +205,7 @@ module.exports = {
   onArmordUpEffect,
   onAttackSpeedEffect,
   onBurnedEffect,
+  onTiedUpEffect,
+  onAutoMoveEffect,
+  onFoucusEffect,
 };

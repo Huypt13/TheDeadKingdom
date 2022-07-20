@@ -38,7 +38,6 @@ public class Skill3_002 : MonoBehaviour
                 typeId = "002",
                 enemyId = ni.GetId(),
                 typeEnemy = "Player",
-
             })));
 
 

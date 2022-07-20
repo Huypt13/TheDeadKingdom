@@ -42,6 +42,7 @@ module.exports = class LobbyBase {
     //Set Position
     item.position = position;
     //Set item into the array
+
     serverItems.push(item);
     //Tell everyone in the room
     console.log("onserver spawn", item.aiId, item?.team);

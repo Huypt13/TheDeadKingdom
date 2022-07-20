@@ -11,6 +11,7 @@ module.exports = class SkillOrientation extends ServerObject {
     this.team = 0;
     this.activator = "";
     this.position = { ...Position };
+    this.direction;
     this.timeRemain;
   }
 

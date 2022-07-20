@@ -34,6 +34,7 @@ class Connection {
       if (connection.lobby instanceof GameLobby)
         connection.lobby.onFireBullet(connection, data, false);
     });
+
     // nhan skill 1
     socket.on("skill", (data) => {
       if (connection.lobby instanceof GameLobby) {

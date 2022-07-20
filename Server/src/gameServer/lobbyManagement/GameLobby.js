@@ -24,6 +24,8 @@ const LobbyEffect = require("./GameLobbyFunction/LobbyEffect");
 const SkillBuff = require("../gamePlay/serverObjects/SkillBuff");
 const Skill002 = require("./GameLobbyFunction/002/Skill002");
 const SkillRegion = require("../gamePlay/serverObjects/SkillRegion");
+const Skill003 = require("./GameLobbyFunction/003/Skill003");
+const TowerAI = require("../aiManagement/TowerAI");
 
 module.exports = class GameLobby extends LobbyBase {
   constructor(settings = GameLobbySettings) {
@@ -57,6 +59,7 @@ module.exports = class GameLobby extends LobbyBase {
       lobby.OnUpdateEffectCooldown();
       lobby.OnUpdateEffectTime();
       lobby.onUpdateItem();
+      lobby.onUpdateItemTime();
     }
     lobby.onWinning();
     await lobby.onJoinGame();
@@ -67,7 +70,23 @@ module.exports = class GameLobby extends LobbyBase {
       lobby.endGameLobby();
     }
   }
-
+  onUpdateItemTime() {
+    this.serverItems.forEach((item) => {
+      if (item?.timeRemain) {
+        item.timeRemain -= 0.1;
+        if (item.timeRemain < 0) {
+          let returnData = {
+            id: item.id,
+          };
+          this.connections[0].socket.emit("playerDied", returnData);
+          this.connections[0].socket.broadcast
+            .to(this.id)
+            .emit("playerDied", returnData);
+          item.isDead = true;
+        }
+      }
+    });
+  }
   onMatchTime() {
     if (this.lobbyState.currentState != this.lobbyState.GAME) {
       console.log(this.lobbyState.currentState);
@@ -411,10 +430,10 @@ module.exports = class GameLobby extends LobbyBase {
     //   new TankAI("01", new Vector2(-6, 2), 4, tankAi, 1),
     //   new Vector2(-6, 2)
     // );
-    this.onServerSpawn(
-      new TankAI("01", new Vector2(-6, 4), 4, tankAi, 0),
-      new Vector2(-6, 4)
-    );
+    // this.onServerSpawn(
+    //   new TankAI("01", new Vector2(-6, 4), 4, tankAi, 0),
+    //   new Vector2(-6, 4)
+    // );
     // this.onServerSpawn(
     //   new TankAI("01", new Vector2(-3, 4), 4, tankAi, 2),
     //   new Vector2(-3, 4)
@@ -423,7 +442,7 @@ module.exports = class GameLobby extends LobbyBase {
     //   new TankAI("01", new Vector2(-6, 6), 4, tankAi, 0),
     //   new Vector2(5, 2)
     // );
-    // this.onServerSpawn(new TowerAI("01", tankAi, 1), new Vector2(-3, 0));
+    //this.onServerSpawn(new TowerAI("01", tankAi, 1), new Vector2(-3, 0));
     // this.onServerSpawn(new TowerAI("01", tankAi, 0), new Vector2(-5, 0));
     // this.onServerSpawn(new TowerAI("01", tankAi, 2), new Vector2(-1, 0));
 
@@ -481,6 +500,77 @@ module.exports = class GameLobby extends LobbyBase {
     });
   }
 
+  onFireBullet3Tia(connection, data) {
+    const { activator, position, direction } = data;
+    const activeBy = this.connections.find((c) => {
+      return c.player.id === activator;
+    });
+    // lech moi tia 30 do
+    // tia 1
+    let bullet1 = new Bullet(position, activeBy?.player?.tank, direction);
+    bullet1.activator = activator;
+    bullet1.team = activeBy?.player?.team;
+    this.bullets.push(bullet1);
+    const returnData1 = {
+      name: "Bullet",
+      id: bullet1.id,
+      team: bullet1.team,
+      activator,
+      direction,
+      position,
+      bulletSpeed: activeBy?.player?.tank?.bulletSpeed || bullet.speed,
+    };
+    connection.socket.emit("serverSpawn", returnData1);
+    connection.socket.broadcast.to(this.id).emit("serverSpawn", returnData1);
+
+    // tia 2
+    let direction2 = {};
+    // y=sin , x =cos
+    // sin(a+pi/6) = 0,866xsin(a) + 0,5cos(a)
+    // cos(a+pi/6) = cosa + 0.866 - sina*0.5x
+    direction2.y = 0.866 * direction.y + 0.5 * direction.x;
+    direction2.x = 0.866 * direction.x - 0.5 * direction.y;
+    let bullet2 = new Bullet(position, activeBy?.player?.tank, direction2);
+    bullet2.activator = activator;
+    bullet2.team = activeBy?.player?.team;
+    this.bullets.push(bullet2);
+    const returnData2 = {
+      name: "Bullet",
+      id: bullet2.id,
+      team: bullet2.team,
+      activator,
+      direction: { ...direction2 },
+      position,
+      bulletSpeed: activeBy?.player?.tank?.bulletSpeed || bullet2.speed,
+    };
+    connection.socket.emit("serverSpawn", returnData2);
+    connection.socket.broadcast.to(this.id).emit("serverSpawn", returnData2);
+
+    // tia phai
+
+    // sin(a-pi/6) =
+    // cos(a-pi/6) = cosa + 0.866 + sina*0.5x
+
+    let direction3 = {};
+    direction3.y = 0.866 * direction.y - 0.5 * direction.x;
+    direction3.x = 0.866 * direction.x + 0.5 * direction.y;
+
+    let bullet3 = new Bullet(position, activeBy?.player?.tank, direction3);
+    bullet3.activator = activator;
+    bullet3.team = activeBy?.player?.team;
+    this.bullets.push(bullet3);
+    const returnData3 = {
+      name: "Bullet",
+      id: bullet3.id,
+      team: bullet3.team,
+      activator,
+      direction: { ...direction3 },
+      position,
+      bulletSpeed: activeBy?.player?.tank?.bulletSpeed || bullet3.speed,
+    };
+    connection.socket.emit("serverSpawn", returnData3);
+    connection.socket.broadcast.to(this.id).emit("serverSpawn", returnData3);
+  }
   onFireBullet(connection = Connection, data, isAI = false, aiId) {
     const { activator, position, direction } = data;
     const activeBy = this.connections.find((c) => {
@@ -488,6 +578,11 @@ module.exports = class GameLobby extends LobbyBase {
     });
 
     if (!isAI) {
+      console.log("3 tia", activeBy.player.effect.threeBullet);
+      if (activeBy?.player?.effect?.threeBullet != 0) {
+        this.onFireBullet3Tia(connection, data);
+        return;
+      }
       let bullet = new Bullet(position, activeBy?.player?.tank, direction);
       bullet.activator = activator;
       bullet.team = activeBy?.player?.team;
@@ -554,12 +649,14 @@ module.exports = class GameLobby extends LobbyBase {
     connection.socket.emit("skillSpawn", returnData);
     connection.socket.broadcast.to(this.id).emit("skillSpawn", returnData);
   }
+
   createRegionSkill(data, activeBy, connection, skill, timeRemain) {
     const { position, activator, typeId, num } = data;
     let skillObj = new SkillRegion(position, skill);
     skillObj.activator = activator;
     skillObj.team = activeBy?.player?.team;
     skillObj.timeRemain = timeRemain;
+    skillObj.direction = data?.direction;
     this.skill.push(skillObj);
 
     const returnData = {
@@ -569,10 +666,29 @@ module.exports = class GameLobby extends LobbyBase {
       typeId,
       num,
       position,
+      direction: skillObj.direction,
     };
+
     connection.socket.emit("skillSpawn", returnData);
     connection.socket.broadcast.to(this.id).emit("skillSpawn", returnData);
+    return skillObj.id;
   }
+
+  createSkillMove(connection, data, range) {
+    const { position, direction, enemyId } = data;
+
+    const returnData = {
+      name: "skillMove",
+      id: enemyId,
+      position: {
+        x: position.x - direction.x * range,
+        y: position.y - direction.y * range,
+      },
+    };
+    connection.socket.emit("updatePosition", returnData);
+    connection.socket.broadcast.to(this.id).emit("updatePosition", returnData);
+  }
+
   createBuffSkill(connection, playerImpacted, timeRemain, typeId, num) {
     const skillBuff = new SkillBuff();
     skillBuff.playerImpacted = playerImpacted;
@@ -587,6 +703,7 @@ module.exports = class GameLobby extends LobbyBase {
     };
     connection.socket.emit("skillSpawn", returnData);
     connection.socket.broadcast.to(this.id).emit("skillSpawn", returnData);
+    return skillBuff;
   }
 
   onSkill(connection, data) {
@@ -645,6 +762,62 @@ module.exports = class GameLobby extends LobbyBase {
         activeBy?.player?.tank?.skill3,
         0.5
       );
+    } else if (typeId === "003" && num === 1) {
+      // luot va buff
+      this.createSkillMove(
+        connection,
+        data,
+        activeBy?.player?.tank?.skill1?.range
+      );
+      this.createBuffSkill(
+        connection,
+        [connection.player.id],
+        connection?.player?.tank?.skill1?.timeEffect,
+        typeId,
+        num
+      );
+      Skill003.Skill1Handler(
+        connection,
+        connection.player.startTank.skill1,
+        this
+      );
+    } else if (typeId == "003" && num === 2) {
+      if (activeBy.player.tank.skill2.activeId != "") {
+        // bay den activeid
+        activeBy.player.effect.focusOn = {
+          focusId: activeBy.player.tank.skill2.activeId,
+          speed: activeBy.player.tank.skill2.enemySpeed,
+        };
+        activeBy.player.tank.skill2.activeId = "";
+      } else {
+        data.position.x -= data.direction.x * 1;
+        data.position.y -= data.direction.y * 1;
+        // this.createOrientationSkill(
+        //   data,
+        //   activeBy,
+        //   connection,
+        //   activeBy?.player?.tank?.skill2
+        // );
+        this.createRegionSkill(
+          data,
+          activeBy,
+          connection,
+          activeBy?.player?.tank?.skill2,
+          0.3
+        );
+      }
+    } else if (typeId === "003" && num === 3) {
+      let towerAI = new TowerAI(
+        "002_3",
+        connection.player.tank.skill3.tower,
+        connection.player.team
+      );
+      towerAI.timeRemain = connection.player.tank.skill3.timeEffect;
+
+      this.onServerSpawn(
+        towerAI,
+        new Vector2(data.position.x, data.position.y)
+      );
     }
   }
   onTouchSkill(connection, data) {
@@ -663,6 +836,9 @@ module.exports = class GameLobby extends LobbyBase {
     }
     if (typeId == "002" && num === 3) {
       Skill002.Skill3Handler(connection, data, this);
+    }
+    if (typeId == "003" && num === 2) {
+      Skill003.Skill2Handler(connection, data, this);
     }
   }
   onTouchItem(connection, data) {
@@ -882,10 +1058,10 @@ module.exports = class GameLobby extends LobbyBase {
 
   endSkillBuff(skill) {
     let index = this.skill.indexOf(skill);
+
     if (index > -1) {
       this.skill.splice(index, 1);
     }
-    console.log(skill);
     skill.playerImpacted.forEach((id) => {
       if (this.connections.length > 0) {
         this.connections[0].socket.emit("endEffectAnimation", {
@@ -1126,6 +1302,18 @@ module.exports = class GameLobby extends LobbyBase {
       }
       if (connection.player.effect.burned.length > 0) {
         LobbyEffect.onBurnedEffect(connection, this);
+      }
+      if (connection.player.effect.threeBullet != 0) {
+        connection.player.onThreeBulletCouter();
+      }
+      if (connection.player.effect.tiedUp.length > 0) {
+        LobbyEffect.onTiedUpEffect(connection, this);
+      }
+      if (connection.player.effect.autoMove) {
+        LobbyEffect.onAutoMoveEffect(connection, this);
+      }
+      if (connection.player.effect.focusOn) {
+        LobbyEffect.onFoucusEffect(connection, this);
       }
     }
   }

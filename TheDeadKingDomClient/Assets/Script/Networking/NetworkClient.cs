@@ -126,9 +126,8 @@ public class NetworkClient : SocketIOComponent
 
         On("skillEffectAnimation", (E) =>
         {
-            Debug.Log("reiceved Skill");
-            string enemyId = E.data["enemyId"].str;
-            string efId = E.data["efId"].str;
+            string enemyId = E.data["enemyId"].str;  // 
+            string efId = E.data["efId"].str;  //
             var ni = serverObjects[enemyId];
             var efAni = ni.GetComponent<EffectAnimation>();
             var niSkill = serverObjects[efId];
@@ -178,6 +177,15 @@ public class NetworkClient : SocketIOComponent
             var ni = serverObjects[id];
             var efAni = ni.GetComponent<EffectAnimation>();
             efAni.RemoveALlEf();
+        });
+        On("isTiedUp", (E) =>
+        {
+            string id = E.data["id"].str;
+            bool tiedUp = E.data["tiedUp"].b;
+            Debug.Log(id + " tiedUp " + tiedUp);
+            var ni = serverObjects[id];
+            var tg = ni.GetComponent<TankGeneral>();
+            tg.TiedUp = tiedUp;
         });
         On("isStunned", (E) =>
         {
@@ -232,11 +240,15 @@ public class NetworkClient : SocketIOComponent
                 {
                     float directionX = E.data["direction"]["x"].f;
                     float directionY = E.data["direction"]["y"].f;
+
                     string activator = E.data["activator"].ToString().RemoveQuotes();
+
                     float bulletSpeed = E.data["bulletSpeed"].f;
 
                     var netIdenPlayer = serverObjects[activator];
+
                     var spawnedObject = Instantiate(netIdenPlayer.GetBullet(), networkContainer);
+
                     spawnedObject.transform.position = new Vector3(x, y, 0);
 
 
@@ -245,6 +257,7 @@ public class NetworkClient : SocketIOComponent
                     ni.SetSocketReference(this);
 
                     float rot = Mathf.Atan2(directionY, directionX) * Mathf.Rad2Deg;
+
                     Vector3 currentRotation = new Vector3(0, 0, rot + 90);
                     spawnedObject.transform.rotation = Quaternion.Euler(currentRotation);
 
@@ -252,7 +265,9 @@ public class NetworkClient : SocketIOComponent
                     whoActivatedMe.SetActivator(activator);
 
                     Projectile projectile = spawnedObject.GetComponent<Projectile>();
+
                     projectile.Direction = new Vector2(directionX, directionY);
+
                     projectile.Speed = bulletSpeed;
 
                     serverObjects.Add(id, ni);
@@ -402,6 +417,7 @@ public class NetworkClient : SocketIOComponent
                     var skill = spawnedObject.GetComponent<Skill1_002>();
                     skill.ActiveBy = activator;
                 }
+
                 spawnedObject.transform.position = new Vector3(x, y, 0);
                 ni = spawnedObject.GetComponent<NetworkIdentity>();
                 ni.SetControllerId(id);
@@ -431,6 +447,15 @@ public class NetworkClient : SocketIOComponent
                         var efAni = ni.GetComponent<EffectAnimation>();
                         efAni.SetEffectAnimation(id, ni.GetSkill3());
                     }
+                    if (typeId == "003" && num == 1)
+                    {
+                        var tankSkill003 = ni.GetComponent<TankSkill003>();
+                        tankSkill003.OnSkill1 = true;
+                        var efAni = ni.GetComponent<EffectAnimation>();
+                        efAni.SetEffectAnimation(id, ni.GetSkill1());
+
+                    }
+
                 });
             }
             if (name == "skillRegion")
@@ -452,6 +477,20 @@ public class NetworkClient : SocketIOComponent
                     spawnedObject = Instantiate(netIdenPlayer.GetSkill2(), networkContainer);
                     var skill = spawnedObject.GetComponent<Skill2_002>();
                     skill.ActiveBy = activator;
+                }
+                if (num == 2 && typeId == "003")
+                {
+                    float directionX = E.data["direction"]["x"].f;
+                    float directionY = E.data["direction"]["y"].f;
+                    spawnedObject = Instantiate(netIdenPlayer.GetSkill2(), networkContainer);
+                    var skill = spawnedObject.GetComponent<Skill2_003>();
+                    skill.ActiveBy = activator;
+                    skill.Direction = new Position();
+                    skill.Direction.x = directionX;
+                    skill.Direction.y = directionY;
+                    float rot = Mathf.Atan2(directionY, directionX) * Mathf.Rad2Deg;
+                    Vector3 currentRotation = new Vector3(0, 0, rot + 90);
+                    spawnedObject.transform.rotation = Quaternion.Euler(currentRotation);
                 }
                 spawnedObject.transform.position = new Vector3(x, y, 0);
                 ni = spawnedObject.GetComponent<NetworkIdentity>();
@@ -557,7 +596,9 @@ public class NetworkClient : SocketIOComponent
             float y = E.data["position"]["y"].f;
 
             NetworkIdentity ni = serverObjects[id];
-            ni.transform.position = new Vector3(x, y, 0);
+            StartCoroutine(AIPositionSmoothing(ni.transform, new Vector3(x, y, 0)));
+
+            //   ni.transform.position = new Vector3(x, y, 0);
         });
 
         // update player rotation

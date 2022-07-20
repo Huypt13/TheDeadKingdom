@@ -7,4 +7,6 @@ public class TouchData
     public string typeId;
     public string enemyId;
     public string typeEnemy;
+    public Position direction;
+    public string activator;
 }

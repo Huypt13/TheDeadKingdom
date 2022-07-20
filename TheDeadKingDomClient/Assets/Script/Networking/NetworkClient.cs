@@ -126,6 +126,7 @@ public class NetworkClient : SocketIOComponent
 
         On("skillEffectAnimation", (E) =>
         {
+            Debug.Log("reiceved Skill");
             string enemyId = E.data["enemyId"].str;
             string efId = E.data["efId"].str;
             var ni = serverObjects[enemyId];
@@ -320,6 +321,7 @@ public class NetworkClient : SocketIOComponent
                     NetworkIdentity ni1 = spawnedObject1.GetComponent<NetworkIdentity>();
                     ni1.SetControllerId(id);
                     ni1.SetSocketReference(this);
+                    ni1.TypeId = type;
                     serverObjects.Add(id, ni1);
                 }
                 if(name == "WoodBox")
@@ -532,6 +534,7 @@ public class NetworkClient : SocketIOComponent
         // unspawn bullet
         On("serverUnSpawn", (E) =>
         {
+            Debug.Log("serverUnspawn");
             string id = E.data["id"].ToString().RemoveQuotes();
             NetworkIdentity ni = serverObjects[id];
             serverObjects.Remove(id);
@@ -568,18 +571,7 @@ public class NetworkClient : SocketIOComponent
             ni.transform.localEulerAngles = new Vector3(0, 0, tankRotation);
             ni.GetComponent<TankGeneral>().SetRotation(barrelRotation);
         });
-        On("HpHeal", (E) =>
-        {
-            string playerId = (E.data.str).RemoveQuotes();
-            Transform effect = serverObjects[playerId].transform.Find("Immunity Area Effect");
-            effect.gameObject.SetActive(true);
-        });
-        On("HpStopHeal", (E) =>
-        {
-            string playerId = (E.data.str).RemoveQuotes();
-            Transform effect = serverObjects[playerId].transform.Find("Immunity Area Effect");
-            effect.gameObject.SetActive(false);
-        });
+
 
 
         // update player died

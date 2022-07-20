@@ -8,8 +8,7 @@ module.exports = class Helipad extends ServerObject {
         this.coolDownTime = coolDownTime1;
         this.isActive = false;
     }
-    coolDown() {
-      
+    coolDown() {    
         this.itemSpawnTicker += 1;
         if (this.itemSpawnTicker >= 10) {
           this.itemSpawnTicker = 0;

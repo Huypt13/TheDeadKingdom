@@ -17,8 +17,8 @@ module.exports = class Potion extends ServerObject {
     this.healAmount = 50;
     this.team = Team;
     this.healing = {
-      value: 20, // value mau moi lan hoi
-      times: 15, // so lan hoi mau
+      value: -20, // value mau moi lan hoi
+      times: 20, // so lan hoi mau
       waiting: 0.3, // time giua moi lan hoi mau
     };
   }

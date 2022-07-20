@@ -5,7 +5,7 @@ module.exports = class BaseItem extends ServerObject {
         this.lifeTime = 0;
         this.username = "buffItem"
         this.lifeTicker = 0;
-        this.existTime = 5;
+        this.existTime = 10;
         this.isActive = false;
     }
     existTimeCouter(){

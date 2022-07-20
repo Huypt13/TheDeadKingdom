@@ -11,7 +11,7 @@ const Potion = require("../gamePlay/serverObjects/Potion");
 const WoodBox = require("../gamePlay/serverObjects/WoodBox");
 const FastSpeedItem = require("../gamePlay/serverObjects/itemBuff/FastSpeedItem");
 const BuffArmorItem = require("../gamePlay/serverObjects/itemBuff/BuffArmorItem");
-const TripleBulletItem = require("../gamePlay/serverObjects//itemBuff/TripleBulletItem");
+const BuffDamageItem = require("../gamePlay/serverObjects/itemBuff/BuffDamage");
 const HealHpItem = require("../gamePlay/serverObjects//itemBuff/HealHpItem");
 const Helipad = require("../gamePlay/serverObjects/Helipad");
 const BaseItem = require("../gamePlay/serverObjects/itemBuff/BaseItem");
@@ -201,8 +201,8 @@ module.exports = class GameLobby extends LobbyBase {
 
   async onJoinGame() {
     if (this.lobbyState.currentState == this.lobbyState.WAITING) {
-      this.waitingTime += +0.1;
-      if (this.waitingTime > GameInfor.WaitChoolseTime) {
+      // this.waitingTime += +0.1;
+      // if (this.waitingTime > GameInfor.WaitChoolseTime) {
         this.waitingTime = 0;
         this.lobbyState.currentState = this.lobbyState.GAME;
         if (this.connections.length > 0) {
@@ -222,20 +222,20 @@ module.exports = class GameLobby extends LobbyBase {
           await this.onSpawnAllPlayersIntoGame();
           this.onSpawnAIIntoGame();
         }
-      }
+      // }
     }
   }
   setInitialListItem(){
     const buffArmorItem = new BuffArmorItem();
     const fastSpeedItem = new FastSpeedItem();
     const healHpItem = new HealHpItem();
-    const tripleBulletItem = new TripleBulletItem();
+    const buffDamageItem = new BuffDamageItem();
     const buffArmorItem2 = new BuffArmorItem();
     const fastSpeedItem2 = new FastSpeedItem();
     const healHpItem2 = new HealHpItem();
-    const tripleBulletItem2 = new TripleBulletItem();
-    this.listItem.push(buffArmorItem, fastSpeedItem, healHpItem, tripleBulletItem);
-    this.listItem.push(buffArmorItem2, fastSpeedItem2, healHpItem2, tripleBulletItem2);
+    const buffDamageItem2 = new BuffDamageItem();
+    this.listItem.push(buffArmorItem, fastSpeedItem, healHpItem, buffDamageItem);
+    this.listItem.push(buffArmorItem2, fastSpeedItem2, healHpItem2, buffDamageItem2);
    
   }
   onJoinGameInit() {
@@ -283,13 +283,7 @@ module.exports = class GameLobby extends LobbyBase {
     this.listItem.forEach((item) => {
       if(item instanceof BaseItem && item.isActive) { 
         if(!item.existTimeCouter()){
-          console.log("item: "+item.id+"|" + item.isActive);
-          const index = this.serverItems.indexOf(item);
-          this.serverItems.splice(index, 1);
-          const returnData = {id : item.id};
-          this.connections.forEach((connection) => {
-            connection.socket.emit("serverUnSpawn", returnData);
-          });
+          this.despawnItem(item);
         }
       }
     })
@@ -327,7 +321,7 @@ module.exports = class GameLobby extends LobbyBase {
     super.onEnterLobby(connection);
 
     // du nguoi thi vao chon tuong
-    if (lobby.connections.length == lobby.settings.maxPlayers) {
+    if (lobby.connections.length <= lobby.settings.maxPlayers) {
       console.log("We have enough players we can start choose hero");
       lobby.lobbyState.currentState = lobby.lobbyState.WAITING;
       const returnData1 = {
@@ -438,8 +432,8 @@ module.exports = class GameLobby extends LobbyBase {
     this.onServerSpawn(new WoodBox(), new Vector2(-1,3));
     this.onServerSpawn(new WoodBox(), new Vector2(2,3));
     this.onServerSpawn(new WoodBox(), new Vector2(4,3));
-    this.onServerSpawn(new Helipad(2), new Vector2(-3,1));
-    this.onServerSpawn(new Helipad(3), new Vector2(-3,3));
+    this.onServerSpawn(new Helipad(18), new Vector2(-3,1));
+    this.onServerSpawn(new Helipad(20), new Vector2(-3,3));
   
 
   }
@@ -671,6 +665,26 @@ module.exports = class GameLobby extends LobbyBase {
       Skill002.Skill3Handler(connection, data, this);
     }
   }
+  onTouchItem(connection, data) {
+    const id = data.id;
+    const item = this.serverItems.find(item => item.id == id);
+    if(!item)return;
+    const type = item.type;
+    switch(type) {
+      case "Armor": 
+        item.buffArmor(connection, data, this);
+        break;
+      case "Damage":
+        item.buffDamage(connection, data, this);
+        break;
+      case "Speed":
+        item.buffSpeed(connection, data, this);
+        break;
+      case "Hp":
+        item.buffHp(connection, data, this);
+        break;
+    }
+  }
   onExitSkill(connection, data) {
     const { typeId, num } = data;
 
@@ -758,6 +772,7 @@ module.exports = class GameLobby extends LobbyBase {
     let id = data?.id;
     let enemyId = data?.enemyId;
     const potion = this.serverItems.find((item) => item.id == enemyId);
+    if(potion.team == 1)
     if (!potion || potion.team == connection.player.team) return;
     const returnBullet = lobby.bullets.filter((e) => e.id == id);
     returnBullet.forEach((bullet) => {
@@ -854,6 +869,14 @@ module.exports = class GameLobby extends LobbyBase {
       connection.socket.emit("severUnspawnSkill", {
         id: skill.id,
       });
+    });
+  }
+  despawnItem(item) {
+    const index = this.serverItems.indexOf(item);
+    this.serverItems.splice(index, 1);
+    const returnData = {id : item.id};
+    this.connections.forEach((connection) => {
+      connection.socket.emit("serverUnSpawn", returnData);
     });
   }
 
@@ -1049,29 +1072,43 @@ module.exports = class GameLobby extends LobbyBase {
       .to(this.id)
       .emit("startLoadingCoolDown", potion.id);
     const player = connection.player;
-    connection.socket.emit("HpHeal", player.id);
-    connection.socket.broadcast.to(this.id).emit("HpHeal", player.id);
+    connection.socket.emit("skillEffectAnimation", {
+      enemyId: player.id,
+      efId: potion.id,
+      remove: false, // remove game object tao ra hieu ung nay
+
+    });
+    connection.socket.broadcast.to(lobby.id).emit("skillEffectAnimation", {
+      enemyId: player.id,
+      efId: potion.id,
+      remove: false,
+
+    });
     potion.isActive = false;
-    const healing = player.effect.healing;
-    for (let property in healing) {
-      healing[property] = potion.healing[property];
-    }
+    player.effect.burned.push({
+      id: potion.id,
+      countTime: 0,
+      ...potion.healing});
+    
   }
   OnUpdateEffectCooldown() {
     for (let item of this.serverItems) {
       if (item?.isActive != undefined && !item.isActive) {
-        if (item.coolDown()) {
+        if (item instanceof Potion && item.coolDown()) {
           for (let connection of this.connections)
             connection.socket.emit("stopLoading", item.id);
         }
+      }
+      if(item instanceof Helipad && item.coolDown()) {
+           this.spawnRandomItem(item.position);
       }
     }
   }
   OnUpdateEffectTime() {
     for (let connection of this.connections) {
-      if (connection.player.effect.healing.value != 0) {
-        LobbyEffect.healHp(connection, this);
-      }
+      // if (connection.player.effect.healing.value != 0) {
+      //   LobbyEffect.healHp(connection, this);
+      // }
       if (connection.player.effect.slowled.length > 0) {
         LobbyEffect.onSlowEffect(connection, this);
       }

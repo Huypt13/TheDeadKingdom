@@ -100,27 +100,6 @@ class Player {
     return false;
   }
 
-  healHp() {
-    this.respawnCount.healing += 1;
-    if (
-      this.respawnCount.healing >=
-      (this.effect.healing.waiting - 0.01) * 10
-    ) {
-      this.health += this.effect.healing.value;
-      if (this.health >= this.maxHealth) {
-        this.health = this.maxHealth;
-        return true;
-      }
-      this.respawnCount.healing = 0;
-      this.respawnCountTime.healing += 1;
-      if (this.respawnCountTime.healing >= this.effect.healing.times) {
-        this.respawnCount.healing = 0;
-        this.respawnCountTime.healing = 0;
-        return true;
-      }
-    }
-    return false;
-  }
   onBurnCounter(lobby) {
     let endEf = []; // list effect ket thuc trong lan update
     let healthChange = false;
@@ -130,10 +109,14 @@ class Player {
         healthChange = true;
         burn.countTime = 0;
         burn.times--;
+        if(burn.value < 0 && this.health >= this.maxHealth){
+          burn.times = 0;
+          this.health = this.maxHealth;
+        } 
         if (burn.times <= 0) {
           endEf.push(burn);
         } else {
-          this.health -= GameMechanism.getDame(this.tank, burn.value);
+          this.health -= GameMechanism.getDame(this.tank, burn.value);       
           if (this.health <= 0) {
             this.isDead = true;
             const activator = lobby.skill.find((sk) => {
@@ -160,8 +143,7 @@ class Player {
     };
   }
   onSlowCounter() {
-    let endEf = []; // list hieu ung ket thuc
-    // {0.5 , 5}  {0.3, 10} , {-0.3,4}
+    let endEf = []; 
     let totalSlowed = 0;
     this.effect.slowled.forEach((ef) => {
       ef.time -= 0.1;

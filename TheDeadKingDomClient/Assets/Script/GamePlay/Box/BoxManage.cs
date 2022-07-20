@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ColliderDestroyWithAnimate : MonoBehaviour
+public class BoxManage : MonoBehaviour
 {
     [SerializeField]
     private Sprite[] listSprite;

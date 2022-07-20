@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class ColliderEffect : MonoBehaviour
+public class BoxColliderEffect : MonoBehaviour
 {
     public void OnCollisionEnter2D(Collision2D collision)
     {

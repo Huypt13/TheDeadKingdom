@@ -17,6 +17,7 @@ public class EffectAnimation : MonoBehaviour
 
     public void RemoveEffect(string efId)
     {
+        Debug.Log("remove");
         var ni = GetComponent<NetworkIdentity>();
         var efAni = ni.GetEffectZone().transform.Find(efId);
         if (efAni != null)
@@ -27,6 +28,7 @@ public class EffectAnimation : MonoBehaviour
 
     public void RemoveALlEf()
     {
+        Debug.Log("remove2");
         var ni = GetComponent<NetworkIdentity>();
 
         foreach (Transform child in ni.GetEffectZone().transform)

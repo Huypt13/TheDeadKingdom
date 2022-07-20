@@ -1,20 +1,19 @@
 const BaseItem = require("./BaseItem")
-module.exports = class BuffArmorItem extends BaseItem {
+module.exports = class BuffDamage extends BaseItem {
     constructor(){
         super();
-        this.type = "Armor";
-        this.armorUp = {
-            value: 20,
-            time: 8
-        }
+        this.type = "Damage";
+        this.damageUp = {
+            value: 10, 
+            time: 7,
+          }
     }
-    buffArmor(connection, data, lobby) {
+    buffDamage(connection, data, lobby) {
         const enemyId = data.enemyId;
         const id = data.id;
-        connection.player.effect.armorUp.push({
+        connection.player.effect.damagedUp.push({
             id: id,
-            value: this.armorUp.value,
-            time: this.armorUp.time,
+            ...this.damageUp
           });
 
         connection.socket.emit("skillEffectAnimation", {

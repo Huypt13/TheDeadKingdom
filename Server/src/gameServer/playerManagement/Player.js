@@ -51,8 +51,10 @@ class Player {
       stunned: [], // thoi gian bi lam choang ko dung dc chieu ko ban dc
       tiedUp: [], // thoi gian bi troi van dung dc chieu vs ban dc
       burned: [],
+      autoMove: null, // {id, speed , startPost, direction , range}
+      focusOn: null, // {id, focusId ,speed}
       // hieu ung co loi
-
+      threeBullet: 0,
       healing: {
         value: 0, // value mau moi lan hoi
         times: 0, // so lan hoi mau
@@ -119,6 +121,59 @@ class Player {
     }
     return false;
   }
+
+  onAutoMoveCounter(lobby) {
+    let endEf = []; // list hieu ung ket thuc
+    this.position.x -=
+      this.effect.autoMove.speed * this.effect.autoMove.direction.x;
+    this.position.y -=
+      this.effect.autoMove.speed * this.effect.autoMove.direction.y;
+
+    console.log(
+      this.position.Distance(this.effect.autoMove.startPos),
+      this.position
+    );
+    if (
+      this.position.Distance(this.effect.autoMove.startPos) >=
+      this.effect.autoMove.range - 0.1
+    ) {
+      endEf.push(this.effect.autoMove);
+      this.effect.autoMove = null;
+    } else {
+      lobby.connections[0].socket.emit("updatePosition", this);
+      lobby.connections[0].socket.broadcast
+        .to(lobby.id)
+        .emit("updatePosition", this);
+    }
+
+    return { endEf: endEf };
+  }
+
+  onFocusOnCounter(lobby) {
+    let endEf = []; // list hieu ung ket thuc
+    const focus = lobby.connections.find((c) => {
+      return c.player.id === this.effect.focusOn.focusId;
+    });
+    const direction = new Vector2(
+      focus.player.position.x - this.position.x,
+      focus.player.position.y - this.position.y
+    ).Normalized();
+    this.position.x += this.effect.focusOn.speed * direction.x;
+    this.position.y += this.effect.focusOn.speed * direction.y;
+
+    if (this.position.Distance(focus.player.position) <= 0.5) {
+      endEf.push(this.effect.focusOn);
+      this.effect.focusOn = null;
+    } else {
+      lobby.connections[0].socket.emit("updatePosition", this);
+      lobby.connections[0].socket.broadcast
+        .to(lobby.id)
+        .emit("updatePosition", this);
+    }
+
+    return { endEf: endEf };
+  }
+
   onBurnCounter(lobby) {
     let endEf = []; // list effect ket thuc trong lan update
     let healthChange = false;
@@ -277,6 +332,33 @@ class Player {
     };
   }
 
+  onTiedupCounter() {
+    let endEf = []; // list hieu ung ket thuc
+    this.effect.tiedUp.forEach((ef) => {
+      ef.time -= 0.1;
+      if (ef.time < 0) {
+        endEf.push(ef);
+      }
+    });
+    if (endEf.length > 0) {
+      endEf.forEach((ef) => {
+        let index = this.effect.tiedUp.indexOf(ef);
+        console.log("remove  tiedup index", index, ef.id);
+        this.effect.tiedUp.splice(index, 1);
+      });
+    }
+
+    return {
+      endEf,
+      tiedUp: this.effect.tiedUp.length == 0 ? false : true,
+    };
+  }
+  onThreeBulletCouter() {
+    this.effect.threeBullet -= 0.1;
+    if (this.effect.threeBullet < 0) {
+      this.effect.threeBullet = 0;
+    }
+  }
   onSkillCounter() {
     //skill1
     //skill2
@@ -318,7 +400,7 @@ class Player {
       tiedUp: [], // thoi gian bi troi van dung dc chieu vs ban dc
       burned: [],
       // hieu ung co loi
-
+      threeBullet: 0,
       healing: {
         value: 0, // value mau moi lan hoi
         times: 0, // so lan hoi mau
@@ -378,6 +460,7 @@ class Player {
       burned: [],
       // hieu ung co loi
 
+      threeBullet: 0,
       healing: {
         value: 0, // value mau moi lan hoi
         times: 0, // so lan hoi mau

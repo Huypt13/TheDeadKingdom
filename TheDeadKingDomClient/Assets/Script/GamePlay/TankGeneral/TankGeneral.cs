@@ -135,7 +135,8 @@ public class TankGeneral : MonoBehaviour
         {
             shootingCooldown.StartCooldown();
 
-            //Define Bullet
+
+
             bulletData.activator = NetworkClient.ClientID;
             bulletData.position.x = bulletSpawnPoint.position.x.TwoDecimals();
             bulletData.position.y = bulletSpawnPoint.position.y.TwoDecimals();
@@ -144,6 +145,7 @@ public class TankGeneral : MonoBehaviour
 
             //Send Bullet
             networkIdentity.GetSocket().Emit("fireBullet", new JSONObject(JsonUtility.ToJson(bulletData)));
+
         }
     }
 }

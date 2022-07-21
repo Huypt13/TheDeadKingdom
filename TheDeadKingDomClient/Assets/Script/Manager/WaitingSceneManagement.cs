@@ -32,14 +32,14 @@ public class WaitingSceneManagement : MonoBehaviour
     void Start()
     {
 
-        InvokeRepeating("setTime", 0f, 1f);
+        InvokeRepeating("SetTime", 0f, 1f);
 
         LoadListTank();
         NetworkClient.OnUpdatePlayer = UpdatePlayer;
         NetworkClient.OnChangeHero = ChangeHero;
 
     }
-    void setTime()
+    void SetTime()
     {
         timeText.text = time.ToString();
         time--;

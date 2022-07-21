@@ -3,7 +3,7 @@ module.exports = class BaseItem extends ServerObject {
     constructor(){
         super();
         this.lifeTime = 0;
-        this.username = "buffItem"
+        this.username = "BuffItem"
         this.lifeTicker = 0;
         this.existTime = 10;
         this.isActive = false;

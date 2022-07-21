@@ -1,5 +1,5 @@
 const BaseItem = require("./BaseItem")
-module.exports = class Healthis extends BaseItem {
+module.exports = class HealHpItem extends BaseItem {
     constructor(){
         super();
         this.type = "Hp";

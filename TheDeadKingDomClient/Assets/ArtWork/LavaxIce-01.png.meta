@@ -1,0 +1,4082 @@
+fileFormatVersion: 2
+guid: 533a69780559d1a4ca76af61763a12e1
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 11
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMasterTextureLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 64
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Server
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: LavaxIce-01_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 611
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 33d32d0624a2a984a86c606c5eba1845
+      internalID: 1078740986
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_1
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 611
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a95c8c0d12d5859488b1b11b3b459fd9
+      internalID: 84413664
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_2
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 611
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6845ba85e2e3fb84d889ce57c5ef4017
+      internalID: 236193237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_3
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 611
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 70d817075fc98a74bb5a632931eab26f
+      internalID: -2037736294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_4
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 611
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cd2f1b59b3637714da7f1bf3e7e83634
+      internalID: 486375984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_5
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 611
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 38b3386fef3d5c647b1c68e55d770f5c
+      internalID: 1606739551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_6
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 611
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4c84f4a999b7e7a489d4c4555614384b
+      internalID: 2018879928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_7
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 611
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 37ffed88ffdb32b44a94c65a63d43b23
+      internalID: 1498314762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_8
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 611
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aa8530dc72667644eb8f0973dc967d2b
+      internalID: -493481026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_9
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 611
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4a5362141986b9d4ba647ddfe2579bef
+      internalID: -1512786420
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_10
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 611
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 157501e3ec154c346a6dd7fc176aaa02
+      internalID: -529295572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_11
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 611
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 279d80cebadaee147ab5e539383f340d
+      internalID: -1328203327
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_12
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 611
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 19a5a25b85fad83459c7e2ca8d8a9d74
+      internalID: 229584668
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_13
+      rect:
+        serializedVersion: 2
+        x: 832
+        y: 611
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f43d231b7a3228148b8b1fcbd85e9f5f
+      internalID: -1583969807
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_14
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 611
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 51628709e8622c0489b6005edec94883
+      internalID: -2132536734
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_15
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 611
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 86da29ebca01d8e4bbd064e46eb277ac
+      internalID: 650110213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_16
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 611
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f3a5dba577629449b77ab658ce5c85d
+      internalID: 1311771228
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_17
+      rect:
+        serializedVersion: 2
+        x: 1088
+        y: 611
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 839bd0cc7905fdb468c08ca8c3bb90e3
+      internalID: -1150807043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_18
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 547
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d66a661b4cafe3148a503514c9993d3e
+      internalID: -263433647
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_19
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 547
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0e295d197b17ac34ba6bb25173442c3b
+      internalID: 1950646519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_20
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 547
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: de3d6bd465674314091f54b0c80d8a02
+      internalID: -1524281493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_21
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 547
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0bad92a166d42954d8eb0ef468c14da9
+      internalID: -2027957519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_22
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 547
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 91fecf309c7d1cd44ab29439d65c9bdf
+      internalID: 2070161589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_23
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 547
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 40f7a78055f3a3541881d9c61635c9a3
+      internalID: 1620224669
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_24
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 547
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a8c3d0e526de95a4a884c8ffcbb7ffce
+      internalID: 299519198
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_25
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 547
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 88a30cfae6af22843bfe29bca7d377d0
+      internalID: 1941712547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_26
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 547
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a221d81dccd01a54d8eb55af5a772f88
+      internalID: -722687238
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_27
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 547
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d377f628bd4fab94ba99fb1c9a201c29
+      internalID: -531332844
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_28
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 547
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6bc325a870cbdc64e87589e89ad1f77f
+      internalID: 2104776902
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_29
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 547
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4c4d2707ea3438a4f822cfc10793c63d
+      internalID: -1955657591
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_30
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 547
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4b50577132f9b8e4fa5ca798bfcf7c40
+      internalID: -1494094049
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_31
+      rect:
+        serializedVersion: 2
+        x: 832
+        y: 547
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c284669d0b3e6c246a84b5f542572c4c
+      internalID: 1279070550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_32
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 547
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0d6f390345a3580409733b9388da8c8d
+      internalID: 1743770780
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_33
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 547
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7a9a815e0dbc52444a4d9d27859b740f
+      internalID: 247544407
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_34
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 547
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 58be0df6baf112d45b1b8220cce01ab6
+      internalID: -1442277081
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_35
+      rect:
+        serializedVersion: 2
+        x: 1088
+        y: 547
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 52d88dda6921a474296f8c7fd0f5c640
+      internalID: -1429754552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_36
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 483
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 03e1561e5db68e94cb3727c01881ab0f
+      internalID: -1060888136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_37
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 483
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 73ca4a314b62d274f8e2be61c321a3ea
+      internalID: 980094192
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_38
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 483
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c6e099e50c2cf4746b581544a48e64fe
+      internalID: 1303877816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_39
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 483
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2aa1604eb514a8a479a90bc7dd49daa5
+      internalID: 1134534511
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_40
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 483
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d6a3529c98c40be47b1f0d420f74c494
+      internalID: -1331735877
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_41
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 483
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0cd5f4e48e3a0e24eb50fcc1fd1ddd78
+      internalID: 499155425
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_42
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 483
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c54540ccf80761c4890b37cd550324f2
+      internalID: -1238292090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_43
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 483
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 370cbc46110801741802c66ba0619371
+      internalID: 439460681
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_44
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 483
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9789dbce42f1b4e4d911daab0ea6b13a
+      internalID: 1904270000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_45
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 483
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 44d579c71410d7a48b48cec57e59abff
+      internalID: 1821759634
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_46
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 483
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f97d4f94ef08eef4eac81facd1eee357
+      internalID: 1090501350
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_47
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 483
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b36e279def67c094985fe721d8831d5a
+      internalID: -778896839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_48
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 483
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 189b2fde0125dc647a4695edafe8e3be
+      internalID: 778919484
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_49
+      rect:
+        serializedVersion: 2
+        x: 832
+        y: 483
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 714c54b6561f5a34eafe3aa33813ee23
+      internalID: 1948801403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_50
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 483
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4e49ee136b3dd5d45b54ce20772516b5
+      internalID: 225882164
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_51
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 483
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c9b9d3f35aaae654592927b727666b71
+      internalID: -1044180142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_52
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 483
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 144309ca82cb118439f5c5599ecceb79
+      internalID: 942325987
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_53
+      rect:
+        serializedVersion: 2
+        x: 1088
+        y: 483
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 90f80b87094196f44af49f3f62fc5d98
+      internalID: -2132339225
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_54
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 419
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: df157d792d797d8458de57cd91a69ec1
+      internalID: -622607973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_55
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 419
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cc4f7edeee955e041b136d50fef2cfa6
+      internalID: -1812617712
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_56
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 419
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3a13014159677d64ab56f56ba5796f06
+      internalID: 326225162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_57
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 419
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e28bec46363ef8e4ca4ecceee017c258
+      internalID: 691164279
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_58
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 419
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ad1a7c6d3637dd541a7284a72d460f8d
+      internalID: -2049734338
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_59
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 419
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1ca5bf3e369b9ba4faf63d49210be7ef
+      internalID: -658950601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_60
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 419
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 52320fbb62bf8ef4792aba135e3f05b4
+      internalID: 1559523321
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_61
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 419
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 63b8e09ed4b0d1f4eaad98954f2622a4
+      internalID: -1843854255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_62
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 419
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9763e1febbbb9b946aacbd7c38b25260
+      internalID: -1200283613
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_63
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 419
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5354b09b4b054704e9721e1eeab10599
+      internalID: 256022653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_64
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 419
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2656d713a223d8b48b53dc12e29bc404
+      internalID: -1287437786
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_65
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 419
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8c6574a639ad2e548a530afc79304f1e
+      internalID: -2005515396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_66
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 419
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 50f18f2c90b21354aa0d3f88d3815668
+      internalID: 1141426343
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_67
+      rect:
+        serializedVersion: 2
+        x: 832
+        y: 419
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 52bcfdf0e7364f440a70dab5b659e174
+      internalID: 571070716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_68
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 419
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4a8e48bad12bde843919e6b970df62bc
+      internalID: 1986332777
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_69
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 419
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f0c51f81b0e078a42aae4075d1b1b5e3
+      internalID: -96402785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_70
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 419
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e66b3b8cf8ac09a44825b80bfb276787
+      internalID: 511712370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_71
+      rect:
+        serializedVersion: 2
+        x: 1088
+        y: 419
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 242cefc15ee262045b2bd8d605a8a597
+      internalID: 1424679326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_72
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 355
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2f5810b16ac00c44c99961258790d6cf
+      internalID: 362542488
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_73
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 355
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 299b7d25be50bb64287b76d432f95675
+      internalID: -890244640
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_74
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 355
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5745c8a85237b5146b9923d540376d4b
+      internalID: 353960782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_75
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 355
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 17ae684fc8137ec4cb13b5640e198197
+      internalID: -1979628627
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_76
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 355
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d96a7884530c41446b7c8d66cd49c504
+      internalID: 640831934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_77
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 355
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0beb791f5b8ec794bab76687e1fe4b5f
+      internalID: 1293756092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_78
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 355
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5d83e0c78f5539b4b842c7f9fe28b915
+      internalID: -913038103
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_79
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 355
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d45f5b6566565dd4184396931ec400c4
+      internalID: 1446403131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_80
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 355
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c072aea7e73d4574ab57460b3879efe4
+      internalID: 864375107
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_81
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 355
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bd9b1c48c2e33df4680d4201c3a75f02
+      internalID: 191679329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_82
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 355
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2eaae30a0d86b0645b1426721e9bfe4e
+      internalID: 1744199754
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_83
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 355
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6ab8430773d231c4d94df8dcde20e24a
+      internalID: 1887073365
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_84
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 355
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ab7b17ea51553584b870e650cc708b2e
+      internalID: -1095130180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_85
+      rect:
+        serializedVersion: 2
+        x: 832
+        y: 355
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 73c9031726fb34f478ab61316b0c9223
+      internalID: 344616540
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_86
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 355
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 91e21e10f6933574b963caebe0e61c0f
+      internalID: 841879659
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_87
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 355
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 127a329ed92e43d49b25a9d671402eec
+      internalID: 1780978466
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_88
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 355
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f44c901d2af6fa4cbdae5ddf713caac
+      internalID: -99549942
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_89
+      rect:
+        serializedVersion: 2
+        x: 1088
+        y: 355
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2bb09e78febab6a42b9eed48cabac15f
+      internalID: 47101531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_90
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 291
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 48b6b390b7fd0eb4b98de2bc78a44c1a
+      internalID: 1932975679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_91
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 291
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0303e413e3cf8204ea1570344e9c77f1
+      internalID: -1612268900
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_92
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 291
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 696c82ac1e869cd4eaa4a4165c33a688
+      internalID: -279829508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_93
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 291
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 703694080909c854a9b3b765c4c1db17
+      internalID: 426450973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_94
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 291
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 89534ac5048fa53459a03cc445f915be
+      internalID: -999291523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_95
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 291
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: caadabba9af3be94085cfbe9c73952ec
+      internalID: 1949812513
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_96
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 291
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 80843d8c13e1eb84f99df223613dcb89
+      internalID: 1008929988
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_97
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 291
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 81d941ecf8c69274d9796341b9154a10
+      internalID: 2130419397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_98
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 291
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3e8ca2594d6a169458e5de0a70696afe
+      internalID: -608244467
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_99
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 291
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 45688cc2c4bace3419be49c837bbe54c
+      internalID: -827582122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_100
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 291
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d90b49ad073921d41853387fe1bf9996
+      internalID: -704945926
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_101
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 291
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e8cde4a8bd120a04ca99a43f318c8187
+      internalID: 1449556594
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_102
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 291
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c6330b41083c8be4ebb30530ba83b36a
+      internalID: 1705704545
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_103
+      rect:
+        serializedVersion: 2
+        x: 832
+        y: 291
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0b7fc3c2bb45d4249979959b7daab063
+      internalID: -241729271
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_104
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 291
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7e36dd379e385ed47ad90ccbee35643e
+      internalID: 1514664391
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_105
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 291
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f41be87c328783943b7c7458ce46b481
+      internalID: -1774367973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_106
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 291
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cafe58732b3d1f847bafe38fa953fd77
+      internalID: -89834729
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_107
+      rect:
+        serializedVersion: 2
+        x: 1088
+        y: 291
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dac49b3c63dc5a746b2b64f479468114
+      internalID: 369160854
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_108
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 227
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6a2b8ca06acf26a41a612aaa3a4d79bd
+      internalID: 659778518
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_109
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 227
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ed125c3d4713bc34c8f4e9ae966a1893
+      internalID: -1662613209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_110
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 227
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a99a25fda52ec2c42971b103a30b4d26
+      internalID: -675613432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_111
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 227
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 253f3c652a99da846955bea8b7e2bd18
+      internalID: 1028615453
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_112
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 227
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ecb4bdda81be7b34ab6543847055f4cc
+      internalID: 1198680123
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_113
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 227
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7f20489ca20c38543a9a3a7b214a9eb1
+      internalID: 1483349284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_114
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 227
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1c64a776ceac18c4cb5873a1d3aa8a07
+      internalID: -1129791136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_115
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 227
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 856ae90ef7ad48f43a27c0221166ec12
+      internalID: -1950205943
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_116
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 227
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e1317d341c092e744b432cba5ed849b4
+      internalID: -2086882426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_117
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 227
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 659182aa91e2ae5488352f3905209e4a
+      internalID: 1454506663
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_118
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 227
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 480bf404180a412438a61fa883b81fce
+      internalID: 355095346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_119
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 227
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 108b82226cd071043b5b637c4f2c03a0
+      internalID: -1271435976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_120
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 227
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a690ca2386140c84c8c217e940042e85
+      internalID: 1786807474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_121
+      rect:
+        serializedVersion: 2
+        x: 832
+        y: 227
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 79c3e72e741e0cc41a0cfc6c9e39b00f
+      internalID: -1843637424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_122
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 227
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 67a5bac94da2bf94eaaf53266b2aae51
+      internalID: 207586474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_123
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 227
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d085d1460cb6709419de796cda89bedf
+      internalID: -1823998887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_124
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 227
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 81969e132e2c1b54d98151ba9185f651
+      internalID: -1538637862
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_125
+      rect:
+        serializedVersion: 2
+        x: 1088
+        y: 227
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8b1b2f92d036a9040b49ec660ca95566
+      internalID: 180435117
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_126
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 163
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1611677571d22614ca7b85d4441b4056
+      internalID: 1431021634
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_127
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 163
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c6b373a40062d614eab67fb91edcc011
+      internalID: -1531494245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_128
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 163
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0cd4f25e3a7263946b72a395d97fb32c
+      internalID: 1876599648
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_129
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 163
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8f543ee8bad2a4247bcebcacbd726265
+      internalID: -666888965
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_130
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 163
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eebe934a2680f9e418bd08f930451b06
+      internalID: -1104877406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_131
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 163
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e4a00f3853310a44e81c9bf7a7063907
+      internalID: 1783145263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_132
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 163
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 159bca637be47154587365265abbf91f
+      internalID: -1636925602
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_133
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 163
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1cce15a94e121524ba7b4dbcba85dc96
+      internalID: 776041741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_134
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 163
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e4428432da26e1e419cdf8b8649b9817
+      internalID: 1628780144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_135
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 163
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c8434540df1bbba48b9e27fbb10c23f9
+      internalID: 324657354
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_136
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 163
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 345dd235351abbe4087d290cbf6df7d6
+      internalID: 1876220847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_137
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 163
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 554f11d55e803f8408a715ec53c1184c
+      internalID: -671174431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_138
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 163
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0b92657926a65144fab8270be7a23f33
+      internalID: 605482495
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_139
+      rect:
+        serializedVersion: 2
+        x: 832
+        y: 163
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d405b737b157e6b47a4d037cabc02813
+      internalID: 1860039603
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_140
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 163
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fef745668ef6f0f4dbc0dce792ff42fb
+      internalID: -1705322909
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_141
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 163
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b05dc869ca3c020419c7bdb19efae6dc
+      internalID: -2056291913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_142
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 163
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f3ea4fb77219ba5499eaf17ea16b9f98
+      internalID: 1035547619
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_143
+      rect:
+        serializedVersion: 2
+        x: 1088
+        y: 163
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 33061f0170337a343ad8a80eb2c5e4e6
+      internalID: -807208068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_144
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 99
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 62ac6b1670060aa42a3088b2e2f3f9a9
+      internalID: 1476354597
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_145
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 99
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8c0eeb9e673b9f440b005a488888190a
+      internalID: 1319143542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_146
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 99
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c245a989a6c2f3e408c6ae7e45e878e2
+      internalID: 1500677906
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_147
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 99
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 555499ea1aaf8994fb082f932f889553
+      internalID: 861111985
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_148
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 99
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1194b5eb523bc01469dd9d3d118f6c44
+      internalID: -622263513
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_149
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 99
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2c1198828d050394985754a158298f67
+      internalID: 1430433394
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_150
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 99
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fe9253b12c4be224aa233e9e6cf3712b
+      internalID: -1001818019
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_151
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 99
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0c1fc19a052d6104c8fc456fbe6ebb02
+      internalID: 987748295
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_152
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 99
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d0b12e7d492769c418ca321dfc190f3b
+      internalID: 411721847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_153
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 99
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cc0e8fcf461e3e14dadfd47806c69d76
+      internalID: 708784913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_154
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 99
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ad84370077418814ba561d513f1863b0
+      internalID: 1587084145
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_155
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 99
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aa6b19fa4433f9c4e81acebce58ad7bb
+      internalID: -440651522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_156
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 99
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 84c2601a09e6aae44b38c86e91c64eb9
+      internalID: 1999079269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_157
+      rect:
+        serializedVersion: 2
+        x: 832
+        y: 99
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 01315def2500a9c4b94d55991f993eb6
+      internalID: -2117017476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_158
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 99
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6950c47e96c34a841b21d3d1d7d06c14
+      internalID: 1335736079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_159
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 99
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1443d9c32dd5b564f9ab04339f7b4b6b
+      internalID: -1812238363
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_160
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 99
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e3198d50fc5b17f47b875ebc053a57d7
+      internalID: 1800425514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_161
+      rect:
+        serializedVersion: 2
+        x: 1088
+        y: 99
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 05b0c63e7bb2fd94bad6ecb63d06e7e5
+      internalID: 1585291203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_162
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 35
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ac667e8b93126dd4da6f876126ae7dfa
+      internalID: -745904248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_163
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 35
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f5d5f5b7572c8cd4b90c14942a153155
+      internalID: 1872721107
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_164
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 35
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ece8882e7cab09348af781cd448c3bdb
+      internalID: -251173867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_165
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 35
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2f8882ce0b1dd934db9d0352d3f5c72d
+      internalID: 1747070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_166
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 35
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 339d911bba4af864a867b4312dc367c0
+      internalID: 1354290844
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_167
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 35
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cff20663b7e8e1e4daba17b4fcf4e104
+      internalID: -22759199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_168
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 35
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cf1bde30178f0db48ae61c17d802535e
+      internalID: -44845840
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_169
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 35
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aa74c51375d71b049ba5f614f9e54982
+      internalID: -1015108297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_170
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 35
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c43014564382e174c8b6c57101bcefcf
+      internalID: 2015461988
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_171
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 35
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4bfc5cbf4a620b34c841e64fab85455d
+      internalID: -1374586842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_172
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 35
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 98e8b6fc56850194fa48f2af3e0340b6
+      internalID: 1004790288
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_173
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 35
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4fbad65c088cb6540b9ff791cec1bad4
+      internalID: 978230840
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_174
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 35
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bae55377a1b273447bd0506b0a7e529e
+      internalID: -1073161874
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_175
+      rect:
+        serializedVersion: 2
+        x: 832
+        y: 35
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8ea3e9afe47c8cf4bac7597d2a44d87d
+      internalID: -132844285
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_176
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 35
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: db59e7712d986bd40bbf86a2e7db744f
+      internalID: -1749426291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_177
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 35
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7182b60ac8945854a9eeade24af0e3fa
+      internalID: 809261897
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_178
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 35
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f8b1911ca1026cb43813c5dbfe6e70c2
+      internalID: 98555041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LavaxIce-01_179
+      rect:
+        serializedVersion: 2
+        x: 1088
+        y: 35
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 628e75e0d11779c44bccaaeaa7383dba
+      internalID: -201473027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      LavaxIce-01_43: 439460681
+      LavaxIce-01_85: 344616540
+      LavaxIce-01_141: -2056291913
+      LavaxIce-01_153: 708784913
+      LavaxIce-01_169: -1015108297
+      LavaxIce-01_94: -999291523
+      LavaxIce-01_103: -241729271
+      LavaxIce-01_101: 1449556594
+      LavaxIce-01_135: 324657354
+      LavaxIce-01_150: -1001818019
+      LavaxIce-01_91: -1612268900
+      LavaxIce-01_138: 605482495
+      LavaxIce-01_71: 1424679326
+      LavaxIce-01_140: -1705322909
+      LavaxIce-01_151: 987748295
+      LavaxIce-01_38: 1303877816
+      LavaxIce-01_136: 1876220847
+      LavaxIce-01_149: 1430433394
+      LavaxIce-01_129: -666888965
+      LavaxIce-01_113: 1483349284
+      LavaxIce-01_49: 1948801403
+      LavaxIce-01_87: 1780978466
+      LavaxIce-01_55: -1812617712
+      LavaxIce-01_14: -2132536734
+      LavaxIce-01_1: 84413664
+      LavaxIce-01_90: 1932975679
+      LavaxIce-01_109: -1662613209
+      LavaxIce-01_47: -778896839
+      LavaxIce-01_2: 236193237
+      LavaxIce-01_133: 776041741
+      LavaxIce-01_77: 1293756092
+      LavaxIce-01_110: -675613432
+      LavaxIce-01_131: 1783145263
+      LavaxIce-01_175: -132844285
+      LavaxIce-01_7: 1498314762
+      LavaxIce-01_116: -2086882426
+      LavaxIce-01_30: -1494094049
+      LavaxIce-01_167: -22759199
+      LavaxIce-01_53: -2132339225
+      LavaxIce-01_147: 861111985
+      LavaxIce-01_144: 1476354597
+      LavaxIce-01_45: 1821759634
+      LavaxIce-01_13: -1583969807
+      LavaxIce-01_61: -1843854255
+      LavaxIce-01_115: -1950205943
+      LavaxIce-01_93: 426450973
+      LavaxIce-01_119: -1271435976
+      LavaxIce-01_178: 98555041
+      LavaxIce-01_48: 778919484
+      LavaxIce-01_17: -1150807043
+      LavaxIce-01_75: -1979628627
+      LavaxIce-01_142: 1035547619
+      LavaxIce-01_37: 980094192
+      LavaxIce-01_27: -531332844
+      LavaxIce-01_3: -2037736294
+      LavaxIce-01_79: 1446403131
+      LavaxIce-01_171: -1374586842
+      LavaxIce-01_139: 1860039603
+      LavaxIce-01_65: -2005515396
+      LavaxIce-01_121: -1843637424
+      LavaxIce-01_10: -529295572
+      LavaxIce-01_156: 1999079269
+      LavaxIce-01_95: 1949812513
+      LavaxIce-01_134: 1628780144
+      LavaxIce-01_67: 571070716
+      LavaxIce-01_107: 369160854
+      LavaxIce-01_42: -1238292090
+      LavaxIce-01_50: 225882164
+      LavaxIce-01_173: 978230840
+      LavaxIce-01_148: -622263513
+      LavaxIce-01_117: 1454506663
+      LavaxIce-01_70: 511712370
+      LavaxIce-01_73: -890244640
+      LavaxIce-01_69: -96402785
+      LavaxIce-01_35: -1429754552
+      LavaxIce-01_41: 499155425
+      LavaxIce-01_26: -722687238
+      LavaxIce-01_170: 2015461988
+      LavaxIce-01_54: -622607973
+      LavaxIce-01_155: -440651522
+      LavaxIce-01_152: 411721847
+      LavaxIce-01_162: -745904248
+      LavaxIce-01_82: 1744199754
+      LavaxIce-01_164: -251173867
+      LavaxIce-01_68: 1986332777
+      LavaxIce-01_163: 1872721107
+      LavaxIce-01_22: 2070161589
+      LavaxIce-01_123: -1823998887
+      LavaxIce-01_64: -1287437786
+      LavaxIce-01_36: -1060888136
+      LavaxIce-01_74: 353960782
+      LavaxIce-01_18: -263433647
+      LavaxIce-01_118: 355095346
+      LavaxIce-01_143: -807208068
+      LavaxIce-01_81: 191679329
+      LavaxIce-01_104: 1514664391
+      LavaxIce-01_128: 1876599648
+      LavaxIce-01_51: -1044180142
+      LavaxIce-01_83: 1887073365
+      LavaxIce-01_99: -827582122
+      LavaxIce-01_9: -1512786420
+      LavaxIce-01_105: -1774367973
+      LavaxIce-01_23: 1620224669
+      LavaxIce-01_158: 1335736079
+      LavaxIce-01_19: 1950646519
+      LavaxIce-01_57: 691164279
+      LavaxIce-01_89: 47101531
+      LavaxIce-01_157: -2117017476
+      LavaxIce-01_46: 1090501350
+      LavaxIce-01_98: -608244467
+      LavaxIce-01_34: -1442277081
+      LavaxIce-01_127: -1531494245
+      LavaxIce-01_106: -89834729
+      LavaxIce-01_66: 1141426343
+      LavaxIce-01_8: -493481026
+      LavaxIce-01_60: 1559523321
+      LavaxIce-01_172: 1004790288
+      LavaxIce-01_21: -2027957519
+      LavaxIce-01_58: -2049734338
+      LavaxIce-01_86: 841879659
+      LavaxIce-01_96: 1008929988
+      LavaxIce-01_161: 1585291203
+      LavaxIce-01_122: 207586474
+      LavaxIce-01_166: 1354290844
+      LavaxIce-01_88: -99549942
+      LavaxIce-01_179: -201473027
+      LavaxIce-01_146: 1500677906
+      LavaxIce-01_114: -1129791136
+      LavaxIce-01_108: 659778518
+      LavaxIce-01_11: -1328203327
+      LavaxIce-01_62: -1200283613
+      LavaxIce-01_56: 326225162
+      LavaxIce-01_176: -1749426291
+      LavaxIce-01_76: 640831934
+      LavaxIce-01_72: 362542488
+      LavaxIce-01_145: 1319143542
+      LavaxIce-01_52: 942325987
+      LavaxIce-01_154: 1587084145
+      LavaxIce-01_31: 1279070550
+      LavaxIce-01_63: 256022653
+      LavaxIce-01_24: 299519198
+      LavaxIce-01_80: 864375107
+      LavaxIce-01_78: -913038103
+      LavaxIce-01_165: 1747070
+      LavaxIce-01_25: 1941712547
+      LavaxIce-01_32: 1743770780
+      LavaxIce-01_40: -1331735877
+      LavaxIce-01_28: 2104776902
+      LavaxIce-01_126: 1431021634
+      LavaxIce-01_168: -44845840
+      LavaxIce-01_111: 1028615453
+      LavaxIce-01_20: -1524281493
+      LavaxIce-01_97: 2130419397
+      LavaxIce-01_16: 1311771228
+      LavaxIce-01_33: 247544407
+      LavaxIce-01_15: 650110213
+      LavaxIce-01_0: 1078740986
+      LavaxIce-01_5: 1606739551
+      LavaxIce-01_159: -1812238363
+      LavaxIce-01_132: -1636925602
+      LavaxIce-01_92: -279829508
+      LavaxIce-01_125: 180435117
+      LavaxIce-01_137: -671174431
+      LavaxIce-01_102: 1705704545
+      LavaxIce-01_4: 486375984
+      LavaxIce-01_160: 1800425514
+      LavaxIce-01_112: 1198680123
+      LavaxIce-01_100: -704945926
+      LavaxIce-01_44: 1904270000
+      LavaxIce-01_120: 1786807474
+      LavaxIce-01_174: -1073161874
+      LavaxIce-01_177: 809261897
+      LavaxIce-01_84: -1095130180
+      LavaxIce-01_12: 229584668
+      LavaxIce-01_29: -1955657591
+      LavaxIce-01_59: -658950601
+      LavaxIce-01_130: -1104877406
+      LavaxIce-01_39: 1134534511
+      LavaxIce-01_124: -1538637862
+      LavaxIce-01_6: 2018879928
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

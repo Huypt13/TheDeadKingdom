@@ -11,21 +11,35 @@ public class BoxManage : MonoBehaviour
     
     public void Update()
     {
+        
         if (listSprite.Length == 0) return;
         float health = networkIdentity.getHealthBar().slider.value;
         float maxHealth = networkIdentity.getHealthBar().slider.maxValue;
         if (health == maxHealth) return;
-        float rate = Mathf.Round((health / maxHealth) * 100);
-        if (70 <= rate && rate < 100)
+        if(gameObject.tag == "Box")
         {
-            transform.gameObject.GetComponent<SpriteRenderer>().sprite = listSprite[0];
-        }
-        else
-        {
-            if (30 <= rate && rate < 70)
-                transform.gameObject.GetComponent<SpriteRenderer>().sprite = listSprite[1];
+            float rate = Mathf.Round((health / maxHealth) * 100);
+            if (70 <= rate && rate < 100)
+            {
+                transform.gameObject.GetComponent<SpriteRenderer>().sprite = listSprite[0];
+            }
             else
-                transform.gameObject.GetComponent<SpriteRenderer>().sprite = listSprite[2];
+            {
+                if (30 <= rate && rate < 70)
+                    transform.gameObject.GetComponent<SpriteRenderer>().sprite = listSprite[1];
+                else
+                    transform.gameObject.GetComponent<SpriteRenderer>().sprite = listSprite[2];
+            }
         }
+        if(gameObject.tag == "HpBox")
+        {
+            if (health <= 0)
+            {
+                transform.gameObject.SetActive(true);
+                transform.gameObject.GetComponent<SpriteRenderer>().sprite = listSprite[0];
+                return;
+            }
+        }
+    
     }
 }

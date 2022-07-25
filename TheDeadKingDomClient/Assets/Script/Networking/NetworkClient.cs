@@ -326,7 +326,7 @@ public class NetworkClient : SocketIOComponent
                     ni1.setHealthBar(healthBar);
 
                 }
-                if (name == "buffItem")
+                if (name == "BuffItem")
                 {
                     string type = E.data["type"].ToString().RemoveQuotes();
                     ServerObjectData sod1 = serverSpawnables.GetObjectByName(name + "_" + type);
@@ -338,10 +338,11 @@ public class NetworkClient : SocketIOComponent
                     ni1.TypeId = type;
                     serverObjects.Add(id, ni1);
                 }
-                if (name == "WoodBox")
+                if (name == "Box")
                 {
                     float health = E.data["health"].f;
-                    ServerObjectData sod1 = serverSpawnables.GetObjectByName(name);
+                    string type = E.data["type"].ToString().RemoveQuotes();
+                    ServerObjectData sod1 = serverSpawnables.GetObjectByName(name + "_" + type);
                     GameObject spawnedObject1 = Instantiate(sod1.Prefab, networkContainer);
                     spawnedObject1.transform.position = new Vector3(x, y, 0);
                     NetworkIdentity ni1 = spawnedObject1.GetComponent<NetworkIdentity>();
@@ -627,6 +628,18 @@ public class NetworkClient : SocketIOComponent
             ni.gameObject.SetActive(false);
         });
 
+        On("boxDied", (e) =>
+        {
+            string id = e.data["id"].ToString().Replace("\"", "");
+            var ni = serverObjects[id];
+            if (ni.GetComponent<AiManager>())
+            {
+                ni.GetComponent<AiManager>().StopCoroutines();
+            }
+            DestroyImmediate(ni.getHealthBar().transform.parent.gameObject);
+        });
+
+
 
         // update player attacked
 
@@ -641,6 +654,7 @@ public class NetworkClient : SocketIOComponent
             healthBar.SetHealth(health);
 
         });
+
         On("loadWaiting", (E) =>
         {
             Debug.Log("Switching to waiting choose hero");

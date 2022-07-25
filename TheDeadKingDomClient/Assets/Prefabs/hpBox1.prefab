@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 8592484619528367312}
   - component: {fileID: 369485681367670416}
   - component: {fileID: 559532935087937238}
+  - component: {fileID: 9063284011464660697}
   m_Layer: 0
   m_Name: hpBox1
   m_TagString: HpBox
@@ -179,6 +180,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   effect: {fileID: 6685393159536730410, guid: e4f1378a21597f84fa49c6d0a4bc102a, type: 3}
+--- !u!114 &9063284011464660697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3179618275572778288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a779e57e8720894b93148a0b8f52b4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  listSprite:
+  - {fileID: 21300000, guid: 5f2307bf702807b4ca6c29dc5c70d620, type: 3}
+  networkIdentity: {fileID: 8592484619528367312}
 --- !u!1 &7788729299512545226
 GameObject:
   m_ObjectHideFlags: 0

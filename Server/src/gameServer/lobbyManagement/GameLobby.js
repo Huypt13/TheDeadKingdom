@@ -8,7 +8,9 @@ const Connection = require("../playerManagement/Connection");
 const TankService = require("../../api/hero/Tank.service");
 const Player = require("../playerManagement/Player");
 const Potion = require("../gamePlay/serverObjects/Potion");
-const WoodBox = require("../gamePlay/serverObjects/WoodBox");
+const WoodBox = require("../gamePlay/serverObjects/Box/WoodBox");
+const IronBox = require("../gamePlay/serverObjects/Box/IronBox");
+const PileBox = require("../gamePlay/serverObjects/Box/PileBox");
 const FastSpeedItem = require("../gamePlay/serverObjects/itemBuff/FastSpeedItem");
 const BuffArmorItem = require("../gamePlay/serverObjects/itemBuff/BuffArmorItem");
 const BuffDamageItem = require("../gamePlay/serverObjects/itemBuff/BuffDamage");
@@ -58,7 +60,6 @@ module.exports = class GameLobby extends LobbyBase {
       lobby.onMatchTime();
       lobby.OnUpdateEffectCooldown();
       lobby.OnUpdateEffectTime();
-      lobby.onUpdateItem();
       lobby.onUpdateItemTime();
     }
     lobby.onWinning();
@@ -306,15 +307,7 @@ module.exports = class GameLobby extends LobbyBase {
       );
     });
   }
-  onUpdateItem() {
-    this.listItem.forEach((item) => {
-      if (item instanceof BaseItem && item.isActive) {
-        if (!item.existTimeCouter()) {
-          this.despawnItem(item);
-        }
-      }
-    });
-  }
+
 
   canEnterLobby(connection = Connection) {
     let lobby = this;
@@ -457,10 +450,10 @@ module.exports = class GameLobby extends LobbyBase {
     this.onServerSpawn(new Potion(1), new Vector2(7, -5));
     this.onServerSpawn(new Potion(2), new Vector2(7, -1));
     this.onServerSpawn(new WoodBox(), new Vector2(-1, 3));
-    this.onServerSpawn(new WoodBox(), new Vector2(2, 3));
-    this.onServerSpawn(new WoodBox(), new Vector2(4, 3));
-    this.onServerSpawn(new Helipad(18), new Vector2(-3, 1));
-    this.onServerSpawn(new Helipad(20), new Vector2(-3, 3));
+    this.onServerSpawn(new IronBox(), new Vector2(2, 3));
+    this.onServerSpawn(new PileBox(), new Vector2(4, 3));
+    this.onServerSpawn(new Helipad(3), new Vector2(-3, 1));
+    this.onServerSpawn(new Helipad(5), new Vector2(-3, 3));
   }
   onUnspawnAllAIInGame(connection = Connection) {
     let lobby = this;
@@ -851,6 +844,8 @@ module.exports = class GameLobby extends LobbyBase {
     const id = data.id;
     const item = this.serverItems.find((item) => item.id == id);
     if (!item) return;
+    const owner = this.serverItems.find((owner) => owner.id == item.ownerId);
+    owner.isActive = false;
     const type = item.type;
     switch (type) {
       case "Armor":
@@ -954,8 +949,7 @@ module.exports = class GameLobby extends LobbyBase {
     let id = data?.id;
     let enemyId = data?.enemyId;
     const potion = this.serverItems.find((item) => item.id == enemyId);
-    if (potion.team == 1)
-      if (!potion || potion.team == connection.player.team) return;
+    if (!potion || potion.team == connection.player.team) return;
     const returnBullet = lobby.bullets.filter((e) => e.id == id);
     returnBullet.forEach((bullet) => {
       bullet.isDestroyed = true;
@@ -965,11 +959,24 @@ module.exports = class GameLobby extends LobbyBase {
       }
 
       if (isDead) {
+        connection.socket.emit("stopLoading", potion.id);
+        connection.socket.broadcast.to(lobby.id).emit("stopLoading", potion.id);
+
+        let returnData1 = {
+          id: potion.id,
+          health: potion.health,
+        };
+        connection.socket.emit("playerAttacked", returnData1);
+        connection.socket.broadcast
+          .to(lobby.id)
+          .emit("playerAttacked", returnData1);
         let returnData = {
           id: enemyId,
         };
-        connection.socket.emit("playerDied", returnData);
-        connection.socket.broadcast.to(lobby.id).emit("playerDied", returnData);
+        connection.socket.emit("boxDied", returnData);
+        connection.socket.broadcast.to(lobby.id).emit("boxDied", returnData);
+        const index = this.serverItems.indexOf(potion);
+        this.serverItems.splice(index, 1);
       } else {
         let returnData = {
           id: potion.id,
@@ -982,32 +989,28 @@ module.exports = class GameLobby extends LobbyBase {
       }
     });
   }
-  onCollisionDestroyWoodBox(connection = Connection, data) {
-    console.log("destroy");
+  onCollisionDestroyBox(connection = Connection, data) {
     let lobby = this;
     let id = data?.id;
     let enemyId = data?.enemyId;
-    const woodBox = this.serverItems.find((item) => item.id == enemyId);
-    if (!woodBox) return;
-    console.log("destroy1");
+    const box = this.serverItems.find((item) => item.id == enemyId);
+    if (!box) return;
     const returnBullet = lobby.bullets.filter((e) => e.id == id);
     returnBullet.forEach((bullet) => {
       let isDead = false;
       bullet.isDestroyed = true;
-      isDead = woodBox.dealDamage(bullet?.tank?.damage || 5);
-      console.log("isDead: " + isDead);
+      isDead = box.dealDamage(bullet?.tank?.damage || 5);
       if (isDead) {
         let returnData = {
           id: enemyId,
         };
-        connection.socket.emit("playerDied", returnData);
-        connection.socket.broadcast.to(lobby.id).emit("playerDied", returnData);
-        console.log("create");
-        this.spawnRandomItem(woodBox.position);
+        connection.socket.emit("serverUnSpawn", returnData);
+        connection.socket.broadcast.to(lobby.id).emit("serverUnSpawn", returnData);
+        this.spawnRandomItem(box);
       } else {
         let returnData = {
-          id: woodBox.id,
-          health: woodBox.health,
+          id: box.id,
+          health: box.health,
         };
         connection.socket.emit("playerAttacked", returnData);
         connection.socket.broadcast
@@ -1019,16 +1022,16 @@ module.exports = class GameLobby extends LobbyBase {
   randomInRange(max, min) {
     return Math.floor(Math.random() * (max - min)) + min;
   }
-  spawnRandomItem(position) {
+  spawnRandomItem(owner) {
     const nonActiveItems = this.listItem.filter(
       (item) => item.isActive == false
     );
-    const index = this.randomInRange(nonActiveItems.length, 0);
+    const index = this.randomInRange(nonActiveItems.length, -1);
     const item = nonActiveItems[index];
     if (item) {
+      item.ownerId = owner.id;
       item.isActive = true;
-      this.onServerSpawn(item, position);
-      console.log("item :" + item.name);
+      this.onServerSpawn(item, owner.position);
     }
   }
 
@@ -1218,18 +1221,6 @@ module.exports = class GameLobby extends LobbyBase {
         }
       }
     });
-    for (let item of lobby.serverItems) {
-      if (item instanceof Potion && item.isDead) {
-        if (!item.reSpawn()) {
-          for (let connection of lobby.connections) {
-            connection.socket.emit("playerRespawn", item);
-            connection.socket.broadcast
-              .to(lobby.id)
-              .emit("playerRespawn", item);
-          }
-        }
-      }
-    }
   }
   removePlayer(connection = Connection) {
     let lobby = this;
@@ -1244,6 +1235,7 @@ module.exports = class GameLobby extends LobbyBase {
     const potion = lobby.serverItems.find((item) => item.id == potionId);
     console.log(connection.player.health + "||" + connection.player.maxHealth);
     if (
+      !potion||
       !potion.isActive ||
       connection.player.health === connection.player.maxHealth ||
       connection.player.team != potion.team
@@ -1274,14 +1266,16 @@ module.exports = class GameLobby extends LobbyBase {
   OnUpdateEffectCooldown() {
     for (let item of this.serverItems) {
       if (item?.isActive != undefined && !item.isActive) {
-        if (item instanceof Potion && item.coolDown()) {
+        if (item instanceof Potion && !item.isDead && item.coolDown()) {
           for (let connection of this.connections)
             connection.socket.emit("stopLoading", item.id);
         }
+        if (item instanceof Helipad && item.coolDown()) {
+          this.spawnRandomItem(item);
+          item.isActive = true;
+        }
       }
-      if (item instanceof Helipad && item.coolDown()) {
-        this.spawnRandomItem(item.position);
-      }
+      
     }
   }
   OnUpdateEffectTime() {

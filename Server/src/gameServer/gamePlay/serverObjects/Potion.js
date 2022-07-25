@@ -28,26 +28,10 @@ module.exports = class Potion extends ServerObject {
     if (this.health <= 0) {
       this.isDead = true;
       this.isActive = false;
-      // this.position = new Vector2(this.random2Numeric(-3,1),this.random2Numeric(-8,8));
-      this.health = this.maxHealth;
       return this.isDead;
     }
     console.log("Health is: " + this.health);
     return false;
-  }
-  reSpawn() {
-    this.reSpawnTime += 1;
-    if (this.reSpawnTime >= 10) {
-      this.reSpawnTime = 0;
-      this.reSpawnTicket += 1;
-      if (this.reSpawnTicket >= 4) {
-        this.reSpawnTime = new Number(0);
-        this.reSpawnTicket = new Number(0);
-        this.isDead = false;
-        return this.isDead;
-      }
-    }
-    return true;
   }
   coolDown() {
     this.reHealTime += 1;

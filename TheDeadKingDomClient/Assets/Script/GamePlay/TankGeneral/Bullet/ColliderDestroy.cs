@@ -84,7 +84,6 @@ public class ColliderDestroy : MonoBehaviour
                 // ban trung hop mau firer gui reques
                 if (ni.tag == "HpBox" && niActive.IsControlling())
                 {
-                    Debug.Log("bum");
                     Destroy(gameObject);
                     NetworkClient.serverObjects.Remove(networkIdentity.GetId());
                     networkIdentity.GetSocket().Emit("collisionDestroyHpBox", new JSONObject(JsonUtility.ToJson(new IDData()
@@ -95,12 +94,12 @@ public class ColliderDestroy : MonoBehaviour
                     return;
                 }
 
-                if (ni.tag == "WoodBox" && niActive.IsControlling())
+                if (ni.tag == "Box" && niActive.IsControlling())
                 {
-
+                    Debug.Log("chma");
                     Destroy(gameObject);
                     NetworkClient.serverObjects.Remove(networkIdentity.GetId());
-                    networkIdentity.GetSocket().Emit("collisionDestroyWoodBox", new JSONObject(JsonUtility.ToJson(new IDData()
+                    networkIdentity.GetSocket().Emit("collisionDestroyBox", new JSONObject(JsonUtility.ToJson(new IDData()
                         {
                             id = networkIdentity.GetId(),
                             enemyId = ni.GetId()

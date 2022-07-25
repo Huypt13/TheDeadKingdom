@@ -308,7 +308,6 @@ module.exports = class GameLobby extends LobbyBase {
     });
   }
 
-
   canEnterLobby(connection = Connection) {
     let lobby = this;
     let maxPlayerCount = lobby.settings.maxPlayers;
@@ -452,8 +451,8 @@ module.exports = class GameLobby extends LobbyBase {
     this.onServerSpawn(new WoodBox(), new Vector2(-1, 3));
     this.onServerSpawn(new IronBox(), new Vector2(2, 3));
     this.onServerSpawn(new PileBox(), new Vector2(4, 3));
-    this.onServerSpawn(new Helipad(3), new Vector2(-3, 1));
-    this.onServerSpawn(new Helipad(5), new Vector2(-3, 3));
+    this.onServerSpawn(new Helipad(13), new Vector2(-3, 1));
+    this.onServerSpawn(new Helipad(17), new Vector2(-3, 3));
   }
   onUnspawnAllAIInGame(connection = Connection) {
     let lobby = this;

@@ -7,5 +7,7 @@ module.exports = async function (deployer) {
   const deathKingdomCoin = await DeathKingdomCoin.deployed();
   await deployer.deploy(Marketplace, deathKingdomCoin.address);
   const marketplace = await Marketplace.deployed();
-  await deployer.deploy(TankNFT, marketplace.address);
+  await deployer.deploy(TankNFT, marketplace.address, deathKingdomCoin.address);
+
+
 };

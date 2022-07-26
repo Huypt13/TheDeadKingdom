@@ -9,8 +9,4 @@ contract DeathKingdomCoin is ERC20, Ownable {
     constructor() ERC20("DeathKingdomCoin", "DKC") {
         _mint(msg.sender, 100000000 * 10**decimals());
     }
-
-    // function mint(address to, uint256 amount) public onlyOwner {
-    //     _mint(to, amount);
-    // }
 }

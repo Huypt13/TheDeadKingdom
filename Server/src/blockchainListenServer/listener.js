@@ -1,6 +1,6 @@
 const Web3 = require("web3");
-const TankNFT = require('../contracts/TankNFT.json');
-const Marketplace = require('./contracts/Marketplace.json');
+const TankNFT = require('../../../Contract/demo-client/contracts/TankNFT.json');
+const Marketplace = require('../../../Contract/demo-client/contracts/Marketplace.json');
 
 const init = async () => {
     const web3 = new Web3('ws://127.0.0.1:7545');
@@ -14,6 +14,15 @@ const init = async () => {
             console.log("===============NFTMinted=================");
             console.log(event.returnValues);
             // Do something here
+
+        })
+        .on('error', console.error);
+
+    tankNFTContract.events.Transfer({})
+        .on('data', async function (event) {
+            console.log("===============TransferNFT=================");
+            console.log(event.returnValues);
+            // Phai check xem la from va to co phai cua marketplace hay khong
 
         })
         .on('error', console.error);

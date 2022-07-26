@@ -41,15 +41,6 @@ export default function MyAssets() {
 
 
     async function loadNFTs() {
-        // const web3Modal = new Web3Modal()
-        // const provider = await web3Modal.connect()
-        // const web3 = new Web3(provider)
-
-        // const networkId = await web3.eth.net.getId()
-        // const marketplaceContract = new web3.eth.Contract(Marketplace.abi, Marketplace.networks[networkId].address)
-        // const tankNFTContractAddress = TankNFT.networks[networkId].address
-        // const tankNFTContract = new web3.eth.Contract(TankNFT.abi, tankNFTContractAddress)
-        // const accounts = await web3.eth.getAccounts()
         await setWeb3Value();
 
         const data = await tankNFTContract.methods.getMyNfts(accounts[0]).call({ from: accounts[0] })
@@ -79,12 +70,13 @@ export default function MyAssets() {
         router.push(`/resell-nft?id=${nft.tokenId}&tokenURI=${nft.tokenURI}`)
     }
 
-    async function sellNFT(tokenId, price = 0.1) {
+    async function sellNFT(tokenId, price = 100) {
         await setWeb3Value();
 
-        await marketplaceContract.methods.listNft(TankNFT.networks[networkId].address, tokenId, new BigNumber(price * Math.pow(10, 18))).send({ from: accounts[0] })
+        await marketplaceContract.methods.listNft(TankNFT.networks[networkId].address, tokenId, Web3.utils.toWei(price.toString(), "ether")).send({ from: accounts[0] })
             .on('receipt', function (receipt) {
-                console.log(receipt);
+                console.log(receipt.status);
+                console.log(receipt.events);
             });
     }
 

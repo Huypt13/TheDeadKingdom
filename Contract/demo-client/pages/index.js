@@ -17,10 +17,26 @@ export default function Home() {
   var tankNFTContract;
   var marketplaceContract;
 
+  // async function setEthereum() {
+  //   if (typeof window.ethereum !== 'undefined') {
+  //     console.log('MetaMask is installed!');
+  //   }
+  //   else {
+  //     console.log('MetaMask is NOT installed!');
+  //   }
+  // }
+
+  // setEthereum();
+
+  const [boxAmount, setBoxAmount] = useState(1);
+
   async function setWeb3Value() {
     const web3Modal = new Web3Modal();
     const provider = await web3Modal.connect();
 
+    console.log(provider)
+    console.log(window.ethereum)
+    console.log(window.ethereum == provider)
     web3 = new Web3(provider);
 
     // web3 = new Web3('HTTP://127.0.0.1:7545');
@@ -30,12 +46,28 @@ export default function Home() {
     deathKingdomCoinContract = new web3.eth.Contract(DeathKingdomCoin.abi, DeathKingdomCoin.networks[networkId].address);
     tankNFTContract = new web3.eth.Contract(TankNFT.abi, TankNFT.networks[networkId].address);
     marketplaceContract = new web3.eth.Contract(Marketplace.abi, Marketplace.networks[networkId].address);
+    console.log("DKC Address:  " + DeathKingdomCoin.networks[networkId].address)
+    console.log("TankNFT Address:  " + TankNFT.networks[networkId].address)
   }
 
   setWeb3Value();
 
-  async function mintNFT() {
-    await tankNFTContract.methods.createToken().send({ from: accounts[0] })
+  async function buyBoxes() {
+    const amount = boxAmount;
+    const boxPrice = (await tankNFTContract.methods.boxPrice().call({ from: accounts[0] }));
+
+    let allowance = await deathKingdomCoinContract.methods.allowance(accounts[0], TankNFT.networks[networkId].address).call({ from: accounts[0] })
+
+    console.log((boxPrice), (allowance));
+
+    if (BigNumber(allowance).lt(BigNumber(boxPrice).mult(amount))) {
+      await deathKingdomCoinContract.methods.approve(TankNFT.networks[networkId].address, (BigNumber(boxPrice).mult(amount)).minus(BigNumber(allowance))).send({ from: accounts[0] })
+        .on('receipt', function (receipt) {
+          console.log("Approve: " + receipt.status);
+        });
+    }
+
+    await tankNFTContract.methods.buyBoxes(amount).send({ from: accounts[0] })
       .on('receipt', function (receipt) {
         console.log(receipt.status);
         console.log(receipt.events);
@@ -43,16 +75,16 @@ export default function Home() {
       });
   }
 
-  async function transferDKC(amount = 1) {
-    await deathKingdomCoinContract.methods.transfer("0xeA805C24E8352A0197e24E47A60729EFe4484828", new BigNumber(amount * Math.pow(10, 18))).send({ from: accounts[0] });
+  async function transferDKC(amount = 1000) {
+    await deathKingdomCoinContract.methods.transfer("0xeA805C24E8352A0197e24E47A60729EFe4484828", Web3.utils.toWei(amount.toString(), "ether")).send({ from: accounts[0] });
+    await deathKingdomCoinContract.methods.transfer("0x57Cc8B3D8E509384f2E3D98707537A425277d855", Web3.utils.toWei(amount.toString(), "ether")).send({ from: accounts[0] });
     const a = await deathKingdomCoinContract.methods.balanceOf(accounts[0]).call();
-    console.log(a);
   }
 
   async function getBalance() {
     let balance = await deathKingdomCoinContract.methods.balanceOf(accounts[0]).call({ from: accounts[0] });
 
-    console.log(balance);
+    console.log(balance, typeof (balance));
   }
 
   async function getListingNfts() {
@@ -80,12 +112,20 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <button type="button" className="mt-4 w-full bg-teal-400 text-white font-bold py-2 px-12 rounded" onClick={() => mintNFT()}>MintNFT</button>
+      Box Amount<input type="number" min="1" name="boxAmount" className='w-full my-1 text-black border' value={boxAmount} onChange={(event) => { setBoxAmount(event.target.value); }} />
+
+      <button type="button" className="mt-4 w-full bg-teal-400 text-white font-bold py-2 px-12 rounded" onClick={() => buyBoxes()}>BuyBoxes</button>
       <button type="button" className="mt-4 w-full bg-teal-400 text-white font-bold py-2 px-12 rounded" onClick={() => getBalance()}>GetBalance</button>
       <button type="button" className="mt-4 w-full bg-teal-400 text-white font-bold py-2 px-12 rounded" onClick={() => getMyNfts()}>getMyNfts</button>
       <button type="button" className="mt-4 w-full bg-teal-400 text-white font-bold py-2 px-12 rounded" onClick={() => getListingNfts()}>getListingNfts</button>
       <button type="button" className="mt-4 w-full bg-teal-400 text-white font-bold py-2 px-12 rounded" onClick={() => getMyListingNfts()}>getMyListingNfts</button>
+
       <br></br>
+      <br></br>
+      <br></br>
+      <br></br>
+      <br></br>
+      <button type="button" className="mt-4 w-full bg-teal-400 text-white font-bold py-2 px-12 rounded" onClick={() => transferDKC()}>TransferDKC</button>
 
     </div>
   )

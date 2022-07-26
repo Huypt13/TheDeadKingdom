@@ -6,22 +6,20 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract Marketplace is ReentrancyGuard {
+contract Marketplace is ReentrancyGuard, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _marketItemIds;
     Counters.Counter private _nftSold;
-    IERC20 public tokenAddress;
+    IERC20 public deathKingdomCoin;
     uint256 public platformFee = 25;
     uint256 public deno = 1000;
 
-    address payable marketOwner;
-
     mapping(uint256 => NFTMarketItem) private marketItems;
 
-    constructor(address _tokenAddress) {
-        marketOwner = payable(msg.sender);
-        tokenAddress = IERC20(_tokenAddress);
+    constructor(address _deathKingdomCoinContract) {
+        deathKingdomCoin = IERC20(_deathKingdomCoinContract);
     }
 
     struct NFTMarketItem {
@@ -66,7 +64,11 @@ contract Marketplace is ReentrancyGuard {
         uint256 _tokenId,
         uint256 _price
     ) public {
-        require(_price > 0);
+        require(_price > 0, "Price must > 0");
+        require(
+            IERC721(_nftContract).ownerOf(_tokenId) == msg.sender,
+            "You are not NFT's owner"
+        );
         _marketItemIds.increment();
         uint256 marketItemId = _marketItemIds.current();
 
@@ -92,7 +94,8 @@ contract Marketplace is ReentrancyGuard {
 
     function cancelSellNft(uint256 _marketItemId) public {
         NFTMarketItem storage nftMarketItem = marketItems[_marketItemId];
-        require(msg.sender == nftMarketItem.seller);
+        require(msg.sender == nftMarketItem.seller, "You are not NFT's Owner");
+        require(nftMarketItem.isSelling == true, "NFT is not Selling");
         nftMarketItem.isSelling = false;
         IERC721(nftMarketItem.nftContract).transferFrom(
             address(this),
@@ -111,19 +114,28 @@ contract Marketplace is ReentrancyGuard {
 
     function buyNft(uint256 _marketItemId) public payable {
         NFTMarketItem storage nftMarketItem = marketItems[_marketItemId];
+        require(nftMarketItem.isSelling == true, "NFT is not Selling");
+        require(
+            nftMarketItem.seller != msg.sender,
+            "You can not buy your own NFT"
+        );
+
         uint256 price = nftMarketItem.price;
         uint256 marketFee = (price * platformFee) / deno;
 
-        uint256 allowance = tokenAddress.allowance(msg.sender, address(this));
-        require(allowance >= price, "Check the token allowance");
+        uint256 allowance = deathKingdomCoin.allowance(
+            msg.sender,
+            address(this)
+        );
+        require(allowance >= price, "Do not have enough DKC to buy NFT");
 
-        tokenAddress.transferFrom(msg.sender, address(this), price);
+        deathKingdomCoin.transferFrom(msg.sender, address(this), price);
 
-        tokenAddress.transfer(nftMarketItem.seller, price - marketFee);
+        deathKingdomCoin.transfer(nftMarketItem.seller, price - marketFee);
 
-        tokenAddress.transfer(
-            marketOwner,
-            tokenAddress.balanceOf(address(this))
+        deathKingdomCoin.transfer(
+            owner(),
+            deathKingdomCoin.balanceOf(address(this))
         );
 
         nftMarketItem.buyer = payable(msg.sender);
@@ -181,6 +193,36 @@ contract Marketplace is ReentrancyGuard {
             if (
                 marketItems[i + 1].seller == msg.sender &&
                 marketItems[i + 1].isSelling
+            ) {
+                nfts[nftsIndex] = marketItems[i + 1];
+                nftsIndex++;
+            }
+        }
+        return nfts;
+    }
+
+    function getNftSellHistory(uint256 _tokenId)
+        public
+        view
+        returns (NFTMarketItem[] memory)
+    {
+        uint256 nftCount = _marketItemIds.current();
+        uint256 nftSellHistoryCount = 0;
+        for (uint256 i = 0; i < nftCount; i++) {
+            if (
+                marketItems[i + 1].tokenId == _tokenId &&
+                !marketItems[i + 1].isSelling
+            ) {
+                nftSellHistoryCount++;
+            }
+        }
+
+        NFTMarketItem[] memory nfts = new NFTMarketItem[](nftSellHistoryCount);
+        uint256 nftsIndex = 0;
+        for (uint256 i = 0; i < nftCount; i++) {
+            if (
+                marketItems[i + 1].tokenId == _tokenId &&
+                !marketItems[i + 1].isSelling
             ) {
                 nfts[nftsIndex] = marketItems[i + 1];
                 nftsIndex++;

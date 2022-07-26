@@ -26,9 +26,10 @@ const Skill002 = require("./GameLobbyFunction/002/Skill002");
 const SkillRegion = require("../gamePlay/serverObjects/SkillRegion");
 const Skill003 = require("./GameLobbyFunction/003/Skill003");
 const TowerAI = require("../aiManagement/TowerAI");
+const GameLobbySetting = require("./GameLobbySetting");
 
 module.exports = class GameLobby extends LobbyBase {
-  constructor(settings = GameLobbySettings) {
+  constructor(settings = GameLobbySetting) {
     super();
     this.settings = settings;
     this.lobbyState = new LobbyState();
@@ -227,8 +228,12 @@ module.exports = class GameLobby extends LobbyBase {
         if (this.connections.length > 0) {
           this.onJoinGameInit();
           console.log("join game");
-          this.connections[0].socket.emit("loadGame");
-          this.connections[0].socket.broadcast.to(this.id).emit("loadGame");
+          this.connections[0].socket.emit("loadGame", {
+            map: this.settings.map,
+          });
+          this.connections[0].socket.broadcast.to(this.id).emit("loadGame", {
+            map: this.settings.map,
+          });
           const returnData = {
             state: this.lobbyState.currentState,
           };

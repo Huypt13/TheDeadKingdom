@@ -4,14 +4,14 @@
 TagManager:
   serializedVersion: 2
   tags:
+  - BulletThrough
   - HpBox
-  - Undefined
   - WoodBox
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Wall
   - Water
   - UI
   - 

@@ -71,7 +71,7 @@ export default function Home() {
 
         console.log(BigNumber(nftMarketItemId.price), BigNumber(allowance));
 
-        if (allowance < nftMarketItemId.price) {
+        if (BigNumber(allowance).lt(BigNumber(nftMarketItemId.price))) {
             await deathKingdomCoinContract.methods.approve(Marketplace.networks[networkId].address, BigNumber(nftMarketItemId.price).minus(BigNumber(allowance))).send({ from: accounts[0] })
                 .on('receipt', function (receipt) {
                     console.log("Approve: " + receipt.status);

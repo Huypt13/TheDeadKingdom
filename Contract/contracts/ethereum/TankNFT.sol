@@ -4,14 +4,22 @@ pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract TankNFT is ERC721 {
+contract TankNFT is ERC721, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
-    address contractAddress;
+    address public marketAddress;
+    ERC20 public deathKingdomCoin;
+    uint256 public boxPrice;
 
-    constructor(address NFTMarket) ERC721("TankNFTToken", "DKT") {
-        contractAddress = NFTMarket;
+    constructor(address _mrketplaceContract, address _deathKingdomCoinContract)
+        ERC721("TankNFTToken", "DKT")
+    {
+        marketAddress = _mrketplaceContract;
+        deathKingdomCoin = ERC20(_deathKingdomCoinContract);
+        boxPrice = 200 * 10**deathKingdomCoin.decimals();
     }
 
     function _baseURI() internal pure override returns (string memory) {
@@ -20,12 +28,34 @@ contract TankNFT is ERC721 {
 
     event NFTMinted(uint256 tokenId, address tokenOwner);
 
-    function createToken() public returns (uint256) {
+    function buyBoxes(uint256 _amount) public returns (uint256[] memory) {
+        require(_amount > 0, "BoxAmount must > 0");
+        uint256 totalPrice = _amount * boxPrice;
+
+        uint256 allowance = deathKingdomCoin.allowance(
+            msg.sender,
+            address(this)
+        );
+        require(
+            allowance >= totalPrice,
+            "You do not have enough DKC to buy Boxes"
+        );
+
+        deathKingdomCoin.transferFrom(msg.sender, owner(), totalPrice);
+
+        uint256[] memory nfts = new uint256[](_amount);
+        for (uint256 i = 0; i < _amount; i++) {
+            nfts[i] = createToken();
+        }
+        return nfts;
+    }
+
+    function createToken() private returns (uint256) {
         _tokenIds.increment();
         uint256 newTokenId = _tokenIds.current();
 
         _mint(msg.sender, newTokenId);
-        _setApprovalForAll(_msgSender(), contractAddress, true);
+        _setApprovalForAll(_msgSender(), marketAddress, true);
 
         emit NFTMinted(newTokenId, msg.sender);
         return newTokenId;

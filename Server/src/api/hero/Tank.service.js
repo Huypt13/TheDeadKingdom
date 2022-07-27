@@ -39,6 +39,16 @@ class TankService {
   async getByTankUserById(id, userId) {
     return await TankUser.findOne({ tankId: id, userId }).lean();
   }
+  async insertAll(userId) {
+    const listTank = await Tank.find({}).lean();
+    listTank.forEach(async (l) => {
+      const tankUser = await new TankUser({
+        userId,
+        tankId: l._id,
+        remaining: 100,
+      }).save();
+    });
+  }
 }
 
 module.exports = new TankService();

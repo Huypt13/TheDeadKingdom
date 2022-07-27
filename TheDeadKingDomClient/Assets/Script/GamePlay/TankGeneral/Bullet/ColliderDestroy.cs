@@ -20,7 +20,7 @@ public class ColliderDestroy : MonoBehaviour
         NetworkIdentity ni = collision?.gameObject?.GetComponent<NetworkIdentity>();
 
         // cham cay
-        if (collision.gameObject.layer == 3)
+        if (ni == null)
         {
             Destroy(gameObject);
             NetworkClient.serverObjects.Remove(networkIdentity.GetId());

@@ -50,7 +50,5 @@ server.listen(8080);
 //console.log(GameMechanism.getDame({ armor: 99 }, 1000));
 
 // const a = (async () => {
-//   console.log(
-//     JSON.stringify(await Tank.getTankByUserId("6296d13fb263c0630e920031"))
-//   );
+//   await Tank.insertAll("629a066d8b413bffcf4f40ec");
 // })();

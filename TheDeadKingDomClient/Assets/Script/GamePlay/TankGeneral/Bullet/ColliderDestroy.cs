@@ -18,8 +18,9 @@ public class ColliderDestroy : MonoBehaviour
 
 
         NetworkIdentity ni = collision?.gameObject?.GetComponent<NetworkIdentity>();
+
         // cham cay
-        if (ni == null)
+        if (collision.gameObject.layer == 3)
         {
             Destroy(gameObject);
             NetworkClient.serverObjects.Remove(networkIdentity.GetId());
@@ -30,7 +31,7 @@ public class ColliderDestroy : MonoBehaviour
             })));
             return;
         }
-       
+
 
         // bullet cham nhau
 
@@ -99,12 +100,21 @@ public class ColliderDestroy : MonoBehaviour
                     Debug.Log("chma");
                     Destroy(gameObject);
                     NetworkClient.serverObjects.Remove(networkIdentity.GetId());
+<<<<<<< HEAD
                     networkIdentity.GetSocket().Emit("collisionDestroyBox", new JSONObject(JsonUtility.ToJson(new IDData()
                         {
                             id = networkIdentity.GetId(),
                             enemyId = ni.GetId()
                         })));
                     
+=======
+                    networkIdentity.GetSocket().Emit("collisionDestroyWoodBox", new JSONObject(JsonUtility.ToJson(new IDData()
+                    {
+                        id = networkIdentity.GetId(),
+                        enemyId = ni.GetId()
+                    })));
+
+>>>>>>> b4d519925d8b8a4b158f698733a49648427a31e3
                 }
 
 

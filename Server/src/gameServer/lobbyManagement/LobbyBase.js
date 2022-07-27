@@ -54,7 +54,7 @@ module.exports = class LobbyBase {
         health: item?.health,
         team: item?.team || 0,
         position,
-        type: item?.type
+        type: item?.type,
       });
     });
   }

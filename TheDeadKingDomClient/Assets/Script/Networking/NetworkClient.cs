@@ -671,7 +671,8 @@ public class NetworkClient : SocketIOComponent
         On("loadGame", (E) =>
         {
             Debug.Log("Join game");
-            SceneManagement.Instance.LoadLevel(SceneList.LEVEL, (levelName) =>
+            string map = E.data["map"].str;
+            SceneManagement.Instance.LoadLevel(map, (levelName) =>
             {
                 SceneManagement.Instance.UnLoadLevel(SceneList.WAITING);
             });

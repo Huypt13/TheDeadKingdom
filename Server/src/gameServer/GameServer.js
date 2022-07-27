@@ -1,4 +1,5 @@
 const shortid = require("shortid");
+const _ = require("lodash");
 
 const Connection = require("./playerManagement/Connection");
 const LobbyBase = require("./lobbyManagement/LobbyBase");
@@ -6,6 +7,8 @@ const Player = require("./playerManagement/Player");
 const GameLobby = require("./lobbyManagement/GameLobby");
 const GameLobbySetting = require("./lobbyManagement/GameLobbySetting");
 const GameInfor = require("../helper/GameInfor.helper");
+const GameType = require("./lobbyManagement/GameType");
+const Maps = require("./lobbyManagement/Maps");
 
 // server game manage all lobby , all connections
 // co the tao nhieu server
@@ -117,16 +120,19 @@ class GameServer {
     if (!lobbyFound) {
       console.log("Making a new game lobby");
       // random type
-
+      const type = _.shuffle(GameType.types)[0]; // random type
       let gamelobby = new GameLobby(
         new GameLobbySetting(
-          "CountKill",
+          type,
           GameInfor.CountKillMaxPlayer,
           GameInfor.CountKillMinPlayer,
           null
         )
       );
       // random map
+      gamelobby.settings.map = _.shuffle(Maps[type])[0];
+
+      console.log("random game", type, gamelobby.map);
       gamelobby.endGameLobby = () => {
         console.log("end lobby");
         this.closeDownLobby(gamelobby.id);

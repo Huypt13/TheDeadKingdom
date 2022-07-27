@@ -4,10 +4,15 @@
 TagManager:
   serializedVersion: 2
   tags:
+  - BulletThrough
   - HpBox
+<<<<<<< HEAD
   - Undefined
   - Box
   - BulletThrough
+=======
+  - WoodBox
+>>>>>>> b4d519925d8b8a4b158f698733a49648427a31e3
   layers:
   - Default
   - TransparentFX

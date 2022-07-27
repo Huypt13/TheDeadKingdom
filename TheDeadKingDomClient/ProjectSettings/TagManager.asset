@@ -7,11 +7,12 @@ TagManager:
   - HpBox
   - Undefined
   - Box
+  - BulletThrough
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Wall
   - Water
   - UI
   - 
@@ -43,4 +44,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Wall
+    uniqueID: 2482401661
     locked: 0

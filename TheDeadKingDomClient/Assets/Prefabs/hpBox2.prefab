@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 8052246414540433418}
   - component: {fileID: 4649490894146369397}
   - component: {fileID: 8611808503493245618}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: hpBox2
   m_TagString: HpBox
   m_Icon: {fileID: 0}

@@ -434,10 +434,10 @@ module.exports = class GameLobby extends LobbyBase {
     //   new TankAI("01", new Vector2(-6, 4), 4, tankAi, 0),
     //   new Vector2(-6, 4)
     // );
-    // this.onServerSpawn(
-    //   new TankAI("01", new Vector2(-3, 4), 4, tankAi, 2),
-    //   new Vector2(-3, 4)
-    // );
+    this.onServerSpawn(
+      new TankAI("01", new Vector2(-3, 4), 4, tankAi, 2),
+      new Vector2(-3, 4)
+    );
     // this.onServerSpawn(
     //   new TankAI("01", new Vector2(-6, 6), 4, tankAi, 0),
     //   new Vector2(5, 2)
@@ -1235,7 +1235,7 @@ module.exports = class GameLobby extends LobbyBase {
     console.log(connection.player.health + "||" + connection.player.maxHealth);
     if (
       !potion||
-      !potion.isActive ||
+      // !potion.isActive ||
       connection.player.health === connection.player.maxHealth ||
       connection.player.team != potion.team
     )

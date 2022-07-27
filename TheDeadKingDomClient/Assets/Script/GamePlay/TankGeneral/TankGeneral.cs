@@ -28,6 +28,11 @@ public class TankGeneral : MonoBehaviour
     [SerializeField]
     private NetworkIdentity networkIdentity;
 
+    private CapsuleCollider2D capsuleCollider;
+    private RaycastHit2D hit;
+    private RaycastHit2D hit1;
+    private Vector3 moveDelta;
+
     public float Speed { get => speed; set => speed = value; }
     public bool Stunned { get => stunned; set => stunned = value; }
     public bool TiedUp { get => tiedUp; set => tiedUp = value; }
@@ -49,6 +54,7 @@ public class TankGeneral : MonoBehaviour
         bulletData = new BulletData();
         bulletData.position = new Position();
         bulletData.direction = new Position();
+        capsuleCollider = GetComponent<CapsuleCollider2D>();
 
     }
 
@@ -96,6 +102,7 @@ public class TankGeneral : MonoBehaviour
     {
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
+        Vector3 direction = transform.up;
         //    int count = rb.Cast(-transform.up * vertical, castCollisions, speed * Time.deltaTime);
         //int count = 0;
         //if (count == 0)
@@ -110,7 +117,22 @@ public class TankGeneral : MonoBehaviour
         //else
         //{
         //    Debug.DrawRay(transform.position, transform.up * 10, Color.white);
-        transform.position += transform.up * vertical * Speed * Time.deltaTime;
+        if (vertical < 0) direction *= -1;
+        //it = Physics2D.CapsuleCast(transform.position,capsuleCollider.size, capsuleCollider.direction,0 , direction, LayerMask.GetMask("Wall"), Mathf.Infinity);
+        hit = Physics2D.BoxCast(transform.position, capsuleCollider.size, 0, direction, Mathf.Abs(vertical * Speed * Time.deltaTime), LayerMask.GetMask("Wall"));
+        if(hit.collider == null)
+        {
+            transform.position += transform.up * vertical * Speed * Time.deltaTime;
+        }  
+        //float distance1 = Vector3.Distance(transform.position, -transform.up * vertical * Speed * Time.deltaTime);
+        //hit1 = Physics2D.BoxCast(transform.position, capsuleCollider.size, 0, -transform.up, Mathf.Abs(distance1), LayerMask.GetMask("Wall"));
+        //if(hit1.collider == null)
+        //{
+        //    Debug.Log(hit1.collider);
+        //    Debug.Log(-transform.up);
+        //    transform.position += -transform.up * vertical * Speed * Time.deltaTime;
+        //}
+        Debug.Log(hit.collider);
         //    Debug.Log("Did not Hit");
         //}
         //}

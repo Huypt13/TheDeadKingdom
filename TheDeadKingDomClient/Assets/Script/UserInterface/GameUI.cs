@@ -17,6 +17,9 @@ public class GameUI : MonoBehaviour
     private Transform timeTransform;
     [SerializeField]
     private Transform killDeadTransform;
+    [SerializeField]
+    private Transform skillTransform;
+
     public void Start()
     {
         string kill1 = (NetworkClient.MyTeam == 1) ? $"<color=red><b>0</b></color>" : 0 + "";
@@ -24,8 +27,9 @@ public class GameUI : MonoBehaviour
         Text text = killDeadTransform.GetComponent<Text>();
         text.text = $"{kill1} - {kill2}";
         NetworkClient.OnGameStateChange = OnGameStateChange;
-        NetworkClient.OnTimeUpdate += OnTimeUpdate;
+        NetworkClient.OnTimeUpdate = OnTimeUpdate;
         NetworkClient.OnKillDeadUpdate = OnKillDeadUpdate;
+        NetworkClient.OnTimeSkillUpdate = OnTimeSKillUpdate;
         //Initial Turn off screens
         gameLobbyContainer.SetActive(false);
     }
@@ -69,6 +73,19 @@ public class GameUI : MonoBehaviour
         TimeSpan t = TimeSpan.FromSeconds(time);
         DateTime dateTime = DateTime.Today.Add(t);
         text.text = dateTime.ToString("mm:ss");
+    }
+
+    private void OnTimeSKillUpdate(SocketIOEvent E)
+    {
+        float time1 = E.data["time1"].f;
+        float time2 = E.data["time2"].f;
+        float time3 = E.data["time3"].f;
+        float timeFull1 = E.data["timeFull1"].f;
+        float timeFull2 = E.data["timeFull2"].f;
+        float timeFull3 = E.data["timeFull3"].f;
+        Text text = skillTransform.GetComponent<Text>();
+        text.text = time1 + "/" + timeFull1 + "  " + time2 + "/" + timeFull2 + "  " + time3 + "/" + timeFull3;
+
     }
     private void OnKillDeadUpdate(SocketIOEvent E)
     {

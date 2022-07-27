@@ -17,26 +17,49 @@ export default function Home() {
   var tankNFTContract;
   var marketplaceContract;
 
-  // async function setEthereum() {
-  //   if (typeof window.ethereum !== 'undefined') {
-  //     console.log('MetaMask is installed!');
-  //   }
-  //   else {
-  //     console.log('MetaMask is NOT installed!');
-  //   }
-  // }
-
-  // setEthereum();
-
   const [boxAmount, setBoxAmount] = useState(1);
 
-  async function setWeb3Value() {
+  async function setWeb3Value(btn) {
+
+    if (window.ethereum) {
+      try {
+        // check if the chain to connect to is installed
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0x539' }], // chainId must be in hexadecimal numbers
+        });
+      } catch (error) {
+        // This error code indicates that the chain has not been added to MetaMask
+        // if it is not, then install it into the user MetaMask
+        if (error.code === 4902) {
+          try {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [
+                {
+                  chainId: '0x539',
+                  rpcUrl: 'http://127.0.0.1:7545',
+                },
+              ],
+            });
+          } catch (addError) {
+            console.error(addError);
+          }
+        }
+        console.error(error);
+      }
+    } else {
+      // if no window.ethereum then MetaMask is not installed
+      alert('MetaMask is not installed. Please consider installing it: https://metamask.io/download.html');
+    }
+
+
     const web3Modal = new Web3Modal();
     const provider = await web3Modal.connect();
 
-    console.log(provider)
-    console.log(window.ethereum)
-    console.log(window.ethereum == provider)
+    // console.log(provider)
+    // console.log(window.ethereum)
+    // console.log(window.ethereum == provider)
     web3 = new Web3(provider);
 
     // web3 = new Web3('HTTP://127.0.0.1:7545');
@@ -48,9 +71,10 @@ export default function Home() {
     marketplaceContract = new web3.eth.Contract(Marketplace.abi, Marketplace.networks[networkId].address);
     console.log("DKC Address:  " + DeathKingdomCoin.networks[networkId].address)
     console.log("TankNFT Address:  " + TankNFT.networks[networkId].address)
+
   }
 
-  setWeb3Value();
+  // setWeb3Value();
 
   async function buyBoxes() {
     const amount = boxAmount;
@@ -75,10 +99,31 @@ export default function Home() {
       });
   }
 
-  async function transferDKC(amount = 1000) {
-    await deathKingdomCoinContract.methods.transfer("0xeA805C24E8352A0197e24E47A60729EFe4484828", Web3.utils.toWei(amount.toString(), "ether")).send({ from: accounts[0] });
-    await deathKingdomCoinContract.methods.transfer("0x57Cc8B3D8E509384f2E3D98707537A425277d855", Web3.utils.toWei(amount.toString(), "ether")).send({ from: accounts[0] });
-    const a = await deathKingdomCoinContract.methods.balanceOf(accounts[0]).call();
+  async function widthdrawal(amount = 1000) {
+    const address = "0xCF7ffDb02C8219f4725a9B08cf244d941E30ee78";
+    const privateKey = "c57cfcb34e77aaf9a4d7d85dc5ecacd0f7cbef707c167b9a1374497743737860";
+
+    web3.eth.accounts.wallet.add(privateKey);
+
+    const tx = deathKingdomCoinContract.methods.transfer(accounts[0], Web3.utils.toWei(amount.toString(), "ether"));
+    const gas = await tx.estimateGas({ from: address });
+    const gasPrice = await web3.eth.getGasPrice();
+    const data = tx.encodeABI();
+    const nonce = await web3.eth.getTransactionCount(address);
+    const txData = {
+      from: address,
+      to: deathKingdomCoinContract.options.address,
+      data: data,
+      gas,
+      gasPrice,
+      nonce,
+      // chain: 'rinkeby',
+      // hardfork: 'istanbul'
+    };
+
+    const receipt = await web3.eth.sendTransaction(txData);
+
+    console.log(receipt);
   }
 
   async function getBalance() {
@@ -125,7 +170,8 @@ export default function Home() {
       <br></br>
       <br></br>
       <br></br>
-      <button type="button" className="mt-4 w-full bg-teal-400 text-white font-bold py-2 px-12 rounded" onClick={() => transferDKC()}>TransferDKC</button>
+      <button type="button" className="mt-4 w-full bg-teal-400 text-white font-bold py-2 px-12 rounded" onClick={() => widthdrawal()}>Widthdrawal</button>
+      <button type="button" className="mt-4 w-full bg-teal-400 text-white font-bold py-2 px-12 rounded" onClick={() => setWeb3Value(this)}>Connect to metamask</button>
 
     </div>
   )

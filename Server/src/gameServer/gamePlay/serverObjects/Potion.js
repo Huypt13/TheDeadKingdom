@@ -2,7 +2,7 @@ const Vector2 = require("../../../dto/Vector2");
 const ServerObject = require("./ServerObject");
 const GameMechanism = require("../GameMechanism");
 module.exports = class Potion extends ServerObject {
-  constructor(Team) {
+  constructor(data) {
     super();
     this.username = "Hp_Potion";
     this.reHealTime = 10;

@@ -119,7 +119,7 @@ public class TankGeneral : MonoBehaviour
         //    Debug.DrawRay(transform.position, transform.up * 10, Color.white);
         if (vertical < 0) direction *= -1;
         //it = Physics2D.CapsuleCast(transform.position,capsuleCollider.size, capsuleCollider.direction,0 , direction, LayerMask.GetMask("Wall"), Mathf.Infinity);
-        hit = Physics2D.BoxCast(transform.position, capsuleCollider.size, 0, direction, Mathf.Abs(vertical * Speed * Time.deltaTime), LayerMask.GetMask("Wall"));
+        hit = Physics2D.BoxCast(transform.position,new Vector2( capsuleCollider.size.x- 0.5f, capsuleCollider.size.y - 0.5f), 0, direction, Mathf.Abs(vertical * Speed * Time.deltaTime), LayerMask.GetMask("Wall"));
         if(hit.collider == null)
         {
             transform.position += transform.up * vertical * Speed * Time.deltaTime;

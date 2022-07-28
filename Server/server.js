@@ -46,9 +46,9 @@ server.listen(8080);
 
 //console.log(GameMechanism.getDame({ armor: 99 }, 1000));
 
-const a = (async () => {
-  const props = MapProps["FarmMap"];
+// const a = (async () => {
+//   const props = MapProps["FarmMap"];
 
-})();
+// })();
 
 

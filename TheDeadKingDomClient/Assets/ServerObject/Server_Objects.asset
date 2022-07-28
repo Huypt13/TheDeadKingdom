@@ -25,8 +25,22 @@ MonoBehaviour:
     Prefab: {fileID: 3179618275572778288, guid: 2f5fee66b11c2954d81634a019d7f2ea, type: 3}
   - Name: Hp_Potion_2
     Prefab: {fileID: 3179618275572778288, guid: 13dba4b32d510f14cbe91d7f382b4f69, type: 3}
+  - Name: buffItem_Hp
+    Prefab: {fileID: 951066480273024931, guid: c5de2606f1b533342b388437835513c8, type: 3}
+  - Name: buffItem_Speed
+    Prefab: {fileID: 9189018206323813231, guid: 32d15de06540fe54f9248185f7f6daa5, type: 3}
+  - Name: WoodBox
+    Prefab: {fileID: 5827310782098950646, guid: 46bc00af3873cd0429b63f2608c407f4, type: 3}
+  - Name: Helipad
+    Prefab: {fileID: 3447365066614579900, guid: e69adb899fc9b384bb528c8a65bde0d8, type: 3}
+  - Name: buffItem_Armor
+    Prefab: {fileID: 9189018206323813231, guid: 6099f0715f2a97342a1b26a89fc2428e, type: 3}
+  - Name: buffItem_Damage
+    Prefab: {fileID: 9189018206323813231, guid: 44e85cc76bdee8742bf5be4d62c42f3b, type: 3}
   - Name: Tank_002_1
     Prefab: {fileID: 6619692362034631719, guid: 64ad1105d55db49be9c29717e96f0e46, type: 3}
+  - Name: buffItem_TripleBullet
+    Prefab: {fileID: 9189018206323813231, guid: b9a6aa6ee2c06f94ea592985becda5b7, type: 3}
   - Name: Tank_003_1
     Prefab: {fileID: 2914048423017081913, guid: d53b68ffbe2fa42128c86cb3ca923546, type: 3}
   - Name: AI_TOWER_002_3

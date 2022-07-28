@@ -8,6 +8,14 @@ const Connection = require("../playerManagement/Connection");
 const TankService = require("../../api/hero/Tank.service");
 const Player = require("../playerManagement/Player");
 const Potion = require("../gamePlay/serverObjects/Potion");
+const WoodBox = require("../gamePlay/serverObjects/WoodBox");
+const FastSpeedItem = require("../gamePlay/serverObjects/itemBuff/FastSpeedItem");
+const BuffArmorItem = require("../gamePlay/serverObjects/itemBuff/BuffArmorItem");
+const BuffDamageItem = require("../gamePlay/serverObjects/itemBuff/BuffDamage");
+const HealHpItem = require("../gamePlay/serverObjects//itemBuff/HealHpItem");
+const Helipad = require("../gamePlay/serverObjects/Helipad");
+const BaseItem = require("../gamePlay/serverObjects/itemBuff/BaseItem");
+const { iteratee } = require("lodash");
 const GameInfor = require("../../helper/GameInfor.helper");
 const SkillOrientation = require("../gamePlay/serverObjects/SkillOrientation");
 const Skill001 = require("./GameLobbyFunction/001/Skill001");
@@ -18,9 +26,11 @@ const Skill002 = require("./GameLobbyFunction/002/Skill002");
 const SkillRegion = require("../gamePlay/serverObjects/SkillRegion");
 const Skill003 = require("./GameLobbyFunction/003/Skill003");
 const TowerAI = require("../aiManagement/TowerAI");
+const GameLobbySetting = require("./GameLobbySetting");
+const History = require("../../api/history/History.service");
 
 module.exports = class GameLobby extends LobbyBase {
-  constructor(settings = GameLobbySettings) {
+  constructor(settings = GameLobbySetting) {
     super();
     this.settings = settings;
     this.lobbyState = new LobbyState();
@@ -34,6 +44,7 @@ module.exports = class GameLobby extends LobbyBase {
     this.ai2Kill = 0;
     this.isSendRs = 0;
     this.endGameLobby = function () {};
+    this.listItem = [];
   }
   async onUpdate() {
     super.onUpdate();
@@ -49,6 +60,7 @@ module.exports = class GameLobby extends LobbyBase {
       lobby.onMatchTime();
       lobby.OnUpdateEffectCooldown();
       lobby.OnUpdateEffectTime();
+      lobby.onUpdateItem();
       lobby.onUpdateItemTime();
     }
     lobby.onWinning();
@@ -174,8 +186,22 @@ module.exports = class GameLobby extends LobbyBase {
         }),
       };
       let { team1Kill, team2Kill } = this.getTeamKill();
+      let history = {
+        teamWin: this.teamWin,
+        team1Kill: team1Kill + this.ai1Kill,
+        team2Kill: team2Kill + this.ai2Kill,
+        time: Date.now(),
+      };
+      let members = [];
       this.connections.forEach((connection) => {
         if (connection.player.team == this.teamWin) {
+          members.push({
+            userId: connection.player.id,
+            team: connection.player.team,
+            isWin: true,
+            kill: connection.player.kill,
+            dead: connection.player.dead,
+          });
           returnData = {
             ...returnData,
             result: "win",
@@ -183,6 +209,13 @@ module.exports = class GameLobby extends LobbyBase {
             kill2: team2Kill + this.ai2Kill,
           };
         } else {
+          members.push({
+            userId: connection.player.id,
+            team: connection.player.team,
+            isWin: false,
+            kill: connection.player.kill,
+            dead: connection.player.dead,
+          });
           returnData = {
             ...returnData,
             result: "lose",
@@ -192,6 +225,9 @@ module.exports = class GameLobby extends LobbyBase {
         }
         connection.socket.emit("rsmatch", returnData);
       });
+      // save history:
+      history = { ...history, members };
+      History.insertMatchHistory(history);
       console.log(
         "out room",
         this.connections.length,
@@ -215,10 +251,13 @@ module.exports = class GameLobby extends LobbyBase {
         this.waitingTime = 0;
         this.lobbyState.currentState = this.lobbyState.GAME;
         if (this.connections.length > 0) {
-          this.onJoinGameInit();
           console.log("join game");
-          this.connections[0].socket.emit("loadGame");
-          this.connections[0].socket.broadcast.to(this.id).emit("loadGame");
+          this.connections[0].socket.emit("loadGame", {
+            map: this.settings.map,
+          });
+          this.connections[0].socket.broadcast.to(this.id).emit("loadGame", {
+            map: this.settings.map,
+          });
           const returnData = {
             state: this.lobbyState.currentState,
           };
@@ -227,11 +266,35 @@ module.exports = class GameLobby extends LobbyBase {
             .to(this.id)
             .emit("lobbyUpdate", returnData);
 
+          this.setInitialListItem();
           await this.onSpawnAllPlayersIntoGame();
+          this.onJoinGameInit();
           this.onSpawnAIIntoGame();
         }
       }
     }
+  }
+  setInitialListItem() {
+    const buffArmorItem = new BuffArmorItem();
+    const fastSpeedItem = new FastSpeedItem();
+    const healHpItem = new HealHpItem();
+    const buffDamageItem = new BuffDamageItem();
+    const buffArmorItem2 = new BuffArmorItem();
+    const fastSpeedItem2 = new FastSpeedItem();
+    const healHpItem2 = new HealHpItem();
+    const buffDamageItem2 = new BuffDamageItem();
+    this.listItem.push(
+      buffArmorItem,
+      fastSpeedItem,
+      healHpItem,
+      buffDamageItem
+    );
+    this.listItem.push(
+      buffArmorItem2,
+      fastSpeedItem2,
+      healHpItem2,
+      buffDamageItem2
+    );
   }
   onJoinGameInit() {
     this.connections.forEach((connection) => {
@@ -273,6 +336,15 @@ module.exports = class GameLobby extends LobbyBase {
       );
     });
   }
+  onUpdateItem() {
+    this.listItem.forEach((item) => {
+      if (item instanceof BaseItem && item.isActive) {
+        if (!item.existTimeCouter()) {
+          this.despawnItem(item);
+        }
+      }
+    });
+  }
 
   canEnterLobby(connection = Connection) {
     let lobby = this;
@@ -284,13 +356,11 @@ module.exports = class GameLobby extends LobbyBase {
     }
     return true;
   }
-  async someOneChooseHero(connection, tankId) {
-    // check tank dc chon chua
-
-    // neu tank chua dc chon
-
-    connection.player.tank = await TankService.getByTankId(tankId);
-    connection.player.startTank = { ...connection.player.tank };
+  async someOneChooseHero(connection, _id) {
+    const tank = await TankService.getByTankId(_id, connection.player.id);
+    connection.player.tank = JSON.parse(JSON.stringify(tank));
+    connection.player.startTank = JSON.parse(JSON.stringify(tank));
+    connection.player.startTank.tankUserId = _id;
     const returnData = {
       id: connection.player.id,
       username: connection.player.username,
@@ -414,6 +484,11 @@ module.exports = class GameLobby extends LobbyBase {
 
     this.onServerSpawn(new Potion(1), new Vector2(7, -5));
     this.onServerSpawn(new Potion(2), new Vector2(7, -1));
+    this.onServerSpawn(new WoodBox(), new Vector2(-1, 3));
+    this.onServerSpawn(new WoodBox(), new Vector2(2, 3));
+    this.onServerSpawn(new WoodBox(), new Vector2(4, 3));
+    this.onServerSpawn(new Helipad(18), new Vector2(-3, 1));
+    this.onServerSpawn(new Helipad(20), new Vector2(-3, 3));
   }
   onUnspawnAllAIInGame(connection = Connection) {
     let lobby = this;
@@ -670,7 +745,29 @@ module.exports = class GameLobby extends LobbyBase {
     const activeBy = this.connections.find((c) => {
       return c.player.id === activator;
     });
-
+    let [time1, time2, time3, timeFull1, timeFull2, timeFull3] = [
+      activeBy.player.tank.skill1.timeCounter,
+      activeBy.player.tank.skill2.timeCounter,
+      activeBy.player.tank.skill3.timeCounter,
+      activeBy.player.startTank.skill1.timeCounter,
+      activeBy.player.startTank.skill2.timeCounter,
+      activeBy.player.startTank.skill3.timeCounter,
+    ];
+    if (num == 1) {
+      if (time1 > 0) {
+        return;
+      }
+      activeBy.player.tank.skill1.timeCounter = timeFull1;
+      console.log("hoi chieu ", timeFull1);
+    }
+    if (num == 2) {
+      if (time2 > 0) return;
+      activeBy.player.tank.skill2.timeCounter = timeFull2;
+    }
+    if (num == 3) {
+      if (time3 > 0) return;
+      activeBy.player.tank.skill3.timeCounter = timeFull3;
+    }
     if (typeId === "001" && num === 1) {
       this.createOrientationSkill(
         data,
@@ -751,12 +848,6 @@ module.exports = class GameLobby extends LobbyBase {
       } else {
         data.position.x -= data.direction.x * 1;
         data.position.y -= data.direction.y * 1;
-        // this.createOrientationSkill(
-        //   data,
-        //   activeBy,
-        //   connection,
-        //   activeBy?.player?.tank?.skill2
-        // );
         this.createRegionSkill(
           data,
           activeBy,
@@ -798,6 +889,26 @@ module.exports = class GameLobby extends LobbyBase {
     }
     if (typeId == "003" && num === 2) {
       Skill003.Skill2Handler(connection, data, this);
+    }
+  }
+  onTouchItem(connection, data) {
+    const id = data.id;
+    const item = this.serverItems.find((item) => item.id == id);
+    if (!item) return;
+    const type = item.type;
+    switch (type) {
+      case "Armor":
+        item.buffArmor(connection, data, this);
+        break;
+      case "Damage":
+        item.buffDamage(connection, data, this);
+        break;
+      case "Speed":
+        item.buffSpeed(connection, data, this);
+        break;
+      case "Hp":
+        item.buffHp(connection, data, this);
+        break;
     }
   }
   onExitSkill(connection, data) {
@@ -859,13 +970,13 @@ module.exports = class GameLobby extends LobbyBase {
         return;
       }
       let isDead = false;
-      console.log("health before", subjectOfAttack.health);
-      console.log(bullet?.tank?.damage);
+      // console.log("health before", subjectOfAttack.health);
+      // console.log(bullet?.tank?.damage);
       if (subjectOfAttack.team != bullet.team) {
         isDead = subjectOfAttack.dealDamage(bullet?.tank?.damage);
       }
 
-      console.log("health ", subjectOfAttack.health);
+      // console.log("health ", subjectOfAttack.health);
 
       if (isDead) {
         // ng chet la player hoac tank ai
@@ -887,7 +998,8 @@ module.exports = class GameLobby extends LobbyBase {
     let id = data?.id;
     let enemyId = data?.enemyId;
     const potion = this.serverItems.find((item) => item.id == enemyId);
-    if (!potion || potion.team == connection.player.team) return;
+    if (potion.team == 1)
+      if (!potion || potion.team == connection.player.team) return;
     const returnBullet = lobby.bullets.filter((e) => e.id == id);
     returnBullet.forEach((bullet) => {
       bullet.isDestroyed = true;
@@ -914,6 +1026,56 @@ module.exports = class GameLobby extends LobbyBase {
       }
     });
   }
+  onCollisionDestroyWoodBox(connection = Connection, data) {
+    console.log("destroy");
+    let lobby = this;
+    let id = data?.id;
+    let enemyId = data?.enemyId;
+    const woodBox = this.serverItems.find((item) => item.id == enemyId);
+    if (!woodBox) return;
+    console.log("destroy1");
+    const returnBullet = lobby.bullets.filter((e) => e.id == id);
+    returnBullet.forEach((bullet) => {
+      let isDead = false;
+      bullet.isDestroyed = true;
+      isDead = woodBox.dealDamage(bullet?.tank?.damage || 5);
+      console.log("isDead: " + isDead);
+      if (isDead) {
+        let returnData = {
+          id: enemyId,
+        };
+        connection.socket.emit("playerDied", returnData);
+        connection.socket.broadcast.to(lobby.id).emit("playerDied", returnData);
+        console.log("create");
+        this.spawnRandomItem(woodBox.position);
+      } else {
+        let returnData = {
+          id: woodBox.id,
+          health: woodBox.health,
+        };
+        connection.socket.emit("playerAttacked", returnData);
+        connection.socket.broadcast
+          .to(lobby.id)
+          .emit("playerAttacked", returnData);
+      }
+    });
+  }
+  randomInRange(max, min) {
+    return Math.floor(Math.random() * (max - min)) + min;
+  }
+  spawnRandomItem(position) {
+    const nonActiveItems = this.listItem.filter(
+      (item) => item.isActive == false
+    );
+    const index = this.randomInRange(nonActiveItems.length, 0);
+    const item = nonActiveItems[index];
+    if (item) {
+      item.isActive = true;
+      this.onServerSpawn(item, position);
+      console.log("item :" + item.name);
+    }
+  }
+
   despawnBullet(bullet = Bullet) {
     let index = this.bullets.indexOf(bullet);
     if (index > -1) {
@@ -934,6 +1096,14 @@ module.exports = class GameLobby extends LobbyBase {
       connection.socket.emit("severUnspawnSkill", {
         id: skill.id,
       });
+    });
+  }
+  despawnItem(item) {
+    const index = this.serverItems.indexOf(item);
+    this.serverItems.splice(index, 1);
+    const returnData = { id: item.id };
+    this.connections.forEach((connection) => {
+      connection.socket.emit("serverUnSpawn", returnData);
     });
   }
 
@@ -968,8 +1138,8 @@ module.exports = class GameLobby extends LobbyBase {
     // );
     connection.player.position = new Vector2(0, 0);
 
-    let tank = connection.player?.tank;
-
+    let tank = connection.player?.startTank;
+    // chua chon tank
     if (!tank) {
       const tankList = await TankService.getTankByUserId(connection.player.id);
       if (!tankList[0]?.tankList) {
@@ -979,8 +1149,9 @@ module.exports = class GameLobby extends LobbyBase {
       for (const tankRemain of tankList[0]?.tankList) {
         if (tankRemain.remaining > 0) {
           tank = tankRemain.tank;
-          connection.player.tank = { ...tankRemain.tank };
-          connection.player.startTank = { ...tankRemain.tank };
+          connection.player.startTank = JSON.parse(JSON.stringify(tank));
+          connection.player.startTank.tankUserId = tankRemain._id;
+          connection.player.tank = JSON.parse(JSON.stringify(tank));
           break;
         }
       }
@@ -990,13 +1161,14 @@ module.exports = class GameLobby extends LobbyBase {
       return false;
     }
     const tankUser = await TankService.getByTankUserById(
-      tank._id,
+      connection.player.startTank.tankUserId,
       connection.player.id
     );
     if (!tankUser || tankUser?.remaining <= 0) {
       console.log("chon tank check remain fail", connection.player.id);
       return false;
     }
+    await TankService.updateRemaining(connection.player.startTank.tankUserId);
 
     connection.player.health = tank.health;
     console.log(
@@ -1128,29 +1300,41 @@ module.exports = class GameLobby extends LobbyBase {
       .to(this.id)
       .emit("startLoadingCoolDown", potion.id);
     const player = connection.player;
-    connection.socket.emit("HpHeal", player.id);
-    connection.socket.broadcast.to(this.id).emit("HpHeal", player.id);
+    connection.socket.emit("skillEffectAnimation", {
+      enemyId: player.id,
+      efId: potion.id,
+      remove: false, // remove game object tao ra hieu ung nay
+    });
+    connection.socket.broadcast.to(lobby.id).emit("skillEffectAnimation", {
+      enemyId: player.id,
+      efId: potion.id,
+      remove: false,
+    });
     potion.isActive = false;
-    const healing = player.effect.healing;
-    for (let property in healing) {
-      healing[property] = potion.healing[property];
-    }
+    player.effect.burned.push({
+      id: potion.id,
+      countTime: 0,
+      ...potion.healing,
+    });
   }
   OnUpdateEffectCooldown() {
     for (let item of this.serverItems) {
       if (item?.isActive != undefined && !item.isActive) {
-        if (item.coolDown()) {
+        if (item instanceof Potion && item.coolDown()) {
           for (let connection of this.connections)
             connection.socket.emit("stopLoading", item.id);
         }
+      }
+      if (item instanceof Helipad && item.coolDown()) {
+        this.spawnRandomItem(item.position);
       }
     }
   }
   OnUpdateEffectTime() {
     for (let connection of this.connections) {
-      if (connection.player.effect.healing.value != 0) {
-        LobbyEffect.healHp(connection, this);
-      }
+      // if (connection.player.effect.healing.value != 0) {
+      //   LobbyEffect.healHp(connection, this);
+      // }
       if (connection.player.effect.slowled.length > 0) {
         LobbyEffect.onSlowEffect(connection, this);
       }
@@ -1181,6 +1365,7 @@ module.exports = class GameLobby extends LobbyBase {
       if (connection.player.effect.focusOn) {
         LobbyEffect.onFoucusEffect(connection, this);
       }
+      connection.player.onSkillCounter(connection);
     }
   }
 

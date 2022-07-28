@@ -1,22 +1,22 @@
-function healHp(connection, lobby) {
-  const isFinish = connection.player.healHp();
-  const returnData = {
-    id: connection.player.id,
-    health: connection.player.health,
-  };
-  connection.socket.emit("playerAttacked", returnData);
-  connection.socket.broadcast.to(lobby.id).emit("playerAttacked", returnData);
-  if (isFinish) {
-    const healing = connection.player.effect.healing;
-    for (let property in healing) {
-      healing[property] = 0;
-    }
-    connection.socket.emit("HpStopHeal", connection.player.id);
-    connection.socket.broadcast
-      .to(lobby.id)
-      .emit("HpStopHeal", connection.player.id);
-  }
-}
+// function healHp(connection, lobby) {
+//   const isFinish = connection.player.healHp();
+//   const returnData = {
+//     id: connection.player.id,
+//     health: connection.player.health,
+//   };
+//   connection.socket.emit("playerAttacked", returnData);
+//   connection.socket.broadcast.to(lobby.id).emit("playerAttacked", returnData);
+//   if (isFinish) {
+//     const healing = connection.player.effect.healing;
+//     for (let property in healing) {
+//       healing[property] = 0;
+//     }
+//     connection.socket.emit("HpStopHeal", connection.player.id);
+//     connection.socket.broadcast
+//       .to(lobby.id)
+//       .emit("HpStopHeal", connection.player.id);
+//   }
+// }
 
 function onSlowEffect(connection, lobby) {
   const { endEf } = connection.player.onSlowCounter();
@@ -198,7 +198,7 @@ function onFoucusEffect(connection, lobby) {
   }
 }
 module.exports = {
-  healHp,
+  // healHp,
   onSlowEffect,
   onStunnedEffect,
   onDamagedUpEffect,

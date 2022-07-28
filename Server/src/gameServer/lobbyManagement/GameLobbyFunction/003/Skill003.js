@@ -15,6 +15,8 @@ function Skill2Handler(connection, data, lobby) {
   const activeBy = lobby.connections.find((c) => {
     return c.player.id === activator;
   });
+
+  activeBy.player.tank.skill2.timeCounter = 0;
   let connection1 = lobby.connections.find((c) => {
     return c.player.id === enemyId;
   });
@@ -68,6 +70,7 @@ function Skill2Handler(connection, data, lobby) {
       buffSkill.afterDestroy = (skill) => {
         console.log("after destroy skill 2");
         skill.activeId = "";
+        skill.timeCounter = activeBy.player.startTank.skill2.timeCounter;
       };
       console.log("set after destroy", buffSkill.afterDestroy);
       //

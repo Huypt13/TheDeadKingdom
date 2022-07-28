@@ -4,17 +4,17 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - HpBox
-  - HealBarHpBox
   - BulletThrough
+  - HpBox
+  - WoodBox
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - BulletThrough
+  - Wall
   - Water
   - UI
-  - Tree
+  - 
   - 
   - 
   - 

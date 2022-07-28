@@ -28,9 +28,10 @@ public class NetworkClient : SocketIOComponent
     public static Action<SocketIOEvent> OnChangeHero = (E) => { };
     public static Action<SocketIOEvent> OnUpdatePlayer = (E) => { };
     public static Action<SocketIOEvent> OnTimeUpdate = (E) => { };
+    public static Action<SocketIOEvent> OnTimeSkillUpdate = (E) => { };
     public static Action<SocketIOEvent> OnKillDeadUpdate = (E) => { };
     public static Action<SocketIOEvent> OnResultMatch = (E) => { };
-
+    private string myMap = "";
 
     public override void Start()
     {
@@ -326,8 +327,57 @@ public class NetworkClient : SocketIOComponent
                     ni1.setHealthBar(healthBar);
 
                 }
+                if (name == "buffItem")
+                {
+                    string type = E.data["type"].ToString().RemoveQuotes();
+                    ServerObjectData sod1 = serverSpawnables.GetObjectByName(name + "_" + type);
+                    GameObject spawnedObject1 = Instantiate(sod1.Prefab, networkContainer);
+                    spawnedObject1.transform.position = new Vector3(x, y, 0);
+                    NetworkIdentity ni1 = spawnedObject1.GetComponent<NetworkIdentity>();
+                    ni1.SetControllerId(id);
+                    ni1.SetSocketReference(this);
+                    ni1.TypeId = type;
+                    serverObjects.Add(id, ni1);
+                }
+                if (name == "WoodBox")
+                {
+                    float health = E.data["health"].f;
+                    ServerObjectData sod1 = serverSpawnables.GetObjectByName(name);
+                    GameObject spawnedObject1 = Instantiate(sod1.Prefab, networkContainer);
+                    spawnedObject1.transform.position = new Vector3(x, y, 0);
+                    NetworkIdentity ni1 = spawnedObject1.GetComponent<NetworkIdentity>();
+                    ni1.SetControllerId(id);
+                    ni1.SetSocketReference(this);
+                    serverObjects.Add(id, ni1);
+                    GameObject h = Instantiate(healthComponent, spawnedObject1.transform);
+                    h.SetActive(false);
+                    var healthBar = h.transform.GetComponentInChildren<HealthBar>();
+                    if (ClientID == id)
+                    {
+                        healthBar.setIsMyHealth(true);
+                    }
+
+                    healthBar.SetHealth(health);
+                    healthBar.SetMaxHealth(health);
+
+                    healthBar.setMyGamTransform(spawnedObject1.transform);
+                    h.name = $"Health : {id}";
+                    ni1.setHealthBar(healthBar);
+                }
+                if (name == "Helipad")
+                {
+                    ServerObjectData sod1 = serverSpawnables.GetObjectByName(name);
+                    GameObject spawnedObject1 = Instantiate(sod1.Prefab, networkContainer);
+                    spawnedObject1.transform.position = new Vector3(x, y, 0);
+                    NetworkIdentity ni1 = spawnedObject1.GetComponent<NetworkIdentity>();
+                    ni1.SetControllerId(id);
+                    ni1.SetSocketReference(this);
+                    serverObjects.Add(id, ni1);
+                }
             }
         });
+
+        // player and ai response
         On("skillSpawn", (E) =>
         {
             string name = E.data["name"].str;
@@ -514,7 +564,7 @@ public class NetworkClient : SocketIOComponent
             SceneManagement.Instance.LoadLevel(SceneList.MATCHRS, (levelName) =>
             {
                 OnResultMatch.Invoke(e);
-                SceneManagement.Instance.UnLoadLevel(SceneList.LEVEL);
+                SceneManagement.Instance.UnLoadLevel(myMap);
             });
 
         });
@@ -561,18 +611,7 @@ public class NetworkClient : SocketIOComponent
             ni.transform.localEulerAngles = new Vector3(0, 0, tankRotation);
             ni.GetComponent<TankGeneral>().SetRotation(barrelRotation);
         });
-        On("HpHeal", (E) =>
-        {
-            string playerId = (E.data.str).RemoveQuotes();
-            Transform effect = serverObjects[playerId].transform.Find("Immunity Area Effect");
-            effect.gameObject.SetActive(true);
-        });
-        On("HpStopHeal", (E) =>
-        {
-            string playerId = (E.data.str).RemoveQuotes();
-            Transform effect = serverObjects[playerId].transform.Find("Immunity Area Effect");
-            effect.gameObject.SetActive(false);
-        });
+
 
 
         // update player died
@@ -619,7 +658,9 @@ public class NetworkClient : SocketIOComponent
         On("loadGame", (E) =>
         {
             Debug.Log("Join game");
-            SceneManagement.Instance.LoadLevel(SceneList.LEVEL, (levelName) =>
+            string map = E.data["map"].str;
+            myMap = map;
+            SceneManagement.Instance.LoadLevel(map, (levelName) =>
             {
                 SceneManagement.Instance.UnLoadLevel(SceneList.WAITING);
             });
@@ -657,6 +698,11 @@ public class NetworkClient : SocketIOComponent
             }
 
         });
+        On("updateTimeSkill", (E) =>
+        {
+            OnTimeSkillUpdate.Invoke(E);
+        });
+
 
         On("updateHero", (e) =>
         {
@@ -738,7 +784,7 @@ public class NetworkClient : SocketIOComponent
         }
         SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
         {
-            SceneManagement.Instance.UnLoadLevel(SceneList.LEVEL);
+            SceneManagement.Instance.UnLoadLevel(myMap);
             FindObjectOfType<MenuManager>().OnSignInComplete();
         });
     }
@@ -759,7 +805,7 @@ public class NetworkClient : SocketIOComponent
         }
         SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
         {
-            SceneManagement.Instance.UnLoadLevel(SceneList.LEVEL);
+            SceneManagement.Instance.UnLoadLevel(myMap);
             FindObjectOfType<MenuManager>().OnSignInComplete();
             FindObjectOfType<MenuManager>().message.text = error;
         });

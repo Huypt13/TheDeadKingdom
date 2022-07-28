@@ -1,0 +1,32 @@
+Unity Package Manager Diagnostics (v0.2.0)
+============
+Ran 6 checks
+============
+1 succeeded
+5 failed
+============
+❌ UPM registry reachable (FAIL)
+Make an HTTP request to the UPM package registry
+>> Connection error. This could be because a proxy is misconfigured.
+
+❌ Ping UPM registry (FAIL)
+Measure the latency of the UPM package registry API
+>> No successful pings could be made in 37.664 seconds (1 failed)
+
+❌ Ping UPM download (FAIL)
+Measure the latency of the UPM package download endpoint
+>> No successful pings could be made in 38.632 seconds (1 failed)
+
+❌ UPM registry download speed (FAIL)
+Test the Internet connection using the UPM package registry
+>> Connection error. This could be because a proxy is misconfigured.
+
+✅ HTTP proxy environment variables (PASS)
+Detect whether proxy-related environment variables are set (HTTP_PROXY, HTTPS_PROXY, ALL_PROXY, NO_PROXY, UNITY_PROXYSERVER, UNITY_NOPROXY)
+>> No proxy support has been configured through environment variables.
+
+❌ UPM health check (FAIL)
+Start the UPM process and call its health endpoint
+>> Server started but did not respond to health requests:
+>> Error: ETIMEDOUT
+>> Error: ESOCKETTIMEDOUT

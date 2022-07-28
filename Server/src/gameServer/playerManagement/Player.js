@@ -14,34 +14,10 @@ class Player {
     this.startTank;
     this.health;
     this.isDead = false;
-    this.respawnCount = {
-      // may cai tinh time luu vao day
-      healing: 0,
-      slowled: 0,
-      stunned: 0,
-      tiedUp: 0,
-      burned: 0,
-      speedUp: 0,
-      virtualBlood: 0,
-      damagedUp: 0,
-      armorUp: 0,
-      attackSpeedUp: 0,
-    };
-    this.respawnCountTime = {
-      // dem so lan chay
-      healing: 0,
-      slowled: 0,
-      stunned: 0,
-      tiedUp: 0,
-      burned: 0,
-      speedUp: 0,
-      virtualBlood: 0,
-      damagedUp: 0,
-      armorUp: 0,
-      attackSpeedUp: 0,
-    };
     this.respawnTicker = 0;
     this.respawnTime = 0;
+    this.healTicker = 0;
+    this.healTime = 0;
     this.kill = 0;
     this.dead = 0;
     this.maxHealth = 800;
@@ -74,7 +50,7 @@ class Player {
     };
   }
   dealDamage(amount) {
-    console.log(`DealDame ${GameMechanism.getDame(this.tank, amount)}`);
+    // console.log(`DealDame ${GameMechanism.getDame(this.tank, amount)}`);
     this.health -= GameMechanism.getDame(this.tank, amount);
     if (this.health <= 0) {
       this.isDead = true;
@@ -94,28 +70,6 @@ class Player {
         this.respawnTicker = 0;
         this.respawnTime = 0;
         this.health = tank.health;
-        return true;
-      }
-    }
-    return false;
-  }
-
-  healHp() {
-    this.respawnCount.healing += 1;
-    if (
-      this.respawnCount.healing >=
-      (this.effect.healing.waiting - 0.01) * 10
-    ) {
-      this.health += this.effect.healing.value;
-      if (this.health >= this.maxHealth) {
-        this.health = this.maxHealth;
-        return true;
-      }
-      this.respawnCount.healing = 0;
-      this.respawnCountTime.healing += 1;
-      if (this.respawnCountTime.healing >= this.effect.healing.times) {
-        this.respawnCount.healing = 0;
-        this.respawnCountTime.healing = 0;
         return true;
       }
     }
@@ -183,6 +137,10 @@ class Player {
         healthChange = true;
         burn.countTime = 0;
         burn.times--;
+        if (burn.value < 0 && this.health >= this.maxHealth) {
+          burn.times = 0;
+          this.health = this.maxHealth;
+        }
         if (burn.times <= 0) {
           endEf.push(burn);
         } else {
@@ -213,8 +171,7 @@ class Player {
     };
   }
   onSlowCounter() {
-    let endEf = []; // list hieu ung ket thuc
-    // {0.5 , 5}  {0.3, 10} , {-0.3,4}
+    let endEf = [];
     let totalSlowed = 0;
     this.effect.slowled.forEach((ef) => {
       ef.time -= 0.1;
@@ -359,46 +316,69 @@ class Player {
       this.effect.threeBullet = 0;
     }
   }
-  onSkillCounter() {
+  onSkillCounter(connection) {
+    if (!this.tank) {
+      return;
+    }
+
+    let [time1, time2, time3, timeFull1, timeFull2, timeFull3] = [
+      this.tank.skill1.timeCounter,
+      this.tank.skill2.timeCounter,
+      this.tank.skill3.timeCounter,
+      this.startTank.skill1.timeCounter,
+      this.startTank.skill2.timeCounter,
+      this.startTank.skill3.timeCounter,
+    ];
     //skill1
+    if (time1 != 0) {
+      this.tank.skill1.timeCounter -= 0.1;
+      if (this.tank.skill1.timeCounter < 0) {
+        this.tank.skill1.timeCounter = 0;
+      }
+    }
     //skill2
+    if (time2 != 0) {
+      this.tank.skill2.timeCounter -= 0.1;
+      if (this.tank.skill2.timeCounter < 0) {
+        this.tank.skill2.timeCounter = 0;
+      }
+    }
     //skill3
+    if (time3 != 0) {
+      this.tank.skill3.timeCounter -= 0.1;
+      if (this.tank.skill3.timeCounter < 0) {
+        this.tank.skill3.timeCounter = 0;
+      }
+    }
+    const returnData = {
+      time1,
+      time2,
+      time3,
+      timeFull1,
+      timeFull2,
+      timeFull3,
+    };
+
+    connection.socket.emit("updateTimeSkill", returnData);
   }
 
   deadResetEffect() {
     this.tankRotation = 0;
     this.berrelRotaion = 0;
-    this.respawnCount = {
-      healing: 0,
-      slowled: 0,
-      stunned: 0,
-      tiedUp: 0,
-      burned: 0,
-      speedUp: 0,
-      virtualBlood: 0,
-      damagedUp: 0,
-      armorUp: 0,
-      attackSpeedUp: 0,
-    };
-    this.respawnCountTime = {
-      healing: 0,
-      slowled: 0,
-      stunned: 0,
-      tiedUp: 0,
-      burned: 0,
-      speedUp: 0,
-      virtualBlood: 0,
-      damagedUp: 0,
-      armorUp: 0,
-      attackSpeedUp: 0,
-    };
-    this.tank = { ...this.startTank };
+    console.log("init ", this.startTank);
+    this.tank = JSON.parse(JSON.stringify(this.startTank));
+    this.tank.skill1.timeCounter = 0.2;
+    this.tank.skill2.timeCounter = 0.2;
+    this.tank.skill3.timeCounter = 0.2;
     this.effect = {
       // bat loi
       slowled: [], // lam cham  vd {value : 0.2 , time : 10}
       stunned: [], // thoi gian bi lam choang ko dung dc chieu ko ban dc
       tiedUp: [], // thoi gian bi troi van dung dc chieu vs ban dc
       burned: [],
+      // hieu ung co loi
+      autoMove: null, // {id, speed , startPost, direction , range}
+      focusOn: null, // {id, focusId ,speed}
       // hieu ung co loi
       threeBullet: 0,
       healing: {
@@ -428,57 +408,7 @@ class Player {
     this.respawnTime = 0;
     this.tankRotation = 0;
     this.berrelRotaion = 0;
-    this.respawnCount = {
-      healing: 0,
-      slowled: 0,
-      stunned: 0,
-      tiedUp: 0,
-      burned: 0,
-      speedUp: 0,
-      virtualBlood: 0,
-      damagedUp: 0,
-      armorUp: 0,
-      attackSpeedUp: 0,
-    };
-    this.respawnCountTime = {
-      healing: 0,
-      slowled: 0,
-      stunned: 0,
-      tiedUp: 0,
-      burned: 0,
-      speedUp: 0,
-      virtualBlood: 0,
-      damagedUp: 0,
-      armorUp: 0,
-      attackSpeedUp: 0,
-    };
-    this.effect = {
-      // bat loi
-      slowled: [], // lam cham  vd {value : 0.2 , time : 10}
-      stunned: [], // thoi gian bi lam choang ko dung dc chieu ko ban dc
-      tiedUp: [], // thoi gian bi troi van dung dc chieu vs ban dc
-      burned: [],
-      // hieu ung co loi
-
-      threeBullet: 0,
-      healing: {
-        value: 0, // value mau moi lan hoi
-        times: 0, // so lan hoi mau
-        waiting: 0, // time giua moi lan hoi mau
-      },
-
-      // tang toc do di chuyen
-      speedUp: [],
-
-      // tang mau ao
-      virtualBlood: [],
-      // tang dame
-      damagedUp: [],
-      // tang giap
-      armorUp: [],
-      // tang toc danh
-      attackSpeedUp: [],
-    };
+    this.deadResetEffect();
   }
 }
 

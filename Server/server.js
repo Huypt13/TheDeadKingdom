@@ -1,17 +1,14 @@
 const express = require("express");
-const shortid = require("shortid");
 const cors = require("cors");
 
 const GameServer = require("./src/gameServer/GameServer");
-const GameMechanism = require("./src/gameServer/gamePlay/GameMechanism");
 const UserRouter = require("./src/api/user/User.router");
-const UserServices = require("./src/api/user/User.service");
 const Database = require("./src/api/database/Database");
-const Bullet = require("./src/gameServer/gamePlay/serverObjects/Bullet");
 const Tank = require("./src/api/hero/Tank.service");
 
 const Authentication = require("./src/api/middlewares/Authentication.midleware");
 const TankRouter = require("./src/api/hero/Tank.router");
+const History = require("./src/api/history/History.service");
 
 const app = express();
 const server = require("http").createServer(app);
@@ -47,10 +44,29 @@ app.use("/tank", Authentication, TankRouter);
 Database.connect();
 server.listen(8080);
 
-//console.log(GameMechanism.getDame({ armor: 99 }, 1000));
-
-// const a = (async () => {
-//   console.log(
-//     JSON.stringify(await Tank.getTankByUserId("6296d13fb263c0630e920031"))
-//   );
-// })();
+const a = (async () => {
+  // let b = await Tank.getByTankId(
+  //   "62e1136440d7669dcf7492c9",
+  //   "62979ec0f7a5a3b40c332a15"
+  // );
+  // console.log(b);
+  // let c = await Tank.getTankByUserId("62979ec0f7a5a3b40c332a15");
+  // console.log(c[0].tankList);
+  // console.log(
+  //   await History.insertMatchHistory({
+  //     teamWin: 1,
+  //     team1Kill: 15,
+  //     team2Kill: 13,
+  //     members: [
+  //       {
+  //         userId: "xx",
+  //         team: 1,
+  //         isWin: true,
+  //         kill: 5,
+  //         dead: 1,
+  //       },
+  //     ],
+  //     time: Date.now(),
+  //   })
+  // );
+})();

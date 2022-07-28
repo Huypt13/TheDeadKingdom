@@ -316,16 +316,60 @@ class Player {
       this.effect.threeBullet = 0;
     }
   }
-  onSkillCounter() {
+  onSkillCounter(connection) {
+    if (!this.tank) {
+      return;
+    }
+
+    let [time1, time2, time3, timeFull1, timeFull2, timeFull3] = [
+      this.tank.skill1.timeCounter,
+      this.tank.skill2.timeCounter,
+      this.tank.skill3.timeCounter,
+      this.startTank.skill1.timeCounter,
+      this.startTank.skill2.timeCounter,
+      this.startTank.skill3.timeCounter,
+    ];
     //skill1
+    if (time1 != 0) {
+      this.tank.skill1.timeCounter -= 0.1;
+      if (this.tank.skill1.timeCounter < 0) {
+        this.tank.skill1.timeCounter = 0;
+      }
+    }
     //skill2
+    if (time2 != 0) {
+      this.tank.skill2.timeCounter -= 0.1;
+      if (this.tank.skill2.timeCounter < 0) {
+        this.tank.skill2.timeCounter = 0;
+      }
+    }
     //skill3
+    if (time3 != 0) {
+      this.tank.skill3.timeCounter -= 0.1;
+      if (this.tank.skill3.timeCounter < 0) {
+        this.tank.skill3.timeCounter = 0;
+      }
+    }
+    const returnData = {
+      time1,
+      time2,
+      time3,
+      timeFull1,
+      timeFull2,
+      timeFull3,
+    };
+
+    connection.socket.emit("updateTimeSkill", returnData);
   }
 
   deadResetEffect() {
     this.tankRotation = 0;
     this.berrelRotaion = 0;
-    this.tank = { ...this.startTank };
+    console.log("init ", this.startTank);
+    this.tank = JSON.parse(JSON.stringify(this.startTank));
+    this.tank.skill1.timeCounter = 0.2;
+    this.tank.skill2.timeCounter = 0.2;
+    this.tank.skill3.timeCounter = 0.2;
     this.effect = {
       // bat loi
       slowled: [], // lam cham  vd {value : 0.2 , time : 10}

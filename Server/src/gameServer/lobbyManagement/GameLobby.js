@@ -228,7 +228,6 @@ module.exports = class GameLobby extends LobbyBase {
         this.waitingTime = 0;
         this.lobbyState.currentState = this.lobbyState.GAME;
         if (this.connections.length > 0) {
-          this.onJoinGameInit();
           console.log("join game");
           this.connections[0].socket.emit("loadGame", {
             map: this.settings.map,
@@ -246,6 +245,7 @@ module.exports = class GameLobby extends LobbyBase {
 
           this.setInitialListItem();
           await this.onSpawnAllPlayersIntoGame();
+          this.onJoinGameInit();
           this.onSpawnAIIntoGame();
         }
       }
@@ -325,12 +325,10 @@ module.exports = class GameLobby extends LobbyBase {
     return true;
   }
   async someOneChooseHero(connection, tankId) {
-    // check tank dc chon chua
+    const tank = await TankService.getByTankId(tankId);
+    connection.player.tank = JSON.parse(JSON.stringify(tank));
+    connection.player.startTank = JSON.parse(JSON.stringify(tank));
 
-    // neu tank chua dc chon
-
-    connection.player.tank = await TankService.getByTankId(tankId);
-    connection.player.startTank = { ...connection.player.tank };
     const returnData = {
       id: connection.player.id,
       username: connection.player.username,
@@ -715,7 +713,29 @@ module.exports = class GameLobby extends LobbyBase {
     const activeBy = this.connections.find((c) => {
       return c.player.id === activator;
     });
-
+    let [time1, time2, time3, timeFull1, timeFull2, timeFull3] = [
+      activeBy.player.tank.skill1.timeCounter,
+      activeBy.player.tank.skill2.timeCounter,
+      activeBy.player.tank.skill3.timeCounter,
+      activeBy.player.startTank.skill1.timeCounter,
+      activeBy.player.startTank.skill2.timeCounter,
+      activeBy.player.startTank.skill3.timeCounter,
+    ];
+    if (num == 1) {
+      if (time1 > 0) {
+        return;
+      }
+      activeBy.player.tank.skill1.timeCounter = timeFull1;
+      console.log("hoi chieu ", timeFull1);
+    }
+    if (num == 2) {
+      if (time2 > 0) return;
+      activeBy.player.tank.skill2.timeCounter = timeFull2;
+    }
+    if (num == 3) {
+      if (time3 > 0) return;
+      activeBy.player.tank.skill3.timeCounter = timeFull3;
+    }
     if (typeId === "001" && num === 1) {
       this.createOrientationSkill(
         data,
@@ -796,12 +816,6 @@ module.exports = class GameLobby extends LobbyBase {
       } else {
         data.position.x -= data.direction.x * 1;
         data.position.y -= data.direction.y * 1;
-        // this.createOrientationSkill(
-        //   data,
-        //   activeBy,
-        //   connection,
-        //   activeBy?.player?.tank?.skill2
-        // );
         this.createRegionSkill(
           data,
           activeBy,
@@ -1109,7 +1123,7 @@ module.exports = class GameLobby extends LobbyBase {
     connection.player.position = new Vector2(0, 0);
 
     let tank = connection.player?.startTank;
-
+    // chua chon tank
     if (!tank) {
       const tankList = await TankService.getTankByUserId(connection.player.id);
       if (!tankList[0]?.tankList) {
@@ -1119,8 +1133,8 @@ module.exports = class GameLobby extends LobbyBase {
       for (const tankRemain of tankList[0]?.tankList) {
         if (tankRemain.remaining > 0) {
           tank = tankRemain.tank;
-          connection.player.tank = { ...tankRemain.tank };
-          connection.player.startTank = { ...tankRemain.tank };
+          connection.player.startTank = JSON.parse(JSON.stringify(tank));
+          connection.player.tank = JSON.parse(JSON.stringify(tank));
           break;
         }
       }
@@ -1321,6 +1335,7 @@ module.exports = class GameLobby extends LobbyBase {
       if (connection.player.effect.focusOn) {
         LobbyEffect.onFoucusEffect(connection, this);
       }
+      connection.player.onSkillCounter(connection);
     }
   }
 

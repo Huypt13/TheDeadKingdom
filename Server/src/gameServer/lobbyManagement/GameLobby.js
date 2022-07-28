@@ -30,7 +30,8 @@ const SkillRegion = require("../gamePlay/serverObjects/SkillRegion");
 const Skill003 = require("./GameLobbyFunction/003/Skill003");
 const TowerAI = require("../aiManagement/TowerAI");
 const GameLobbySetting = require("./GameLobbySetting");
-
+const MapProp = require("./MapProps");
+const GameLobbySettings = require("./GameLobbySetting");
 module.exports = class GameLobby extends LobbyBase {
   constructor(settings = GameLobbySetting) {
     super();
@@ -430,6 +431,7 @@ module.exports = class GameLobby extends LobbyBase {
       bulletSpeed: 1, // 100 ms
       shootingRange: 6,
     };
+    
     // this.onServerSpawn(
     //   new TankAI("01", new Vector2(-6, 2), 4, tankAi, 1),
     //   new Vector2(-6, 2)
@@ -438,10 +440,10 @@ module.exports = class GameLobby extends LobbyBase {
     //   new TankAI("01", new Vector2(-6, 4), 4, tankAi, 0),
     //   new Vector2(-6, 4)
     // );
-    // this.onServerSpawn(
-    //   new TankAI("01", new Vector2(-3, 4), 4, tankAi, 2),
-    //   new Vector2(-3, 4)
-    // );
+    this.onServerSpawn(
+      new TankAI("01", new Vector2(-3, 4), 4, tankAi, 2),
+      new Vector2(-3, 4)
+    );
     // this.onServerSpawn(
     //   new TankAI("01", new Vector2(-6, 6), 4, tankAi, 0),
     //   new Vector2(5, 2)
@@ -449,7 +451,26 @@ module.exports = class GameLobby extends LobbyBase {
     //this.onServerSpawn(new TowerAI("01", tankAi, 1), new Vector2(-3, 0));
     // this.onServerSpawn(new TowerAI("01", tankAi, 0), new Vector2(-5, 0));
     // this.onServerSpawn(new TowerAI("01", tankAi, 2), new Vector2(-1, 0));
+    
+    // let allObject = [];
+    // allObject["WoodBox"] = WoodBox;
+    // let map = this.settings.map;
+    // const props = MapProp.map[map];
+    // for (const key in props) {
+    //   const listProps = props[key];
+    //   listProps.forEach(e=>{
+    //     const pos = new Vector2(e.position.x,e.position.y);
+        
+    //     let object = new allObject[key]();
+    //     for (const key1 in MapProp.props[key]) {
+    //       object[key1]= MapProp.props[key][key1];
+    //     }
+    //     this.onServerSpawn(object, pos);
+    //     console.log(pos,object);
 
+
+    //   })
+    // }
     this.onServerSpawn(new Potion(1), new Vector2(7, -5));
     this.onServerSpawn(new Potion(2), new Vector2(7, -1));
     this.onServerSpawn(new WoodBox(), new Vector2(-1, 3));

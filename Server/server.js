@@ -1,4 +1,7 @@
 const express = require("express");
+
+const MapProps = require("./src/gameServer/lobbyManagement/MapProps");
+
 const shortid = require("shortid");
 const cors = require("cors");
 
@@ -49,6 +52,9 @@ server.listen(8080);
 
 //console.log(GameMechanism.getDame({ armor: 99 }, 1000));
 
-// const a = (async () => {
-//   await Tank.insertAll("629a066d8b413bffcf4f40ec");
-// })();
+const a = (async () => {
+  const props = MapProps["FarmMap"];
+
+})();
+
+

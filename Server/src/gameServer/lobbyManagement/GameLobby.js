@@ -17,6 +17,7 @@ const BuffDamageItem = require("../gamePlay/serverObjects/itemBuff/BuffDamage");
 const HealHpItem = require("../gamePlay/serverObjects//itemBuff/HealHpItem");
 const Helipad = require("../gamePlay/serverObjects/Helipad");
 const BaseItem = require("../gamePlay/serverObjects/itemBuff/BaseItem");
+const BaseBox = require("../gamePlay/serverObjects/Box/BaseBox");
 const { iteratee } = require("lodash");
 const GameInfor = require("../../helper/GameInfor.helper");
 const SkillOrientation = require("../gamePlay/serverObjects/SkillOrientation");
@@ -439,10 +440,10 @@ module.exports = class GameLobby extends LobbyBase {
     //   new TankAI("01", new Vector2(-6, 4), 4, tankAi, 0),
     //   new Vector2(-6, 4)
     // );
-    this.onServerSpawn(
-      new TankAI("01", new Vector2(-3, 4), 4, tankAi, 2),
-      new Vector2(-3, 4)
-    );
+    // this.onServerSpawn(
+    //   new TankAI("01", new Vector2(-3, 4), 4, tankAi, 2),
+    //   new Vector2(-3, 4)
+    // );
     // this.onServerSpawn(
     //   new TankAI("01", new Vector2(-6, 6), 4, tankAi, 0),
     //   new Vector2(5, 2)
@@ -457,7 +458,7 @@ module.exports = class GameLobby extends LobbyBase {
     this.onServerSpawn(new IronBox(), new Vector2(2, 3));
     this.onServerSpawn(new PileBox(), new Vector2(4, 3));
     this.onServerSpawn(new Helipad(13), new Vector2(-3, 1));
-    this.onServerSpawn(new Helipad(17), new Vector2(-3, 3));
+    this.onServerSpawn(new Helipad(16), new Vector2(-3, 3));
   }
   onUnspawnAllAIInGame(connection = Connection) {
     let lobby = this;
@@ -851,6 +852,7 @@ module.exports = class GameLobby extends LobbyBase {
     const owner = this.serverItems.find((owner) => owner.id == item.ownerId);
     owner.isActive = false;
     const type = item.type;
+    item.isActive = false;
     switch (type) {
       case "Armor":
         item.buffArmor(connection, data, this);
@@ -1030,7 +1032,12 @@ module.exports = class GameLobby extends LobbyBase {
     const nonActiveItems = this.listItem.filter(
       (item) => item.isActive == false
     );
-    const index = this.randomInRange(nonActiveItems.length, -1);
+    let index ;
+    if(owner instanceof BaseBox)
+        index = this.randomInRange(nonActiveItems.length, -1);
+    else {
+        index = this.randomInRange(nonActiveItems.length-1, 0)
+    }
     const item = nonActiveItems[index];
     if (item) {
       item.ownerId = owner.id;
@@ -1284,9 +1291,6 @@ module.exports = class GameLobby extends LobbyBase {
   }
   OnUpdateEffectTime() {
     for (let connection of this.connections) {
-      // if (connection.player.effect.healing.value != 0) {
-      //   LobbyEffect.healHp(connection, this);
-      // }
       if (connection.player.effect.slowled.length > 0) {
         LobbyEffect.onSlowEffect(connection, this);
       }

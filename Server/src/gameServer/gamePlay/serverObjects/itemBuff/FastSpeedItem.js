@@ -18,15 +18,15 @@ module.exports = class FastSpeedItem extends BaseItem {
             time: this.speedUp.time,
         });
 
-        connection.socket.emit("skillEffectAnimation", {
+        connection.socket.emit("itemEffectAnimation", {
             enemyId,
             efId: id,
-            remove: false,
+            remove: true,
         });
-        connection.socket.broadcast.to(lobby.id).emit("skillEffectAnimation", {
+        connection.socket.broadcast.to(lobby.id).emit("itemEffectAnimation", {
             enemyId,
             efId: id,
-            remove: false,
+            remove: true,
         });
 
         const totalSlowed = subjectOfAttack.effect.slowled.reduce((pre, cur) => {

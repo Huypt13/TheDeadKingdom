@@ -6,13 +6,7 @@ TagManager:
   tags:
   - BulletThrough
   - HpBox
-<<<<<<< HEAD
-  - Undefined
   - Box
-  - BulletThrough
-=======
-  - WoodBox
->>>>>>> b4d519925d8b8a4b158f698733a49648427a31e3
   layers:
   - Default
   - TransparentFX
@@ -50,6 +44,15 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Wall
-    uniqueID: 2482401661
+  - name: GroundBase
+    uniqueID: 162280807
+    locked: 0
+  - name: GroundBlock
+    uniqueID: 1586316805
+    locked: 0
+  - name: GroundItem
+    uniqueID: 3935285079
+    locked: 0
+  - name: GamePlay
+    uniqueID: 966209371
     locked: 0

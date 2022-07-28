@@ -137,6 +137,30 @@ public class NetworkClient : SocketIOComponent
             if (remove)
             {
                 Destroy(niSkill.gameObject);
+
+            }
+            if (E.data["time"] != null)
+            {
+                float time = E.data["time"].f;
+                StartCoroutine(RemoveEfAftertime(efAni, efId, time));
+            }
+        }); 
+        
+        
+        On("itemEffectAnimation", (E) =>
+        {
+            string enemyId = E.data["enemyId"].str;  // 
+            string efId = E.data["efId"].str;  //
+            var ni = serverObjects[enemyId];
+            var efAni = ni.GetComponent<EffectAnimation>();
+            var niSkill = serverObjects[efId];
+            Debug.Log("ani " + efId);
+            efAni.SetEffectAnimation(efId, niSkill.GetComponent<EffectSkill>().Effect);
+            bool remove = E.data["remove"].b;
+            if (remove)
+            {
+                Destroy(niSkill.gameObject);
+                serverObjects.Remove(efId);
             }
             if (E.data["time"] != null)
             {

@@ -132,7 +132,7 @@ public class TankGeneral : MonoBehaviour
         //    Debug.Log(-transform.up);
         //    transform.position += -transform.up * vertical * Speed * Time.deltaTime;
         //}
-        Debug.Log(hit.collider);
+        //Debug.Log(hit.collider);
         //    Debug.Log("Did not Hit");
         //}
         //}

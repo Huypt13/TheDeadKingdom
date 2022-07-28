@@ -10,6 +10,7 @@ public class BoxColliderEffect : MonoBehaviour
     {
         NetworkIdentity ni = collision.gameObject.GetComponent<NetworkIdentity>();
         NetworkIdentity boxNi = GetComponent<NetworkIdentity>();
+        if (ni == null) return;
         if (ni.GetComponent<WhoActivatedMe>() == null && ni.IsControlling())
         {
             //transform.gameObject.SetActive(false);

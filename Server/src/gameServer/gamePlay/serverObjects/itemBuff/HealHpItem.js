@@ -15,16 +15,15 @@ module.exports = class HealHpItem extends BaseItem {
         if (connection.player.health === connection.player.maxHealth)
           return;
         const player = connection.player;
-        connection.socket.emit("skillEffectAnimation", {
+        connection.socket.emit("itemEffectAnimation", {
           enemyId: enemyId,
           efId: this.id,
-          remove: false, // remove game object tao ra hieu ung nay
+          remove: true, // remove game object tao ra hieu ung nay
         });
-        lobby.despawnItem(this);
-        connection.socket.broadcast.to(lobby.id).emit("skillEffectAnimation", {
+        connection.socket.broadcast.to(lobby.id).emit("itemEffectAnimation", {
           enemyId: enemyId,
           efId: this.id,
-          remove: false,
+          remove: true,
         });
         player.effect.burned.push({
           id: this.id,

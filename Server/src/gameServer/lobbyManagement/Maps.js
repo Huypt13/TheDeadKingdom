@@ -1,8 +1,6 @@
 module.exports = {
-   CountKill: [ "IceMap", "FarmMap", "IcexLavaMap"]
-//   CountKill: [ "IceMap"]
-   //  CountKill: [ "FarmMap"]
-   // CountKill: [ "IcexLavaMap"]
+  //  CountKill: [ "IceMap", "FarmMap", "IcexLavaMap"]
+  //   CountKill: [ "IceMap"]
+  CountKill: ["FarmMap"],
+  // CountKill: [ "IcexLavaMap"]
 };
-
-       

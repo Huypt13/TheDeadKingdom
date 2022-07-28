@@ -129,7 +129,7 @@ public class WaitingSceneManagement : MonoBehaviour
         string a = "";
         MenuManager.myTankList.ForEach(e =>
         {
-            a += e.tank._id + " - " + e.tank.typeId + " - " + e.tank.level + " ....  ";
+            a += e._id + " - " + e.tank.typeId + " - " + e.tank.level + " ....  ";
         });
         liTank.text = a;
     }

@@ -31,7 +31,7 @@ public class NetworkClient : SocketIOComponent
     public static Action<SocketIOEvent> OnTimeSkillUpdate = (E) => { };
     public static Action<SocketIOEvent> OnKillDeadUpdate = (E) => { };
     public static Action<SocketIOEvent> OnResultMatch = (E) => { };
-
+    private string myMap = "";
 
     public override void Start()
     {
@@ -564,7 +564,7 @@ public class NetworkClient : SocketIOComponent
             SceneManagement.Instance.LoadLevel(SceneList.MATCHRS, (levelName) =>
             {
                 OnResultMatch.Invoke(e);
-                SceneManagement.Instance.UnLoadLevel(SceneList.LEVEL);
+                SceneManagement.Instance.UnLoadLevel(myMap);
             });
 
         });
@@ -659,6 +659,7 @@ public class NetworkClient : SocketIOComponent
         {
             Debug.Log("Join game");
             string map = E.data["map"].str;
+            myMap = map;
             SceneManagement.Instance.LoadLevel(map, (levelName) =>
             {
                 SceneManagement.Instance.UnLoadLevel(SceneList.WAITING);
@@ -783,7 +784,7 @@ public class NetworkClient : SocketIOComponent
         }
         SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
         {
-            SceneManagement.Instance.UnLoadLevel(SceneList.LEVEL);
+            SceneManagement.Instance.UnLoadLevel(myMap);
             FindObjectOfType<MenuManager>().OnSignInComplete();
         });
     }
@@ -804,7 +805,7 @@ public class NetworkClient : SocketIOComponent
         }
         SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
         {
-            SceneManagement.Instance.UnLoadLevel(SceneList.LEVEL);
+            SceneManagement.Instance.UnLoadLevel(myMap);
             FindObjectOfType<MenuManager>().OnSignInComplete();
             FindObjectOfType<MenuManager>().message.text = error;
         });

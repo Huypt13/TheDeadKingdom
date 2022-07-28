@@ -27,6 +27,7 @@ const SkillRegion = require("../gamePlay/serverObjects/SkillRegion");
 const Skill003 = require("./GameLobbyFunction/003/Skill003");
 const TowerAI = require("../aiManagement/TowerAI");
 const GameLobbySetting = require("./GameLobbySetting");
+const History = require("../../api/history/History.service");
 
 module.exports = class GameLobby extends LobbyBase {
   constructor(settings = GameLobbySetting) {
@@ -185,8 +186,22 @@ module.exports = class GameLobby extends LobbyBase {
         }),
       };
       let { team1Kill, team2Kill } = this.getTeamKill();
+      let history = {
+        teamWin: this.teamWin,
+        team1Kill: team1Kill + this.ai1Kill,
+        team2Kill: team2Kill + this.ai2Kill,
+        time: Date.now(),
+      };
+      let members = [];
       this.connections.forEach((connection) => {
         if (connection.player.team == this.teamWin) {
+          members.push({
+            userId: connection.player.id,
+            team: connection.player.team,
+            isWin: true,
+            kill: connection.player.kill,
+            dead: connection.player.dead,
+          });
           returnData = {
             ...returnData,
             result: "win",
@@ -194,6 +209,13 @@ module.exports = class GameLobby extends LobbyBase {
             kill2: team2Kill + this.ai2Kill,
           };
         } else {
+          members.push({
+            userId: connection.player.id,
+            team: connection.player.team,
+            isWin: false,
+            kill: connection.player.kill,
+            dead: connection.player.dead,
+          });
           returnData = {
             ...returnData,
             result: "lose",
@@ -203,6 +225,9 @@ module.exports = class GameLobby extends LobbyBase {
         }
         connection.socket.emit("rsmatch", returnData);
       });
+      // save history:
+      history = { ...history, members };
+      History.insertMatchHistory(history);
       console.log(
         "out room",
         this.connections.length,
@@ -331,11 +356,11 @@ module.exports = class GameLobby extends LobbyBase {
     }
     return true;
   }
-  async someOneChooseHero(connection, tankId) {
-    const tank = await TankService.getByTankId(tankId);
+  async someOneChooseHero(connection, _id) {
+    const tank = await TankService.getByTankId(_id, connection.player.id);
     connection.player.tank = JSON.parse(JSON.stringify(tank));
     connection.player.startTank = JSON.parse(JSON.stringify(tank));
-
+    connection.player.startTank.tankUserId = _id;
     const returnData = {
       id: connection.player.id,
       username: connection.player.username,
@@ -1125,6 +1150,7 @@ module.exports = class GameLobby extends LobbyBase {
         if (tankRemain.remaining > 0) {
           tank = tankRemain.tank;
           connection.player.startTank = JSON.parse(JSON.stringify(tank));
+          connection.player.startTank.tankUserId = tankRemain._id;
           connection.player.tank = JSON.parse(JSON.stringify(tank));
           break;
         }
@@ -1135,13 +1161,14 @@ module.exports = class GameLobby extends LobbyBase {
       return false;
     }
     const tankUser = await TankService.getByTankUserById(
-      tank._id,
+      connection.player.startTank.tankUserId,
       connection.player.id
     );
     if (!tankUser || tankUser?.remaining <= 0) {
       console.log("chon tank check remain fail", connection.player.id);
       return false;
     }
+    await TankService.updateRemaining(connection.player.startTank.tankUserId);
 
     connection.player.health = tank.health;
     console.log(

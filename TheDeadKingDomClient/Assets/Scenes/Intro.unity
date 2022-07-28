@@ -218,6 +218,7 @@ GameObject:
   - component: {fileID: 954220400}
   - component: {fileID: 954220402}
   - component: {fileID: 954220401}
+  - component: {fileID: 954220403}
   m_Layer: 0
   m_Name: '[Code]'
   m_TagString: Untagged
@@ -264,6 +265,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a26e3401dcffb47258c420163929fa21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &954220403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 954220399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 292ede85bf0fc5440a42f86b9a5c8aa0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pickTank: {fileID: 8300000, guid: fcbc1660dbce90a4c806686199cfc760, type: 3}
+  fireSound: {fileID: 0}
+  hitSound: {fileID: 0}
 --- !u!1 &1301508736
 GameObject:
   m_ObjectHideFlags: 0

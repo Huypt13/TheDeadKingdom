@@ -20,6 +20,8 @@ public class WaitingSceneManagement : MonoBehaviour
     [SerializeField]
     private Transform Team2;
 
+    [SerializeField]
+    private GameObject players;
     private Dictionary<string, GameObject> playerText;
 
     public SocketIOComponent SocketReference
@@ -39,15 +41,16 @@ public class WaitingSceneManagement : MonoBehaviour
         NetworkClient.OnChangeHero = ChangeHero;
 
     }
+
     void SetTime()
     {
-        timeText.text = time.ToString();
+        timeText.text = time.ToString();  //  time
         time--;
     }
 
     private void ChangeHero(SocketIOEvent e)
     {
-        string id = e.data["id"].str;
+        string id = e.data["id"].str;  // id nguoi choi
         string typeId = e.data["typeId"].str;
         float level = e.data["level"].f;
         Debug.Log("change hero" + id + "." + typeId + "." + level);
@@ -55,15 +58,18 @@ public class WaitingSceneManagement : MonoBehaviour
         Text text = textGO.GetComponent<Text>();
         text.text = $"{e.data["username"].str} - {typeId} - {level}";
     }
+
     private void UpdatePlayer(SocketIOEvent e)
     {
         playerText = new Dictionary<string, GameObject>();
 
-        var players = e.data["players"].list;
+        var players = e.data["players"].list;   // player["id"] , player["team"] ,  player["username"]
 
         int index = 0;
         players.ForEach((player) =>
         {
+
+            // player["id"] , player["team"] ,  player["username"]
 
             if (NetworkClient.ClientID == player["id"].str)
             {
@@ -124,17 +130,25 @@ public class WaitingSceneManagement : MonoBehaviour
             index++;
         });
     }
+
+
     public void LoadListTank()
     {
         string a = "";
         MenuManager.myTankList.ForEach(e =>
         {
-            a += e.tank._id + " - " + e.tank.typeId + " - " + e.tank.level + " ....  ";
+            a += e._id + " - " + e.tank.typeId + " - " + e.tank.level + " ....  ";  // thieu  class , name
+
+            // bind list tank
+
         });
         liTank.text = a;
     }
+
+
     public void ChooseHero()
     {
+        // gui _id
         SocketReference.Emit("chooseHero", myHero.text);
     }
 }

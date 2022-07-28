@@ -1,20 +1,14 @@
 const express = require("express");
-
-const MapProps = require("./src/gameServer/lobbyManagement/MapProps");
-
-const shortid = require("shortid");
 const cors = require("cors");
 
 const GameServer = require("./src/gameServer/GameServer");
-const GameMechanism = require("./src/gameServer/gamePlay/GameMechanism");
 const UserRouter = require("./src/api/user/User.router");
-const UserServices = require("./src/api/user/User.service");
 const Database = require("./src/api/database/Database");
-const Bullet = require("./src/gameServer/gamePlay/serverObjects/Bullet");
 const Tank = require("./src/api/hero/Tank.service");
 
 const Authentication = require("./src/api/middlewares/Authentication.midleware");
 const TankRouter = require("./src/api/hero/Tank.router");
+const History = require("./src/api/history/History.service");
 
 const app = express();
 const server = require("http").createServer(app);

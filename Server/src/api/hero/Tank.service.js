@@ -1,6 +1,10 @@
+const mongoose = require("mongoose");
+const _ = require("lodash");
+
 const Tank = require("./Tank.schema");
 const TankUser = require("./TankUser.schema");
 
+const ObjectId = mongoose.Types.ObjectId;
 class TankService {
   async getTankByUserId(userId) {
     return await TankUser.aggregate([
@@ -25,7 +29,13 @@ class TankService {
       {
         $group: {
           _id: "$userId",
-          tankList: { $push: { tank: "$tank", remaining: "$remaining" } },
+          tankList: {
+            $push: {
+              tank: "$tank",
+              remaining: "$remaining",
+              _id: { $toString: "$_id" },
+            },
+          },
         },
       },
       {
@@ -33,11 +43,37 @@ class TankService {
       },
     ]);
   }
-  async getByTankId(id) {
-    return await Tank.findOne({ _id: id }).lean();
+  async getByTankId(_id, userId) {
+    const tankUser = await TankUser.aggregate([
+      { $match: { _id: ObjectId(_id), userId } },
+      {
+        $lookup: {
+          from: "tanks",
+          let: { tankIdSearch: { $toObjectId: "$tankId" } },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $and: [{ $eq: ["$_id", "$$tankIdSearch"] }] },
+              },
+            },
+          ],
+          as: "tank",
+        },
+      },
+      {
+        $unwind: "$tank",
+      },
+    ]);
+    if (!_.isEmpty(tankUser)) {
+      return tankUser[0].tank;
+    }
+    return null;
   }
-  async getByTankUserById(id, userId) {
-    return await TankUser.findOne({ tankId: id, userId }).lean();
+  async getByTankUserById(_id, userId) {
+    return await TankUser.findOne({ _id, userId }).lean();
+  }
+  async updateRemaining(id) {
+    return await TankUser.findByIdAndUpdate(id, { $inc: { remaining: -1 } });
   }
   async insertAll(userId) {
     const listTank = await Tank.find({}).lean();

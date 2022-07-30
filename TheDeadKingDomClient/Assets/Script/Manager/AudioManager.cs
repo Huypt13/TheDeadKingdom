@@ -7,27 +7,31 @@ public class AudioManager : Singleton<AudioManager>
     [SerializeField]
     private AudioClip pickTank, countDownFight, hitSound;
 
-    private static AudioSource audioSrc;
+    private static AudioSource backgroundAudioSource;
+    private static AudioSource effectAudioSource;
 
     // Start is called before the first frame update
     void Start()
     {
-        audioSrc = GetComponent<AudioSource>();
+        effectAudioSource = gameObject.AddComponent<AudioSource>();
+        effectAudioSource.loop = false;
+        backgroundAudioSource = gameObject.AddComponent<AudioSource>();
+        backgroundAudioSource.loop = true;
     }
 
-    public void PlaySoundOneShot(string soundType)
+    public void PlayEffectSoundOneShot(string soundType)
     {
         switch (soundType)
         {
-            case "pickTank":
-                audioSrc.PlayOneShot(pickTank);
-                break;
+            //case "pickTank":
+            //    effectAudioSource.PlayOneShot(pickTank);
+            //    break;
             case "countDownFight":
-                audioSrc.PlayOneShot(countDownFight);
+                effectAudioSource.PlayOneShot(countDownFight);
                 break;
-            case "hitSound":
-                audioSrc.PlayOneShot(hitSound);
-                break;
+                //case "hitSound":
+                //    effectAudioSource.PlayOneShot(hitSound);
+                //    break;
         }
     }
 
@@ -36,14 +40,16 @@ public class AudioManager : Singleton<AudioManager>
         switch (soundType)
         {
             case "pickTank":
-                audioSrc.PlayOneShot(pickTank);
+                backgroundAudioSource.clip = pickTank;
+                //backgroundAudioSource.Play();
+                backgroundAudioSource.PlayOneShot(pickTank);
                 break;
-            case "countDownFight":
-                audioSrc.PlayOneShot(countDownFight);
-                break;
-            case "hitSound":
-                audioSrc.PlayOneShot(hitSound);
-                break;
+                //case "countDownFight":
+                //    backgroundAudioSource.PlayOneShot(countDownFight);
+                //    break;
+                //case "hitSound":
+                //    backgroundAudioSource.PlayOneShot(hitSound);
+                //    break;
         }
     }
 

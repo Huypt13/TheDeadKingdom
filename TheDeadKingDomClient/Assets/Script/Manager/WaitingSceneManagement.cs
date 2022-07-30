@@ -8,21 +8,47 @@ public class WaitingSceneManagement : MonoBehaviour
 {
     // Start is called before the first frame update
     [SerializeField]
-    private Text liTank;
-    [SerializeField]
     private Text timeText;
-    [SerializeField]
-    private Text myHero;
+
     private SocketIOComponent socketReference;
     public float time = 10;
-    [SerializeField]
-    private Transform Team1;
-    [SerializeField]
-    private Transform Team2;
 
     [SerializeField]
     private GameObject players;
-    private Dictionary<string, GameObject> playerText;
+
+    private Dictionary<string, GameObject> teammateDictionary;
+
+    [SerializeField]
+    private GameObject prefabButtonPickTank;
+
+    [SerializeField]
+    private GameObject playerTanksContainer;
+
+    [SerializeField]
+    private GameObject prefabTeammatePickTank;
+
+    [SerializeField]
+    private GameObject teammateContainer;
+
+    [SerializeField]
+    private GameObject tankPickedName;
+
+    [SerializeField]
+    private GameObject tankPickedRole;
+
+    [SerializeField]
+    private GameObject tankPickedBackground;
+
+    [SerializeField]
+    private GameObject skill1Icon;
+
+    [SerializeField]
+    private GameObject skill2Icon;
+
+    [SerializeField]
+    private GameObject skill3Icon;
+
+
 
     public SocketIOComponent SocketReference
     {
@@ -33,17 +59,22 @@ public class WaitingSceneManagement : MonoBehaviour
     }
     void Start()
     {
-
+        AudioManager.Instance.PlayBackgroundSound("pickTank");
         InvokeRepeating("SetTime", 0f, 1f);
 
         LoadListTank();
         NetworkClient.OnUpdatePlayer = UpdatePlayer;
         NetworkClient.OnChangeHero = ChangeHero;
 
+
     }
 
     void SetTime()
     {
+        if (time == 3)
+        {
+            AudioManager.Instance.PlayEffectSoundOneShot("countDownFight");
+        }
         timeText.text = time.ToString();  //  time
         time--;
     }
@@ -54,18 +85,36 @@ public class WaitingSceneManagement : MonoBehaviour
         string typeId = e.data["typeId"].str;
         float level = e.data["level"].f;
         Debug.Log("change hero" + id + "." + typeId + "." + level);
-        GameObject textGO = playerText[id];
-        Text text = textGO.GetComponent<Text>();
-        text.text = $"{e.data["username"].str} - {typeId} - {level}";
+        GameObject teammatePickTank = teammateDictionary[id];
+        GameObject txtTankName = teammatePickTank.transform.GetChild(2).gameObject;
+        txtTankName.GetComponent<Text>().text = typeId + "-" + level;
+
+        GameObject imgTankIcon = teammatePickTank.transform.GetChild(0).gameObject;
+        imgTankIcon.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(typeId, level, ImageManager.ImageType.TankIconCircle);
+        //ImageManager.Instance.GetImage(typeId, level, ImageManager.ImageType.TankIcon).
+
+        if (e.data["id"].str == NetworkClient.ClientID)
+        {
+            tankPickedName.GetComponent<Text>().text = typeId + "-" + level;
+            tankPickedRole.GetComponent<Text>().text = typeId;
+            tankPickedBackground.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(typeId, level, ImageManager.ImageType.TankBackground);
+            skill1Icon.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(typeId, level, ImageManager.ImageType.Skill1);
+            skill2Icon.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(typeId, level, ImageManager.ImageType.Skill2);
+            skill3Icon.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(typeId, level, ImageManager.ImageType.Skill3);
+        }
     }
 
     private void UpdatePlayer(SocketIOEvent e)
     {
-        playerText = new Dictionary<string, GameObject>();
+        foreach (Transform child in teammateContainer.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+
+        teammateDictionary = new Dictionary<string, GameObject>();
 
         var players = e.data["players"].list;   // player["id"] , player["team"] ,  player["username"]
 
-        int index = 0;
         players.ForEach((player) =>
         {
 
@@ -75,80 +124,51 @@ public class WaitingSceneManagement : MonoBehaviour
             {
                 NetworkClient.MyTeam = player["team"].f;
             }
-            // 
-            Font arial;
-            arial = (Font)Resources.GetBuiltinResource(typeof(Font), "Arial.ttf");
-
-            // Create Canvas GameObject.
-            GameObject canvasGO = new GameObject();
-            canvasGO.name = "Canvas";
-            canvasGO.AddComponent<Canvas>();
-            canvasGO.AddComponent<CanvasScaler>();
-            canvasGO.AddComponent<GraphicRaycaster>();
-
-            // Get canvas from the GameObject.
-            Canvas canvas;
-            canvas = canvasGO.GetComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-
-            // Create the Text GameObject.
-            GameObject textGO = new GameObject();
-            textGO.name = player["id"].str;
-            textGO.transform.parent = canvasGO.transform;
-            textGO.AddComponent<Text>();
-
-            // Set Text component properties.
-            Text text = textGO.GetComponent<Text>();
-            text.font = arial;
-            text.text = player["username"].str;
-            text.fontSize = 48;
-            text.alignment = TextAnchor.MiddleCenter;
-            Debug.Log(playerText.Count);
-            playerText.Add(player["id"].str, textGO);
-
-
-
-            // Provide Text position and size using RectTransform.
-
-            if (player["team"].f == 1)
+        });
+        players.ForEach((player) =>
+        {
+            if (player["team"].f == NetworkClient.MyTeam)
             {
-                RectTransform rectTransform;
-                rectTransform = text.GetComponent<RectTransform>();
-                rectTransform.localPosition = new Vector3(-500, 200 * (index / 2), 0);
-                rectTransform.sizeDelta = new Vector2(600, 200);
-                canvasGO.transform.SetParent(Team1);
-            }
-            else
-            {
+                GameObject teammatePickTank = Instantiate(prefabTeammatePickTank);
+                teammatePickTank.transform.parent = teammateContainer.transform;
+                teammatePickTank.transform.localScale = new Vector3(1f, 1f, 1f);
+                GameObject txtPlayerName = teammatePickTank.transform.GetChild(1).gameObject;
+                txtPlayerName.GetComponent<Text>().text = player["username"].str;
+                GameObject txtTankName = teammatePickTank.transform.GetChild(2).gameObject;
+                txtTankName.GetComponent<Text>().text = "Picking";
 
-                RectTransform rectTransform;
-                rectTransform = text.GetComponent<RectTransform>();
-                rectTransform.localPosition = new Vector3(500, 200 * (index - 1 / 2), 0);
-                rectTransform.sizeDelta = new Vector2(600, 200);
-                canvasGO.transform.SetParent(Team2);
+                teammateDictionary.Add(player["id"].str, teammatePickTank);
             }
-            index++;
         });
     }
 
 
     public void LoadListTank()
     {
-        string a = "";
-        MenuManager.myTankList.ForEach(e =>
+        //a += e._id + " - " + e.tank.typeId + " - " + e.tank.level + " ....  ";  // thieu  class , name
+
+        foreach (Transform child in playerTanksContainer.transform)
         {
-            a += e._id + " - " + e.tank.typeId + " - " + e.tank.level + " ....  ";  // thieu  class , name
+            GameObject.Destroy(child.gameObject);
+        }
 
-            // bind list tank
-
+        LobbyScreenManager.myTankList.ForEach(e =>
+        {
+            GameObject btnPickTank = Instantiate(prefabButtonPickTank);
+            btnPickTank.transform.parent = playerTanksContainer.transform;
+            btnPickTank.transform.localScale = new Vector3(1f, 1f, 1f);
+            btnPickTank.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(e.tank.typeId, e.tank.level, ImageManager.ImageType.TankIcon);
+            btnPickTank.GetComponent<Button>().onClick.AddListener(() =>
+            {
+                ChooseHero(e._id);
+            });
         });
-        liTank.text = a;
     }
 
 
-    public void ChooseHero()
+    public void ChooseHero(string tankId)
     {
         // gui _id
-        SocketReference.Emit("chooseHero", myHero.text);
+        SocketReference.Emit("chooseHero", tankId);
     }
 }

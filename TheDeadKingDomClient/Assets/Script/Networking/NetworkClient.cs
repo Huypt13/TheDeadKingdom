@@ -649,7 +649,7 @@ public class NetworkClient : SocketIOComponent
            {
                OnUpdatePlayer.Invoke(E);
                FindObjectOfType<WaitingSceneManagement>().time = E.data["time"].f;
-               SceneManagement.Instance.UnLoadLevel(SceneList.MAIN_MENU);
+               SceneManagement.Instance.UnLoadLevel(SceneList.LOBBY_SCREEN);
            });
 
 

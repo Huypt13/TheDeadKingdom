@@ -67,7 +67,6 @@ public class NetworkClient : SocketIOComponent
         {
             //Handling all spawning all players
             //Passed Data
-
             string id = E.data["id"].str;
             float team = E.data["team"].f;
             string tankId = E.data["tank"]["typeId"].str;
@@ -145,9 +144,9 @@ public class NetworkClient : SocketIOComponent
                 float time = E.data["time"].f;
                 StartCoroutine(RemoveEfAftertime(efAni, efId, time));
             }
-        }); 
-        
-        
+        });
+
+
         On("itemEffectAnimation", (E) =>
         {
             string enemyId = E.data["enemyId"].str;  // 
@@ -615,6 +614,7 @@ public class NetworkClient : SocketIOComponent
         // update pos player
         On("updatePosition", (E) =>
         {
+            Debug.Log("update");
             string id = E.data["id"].ToString().RemoveQuotes();
             float x = E.data["position"]["x"].f;
             float y = E.data["position"]["y"].f;
@@ -693,6 +693,16 @@ public class NetworkClient : SocketIOComponent
 
         });
 
+        On("reloadGame", (E) =>
+        {
+            Debug.Log("reload game");
+            string map = E.data["map"].str;
+            myMap = map;
+            SceneManagement.Instance.LoadLevel(map, (levelName) =>
+            {
+                SceneManagement.Instance.UnLoadLevel(SceneList.MAIN_MENU);
+            });
+        });
         On("loadGame", (E) =>
         {
             Debug.Log("Join game");
@@ -771,6 +781,17 @@ public class NetworkClient : SocketIOComponent
             Destroy(go); //Remove from game
             serverObjects.Remove(id); //Remove from memory
         });
+
+        On("someoneLoginYourAccount", (E) =>
+        {
+            SceneManagement.Instance.UnLoadLevel(myMap);
+            SceneManagement.Instance.UnLoadLevel(SceneList.ONLINE);
+            SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
+            {
+                FindObjectOfType<MenuManager>().message.text = "Your account is logged in somewhere else";
+
+            });
+        });
     }
 
 
@@ -826,7 +847,26 @@ public class NetworkClient : SocketIOComponent
             FindObjectOfType<MenuManager>().OnSignInComplete();
         });
     }
-
+    private void ReturnToMainMenuLogin(string error)
+    {
+        foreach (var keyValuePair in serverObjects)
+        {
+            if (keyValuePair.Value != null)
+            {
+                Destroy(keyValuePair.Value.gameObject);
+            }
+        }
+        serverObjects.Clear();
+        foreach (Transform child in networkContainer)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+        SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
+        {
+            SceneManagement.Instance.UnLoadLevel(myMap);
+            FindObjectOfType<MenuManager>().message.text = error;
+        });
+    }
     private void ReturnToMainMenuWithError(string error)
     {
         foreach (var keyValuePair in serverObjects)

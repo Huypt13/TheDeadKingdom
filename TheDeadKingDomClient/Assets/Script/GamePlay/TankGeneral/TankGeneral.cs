@@ -103,39 +103,14 @@ public class TankGeneral : MonoBehaviour
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
         Vector3 direction = transform.up;
-        //    int count = rb.Cast(-transform.up * vertical, castCollisions, speed * Time.deltaTime);
-        //int count = 0;
-        //if (count == 0)
-        //{
-        //Debug.Log(LayerMask.GetMask("Tree"));
-        //if (Physics2D.Raycast(transform.position, transform.TransformDirection(transform.up*vertical), speed * Time.fixedDeltaTime + 0.1f, LayerMask.GetMask("Tree")))
-        //{
-        //    // Debug.DrawRay(transform.position, -transform.up *vertical* hit.distance, Color.yellow);
-        //    Debug.DrawRay(transform.position, transform.up * 10, Color.yellow);
-        //    Debug.Log("Hit");
-        //}
-        //else
-        //{
-        //    Debug.DrawRay(transform.position, transform.up * 10, Color.white);
         if (vertical < 0) direction *= -1;
         //it = Physics2D.CapsuleCast(transform.position,capsuleCollider.size, capsuleCollider.direction,0 , direction, LayerMask.GetMask("Wall"), Mathf.Infinity);
-        hit = Physics2D.BoxCast(transform.position,new Vector2( capsuleCollider.size.x- 0.5f, capsuleCollider.size.y - 0.5f), 0, direction, Mathf.Abs(vertical * Speed * Time.deltaTime), LayerMask.GetMask("Wall"));
-        if(hit.collider == null)
+        hit = Physics2D.BoxCast(transform.position, new Vector2(capsuleCollider.size.x - 0.5f, capsuleCollider.size.y - 0.5f), 0, direction, Mathf.Abs(vertical * Speed * Time.deltaTime), LayerMask.GetMask("Wall"));
+        if (hit.collider == null)
         {
             transform.position += transform.up * vertical * Speed * Time.deltaTime;
-        }  
-        //float distance1 = Vector3.Distance(transform.position, -transform.up * vertical * Speed * Time.deltaTime);
-        //hit1 = Physics2D.BoxCast(transform.position, capsuleCollider.size, 0, -transform.up, Mathf.Abs(distance1), LayerMask.GetMask("Wall"));
-        //if(hit1.collider == null)
-        //{
-        //    Debug.Log(hit1.collider);
-        //    Debug.Log(-transform.up);
-        //    transform.position += -transform.up * vertical * Speed * Time.deltaTime;
-        //}
-        //Debug.Log(hit.collider);
-        //    Debug.Log("Did not Hit");
-        //}
-        //}
+        }
+
         transform.Rotate(new Vector3(0, 0, -horizontal * rotation * Time.deltaTime));
     }
     private void BarrelRotation()
@@ -151,6 +126,7 @@ public class TankGeneral : MonoBehaviour
     }
     private void Shooting()
     {
+
         shootingCooldown.CooldownUpdate();
 
         if (Input.GetMouseButton(0) && !shootingCooldown.IsOnCooldown())
@@ -165,6 +141,7 @@ public class TankGeneral : MonoBehaviour
             bulletData.direction.x = bulletSpawnPoint.up.x;
             bulletData.direction.y = bulletSpawnPoint.up.y;
 
+            Debug.Log("shooting 1");
             //Send Bullet
             networkIdentity.GetSocket().Emit("fireBullet", new JSONObject(JsonUtility.ToJson(bulletData)));
 

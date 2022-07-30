@@ -69,7 +69,7 @@ public class WaitingSceneManagement : MonoBehaviour
         players.ForEach((player) =>
         {
 
-            // player["id"] , player["team"] ,  player["username"]
+            // player["id"] , player["team"] , player["username"]
 
             if (NetworkClient.ClientID == player["id"].str)
             {

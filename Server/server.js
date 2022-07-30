@@ -28,9 +28,29 @@ setInterval(async () => {
 io.on("connection", (socket) => {
   console.log(`${socket.id} join room`);
   socket.on("clientJoin", ({ username, id }) => {
-    const connection = gameServer.onConnected(socket, { username, id });
-    connection.createEvents();
-    socket.emit("register", { id: connection.player.id });
+    // neu chua trong game
+    if (!gameServer.connections[id]) {
+      const connection = gameServer.onConnected(socket, { username, id });
+      connection.createEvents();
+      socket.emit("register", { id: connection.player.id });
+    } else {
+      let connection = gameServer.connections[id];
+      socket.emit("register", { id: connection.player.id });
+
+      connection.socket = socket;
+      connection.createEvents();
+
+      // neu dang trong tran
+      connection.player.isOnline = true;
+      const currentLobbyId = connection.player.lobby;
+      socket.join(currentLobbyId);
+
+      // neu dang o general lobby thi leave
+      if (currentLobbyId != gameServer.generalServerID) {
+        // reload game
+        connection.lobby.reloadGame(connection);
+      }
+    }
   });
 });
 
@@ -39,16 +59,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-app.use("/user", UserRouter);
+app.use(
+  "/user",
+  (req, res, next) => {
+    res.locals.gameServer = gameServer;
+    next();
+  },
+  UserRouter
+);
 app.use("/tank", Authentication, TankRouter);
 Database.connect();
 server.listen(8080);
 
 //console.log(GameMechanism.getDame({ armor: 99 }, 1000));
 
-// const a = (async () => {
-//   const props = MapProps["FarmMap"];
-
-// })();
-
-
+const a = (async () => {
+  let a = await Tank.getTankByUserId("62979d10f7a5a3b40c332a04");
+  console.log(a[0].tankList);
+})();

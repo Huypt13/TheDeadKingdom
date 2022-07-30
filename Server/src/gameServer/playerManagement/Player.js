@@ -5,6 +5,7 @@ class Player {
   constructor({ username, id }) {
     this.username = username;
     this.id = id;
+    this.isOnline;
     this.position = new Vector2();
     this.lobby = 0; // Id cua lobby
     this.team = 0;
@@ -365,7 +366,6 @@ class Player {
   deadResetEffect() {
     this.tankRotation = 0;
     this.berrelRotaion = 0;
-    console.log("init ", this.startTank);
     this.tank = JSON.parse(JSON.stringify(this.startTank));
     this.tank.skill1.timeCounter = 0.2;
     this.tank.skill2.timeCounter = 0.2;

@@ -5,7 +5,17 @@ class UserController {
   async login(req, res) {
     const userinfor = req.body;
     const user = await UserService.getUser(userinfor);
+    const gameServer = res.locals.gameServer;
+
     if (user) {
+      if (gameServer.connections[user._id]) {
+        gameServer.connections[user._id].socket.emit(
+          "someoneLoginYourAccount",
+          { id: user._id }
+        );
+        // leave gameserver
+        gameServer.onDisconnected(gameServer.connections[user._id]);
+      }
       return ApiResponse.successResponseWithData(res, "Success", {
         // tra ve token ms dung
         id: user?._id,

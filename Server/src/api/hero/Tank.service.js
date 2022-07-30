@@ -6,6 +6,7 @@ const TankUser = require("./TankUser.schema");
 
 const ObjectId = mongoose.Types.ObjectId;
 class TankService {
+  // list all tank cua id
   async getTankByUserId(userId) {
     return await TankUser.aggregate([
       { $match: { userId } },

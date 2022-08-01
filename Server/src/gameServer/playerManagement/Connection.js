@@ -61,6 +61,11 @@ class Connection {
         socket.broadcast.to(this.lobby.id).emit("updatePosition", player);
       }
     });
+    socket.on("stopAutoMoving", () => {
+      if (connection.lobby instanceof GameLobby) {
+        player.effect.autoMove = null;
+      }
+    });
     socket.on("updateRotation", (data) => {
       if (connection.lobby instanceof GameLobby) {
         player.tankRotation = data.tankRotation;

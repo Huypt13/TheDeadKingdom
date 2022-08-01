@@ -106,6 +106,15 @@ function Skill2Handler(connection, data, lobby) {
         direction,
         range: skillEffect?.flyRange,
       };
+      connection1.socket.emit("startAutoMove", {
+        id: subjectOfAttack.id,
+        direction,
+        startPos: subjectOfAttack.position,
+        range: skillEffect?.flyRange,
+        speed: skillEffect?.enemySpeed, // toc bien
+        rotate: true,
+      });
+
       console.log("set auto move", subjectOfAttack.effect.autoMove);
     }
   }

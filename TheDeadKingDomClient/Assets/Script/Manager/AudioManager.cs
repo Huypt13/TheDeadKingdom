@@ -1,0 +1,61 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class AudioManager : Singleton<AudioManager>
+{
+    [SerializeField]
+    private AudioClip pickTank, countDownFight, hitSound;
+
+    private static AudioSource backgroundAudioSource;
+    private static AudioSource effectAudioSource;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        effectAudioSource = gameObject.AddComponent<AudioSource>();
+        effectAudioSource.loop = false;
+        backgroundAudioSource = gameObject.AddComponent<AudioSource>();
+        backgroundAudioSource.loop = true;
+    }
+
+    public void PlayEffectSoundOneShot(string soundType)
+    {
+        switch (soundType)
+        {
+            //case "pickTank":
+            //    effectAudioSource.PlayOneShot(pickTank);
+            //    break;
+            case "countDownFight":
+                effectAudioSource.PlayOneShot(countDownFight);
+                break;
+                //case "hitSound":
+                //    effectAudioSource.PlayOneShot(hitSound);
+                //    break;
+        }
+    }
+
+    public void PlayBackgroundSound(string soundType)
+    {
+        switch (soundType)
+        {
+            case "pickTank":
+                backgroundAudioSource.clip = pickTank;
+                //backgroundAudioSource.Play();
+                backgroundAudioSource.PlayOneShot(pickTank);
+                break;
+                //case "countDownFight":
+                //    backgroundAudioSource.PlayOneShot(countDownFight);
+                //    break;
+                //case "hitSound":
+                //    backgroundAudioSource.PlayOneShot(hitSound);
+                //    break;
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+}

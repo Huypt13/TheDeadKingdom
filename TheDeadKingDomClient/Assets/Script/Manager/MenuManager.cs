@@ -159,11 +159,17 @@ public class MenuManager : MonoBehaviour
     }
     public void OnSignInComplete()
     {
-        message.gameObject.SetActive(false);
-        signInContainer.SetActive(false);
-        joinContainer.SetActive(true);
-        queueButton.interactable = true;
-        iswaiting = false;
+        //message.gameObject.SetActive(false);
+        //signInContainer.SetActive(false);
+        //joinContainer.SetActive(true);
+        //queueButton.interactable = true;
+        //iswaiting = false;
+
+        // chuyen scene thanh LobbyScreen
+        SceneManagement.Instance.LoadLevel(SceneList.LOBBY_SCREEN, (levelName) =>
+        {
+            SceneManagement.Instance.UnLoadLevel(SceneList.MAIN_MENU);
+        });
     }
 
     public void CreateAccount()

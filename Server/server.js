@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const bcrypt = require("bcrypt");
 
 const GameServer = require("./src/gameServer/GameServer");
 const UserRouter = require("./src/api/user/User.router");
@@ -9,6 +10,7 @@ const Tank = require("./src/api/hero/Tank.service");
 const Authentication = require("./src/api/middlewares/Authentication.midleware");
 const TankRouter = require("./src/api/hero/Tank.router");
 const History = require("./src/api/history/History.service");
+const SocketAuthen = require("./src/api/middlewares/SocketAuthen.middleware");
 
 const app = express();
 const server = require("http").createServer(app);
@@ -27,10 +29,11 @@ setInterval(async () => {
 
 io.on("connection", (socket) => {
   console.log(`${socket.id} join room`);
-  socket.on("clientJoin", ({ username, id }) => {
+  socket.on("clientJoin", async ({ username, id }) => {
+    let _id = await SocketAuthen.getUserId(id);
     // neu chua trong game
     if (!gameServer.connections[id]) {
-      const connection = gameServer.onConnected(socket, { username, id });
+      const connection = gameServer.onConnected(socket, { username, id: _id });
       connection.createEvents();
       socket.emit("register", { id: connection.player.id });
     } else {
@@ -74,6 +77,11 @@ server.listen(8080);
 //console.log(GameMechanism.getDame({ armor: 99 }, 1000));
 
 const a = (async () => {
-  let a = await Tank.getTankByUserId("62979d10f7a5a3b40c332a04");
-  console.log(a[0].tankList);
+  // const saltRounds = 10;
+  // let hash = await bcrypt.hash("123", saltRounds);
+  // let compare = await bcrypt.compare(
+  //   "123",
+  //   "$2b$10$Q/gCCCsDdNDzplSHDjH27.Luk3mj.v.0dCUv745wz2bJjUU5IKudW"
+  // );
+  // console.log(hash, compare);
 })();

@@ -33,6 +33,7 @@ const GameLobbySetting = require("./GameLobbySetting");
 const MapProp = require("./MapProps");
 const GameLobbySettings = require("./GameLobbySetting");
 const History = require("../../api/history/History.service");
+const SocketAuthen = require("../../api/middlewares/SocketAuthen.middleware");
 
 module.exports = class GameLobby extends LobbyBase {
   constructor(settings = GameLobbySetting) {
@@ -352,9 +353,11 @@ module.exports = class GameLobby extends LobbyBase {
     return true;
   }
   async someOneChooseHero(connection, _id) {
+    console.log("choose hero", connection.player.id);
     const tank = await TankService.getByTankId(_id, connection.player.id);
     connection.player.tank = JSON.parse(JSON.stringify(tank));
     connection.player.startTank = JSON.parse(JSON.stringify(tank));
+    connection.player.maxHealth = connection.player.startTank.health;
     connection.player.startTank.tankUserId = _id;
     const returnData = {
       id: connection.player.id,
@@ -842,11 +845,26 @@ module.exports = class GameLobby extends LobbyBase {
       );
     } else if (typeId === "003" && num === 1) {
       // luot va buff
-      this.createSkillMove(
-        connection,
-        data,
-        activeBy?.player?.tank?.skill1?.range
-      );
+      // this.createSkillMove(
+      //   connection,
+      //   data,
+      //   activeBy?.player?.tank?.skill1?.range
+      // );
+      activeBy.player.effect.autoMove = {
+        speed: 0,
+        startPos: data.position,
+        direction: data.direction,
+        range: activeBy?.player?.tank?.skill1?.range,
+      };
+      activeBy.socket.emit("startAutoMove", {
+        id: activeBy.player.id,
+        direction: data.direction,
+        speed: 30, // toc bien
+        startPos: data.position,
+        range: activeBy?.player?.tank?.skill1?.range,
+        rotate: false,
+      });
+
       this.createBuffSkill(
         connection,
         [connection.player.id],
@@ -1246,6 +1264,7 @@ module.exports = class GameLobby extends LobbyBase {
           tank = tankRemain.tank;
           connection.player.startTank = JSON.parse(JSON.stringify(tank));
           connection.player.startTank.tankUserId = tankRemain._id;
+          connection.player.maxHealth = connection.player.startTank.health;
           connection.player.tank = JSON.parse(JSON.stringify(tank));
           break;
         }
@@ -1259,6 +1278,8 @@ module.exports = class GameLobby extends LobbyBase {
       connection.player.startTank.tankUserId,
       connection.player.id
     );
+    console.log("xxx", connection.player.startTank.tankUserId, tankUser);
+
     if (!tankUser || tankUser?.remaining <= 0) {
       console.log("chon tank check remain fail", connection.player.id);
       return false;
@@ -1371,7 +1392,11 @@ module.exports = class GameLobby extends LobbyBase {
   onCollisionHealHpEffects(connection = Connection, potionId) {
     const lobby = this;
     const potion = lobby.serverItems.find((item) => item.id == potionId);
-    console.log(connection.player.health + "||" + connection.player.maxHealth);
+    console.log(
+      "hoi mau",
+      connection.player.health + "||" + connection.player.maxHealth
+    );
+    console.log("potion xx", potion);
     if (
       !potion ||
       // !potion.isActive ||

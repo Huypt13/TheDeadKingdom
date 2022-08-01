@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -35,6 +36,12 @@ public class TankDetailManager : MonoBehaviour
     private GameObject skill2;
     [SerializeField]
     private GameObject skill3;
+    enum TankClasses
+    {
+        Tanker = 1,
+        Support = 2,
+        Assasin = 3,
+    };
 
     // Start is called before the first frame update
     void Start()
@@ -43,8 +50,8 @@ public class TankDetailManager : MonoBehaviour
 
         level.text = tankDetail.tank.level + "";
         remaining.text = tankDetail.remaining + "";
-        tankName.text = tankDetail.tank.level + "Quang Trung";
-        tankRole.text = tankDetail.tank.health + "Sat thu";
+        tankName.text = tankDetail.tank.name;
+        tankRole.text = Enum.GetName(typeof(TankClasses), (int)tankDetail.tank.classType);
         armor.text = tankDetail.tank.armor + "";
         speed.text = tankDetail.tank.speed + "";
         rotateSpeed.text = tankDetail.tank.rotationSpeed + "";
@@ -54,6 +61,17 @@ public class TankDetailManager : MonoBehaviour
         bulletSpeed.text = tankDetail.tank.bulletSpeed + "";
         shootingRange.text = tankDetail.tank.shootingRange + "";
 
+        skill1.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(tankDetail.tank.typeId, tankDetail.tank.level, ImageManager.ImageType.Skill1);
+        skill1.transform.GetChild(1).gameObject.GetComponent<Text>().text = tankDetail.tank.skill1.name;
+        skill1.transform.GetChild(2).gameObject.GetComponent<Text>().text = tankDetail.tank.skill1.description;
+
+        skill2.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(tankDetail.tank.typeId, tankDetail.tank.level, ImageManager.ImageType.Skill2);
+        skill2.transform.GetChild(1).gameObject.GetComponent<Text>().text = tankDetail.tank.skill2.name;
+        skill2.transform.GetChild(2).gameObject.GetComponent<Text>().text = tankDetail.tank.skill2.description;
+
+        skill3.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(tankDetail.tank.typeId, tankDetail.tank.level, ImageManager.ImageType.Skill3);
+        skill3.transform.GetChild(1).gameObject.GetComponent<Text>().text = tankDetail.tank.skill3.name;
+        skill3.transform.GetChild(2).gameObject.GetComponent<Text>().text = tankDetail.tank.skill3.description;
 
     }
 

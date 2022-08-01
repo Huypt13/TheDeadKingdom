@@ -34,6 +34,12 @@ public class MenuManager : MonoBehaviour
     private SocketIOComponent socketReference;
     public static List<TankRemain> myTankList;
 
+    [SerializeField]
+    private Text txtUsername;
+
+    [SerializeField]
+    private Text txtPassword;
+
     public SocketIOComponent SocketReference
     {
         get
@@ -124,8 +130,12 @@ public class MenuManager : MonoBehaviour
     private IEnumerator LoginRequest(string uri)
     {
         var userInfor = new UserInfor();
-        userInfor.username = username;
-        userInfor.password = password;
+        //userInfor.username = username;
+        //userInfor.password = password;
+
+        userInfor.username = txtUsername.text;
+        userInfor.password = txtPassword.text;
+
         using (UnityWebRequest request = UnityWebRequest.Post(uri + "/user", new JSONObject(JsonUtility.ToJson(userInfor))))
         {
             yield return request.SendWebRequest();

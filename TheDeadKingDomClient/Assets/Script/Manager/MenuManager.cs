@@ -140,13 +140,12 @@ public class MenuManager : MonoBehaviour
                 Debug.Log(jo["status"].ToString());
                 if (jo["status"].ToString() == "0")
                 {
-                    Debug.Log("kaka");
                     message.gameObject.SetActive(true);
                     message.text = jo["message"].ToString();
                 }
                 else
                 {
-                    access_token = jo["data"]["id"].ToString();
+                    access_token = jo["data"]["token"].ToString();
                     myName = jo["data"]["username"].ToString();
                     ClientInfor ci = new ClientInfor();
                     ci.id = access_token;

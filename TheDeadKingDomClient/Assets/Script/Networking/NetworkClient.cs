@@ -31,6 +31,8 @@ public class NetworkClient : SocketIOComponent
     public static Action<SocketIOEvent> OnTimeSkillUpdate = (E) => { };
     public static Action<SocketIOEvent> OnKillDeadUpdate = (E) => { };
     public static Action<SocketIOEvent> OnResultMatch = (E) => { };
+    public static Action<SocketIOEvent> OnUpdatePosition = (E) => { };
+
     private string myMap = "";
 
     public override void Start()
@@ -614,13 +616,16 @@ public class NetworkClient : SocketIOComponent
         // update pos player
         On("updatePosition", (E) =>
         {
-            Debug.Log("update");
+            OnUpdatePosition.Invoke(E);
+
             string id = E.data["id"].ToString().RemoveQuotes();
             float x = E.data["position"]["x"].f;
             float y = E.data["position"]["y"].f;
 
+
             NetworkIdentity ni = serverObjects[id];
             StartCoroutine(AIPositionSmoothing(ni.transform, new Vector3(x, y, 0)));
+
 
             //   ni.transform.position = new Vector3(x, y, 0);
         });
@@ -674,7 +679,7 @@ public class NetworkClient : SocketIOComponent
             float health = e.data["health"].f;
             var ni = serverObjects[id];
             //   ni.gameObject.SetActive(false);
-
+            Debug.Log(health);
             var healthBar = ni.getHealthBar();
             healthBar.SetHealth(health);
 
@@ -714,6 +719,40 @@ public class NetworkClient : SocketIOComponent
             });
         });
 
+        On("startAutoMove", (E) =>
+        {
+            string id = E.data["id"].str;
+            float autoSpeed = E.data["speed"].f;
+            float x = E.data["direction"]["x"].f;
+            float y = E.data["direction"]["y"].f;
+            float startx = E.data["startPos"]["x"].f;
+            float starty = E.data["startPos"]["y"].f;
+            float range = E.data["range"].f;
+            bool rotate = E.data["rotate"].b;
+            NetworkIdentity ni = serverObjects[id];
+            var tankgen = ni.GetComponent<TankGeneral>();
+            Debug.Log(autoSpeed + " xx");
+            //toc bien
+            if (autoSpeed == 30)
+            {
+                Debug.Log(ni.transform.position);
+                Debug.Log(ni.transform.position - range * new Vector3(x, y, 0));
+                RaycastHit2D hit = Physics2D.BoxCast(ni.transform.position - range * new Vector3(x, y, 0), new Vector2(tankgen.capsuleCollider.size.x, tankgen.capsuleCollider.size.y), 0, -new Vector2(x, y), 0, LayerMask.GetMask("Wall"));
+                if (hit.collider == null)
+                {
+                    StartCoroutine(AIPositionSmoothing(ni.transform, ni.transform.position - range * new Vector3(x, y, 0)));
+                    return;
+                }
+            }
+
+            tankgen.IsAutoMove = true;
+            tankgen.AutoSpeed = autoSpeed;
+            tankgen.AutoDirection = new Vector2(x, y);
+            tankgen.StartPos = new Vector2(startx, starty);
+            tankgen.Range = range;
+            // quay huong
+
+        });
 
         // update ai pos and rotation
         On("updateAI", (E) =>

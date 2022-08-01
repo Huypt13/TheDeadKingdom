@@ -37,6 +37,8 @@ public class NetworkClient : SocketIOComponent
     public static Action<SocketIOEvent> OnKillDeadUpdate = (E) => { };
     public static Action<SocketIOEvent> OnResultMatch = (E) => { };
     public static Action<SocketIOEvent> OnChat = (E) => { };
+    public static Action<SocketIOEvent> OnUpdatePosition = (E) => { };
+
     private string myMap = "";
 
     public override void Start()
@@ -73,7 +75,6 @@ public class NetworkClient : SocketIOComponent
         {
             //Handling all spawning all players
             //Passed Data
-
             string id = E.data["id"].str;
             float team = E.data["team"].f;
             string tankId = E.data["tank"]["typeId"].str;
@@ -151,9 +152,9 @@ public class NetworkClient : SocketIOComponent
                 float time = E.data["time"].f;
                 StartCoroutine(RemoveEfAftertime(efAni, efId, time));
             }
-        }); 
-        
-        
+        });
+
+
         On("itemEffectAnimation", (E) =>
         {
             string enemyId = E.data["enemyId"].str;  // 
@@ -626,12 +627,16 @@ public class NetworkClient : SocketIOComponent
         // update pos player
         On("updatePosition", (E) =>
         {
+            OnUpdatePosition.Invoke(E);
+
             string id = E.data["id"].ToString().RemoveQuotes();
             float x = E.data["position"]["x"].f;
             float y = E.data["position"]["y"].f;
 
+
             NetworkIdentity ni = serverObjects[id];
             StartCoroutine(AIPositionSmoothing(ni.transform, new Vector3(x, y, 0)));
+
 
             //   ni.transform.position = new Vector3(x, y, 0);
         });
@@ -685,7 +690,7 @@ public class NetworkClient : SocketIOComponent
             float health = e.data["health"].f;
             var ni = serverObjects[id];
             //   ni.gameObject.SetActive(false);
-
+            Debug.Log(health);
             var healthBar = ni.getHealthBar();
             healthBar.SetHealth(health);
 
@@ -698,12 +703,22 @@ public class NetworkClient : SocketIOComponent
            {
                OnUpdatePlayer.Invoke(E);
                FindObjectOfType<WaitingSceneManagement>().time = E.data["time"].f;
-               SceneManagement.Instance.UnLoadLevel(SceneList.MAIN_MENU);
+               SceneManagement.Instance.UnLoadLevel(SceneList.LOBBY_SCREEN);
            });
 
 
         });
 
+        On("reloadGame", (E) =>
+        {
+            Debug.Log("reload game");
+            string map = E.data["map"].str;
+            myMap = map;
+            SceneManagement.Instance.LoadLevel(map, (levelName) =>
+            {
+                SceneManagement.Instance.UnLoadLevel(SceneList.MAIN_MENU);
+            });
+        });
         On("loadGame", (E) =>
         {
             Debug.Log("Join game");
@@ -715,6 +730,40 @@ public class NetworkClient : SocketIOComponent
             });
         });
 
+        On("startAutoMove", (E) =>
+        {
+            string id = E.data["id"].str;
+            float autoSpeed = E.data["speed"].f;
+            float x = E.data["direction"]["x"].f;
+            float y = E.data["direction"]["y"].f;
+            float startx = E.data["startPos"]["x"].f;
+            float starty = E.data["startPos"]["y"].f;
+            float range = E.data["range"].f;
+            bool rotate = E.data["rotate"].b;
+            NetworkIdentity ni = serverObjects[id];
+            var tankgen = ni.GetComponent<TankGeneral>();
+            Debug.Log(autoSpeed + " xx");
+            //toc bien
+            if (autoSpeed == 30)
+            {
+                Debug.Log(ni.transform.position);
+                Debug.Log(ni.transform.position - range * new Vector3(x, y, 0));
+                RaycastHit2D hit = Physics2D.BoxCast(ni.transform.position - range * new Vector3(x, y, 0), new Vector2(tankgen.capsuleCollider.size.x, tankgen.capsuleCollider.size.y), 0, -new Vector2(x, y), 0, LayerMask.GetMask("Wall"));
+                if (hit.collider == null)
+                {
+                    StartCoroutine(AIPositionSmoothing(ni.transform, ni.transform.position - range * new Vector3(x, y, 0)));
+                    return;
+                }
+            }
+
+            tankgen.IsAutoMove = true;
+            tankgen.AutoSpeed = autoSpeed;
+            tankgen.AutoDirection = new Vector2(x, y);
+            tankgen.StartPos = new Vector2(startx, starty);
+            tankgen.Range = range;
+            // quay huong
+
+        });
 
         // update ai pos and rotation
         On("updateAI", (E) =>
@@ -782,6 +831,17 @@ public class NetworkClient : SocketIOComponent
             Destroy(go); //Remove from game
             serverObjects.Remove(id); //Remove from memory
         });
+
+        On("someoneLoginYourAccount", (E) =>
+        {
+            SceneManagement.Instance.UnLoadLevel(myMap);
+            SceneManagement.Instance.UnLoadLevel(SceneList.ONLINE);
+            SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
+            {
+                FindObjectOfType<MenuManager>().message.text = "Your account is logged in somewhere else";
+
+            });
+        });
     }
 
 
@@ -837,7 +897,26 @@ public class NetworkClient : SocketIOComponent
             FindObjectOfType<MenuManager>().OnSignInComplete();
         });
     }
-
+    private void ReturnToMainMenuLogin(string error)
+    {
+        foreach (var keyValuePair in serverObjects)
+        {
+            if (keyValuePair.Value != null)
+            {
+                Destroy(keyValuePair.Value.gameObject);
+            }
+        }
+        serverObjects.Clear();
+        foreach (Transform child in networkContainer)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+        SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
+        {
+            SceneManagement.Instance.UnLoadLevel(myMap);
+            FindObjectOfType<MenuManager>().message.text = error;
+        });
+    }
     private void ReturnToMainMenuWithError(string error)
     {
         foreach (var keyValuePair in serverObjects)

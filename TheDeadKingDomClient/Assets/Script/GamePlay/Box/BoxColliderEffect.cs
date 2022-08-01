@@ -13,6 +13,7 @@ public class BoxColliderEffect : MonoBehaviour
         if (ni == null) return;
         if (ni.GetComponent<WhoActivatedMe>() == null && ni.IsControlling())
         {
+            Debug.Log("hoi mau");
             //transform.gameObject.SetActive(false);
             ni.GetSocket().Emit("onCollisionHealHpEffects", new JSONObject(JsonUtility.ToJson(new Potion()
             {
@@ -36,7 +37,7 @@ public class BoxColliderEffect : MonoBehaviour
         NetworkIdentity boxNi = GetComponent<NetworkIdentity>();
         GameObject HealthBar = transform.Find("Health : " + boxNi.GetId())?.gameObject;
         if (HealthBar)
-        HealthBar.SetActive(false);
+            HealthBar.SetActive(false);
 
     }
 

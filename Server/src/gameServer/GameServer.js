@@ -65,19 +65,24 @@ class GameServer {
 
     const gameServer = this;
     const id = connection.player.id;
-    delete gameServer.connections[id];
+
     console.log("Player " + connection.player.id + " has disconnected");
-
-    // leave lobby
     const currentLobbyId = connection.player.lobby;
-    gameServer.lobbys[currentLobbyId].onLeaveLobby(connection);
-
+    // neu dang o general lobby thi leave
+    if (currentLobbyId == gameServer.generalServerID) {
+      delete gameServer.connections[id];
+      gameServer.lobbys[currentLobbyId].onLeaveLobby(connection);
+    }
+    connection.player.isOnline = false;
     // check de close lobby
     if (
       currentLobbyId != gameServer.generalServerID &&
       gameServer.lobbys[currentLobbyId] != undefined &&
-      gameServer.lobbys[currentLobbyId].connections.length == 0
+      gameServer.lobbys[currentLobbyId].connections.reduce((pre, cur) => {
+        return (pre += cur.player.isOnline ? 1 : 0);
+      }, 0) == 0
     ) {
+      console.log("close lobby", currentLobbyId);
       gameServer.closeDownLobby(currentLobbyId);
     }
   }
@@ -143,6 +148,10 @@ class GameServer {
   }
   closeDownLobby(id) {
     console.log(`closing ${id}`);
+
+    while (this.lobbys[id].connections.length > 0) {
+      this.onSwitchLobby(this.lobbys[id].connections[0], this.generalServerID);
+    }
     delete this.lobbys[id];
   }
 }

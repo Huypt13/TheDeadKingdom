@@ -5,6 +5,7 @@ class Player {
   constructor({ username, id }) {
     this.username = username;
     this.id = id;
+    this.isOnline;
     this.position = new Vector2();
     this.lobby = 0; // Id cua lobby
     this.team = 0;
@@ -27,7 +28,7 @@ class Player {
       stunned: [], // thoi gian bi lam choang ko dung dc chieu ko ban dc
       tiedUp: [], // thoi gian bi troi van dung dc chieu vs ban dc
       burned: [],
-      autoMove: null, // {id, speed , startPost, direction , range}
+      autoMove: null, // {id, speed , startPost, direction , range} // speed moi 0.1s
       focusOn: null, // {id, focusId ,speed}
       // hieu ung co loi
       threeBullet: 0,
@@ -76,30 +77,11 @@ class Player {
     return false;
   }
 
-  onAutoMoveCounter(lobby) {
+  onAutoMoveCounter(connection) {
     let endEf = []; // list hieu ung ket thuc
-    this.position.x -=
-      this.effect.autoMove.speed * this.effect.autoMove.direction.x;
-    this.position.y -=
-      this.effect.autoMove.speed * this.effect.autoMove.direction.y;
-
-    console.log(
-      this.position.Distance(this.effect.autoMove.startPos),
-      this.position
-    );
-    if (
-      this.position.Distance(this.effect.autoMove.startPos) >=
-      this.effect.autoMove.range - 0.1
-    ) {
+    if (!this.effect.autoMove) {
       endEf.push(this.effect.autoMove);
-      this.effect.autoMove = null;
-    } else {
-      lobby.connections[0].socket.emit("updatePosition", this);
-      lobby.connections[0].socket.broadcast
-        .to(lobby.id)
-        .emit("updatePosition", this);
     }
-
     return { endEf: endEf };
   }
 
@@ -112,8 +94,8 @@ class Player {
       focus.player.position.x - this.position.x,
       focus.player.position.y - this.position.y
     ).Normalized();
-    this.position.x += this.effect.focusOn.speed * direction.x;
-    this.position.y += this.effect.focusOn.speed * direction.y;
+    this.position.x += (this.effect.focusOn.speed / 10) * direction.x;
+    this.position.y += (this.effect.focusOn.speed / 10) * direction.y;
 
     if (this.position.Distance(focus.player.position) <= 0.5) {
       endEf.push(this.effect.focusOn);
@@ -365,7 +347,6 @@ class Player {
   deadResetEffect() {
     this.tankRotation = 0;
     this.berrelRotaion = 0;
-    console.log("init ", this.startTank);
     this.tank = JSON.parse(JSON.stringify(this.startTank));
     this.tank.skill1.timeCounter = 0.2;
     this.tank.skill2.timeCounter = 0.2;

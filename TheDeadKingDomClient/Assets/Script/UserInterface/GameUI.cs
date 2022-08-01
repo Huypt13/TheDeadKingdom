@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using SocketIO;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,8 +19,12 @@ public class GameUI : MonoBehaviour
     [SerializeField]
     private Transform killDeadTransform;
     [SerializeField]
+    private Transform chatBox;
+    [SerializeField]
     private Transform skillTransform;
-
+    [SerializeField]
+    private TMP_InputField inputChatBox;
+    private float count = 0;
     public void Start()
     {
         string kill1 = (NetworkClient.MyTeam == 1) ? $"<color=red><b>0</b></color>" : 0 + "";
@@ -33,6 +38,11 @@ public class GameUI : MonoBehaviour
         //Initial Turn off screens
         gameLobbyContainer.SetActive(false);
     }
+    public void Update()
+    {
+        OnChatBoxUpdate();
+        OnChatBoxViewUpdate();
+    }
 
     private void OnGameStateChange(SocketIOEvent e)
     {
@@ -45,6 +55,7 @@ public class GameUI : MonoBehaviour
                 gameLobbyContainer.SetActive(true);
                 break;
             case "EndGame":
+                resetChatBox();
                 gameLobbyContainer.SetActive(false);
                 break;
             case "Lobby":
@@ -99,6 +110,68 @@ public class GameUI : MonoBehaviour
 
     public void OnQuit()
     {
+        resetChatBox();
         networkClient.OnQuit();
     }
+    public float time;
+    private void OnChatBoxUpdate()
+    {
+        if (!ChatBoxInfor.IsTurnChatBox &&Input.GetKeyDown(KeyCode.Return))
+        {
+            
+            chatBox.Find("Input").transform.gameObject
+                .SetActive(true);
+            chatBox.Find("ScrollView").transform.gameObject
+                .SetActive(true);
+            ChatBoxInfor.IsTurnChatBox = true;
+            ChatBoxInfor.IsTurnChatView = false;
+            return;
+        }
+        if (ChatBoxInfor.IsTurnChatBox && Input.GetKeyDown(KeyCode.Return))
+        {
+            chatBox.Find("Input").transform.gameObject
+                .SetActive(false);
+            count = Time.time;
+            StartCoroutine(DoEvent());     
+
+           ChatBoxInfor.IsTurnChatBox = false;
+        }
+    }
+    public IEnumerator DoEvent()
+    {
+        yield return new WaitUntil(() => Mathf.Floor(Time.time - count) > 3); 
+        if(!ChatBoxInfor.IsTurnChatBox)
+        ChatBoxInfor.IsTurnChatView = true;
+                
+    }
+    public void OnChatBoxViewUpdate()
+    {
+        if(ChatBoxInfor.IsTurnChatView && !ChatBoxInfor.IsTurnChatBox)
+        {
+            chatBox.Find("ScrollView").transform.gameObject
+                .SetActive(false);
+        }
+    }
+    public void resetChatBox()
+    {
+        chatBox.Find("Input").transform.gameObject
+          .SetActive(false);
+        chatBox.Find("ScrollView").transform.gameObject
+          .SetActive(false);
+        chatBox.Find("Input").transform.gameObject
+                .SetActive(false);
+        ChatBoxInfor.IsTurnChatBox = false;
+        inputChatBox.text = "";
+        clearListMessage();
+    }
+    private void clearListMessage()
+    {
+        ChatBoxInfor.MessageList.ForEach((message) =>
+        {
+            DestroyImmediate(message.textObject);
+        });
+        ChatBoxInfor.MessageList.Clear();
+    }
+
+
 }

@@ -100,6 +100,7 @@ public class TankGeneral : MonoBehaviour
 
     private void TankMovement()
     {
+        if (ChatBoxInfor.IsTurnChatBox) return;
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
         Vector3 direction = transform.up;

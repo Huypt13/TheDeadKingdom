@@ -33,6 +33,9 @@ const GameLobbySetting = require("./GameLobbySetting");
 const MapProp = require("./MapProps");
 const GameLobbySettings = require("./GameLobbySetting");
 const History = require("../../api/history/History.service");
+const Filter = require("bad-words")
+const filter = new Filter();
+const BadWords = require("../../helper/BadWords");
 
 module.exports = class GameLobby extends LobbyBase {
   constructor(settings = GameLobbySetting) {
@@ -1216,15 +1219,15 @@ module.exports = class GameLobby extends LobbyBase {
     socket.broadcast.to(lobby.id).emit("spawn", returnData); // Tell other
 
     // tell another to me
-    connections.forEach((c) => {
-      if (c.player.id != connection.player.id) {
-        socket.emit("spawn", {
-          id: c.player.id,
-          position: c.player.position,
-          tank,
-        });
-      }
-    });
+    // connections.forEach((c) => {
+    //   if (c.player.id != connection.player.id) {
+    //     socket.emit("spawn", {
+    //       id: c.player.id,
+    //       position: c.player.position,
+    //       tank,
+    //     });
+    //   }
+    // });
     return true;
   }
   updateDeadPlayers() {
@@ -1385,6 +1388,27 @@ module.exports = class GameLobby extends LobbyBase {
         LobbyEffect.onFoucusEffect(connection, this);
       }
       connection.player.onSkillCounter(connection);
+    }
+  }
+  SendMessage(connection, data) {
+    filter.addWords(...BadWords);
+    let content = filter.clean(data.text);
+    const toTeam = data.toTeam;
+    const returnData = {
+      text : content,
+      id : connection.player.id,
+      
+    }
+    if(!toTeam) {
+      console.log("dd");
+      connection.socket.emit("receivedMessage", returnData);
+      connection.socket.broadcast.to(this.id).emit("receivedMessage", returnData);
+    } else {
+      this.connections.forEach(c => { 
+        if(c.player.team == connection.player.team) {
+            c.socket.emit("receivedMessage", returnData);
+        }
+      })
     }
   }
 

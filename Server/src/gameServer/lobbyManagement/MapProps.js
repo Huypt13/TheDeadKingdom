@@ -19,7 +19,7 @@ module.exports.map = {
           },
         ],
       
-        DropZone: [
+        Helipad: [
           {
             position: { x: -5.999, y: 0.005 },
           },
@@ -31,7 +31,7 @@ module.exports.map = {
           },
         ],
       
-        BigWoodBox: [
+        PileBox: [
           {
             position: { x: 2, y: -6.01 },
           },
@@ -40,7 +40,7 @@ module.exports.map = {
           },
         ],
       
-        MetalBigWoodBox: [
+        IronBox: [
           {
             position: { x: 3.39, y: 0.55 },
           },
@@ -49,7 +49,7 @@ module.exports.map = {
           },
         ],
       
-        BlueTeamHpBox: [
+        Potion: [
           {
             position: { x: -6.47, y: -6.73 },
           },
@@ -58,7 +58,7 @@ module.exports.map = {
           },
         ],
       
-        RedTeamHpBox: [
+        Potion: [
           {
             position: { x: 4.4, y: 0.55 },
           },

@@ -24,7 +24,7 @@ public class TankSkill001 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (networkIdentity.IsControlling())
+        if (!ChatBoxInfor.IsTurnChatBox && networkIdentity.IsControlling())
         {
             var tankGen = networkIdentity.GetComponent<TankGeneral>();
             if (!tankGen.Stunned)
@@ -40,7 +40,7 @@ public class TankSkill001 : MonoBehaviour
     // skill e phong 1 luong nang luong lam cham ke dich tren duong di
     private void Skill1()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (!ChatBoxInfor.IsTurnChatBox && Input.GetKeyDown(KeyCode.E))
         {
             //Define skill1
             sk1.activator = NetworkClient.ClientID;
@@ -60,7 +60,7 @@ public class TankSkill001 : MonoBehaviour
     // skill r phong day xich troi ke dich dau tien gap phai
     private void Skill2()
     {
-        if (Input.GetKeyDown(KeyCode.R))
+        if (!ChatBoxInfor.IsTurnChatBox && Input.GetKeyDown(KeyCode.R))
         {
             //Define skill1
             sk1.activator = NetworkClient.ClientID;

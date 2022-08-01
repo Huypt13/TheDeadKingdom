@@ -90,6 +90,10 @@ class Connection {
         this.lobby.onTouchItem(this, data);
       }
     });
+    socket.on("sendMessage", (data) => {
+      if (connection.lobby instanceof GameLobby)
+        this.lobby.SendMessage(this, data);
+    })
   }
 }
 

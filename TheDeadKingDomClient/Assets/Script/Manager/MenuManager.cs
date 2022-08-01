@@ -151,6 +151,7 @@ public class MenuManager : MonoBehaviour
                     ClientInfor ci = new ClientInfor();
                     ci.id = access_token;
                     ci.username = myName;
+                    NetworkClient.ClientName = myName;
                     SocketReference.Emit("clientJoin", new JSONObject(JsonUtility.ToJson(ci)));
                     OnSignInComplete();
                 }

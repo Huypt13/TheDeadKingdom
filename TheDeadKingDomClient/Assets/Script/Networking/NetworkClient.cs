@@ -15,6 +15,11 @@ public class NetworkClient : SocketIOComponent
         get;
         private set;
     }
+    public static string ClientName
+    {
+        get;
+        set;
+    }
     public static float MyTeam;
 
     [SerializeField]
@@ -31,6 +36,7 @@ public class NetworkClient : SocketIOComponent
     public static Action<SocketIOEvent> OnTimeSkillUpdate = (E) => { };
     public static Action<SocketIOEvent> OnKillDeadUpdate = (E) => { };
     public static Action<SocketIOEvent> OnResultMatch = (E) => { };
+    public static Action<SocketIOEvent> OnChat = (E) => { };
     private string myMap = "";
 
     public override void Start()
@@ -242,6 +248,11 @@ public class NetworkClient : SocketIOComponent
             var healthBar = ni.getHealthBar();
             healthBar.SetHealth(health);
 
+        });
+
+        On("receivedMessage", (E) =>
+        {
+            OnChat.Invoke(E);
         });
 
         On("updateTime", (E) =>

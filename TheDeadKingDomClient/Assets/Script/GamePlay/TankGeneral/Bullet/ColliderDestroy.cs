@@ -97,7 +97,6 @@ public class ColliderDestroy : MonoBehaviour
 
                 if (ni.tag == "Box" && niActive.IsControlling())
                 {
-                    Debug.Log("chma");
                     Destroy(gameObject);
                     NetworkClient.serverObjects.Remove(networkIdentity.GetId());
                     networkIdentity.GetSocket().Emit("collisionDestroyBox", new JSONObject(JsonUtility.ToJson(new IDData()

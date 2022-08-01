@@ -15,17 +15,30 @@ public class GameUI : MonoBehaviour
 
     [SerializeField]
     private Transform timeTransform;
+
     [SerializeField]
-    private Transform killDeadTransform;
+    private Text totalKillTeam1;
+
     [SerializeField]
-    private Transform skillTransform;
+    private Text totalKillTeam2;
+
+    [SerializeField]
+    private Image imageSkill1;
+
+    [SerializeField]
+    private Image imageSkill2;
+
+    [SerializeField]
+    private Image imageSkill3;
 
     public void Start()
     {
-        string kill1 = (NetworkClient.MyTeam == 1) ? $"<color=red><b>0</b></color>" : 0 + "";
-        string kill2 = (NetworkClient.MyTeam == 2) ? $"<color=red><b>0</b></color>" : 0 + "";
-        Text text = killDeadTransform.GetComponent<Text>();
-        text.text = $"{kill1} - {kill2}";
+        InitKillDead();
+        imageSkill1.type = Image.Type.Filled;
+        imageSkill2.type = Image.Type.Filled;
+        imageSkill3.type = Image.Type.Filled;
+
+
         NetworkClient.OnGameStateChange = OnGameStateChange;
         NetworkClient.OnTimeUpdate = OnTimeUpdate;
         NetworkClient.OnKillDeadUpdate = OnKillDeadUpdate;
@@ -61,10 +74,13 @@ public class GameUI : MonoBehaviour
 
     private void InitKillDead()
     {
-        string kill1 = (NetworkClient.MyTeam == 1) ? $"<color=red><b>0</b></color>" : 0 + "";
-        string kill2 = (NetworkClient.MyTeam == 2) ? $"<color=red><b>0</b></color>" : 0 + "";
-        Text text = killDeadTransform.GetComponent<Text>();
-        text.text = $"{kill1} - {kill2}";
+        //string kill1 = (NetworkClient.MyTeam == 1) ? $"<color=red><b>0</b></color>" : 0 + "";
+        //string kill2 = (NetworkClient.MyTeam == 2) ? $"<color=red><b>0</b></color>" : 0 + "";
+        //Text text = killDeadTransform.GetComponent<Text>();
+        //text.text = $"{kill1} - {kill2}";
+        totalKillTeam1.text = "0";
+        totalKillTeam2.text = "0";
+
     }
     private void OnTimeUpdate(SocketIOEvent E)
     {
@@ -83,17 +99,22 @@ public class GameUI : MonoBehaviour
         float timeFull1 = E.data["timeFull1"].f;
         float timeFull2 = E.data["timeFull2"].f;
         float timeFull3 = E.data["timeFull3"].f;
-        Text text = skillTransform.GetComponent<Text>();
-        text.text = time1 + "/" + timeFull1 + "  " + time2 + "/" + timeFull2 + "  " + time3 + "/" + timeFull3;
+
+        imageSkill1.fillAmount = 1 - time1 / timeFull1;
+        imageSkill2.fillAmount = 1 - time2 / timeFull2;
+        imageSkill3.fillAmount = 1 - time3 / timeFull3;
+
 
     }
     private void OnKillDeadUpdate(SocketIOEvent E)
     {
 
-        string kill1 = (NetworkClient.MyTeam == 1) ? $"<color=red><b>{E.data["kill1"].f}</b></color>" : E.data["kill1"].f + "";
-        string kill2 = (NetworkClient.MyTeam == 2) ? $"<color=red><b>{E.data["kill2"].f}</b></color>" : E.data["kill2"].f + "";
-        Text text = killDeadTransform.GetComponent<Text>();
-        text.text = $"{kill1} - {kill2}";
+        //string kill1 = (NetworkClient.MyTeam == 1) ? $"<color=red><b>{E.data["kill1"].f}</b></color>" : E.data["kill1"].f + "";
+        //string kill2 = (NetworkClient.MyTeam == 2) ? $"<color=red><b>{E.data["kill2"].f}</b></color>" : E.data["kill2"].f + "";
+        //Text text = killDeadTransform.GetComponent<Text>();
+        //text.text = $"{kill1} - {kill2}";
+        totalKillTeam1.text = E.data["kill1"].f + "";
+        totalKillTeam2.text = E.data["kill2"].f + "";
     }
 
 

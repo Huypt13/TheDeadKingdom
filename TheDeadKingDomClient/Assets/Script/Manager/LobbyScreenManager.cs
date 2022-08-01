@@ -8,13 +8,15 @@ using UnityEngine.UI;
 
 public class LobbyScreenManager : MonoBehaviour
 {
-    private bool iswaiting = false;
+    private bool isFinding = false;
 
     private SocketIOComponent socketReference;
 
     public static List<TankRemain> myTankList;
 
     private float time = 0;
+
+    private bool canJoin = false;
 
     [SerializeField]
     private Text findMatchText;
@@ -29,7 +31,7 @@ public class LobbyScreenManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        StartCoroutine(GetListTank(MenuManager.uri));
     }
 
     // Update is called once per frame
@@ -42,11 +44,19 @@ public class LobbyScreenManager : MonoBehaviour
     public void FindMatch()
     {
         Debug.Log("on queue " + MenuManager.access_token);
-        if (!iswaiting)
+        if (!isFinding)
         {
-            InvokeRepeating("SetTime", 0f, 1f);
-            StartCoroutine(GetListTank("http://localhost:8080"));
-
+            if (canJoin)
+            {
+                InvokeRepeating("SetTime", 0f, 1f);
+                SocketReference.Emit("joinGame");
+                isFinding = true;
+            }
+            else
+            {
+                Debug.Log("Not enough tank");
+                isFinding = false;
+            }
         }
         else
         {
@@ -54,10 +64,8 @@ public class LobbyScreenManager : MonoBehaviour
             time = 0;
             findMatchText.text = "FindMatch";
             SocketReference.Emit("quitGame");
-
+            isFinding = false;
         }
-        iswaiting = !iswaiting;
-        // SocketReference.Emit("joinGame");
     }
 
     void SetTime()
@@ -81,11 +89,10 @@ public class LobbyScreenManager : MonoBehaviour
             }
             else
             {
-
                 var jo = JObject.Parse(request.downloadHandler.text);
                 myTankList = jo["data"]["tankList"].ToObject<List<TankRemain>>();
                 Debug.Log(myTankList.Count);
-                bool canJoin = false;
+                canJoin = false;
                 myTankList.ForEach((e) =>
                 {
                     if (e.remaining > 0)
@@ -93,22 +100,18 @@ public class LobbyScreenManager : MonoBehaviour
                         canJoin = true;
                     }
                 });
-                if (canJoin)
-                {
-                    SocketReference.Emit("joinGame");
-                }
-                else
-                {
-                    //message.gameObject.SetActive(true);
-                    //message.text = "Not enough tank";
-                    //Text text = queueButton.GetComponentInChildren<Text>();
-                    //text.text = "joingame";
-
-                    Debug.Log("Not enough tank");
-
-                    iswaiting = false;
-                }
             }
+        }
+    }
+
+    public void LoadTanksInventory()
+    {
+        if (!isFinding)
+        {
+            SceneManagement.Instance.LoadLevel(SceneList.TANK_INVENTORY, (levelName) =>
+            {
+                //SceneManagement.Instance.UnLoadLevel(SceneList.LOBBY_SCREEN);
+            });
         }
     }
 }

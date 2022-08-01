@@ -93,15 +93,6 @@ public class WaitingSceneManagement : MonoBehaviour
         imgTankIcon.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(typeId, level, ImageManager.ImageType.TankIconCircle);
         //ImageManager.Instance.GetImage(typeId, level, ImageManager.ImageType.TankIcon).
 
-        if (e.data["id"].str == NetworkClient.ClientID)
-        {
-            tankPickedName.GetComponent<Text>().text = typeId + "-" + level;
-            tankPickedRole.GetComponent<Text>().text = typeId;
-            tankPickedBackground.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(typeId, level, ImageManager.ImageType.TankBackground);
-            skill1Icon.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(typeId, level, ImageManager.ImageType.Skill1);
-            skill2Icon.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(typeId, level, ImageManager.ImageType.Skill2);
-            skill3Icon.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(typeId, level, ImageManager.ImageType.Skill3);
-        }
     }
 
     private void UpdatePlayer(SocketIOEvent e)
@@ -154,21 +145,32 @@ public class WaitingSceneManagement : MonoBehaviour
 
         LobbyScreenManager.myTankList.ForEach(e =>
         {
-            GameObject btnPickTank = Instantiate(prefabButtonPickTank);
-            btnPickTank.transform.parent = playerTanksContainer.transform;
-            btnPickTank.transform.localScale = new Vector3(1f, 1f, 1f);
-            btnPickTank.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(e.tank.typeId, e.tank.level, ImageManager.ImageType.TankIcon);
-            btnPickTank.GetComponent<Button>().onClick.AddListener(() =>
+            if (e.remaining > 0)
             {
-                ChooseHero(e._id);
-            });
+                GameObject btnPickTank = Instantiate(prefabButtonPickTank);
+                btnPickTank.transform.parent = playerTanksContainer.transform;
+                btnPickTank.transform.localScale = new Vector3(1f, 1f, 1f);
+                btnPickTank.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(e.tank.typeId, e.tank.level, ImageManager.ImageType.TankIcon);
+                btnPickTank.GetComponent<Button>().onClick.AddListener(() =>
+                {
+                    ChooseHero(e._id, e.tank.typeId, e.tank.level, e.remaining);
+                });
+            }
+
+
         });
     }
 
 
-    public void ChooseHero(string tankId)
+    public void ChooseHero(string tankId, string typeId, float level, float remaining)
     {
         // gui _id
         SocketReference.Emit("chooseHero", tankId);
+        tankPickedName.GetComponent<Text>().text = typeId + "-" + level;
+        tankPickedRole.GetComponent<Text>().text = "Remain: " + remaining;
+        tankPickedBackground.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(typeId, level, ImageManager.ImageType.TankBackground);
+        skill1Icon.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(typeId, level, ImageManager.ImageType.Skill1);
+        skill2Icon.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(typeId, level, ImageManager.ImageType.Skill2);
+        skill3Icon.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(typeId, level, ImageManager.ImageType.Skill3);
     }
 }

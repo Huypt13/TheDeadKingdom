@@ -11,8 +11,8 @@ using TMPro;
 
 public class MenuManager : MonoBehaviour
 {
-    [SerializeField]
-    private string uri;
+    //[SerializeField]
+    public static string uri = "http://localhost:8080";
     public static string access_token = "";
     public static string myName = "";
     [Header("Join Now")]

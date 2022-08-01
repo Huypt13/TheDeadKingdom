@@ -6,6 +6,13 @@ public class TankGeneral : MonoBehaviour
 {
     const float BARREL_PIVOT_OFFSET = 90.0f;
 
+    // trang thai automove
+    private bool isAutoMove = false;
+    private Vector2 autoDirection;
+    private Vector2 startPos;
+    private float range;
+    private float autoSpeed = 0f;
+    //
     private float speed = 1;
     private float rotation = 60;
     private float attackSpeed = 1;
@@ -28,10 +35,9 @@ public class TankGeneral : MonoBehaviour
     [SerializeField]
     private NetworkIdentity networkIdentity;
 
-    private CapsuleCollider2D capsuleCollider;
+    public CapsuleCollider2D capsuleCollider;
     private RaycastHit2D hit;
-    private RaycastHit2D hit1;
-    private Vector3 moveDelta;
+
 
     public float Speed { get => speed; set => speed = value; }
     public bool Stunned { get => stunned; set => stunned = value; }
@@ -45,6 +51,12 @@ public class TankGeneral : MonoBehaviour
             shootingCooldown = new Cooldown(AttackSpeed);
         }
     }
+
+    public bool IsAutoMove { get => isAutoMove; set => isAutoMove = value; }
+    public Vector2 AutoDirection { get => autoDirection; set => autoDirection = value; }
+    public float AutoSpeed { get => autoSpeed; set => autoSpeed = value; }
+    public Vector2 StartPos { get => startPos; set => startPos = value; }
+    public float Range { get => range; set => range = value; }
 
     void Start()
     {
@@ -72,7 +84,7 @@ public class TankGeneral : MonoBehaviour
     {
         if (networkIdentity.IsControlling())
         {
-            if (!Stunned && !TiedUp)
+            if (!Stunned && !TiedUp || IsAutoMove)
                 TankMovement();
 
             if (!Stunned)
@@ -100,18 +112,40 @@ public class TankGeneral : MonoBehaviour
 
     private void TankMovement()
     {
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
-        Vector3 direction = transform.up;
-        if (vertical < 0) direction *= -1;
-        //it = Physics2D.CapsuleCast(transform.position,capsuleCollider.size, capsuleCollider.direction,0 , direction, LayerMask.GetMask("Wall"), Mathf.Infinity);
-        hit = Physics2D.BoxCast(transform.position, new Vector2(capsuleCollider.size.x - 0.5f, capsuleCollider.size.y - 0.5f), 0, direction, Mathf.Abs(vertical * Speed * Time.deltaTime), LayerMask.GetMask("Wall"));
-        if (hit.collider == null)
+        if (!IsAutoMove)
         {
-            transform.position += transform.up * vertical * Speed * Time.deltaTime;
+            float horizontal = Input.GetAxis("Horizontal");
+            float vertical = Input.GetAxis("Vertical");
+            Vector3 direction = transform.up;
+            if (vertical < 0) direction *= -1;
+            hit = Physics2D.BoxCast(transform.position, new Vector2(capsuleCollider.size.x - 0.5f, capsuleCollider.size.y - 0.5f), 0, direction, Mathf.Abs(vertical * Speed * Time.deltaTime), LayerMask.GetMask("Wall"));
+            if (hit.collider == null)
+            {
+                transform.position += transform.up * vertical * Speed * Time.deltaTime;
+            }
+            transform.Rotate(new Vector3(0, 0, -horizontal * rotation * Time.deltaTime));
+        }
+        else
+        {
+
+            hit = Physics2D.BoxCast(transform.position, new Vector2(capsuleCollider.size.x - 0.5f, capsuleCollider.size.y - 0.5f), 0, -AutoDirection, Mathf.Abs(AutoSpeed * Time.deltaTime), LayerMask.GetMask("Wall"));
+            if (hit.collider == null)
+            {
+                transform.position -= new Vector3(AutoDirection.x, AutoDirection.y, 0) * AutoSpeed * Time.deltaTime;
+                if (Vector3.Distance(transform.position, new Vector3(StartPos.x, StartPos.y, 0)) >= Range)
+                {
+                    IsAutoMove = false;
+                    networkIdentity.GetSocket().Emit("stopAutoMoving");
+                }
+            }
+            else
+            {
+                Debug.Log(hit.distance + " " + hit.distance * autoDirection.x);
+                IsAutoMove = false;
+                networkIdentity.GetSocket().Emit("stopAutoMoving");
+            }
         }
 
-        transform.Rotate(new Vector3(0, 0, -horizontal * rotation * Time.deltaTime));
     }
     private void BarrelRotation()
     {

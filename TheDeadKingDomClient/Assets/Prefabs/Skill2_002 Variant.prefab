@@ -11,6 +11,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Skill2_002 Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 1634401484029270, guid: 412b024159425ff428036b8d4f4a1429, type: 3}
+      propertyPath: m_TagString
+      value: BulletThrough
+      objectReference: {fileID: 0}
     - target: {fileID: 4480492009488564, guid: 412b024159425ff428036b8d4f4a1429, type: 3}
       propertyPath: m_RootOrder
       value: 0

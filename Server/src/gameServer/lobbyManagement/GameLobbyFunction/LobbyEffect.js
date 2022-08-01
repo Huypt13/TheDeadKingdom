@@ -170,7 +170,7 @@ function onBurnedEffect(connection, lobby) {
 }
 
 function onAutoMoveEffect(connection, lobby) {
-  const { endEf } = connection.player.onAutoMoveCounter(lobby);
+  const { endEf } = connection.player.onAutoMoveCounter(connection);
 
   if (endEf.length > 0) {
     connection.socket.emit("endEffectAnimation", {
@@ -179,6 +179,9 @@ function onAutoMoveEffect(connection, lobby) {
     });
     connection.socket.broadcast.to(lobby.id).emit("endEffectAnimation", {
       endEf,
+      id: connection.player.id,
+    });
+    connection.socket.emit("endAutoMove", {
       id: connection.player.id,
     });
   }

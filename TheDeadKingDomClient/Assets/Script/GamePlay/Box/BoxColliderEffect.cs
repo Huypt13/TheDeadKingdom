@@ -9,6 +9,8 @@ public class BoxColliderEffect : MonoBehaviour
     public void OnCollisionEnter2D(Collision2D collision)
     {
         NetworkIdentity ni = collision.gameObject.GetComponent<NetworkIdentity>();
+        NetworkIdentity boxNi = GetComponent<NetworkIdentity>();
+        if (ni == null) return;
         if (ni.GetComponent<WhoActivatedMe>() == null && ni.IsControlling())
         {
             //transform.gameObject.SetActive(false);
@@ -20,7 +22,9 @@ public class BoxColliderEffect : MonoBehaviour
         }
         if (ni.GetComponent<WhoActivatedMe>() != null)
         {
-            transform.GetChild(1).gameObject.SetActive(true);
+            GameObject HealthBar = transform.Find("Health : " + boxNi.GetId())?.gameObject;
+            if (!HealthBar) return;
+            HealthBar.SetActive(true);
             StartCoroutine(DoEvent());
 
         }
@@ -29,7 +33,10 @@ public class BoxColliderEffect : MonoBehaviour
     public IEnumerator DoEvent()
     {
         yield return new WaitForSecondsRealtime(2);
-        transform.GetChild(1).gameObject.SetActive(false);
+        NetworkIdentity boxNi = GetComponent<NetworkIdentity>();
+        GameObject HealthBar = transform.Find("Health : " + boxNi.GetId())?.gameObject;
+        if (HealthBar)
+        HealthBar.SetActive(false);
 
     }
 

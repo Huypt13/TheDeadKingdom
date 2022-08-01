@@ -28,6 +28,11 @@ public class TankGeneral : MonoBehaviour
     [SerializeField]
     private NetworkIdentity networkIdentity;
 
+    private CapsuleCollider2D capsuleCollider;
+    private RaycastHit2D hit;
+    private RaycastHit2D hit1;
+    private Vector3 moveDelta;
+
     public float Speed { get => speed; set => speed = value; }
     public bool Stunned { get => stunned; set => stunned = value; }
     public bool TiedUp { get => tiedUp; set => tiedUp = value; }
@@ -49,6 +54,7 @@ public class TankGeneral : MonoBehaviour
         bulletData = new BulletData();
         bulletData.position = new Position();
         bulletData.direction = new Position();
+        capsuleCollider = GetComponent<CapsuleCollider2D>();
 
     }
 
@@ -96,24 +102,15 @@ public class TankGeneral : MonoBehaviour
     {
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
-        //    int count = rb.Cast(-transform.up * vertical, castCollisions, speed * Time.deltaTime);
-        //int count = 0;
-        //if (count == 0)
-        //{
-        //Debug.Log(LayerMask.GetMask("Tree"));
-        //if (Physics2D.Raycast(transform.position, transform.TransformDirection(transform.up*vertical), speed * Time.fixedDeltaTime + 0.1f, LayerMask.GetMask("Tree")))
-        //{
-        //    // Debug.DrawRay(transform.position, -transform.up *vertical* hit.distance, Color.yellow);
-        //    Debug.DrawRay(transform.position, transform.up * 10, Color.yellow);
-        //    Debug.Log("Hit");
-        //}
-        //else
-        //{
-        //    Debug.DrawRay(transform.position, transform.up * 10, Color.white);
-        transform.position += transform.up * vertical * Speed * Time.deltaTime;
-        //    Debug.Log("Did not Hit");
-        //}
-        //}
+        Vector3 direction = transform.up;
+        if (vertical < 0) direction *= -1;
+        //it = Physics2D.CapsuleCast(transform.position,capsuleCollider.size, capsuleCollider.direction,0 , direction, LayerMask.GetMask("Wall"), Mathf.Infinity);
+        hit = Physics2D.BoxCast(transform.position, new Vector2(capsuleCollider.size.x - 0.5f, capsuleCollider.size.y - 0.5f), 0, direction, Mathf.Abs(vertical * Speed * Time.deltaTime), LayerMask.GetMask("Wall"));
+        if (hit.collider == null)
+        {
+            transform.position += transform.up * vertical * Speed * Time.deltaTime;
+        }
+
         transform.Rotate(new Vector3(0, 0, -horizontal * rotation * Time.deltaTime));
     }
     private void BarrelRotation()
@@ -129,6 +126,7 @@ public class TankGeneral : MonoBehaviour
     }
     private void Shooting()
     {
+
         shootingCooldown.CooldownUpdate();
 
         if (Input.GetMouseButton(0) && !shootingCooldown.IsOnCooldown())
@@ -143,6 +141,7 @@ public class TankGeneral : MonoBehaviour
             bulletData.direction.x = bulletSpawnPoint.up.x;
             bulletData.direction.y = bulletSpawnPoint.up.y;
 
+            Debug.Log("shooting 1");
             //Send Bullet
             networkIdentity.GetSocket().Emit("fireBullet", new JSONObject(JsonUtility.ToJson(bulletData)));
 

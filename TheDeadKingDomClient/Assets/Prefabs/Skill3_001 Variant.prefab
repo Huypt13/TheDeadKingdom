@@ -91,13 +91,45 @@ PrefabInstance:
       propertyPath: m_LocalScale.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 199354530758533626, guid: 45f65dac6d4ed0340b8b84ba959847d7, type: 3}
+      propertyPath: m_SortingLayer
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 199354530758533626, guid: 45f65dac6d4ed0340b8b84ba959847d7, type: 3}
+      propertyPath: m_SortingOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 199354530758533626, guid: 45f65dac6d4ed0340b8b84ba959847d7, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 966209371
+      objectReference: {fileID: 0}
+    - target: {fileID: 199785404539057796, guid: 45f65dac6d4ed0340b8b84ba959847d7, type: 3}
+      propertyPath: m_SortingLayer
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 199785404539057796, guid: 45f65dac6d4ed0340b8b84ba959847d7, type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 199785404539057796, guid: 45f65dac6d4ed0340b8b84ba959847d7, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 966209371
+      objectReference: {fileID: 0}
     - target: {fileID: 199785404539057796, guid: 45f65dac6d4ed0340b8b84ba959847d7, type: 3}
       propertyPath: m_Materials.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 212057979578496862, guid: 45f65dac6d4ed0340b8b84ba959847d7, type: 3}
+      propertyPath: m_SortingLayer
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 212057979578496862, guid: 45f65dac6d4ed0340b8b84ba959847d7, type: 3}
       propertyPath: m_SortingOrder
-      value: 5
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 212057979578496862, guid: 45f65dac6d4ed0340b8b84ba959847d7, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 966209371
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 45f65dac6d4ed0340b8b84ba959847d7, type: 3}

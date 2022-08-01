@@ -67,7 +67,6 @@ public class NetworkClient : SocketIOComponent
         {
             //Handling all spawning all players
             //Passed Data
-
             string id = E.data["id"].str;
             float team = E.data["team"].f;
             string tankId = E.data["tank"]["typeId"].str;
@@ -138,6 +137,30 @@ public class NetworkClient : SocketIOComponent
             if (remove)
             {
                 Destroy(niSkill.gameObject);
+
+            }
+            if (E.data["time"] != null)
+            {
+                float time = E.data["time"].f;
+                StartCoroutine(RemoveEfAftertime(efAni, efId, time));
+            }
+        });
+
+
+        On("itemEffectAnimation", (E) =>
+        {
+            string enemyId = E.data["enemyId"].str;  // 
+            string efId = E.data["efId"].str;  //
+            var ni = serverObjects[enemyId];
+            var efAni = ni.GetComponent<EffectAnimation>();
+            var niSkill = serverObjects[efId];
+            Debug.Log("ani " + efId);
+            efAni.SetEffectAnimation(efId, niSkill.GetComponent<EffectSkill>().Effect);
+            bool remove = E.data["remove"].b;
+            if (remove)
+            {
+                Destroy(niSkill.gameObject);
+                serverObjects.Remove(efId);
             }
             if (E.data["time"] != null)
             {
@@ -327,7 +350,7 @@ public class NetworkClient : SocketIOComponent
                     ni1.setHealthBar(healthBar);
 
                 }
-                if (name == "buffItem")
+                if (name == "BuffItem")
                 {
                     string type = E.data["type"].ToString().RemoveQuotes();
                     ServerObjectData sod1 = serverSpawnables.GetObjectByName(name + "_" + type);
@@ -339,10 +362,11 @@ public class NetworkClient : SocketIOComponent
                     ni1.TypeId = type;
                     serverObjects.Add(id, ni1);
                 }
-                if (name == "WoodBox")
+                if (name == "Box")
                 {
                     float health = E.data["health"].f;
-                    ServerObjectData sod1 = serverSpawnables.GetObjectByName(name);
+                    string type = E.data["type"].ToString().RemoveQuotes();
+                    ServerObjectData sod1 = serverSpawnables.GetObjectByName(name + "_" + type);
                     GameObject spawnedObject1 = Instantiate(sod1.Prefab, networkContainer);
                     spawnedObject1.transform.position = new Vector3(x, y, 0);
                     NetworkIdentity ni1 = spawnedObject1.GetComponent<NetworkIdentity>();
@@ -590,6 +614,7 @@ public class NetworkClient : SocketIOComponent
         // update pos player
         On("updatePosition", (E) =>
         {
+            Debug.Log("update");
             string id = E.data["id"].ToString().RemoveQuotes();
             float x = E.data["position"]["x"].f;
             float y = E.data["position"]["y"].f;
@@ -628,6 +653,18 @@ public class NetworkClient : SocketIOComponent
             ni.gameObject.SetActive(false);
         });
 
+        On("boxDied", (e) =>
+        {
+            string id = e.data["id"].ToString().Replace("\"", "");
+            var ni = serverObjects[id];
+            if (ni.GetComponent<AiManager>())
+            {
+                ni.GetComponent<AiManager>().StopCoroutines();
+            }
+            DestroyImmediate(ni.getHealthBar().transform.parent.gameObject);
+        });
+
+
 
         // update player attacked
 
@@ -642,6 +679,7 @@ public class NetworkClient : SocketIOComponent
             healthBar.SetHealth(health);
 
         });
+
         On("loadWaiting", (E) =>
         {
             Debug.Log("Switching to waiting choose hero");
@@ -655,6 +693,16 @@ public class NetworkClient : SocketIOComponent
 
         });
 
+        On("reloadGame", (E) =>
+        {
+            Debug.Log("reload game");
+            string map = E.data["map"].str;
+            myMap = map;
+            SceneManagement.Instance.LoadLevel(map, (levelName) =>
+            {
+                SceneManagement.Instance.UnLoadLevel(SceneList.MAIN_MENU);
+            });
+        });
         On("loadGame", (E) =>
         {
             Debug.Log("Join game");
@@ -733,6 +781,17 @@ public class NetworkClient : SocketIOComponent
             Destroy(go); //Remove from game
             serverObjects.Remove(id); //Remove from memory
         });
+
+        On("someoneLoginYourAccount", (E) =>
+        {
+            SceneManagement.Instance.UnLoadLevel(myMap);
+            SceneManagement.Instance.UnLoadLevel(SceneList.ONLINE);
+            SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
+            {
+                FindObjectOfType<MenuManager>().message.text = "Your account is logged in somewhere else";
+
+            });
+        });
     }
 
 
@@ -788,7 +847,26 @@ public class NetworkClient : SocketIOComponent
             FindObjectOfType<MenuManager>().OnSignInComplete();
         });
     }
-
+    private void ReturnToMainMenuLogin(string error)
+    {
+        foreach (var keyValuePair in serverObjects)
+        {
+            if (keyValuePair.Value != null)
+            {
+                Destroy(keyValuePair.Value.gameObject);
+            }
+        }
+        serverObjects.Clear();
+        foreach (Transform child in networkContainer)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+        SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
+        {
+            SceneManagement.Instance.UnLoadLevel(myMap);
+            FindObjectOfType<MenuManager>().message.text = error;
+        });
+    }
     private void ReturnToMainMenuWithError(string error)
     {
         foreach (var keyValuePair in serverObjects)

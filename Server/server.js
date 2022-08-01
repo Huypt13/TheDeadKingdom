@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const bcrypt = require("bcrypt");
 
 const GameServer = require("./src/gameServer/GameServer");
 const UserRouter = require("./src/api/user/User.router");
@@ -9,6 +10,7 @@ const Tank = require("./src/api/hero/Tank.service");
 const Authentication = require("./src/api/middlewares/Authentication.midleware");
 const TankRouter = require("./src/api/hero/Tank.router");
 const History = require("./src/api/history/History.service");
+const SocketAuthen = require("./src/api/middlewares/SocketAuthen.middleware");
 
 const app = express();
 const server = require("http").createServer(app);
@@ -27,10 +29,31 @@ setInterval(async () => {
 
 io.on("connection", (socket) => {
   console.log(`${socket.id} join room`);
-  socket.on("clientJoin", ({ username, id }) => {
-    const connection = gameServer.onConnected(socket, { username, id });
-    connection.createEvents();
-    socket.emit("register", { id: connection.player.id });
+  socket.on("clientJoin", async ({ username, id }) => {
+    let _id = await SocketAuthen.getUserId(id);
+    // neu chua trong game
+    if (!gameServer.connections[id]) {
+      const connection = gameServer.onConnected(socket, { username, id: _id });
+      connection.createEvents();
+      socket.emit("register", { id: connection.player.id });
+    } else {
+      let connection = gameServer.connections[id];
+      socket.emit("register", { id: connection.player.id });
+
+      connection.socket = socket;
+      connection.createEvents();
+
+      // neu dang trong tran
+      connection.player.isOnline = true;
+      const currentLobbyId = connection.player.lobby;
+      socket.join(currentLobbyId);
+
+      // neu dang o general lobby thi leave
+      if (currentLobbyId != gameServer.generalServerID) {
+        // reload game
+        connection.lobby.reloadGame(connection);
+      }
+    }
   });
 });
 
@@ -39,34 +62,26 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-app.use("/user", UserRouter);
+app.use(
+  "/user",
+  (req, res, next) => {
+    res.locals.gameServer = gameServer;
+    next();
+  },
+  UserRouter
+);
 app.use("/tank", Authentication, TankRouter);
 Database.connect();
 server.listen(8080);
 
+//console.log(GameMechanism.getDame({ armor: 99 }, 1000));
+
 const a = (async () => {
-  // let b = await Tank.getByTankId(
-  //   "62e1136440d7669dcf7492c9",
-  //   "62979ec0f7a5a3b40c332a15"
+  // const saltRounds = 10;
+  // let hash = await bcrypt.hash("123", saltRounds);
+  // let compare = await bcrypt.compare(
+  //   "123",
+  //   "$2b$10$Q/gCCCsDdNDzplSHDjH27.Luk3mj.v.0dCUv745wz2bJjUU5IKudW"
   // );
-  // console.log(b);
-  // let c = await Tank.getTankByUserId("62979ec0f7a5a3b40c332a15");
-  // console.log(c[0].tankList);
-  // console.log(
-  //   await History.insertMatchHistory({
-  //     teamWin: 1,
-  //     team1Kill: 15,
-  //     team2Kill: 13,
-  //     members: [
-  //       {
-  //         userId: "xx",
-  //         team: 1,
-  //         isWin: true,
-  //         kill: 5,
-  //         dead: 1,
-  //       },
-  //     ],
-  //     time: Date.now(),
-  //   })
-  // );
+  // console.log(hash, compare);
 })();

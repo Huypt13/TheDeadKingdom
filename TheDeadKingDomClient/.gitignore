@@ -1,3 +1,31 @@
+Skip to content
+Search or jump to…
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@tuanbqhe 
+Huypt13
+/
+TheDeadKingdom
+Public
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+Insights
+TheDeadKingdom/TheDeadKingDomClient/.gitignore
+
+fpt-huypt13 feat : add map , random match type
+Latest commit b4d5199 2 days ago
+ History
+ 0 contributors
+74 lines (59 sloc)  1.25 KB
+
 
    
 # This .gitignore file should be placed at the root of your Unity project directory
@@ -72,3 +100,17 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 [Aa]ssets/[Ss]treamingAssets/aa.meta
 [Aa]ssets/[Ss]treamingAssets/aa/*
+Footer
+© 2022 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Docs
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About

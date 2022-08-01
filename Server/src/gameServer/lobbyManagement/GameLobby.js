@@ -8,13 +8,16 @@ const Connection = require("../playerManagement/Connection");
 const TankService = require("../../api/hero/Tank.service");
 const Player = require("../playerManagement/Player");
 const Potion = require("../gamePlay/serverObjects/Potion");
-const WoodBox = require("../gamePlay/serverObjects/WoodBox");
+const WoodBox = require("../gamePlay/serverObjects/Box/WoodBox");
+const IronBox = require("../gamePlay/serverObjects/Box/IronBox");
+const PileBox = require("../gamePlay/serverObjects/Box/PileBox");
 const FastSpeedItem = require("../gamePlay/serverObjects/itemBuff/FastSpeedItem");
 const BuffArmorItem = require("../gamePlay/serverObjects/itemBuff/BuffArmorItem");
 const BuffDamageItem = require("../gamePlay/serverObjects/itemBuff/BuffDamage");
 const HealHpItem = require("../gamePlay/serverObjects//itemBuff/HealHpItem");
 const Helipad = require("../gamePlay/serverObjects/Helipad");
 const BaseItem = require("../gamePlay/serverObjects/itemBuff/BaseItem");
+const BaseBox = require("../gamePlay/serverObjects/Box/BaseBox");
 const { iteratee } = require("lodash");
 const GameInfor = require("../../helper/GameInfor.helper");
 const SkillOrientation = require("../gamePlay/serverObjects/SkillOrientation");
@@ -27,7 +30,10 @@ const SkillRegion = require("../gamePlay/serverObjects/SkillRegion");
 const Skill003 = require("./GameLobbyFunction/003/Skill003");
 const TowerAI = require("../aiManagement/TowerAI");
 const GameLobbySetting = require("./GameLobbySetting");
+const MapProp = require("./MapProps");
+const GameLobbySettings = require("./GameLobbySetting");
 const History = require("../../api/history/History.service");
+const SocketAuthen = require("../../api/middlewares/SocketAuthen.middleware");
 
 module.exports = class GameLobby extends LobbyBase {
   constructor(settings = GameLobbySetting) {
@@ -60,7 +66,6 @@ module.exports = class GameLobby extends LobbyBase {
       lobby.onMatchTime();
       lobby.OnUpdateEffectCooldown();
       lobby.OnUpdateEffectTime();
-      lobby.onUpdateItem();
       lobby.onUpdateItemTime();
     }
     lobby.onWinning();
@@ -336,15 +341,6 @@ module.exports = class GameLobby extends LobbyBase {
       );
     });
   }
-  onUpdateItem() {
-    this.listItem.forEach((item) => {
-      if (item instanceof BaseItem && item.isActive) {
-        if (!item.existTimeCouter()) {
-          this.despawnItem(item);
-        }
-      }
-    });
-  }
 
   canEnterLobby(connection = Connection) {
     let lobby = this;
@@ -357,9 +353,11 @@ module.exports = class GameLobby extends LobbyBase {
     return true;
   }
   async someOneChooseHero(connection, _id) {
+    console.log("choose hero", connection.player.id);
     const tank = await TankService.getByTankId(_id, connection.player.id);
     connection.player.tank = JSON.parse(JSON.stringify(tank));
     connection.player.startTank = JSON.parse(JSON.stringify(tank));
+    connection.player.maxHealth = connection.player.startTank.health;
     connection.player.startTank.tankUserId = _id;
     const returnData = {
       id: connection.player.id,
@@ -462,6 +460,7 @@ module.exports = class GameLobby extends LobbyBase {
       bulletSpeed: 1, // 100 ms
       shootingRange: 6,
     };
+
     // this.onServerSpawn(
     //   new TankAI("01", new Vector2(-6, 2), 4, tankAi, 1),
     //   new Vector2(-6, 2)
@@ -470,10 +469,10 @@ module.exports = class GameLobby extends LobbyBase {
     //   new TankAI("01", new Vector2(-6, 4), 4, tankAi, 0),
     //   new Vector2(-6, 4)
     // );
-    // this.onServerSpawn(
-    //   new TankAI("01", new Vector2(-3, 4), 4, tankAi, 2),
-    //   new Vector2(-3, 4)
-    // );
+    this.onServerSpawn(
+      new TankAI("01", new Vector2(-3, 4), 4, tankAi, 2),
+      new Vector2(-3, 4)
+    );
     // this.onServerSpawn(
     //   new TankAI("01", new Vector2(-6, 6), 4, tankAi, 0),
     //   new Vector2(5, 2)
@@ -482,13 +481,31 @@ module.exports = class GameLobby extends LobbyBase {
     // this.onServerSpawn(new TowerAI("01", tankAi, 0), new Vector2(-5, 0));
     // this.onServerSpawn(new TowerAI("01", tankAi, 2), new Vector2(-1, 0));
 
+    // let allObject = [];
+    // allObject["WoodBox"] = WoodBox;
+    // let map = this.settings.map;
+    // const props = MapProp.map[map];
+    // for (const key in props) {
+    //   const listProps = props[key];
+    //   listProps.forEach(e=>{
+    //     const pos = new Vector2(e.position.x,e.position.y);
+
+    //     let object = new allObject[key]();
+    //     for (const key1 in MapProp.props[key]) {
+    //       object[key1]= MapProp.props[key][key1];
+    //     }
+    //     this.onServerSpawn(object, pos);
+    //     console.log(pos,object);
+
+    //   })
+    // }
     this.onServerSpawn(new Potion(1), new Vector2(7, -5));
     this.onServerSpawn(new Potion(2), new Vector2(7, -1));
     this.onServerSpawn(new WoodBox(), new Vector2(-1, 3));
-    this.onServerSpawn(new WoodBox(), new Vector2(2, 3));
-    this.onServerSpawn(new WoodBox(), new Vector2(4, 3));
-    this.onServerSpawn(new Helipad(18), new Vector2(-3, 1));
-    this.onServerSpawn(new Helipad(20), new Vector2(-3, 3));
+    this.onServerSpawn(new IronBox(), new Vector2(2, 3));
+    this.onServerSpawn(new PileBox(), new Vector2(4, 3));
+    this.onServerSpawn(new Helipad(13), new Vector2(-3, 1));
+    this.onServerSpawn(new Helipad(16), new Vector2(-3, 3));
   }
   onUnspawnAllAIInGame(connection = Connection) {
     let lobby = this;
@@ -686,6 +703,14 @@ module.exports = class GameLobby extends LobbyBase {
 
   createRegionSkill(data, activeBy, connection, skill, timeRemain) {
     const { position, activator, typeId, num } = data;
+    if (
+      activeBy.player.position.Distance(new Vector2(position.x, position.y)) >
+      skill.range
+    ) {
+      skill.timeCounter = 0;
+      return;
+    }
+
     let skillObj = new SkillRegion(position, skill);
     skillObj.activator = activator;
     skillObj.team = activeBy?.player?.team;
@@ -820,11 +845,26 @@ module.exports = class GameLobby extends LobbyBase {
       );
     } else if (typeId === "003" && num === 1) {
       // luot va buff
-      this.createSkillMove(
-        connection,
-        data,
-        activeBy?.player?.tank?.skill1?.range
-      );
+      // this.createSkillMove(
+      //   connection,
+      //   data,
+      //   activeBy?.player?.tank?.skill1?.range
+      // );
+      activeBy.player.effect.autoMove = {
+        speed: 0,
+        startPos: data.position,
+        direction: data.direction,
+        range: activeBy?.player?.tank?.skill1?.range,
+      };
+      activeBy.socket.emit("startAutoMove", {
+        id: activeBy.player.id,
+        direction: data.direction,
+        speed: 30, // toc bien
+        startPos: data.position,
+        range: activeBy?.player?.tank?.skill1?.range,
+        rotate: false,
+      });
+
       this.createBuffSkill(
         connection,
         [connection.player.id],
@@ -863,7 +903,14 @@ module.exports = class GameLobby extends LobbyBase {
         connection.player.team
       );
       towerAI.timeRemain = connection.player.tank.skill3.timeEffect;
-
+      if (
+        connection.player.position.Distance(
+          new Vector2(data.position.x, data.position.y)
+        ) > connection.player.tank.skill3.range
+      ) {
+        connection.player.tank.skill3.timeCounter = 0;
+        return;
+      }
       this.onServerSpawn(
         towerAI,
         new Vector2(data.position.x, data.position.y)
@@ -895,7 +942,10 @@ module.exports = class GameLobby extends LobbyBase {
     const id = data.id;
     const item = this.serverItems.find((item) => item.id == id);
     if (!item) return;
+    const owner = this.serverItems.find((owner) => owner.id == item.ownerId);
+    owner.isActive = false;
     const type = item.type;
+    item.isActive = false;
     switch (type) {
       case "Armor":
         item.buffArmor(connection, data, this);
@@ -998,8 +1048,7 @@ module.exports = class GameLobby extends LobbyBase {
     let id = data?.id;
     let enemyId = data?.enemyId;
     const potion = this.serverItems.find((item) => item.id == enemyId);
-    if (potion.team == 1)
-      if (!potion || potion.team == connection.player.team) return;
+    if (!potion || potion.team == connection.player.team) return;
     const returnBullet = lobby.bullets.filter((e) => e.id == id);
     returnBullet.forEach((bullet) => {
       bullet.isDestroyed = true;
@@ -1009,11 +1058,24 @@ module.exports = class GameLobby extends LobbyBase {
       }
 
       if (isDead) {
+        connection.socket.emit("stopLoading", potion.id);
+        connection.socket.broadcast.to(lobby.id).emit("stopLoading", potion.id);
+
+        let returnData1 = {
+          id: potion.id,
+          health: potion.health,
+        };
+        connection.socket.emit("playerAttacked", returnData1);
+        connection.socket.broadcast
+          .to(lobby.id)
+          .emit("playerAttacked", returnData1);
         let returnData = {
           id: enemyId,
         };
-        connection.socket.emit("playerDied", returnData);
-        connection.socket.broadcast.to(lobby.id).emit("playerDied", returnData);
+        connection.socket.emit("boxDied", returnData);
+        connection.socket.broadcast.to(lobby.id).emit("boxDied", returnData);
+        const index = this.serverItems.indexOf(potion);
+        this.serverItems.splice(index, 1);
       } else {
         let returnData = {
           id: potion.id,
@@ -1026,32 +1088,30 @@ module.exports = class GameLobby extends LobbyBase {
       }
     });
   }
-  onCollisionDestroyWoodBox(connection = Connection, data) {
-    console.log("destroy");
+  onCollisionDestroyBox(connection = Connection, data) {
     let lobby = this;
     let id = data?.id;
     let enemyId = data?.enemyId;
-    const woodBox = this.serverItems.find((item) => item.id == enemyId);
-    if (!woodBox) return;
-    console.log("destroy1");
+    const box = this.serverItems.find((item) => item.id == enemyId);
+    if (!box) return;
     const returnBullet = lobby.bullets.filter((e) => e.id == id);
     returnBullet.forEach((bullet) => {
       let isDead = false;
       bullet.isDestroyed = true;
-      isDead = woodBox.dealDamage(bullet?.tank?.damage || 5);
-      console.log("isDead: " + isDead);
+      isDead = box.dealDamage(bullet?.tank?.damage || 5);
       if (isDead) {
         let returnData = {
           id: enemyId,
         };
-        connection.socket.emit("playerDied", returnData);
-        connection.socket.broadcast.to(lobby.id).emit("playerDied", returnData);
-        console.log("create");
-        this.spawnRandomItem(woodBox.position);
+        connection.socket.emit("serverUnSpawn", returnData);
+        connection.socket.broadcast
+          .to(lobby.id)
+          .emit("serverUnSpawn", returnData);
+        this.spawnRandomItem(box);
       } else {
         let returnData = {
-          id: woodBox.id,
-          health: woodBox.health,
+          id: box.id,
+          health: box.health,
         };
         connection.socket.emit("playerAttacked", returnData);
         connection.socket.broadcast
@@ -1063,16 +1123,21 @@ module.exports = class GameLobby extends LobbyBase {
   randomInRange(max, min) {
     return Math.floor(Math.random() * (max - min)) + min;
   }
-  spawnRandomItem(position) {
+  spawnRandomItem(owner) {
     const nonActiveItems = this.listItem.filter(
       (item) => item.isActive == false
     );
-    const index = this.randomInRange(nonActiveItems.length, 0);
+    let index;
+    if (owner instanceof BaseBox)
+      index = this.randomInRange(nonActiveItems.length, -1);
+    else {
+      index = this.randomInRange(nonActiveItems.length - 1, 0);
+    }
     const item = nonActiveItems[index];
     if (item) {
+      item.ownerId = owner.id;
       item.isActive = true;
-      this.onServerSpawn(item, position);
-      console.log("item :" + item.name);
+      this.onServerSpawn(item, owner.position);
     }
   }
 
@@ -1125,7 +1190,55 @@ module.exports = class GameLobby extends LobbyBase {
       }
     });
   }
+  reloadGame(connection = Connection) {
+    // update map
+    connection.socket.emit("reloadGame", {
+      map: this.settings.map,
+    });
+    const returnData = {
+      state: this.lobbyState.currentState,
+    };
 
+    connection.socket.emit("lobbyUpdate", returnData);
+    // reload kill dead
+    this.killUpdate();
+    // reload all player
+    console.log("reload game", connection.player.id);
+    console.log("reload game", this.connections.length);
+    this.connections.forEach((c) => {
+      connection.socket.emit("spawn", {
+        id: c.player.id,
+        position: c.player.position,
+        team: c.player.team,
+        tank: c.player.tank,
+      });
+    });
+
+    // reload serverItems
+    this.serverItems.forEach((item) => {
+      connection.socket.emit("serverSpawn", {
+        id: item.id,
+        aiId: item?.aiId,
+        name: item.username,
+        health: item?.health,
+        team: item?.team || 0,
+        position: item?.position,
+        type: item?.type,
+      });
+    });
+    // reload list item
+    this.listItem.forEach((item) =>
+      connection.socket.emit("serverSpawn", {
+        id: item.id,
+        aiId: item?.aiId,
+        name: item.username,
+        health: item?.health,
+        team: item?.team || 0,
+        position: item?.position,
+        type: item?.type,
+      })
+    );
+  }
   async addPlayer(connection = Connection) {
     let lobby = this;
     let connections = lobby.connections;
@@ -1137,7 +1250,7 @@ module.exports = class GameLobby extends LobbyBase {
     //   randomPosition.y
     // );
     connection.player.position = new Vector2(0, 0);
-
+    connection.player.isOnline = true;
     let tank = connection.player?.startTank;
     // chua chon tank
     if (!tank) {
@@ -1151,6 +1264,7 @@ module.exports = class GameLobby extends LobbyBase {
           tank = tankRemain.tank;
           connection.player.startTank = JSON.parse(JSON.stringify(tank));
           connection.player.startTank.tankUserId = tankRemain._id;
+          connection.player.maxHealth = connection.player.startTank.health;
           connection.player.tank = JSON.parse(JSON.stringify(tank));
           break;
         }
@@ -1164,6 +1278,8 @@ module.exports = class GameLobby extends LobbyBase {
       connection.player.startTank.tankUserId,
       connection.player.id
     );
+    console.log("xxx", connection.player.startTank.tankUserId, tankUser);
+
     if (!tankUser || tankUser?.remaining <= 0) {
       console.log("chon tank check remain fail", connection.player.id);
       return false;
@@ -1185,15 +1301,15 @@ module.exports = class GameLobby extends LobbyBase {
     socket.broadcast.to(lobby.id).emit("spawn", returnData); // Tell other
 
     // tell another to me
-    connections.forEach((c) => {
-      if (c.player.id != connection.player.id) {
-        socket.emit("spawn", {
-          id: c.player.id,
-          position: c.player.position,
-          tank,
-        });
-      }
-    });
+    // connections.forEach((c) => {
+    //   if (c.player.id != connection.player.id) {
+    //     socket.emit("spawn", {
+    //       id: c.player.id,
+    //       position: c.player.position,
+    //       tank,
+    //     });
+    //   }
+    // });
     return true;
   }
   updateDeadPlayers() {
@@ -1264,18 +1380,6 @@ module.exports = class GameLobby extends LobbyBase {
         }
       }
     });
-    for (let item of lobby.serverItems) {
-      if (item instanceof Potion && item.isDead) {
-        if (!item.reSpawn()) {
-          for (let connection of lobby.connections) {
-            connection.socket.emit("playerRespawn", item);
-            connection.socket.broadcast
-              .to(lobby.id)
-              .emit("playerRespawn", item);
-          }
-        }
-      }
-    }
   }
   removePlayer(connection = Connection) {
     let lobby = this;
@@ -1288,9 +1392,14 @@ module.exports = class GameLobby extends LobbyBase {
   onCollisionHealHpEffects(connection = Connection, potionId) {
     const lobby = this;
     const potion = lobby.serverItems.find((item) => item.id == potionId);
-    console.log(connection.player.health + "||" + connection.player.maxHealth);
+    console.log(
+      "hoi mau",
+      connection.player.health + "||" + connection.player.maxHealth
+    );
+    console.log("potion xx", potion);
     if (
-      !potion.isActive ||
+      !potion ||
+      // !potion.isActive ||
       connection.player.health === connection.player.maxHealth ||
       connection.player.team != potion.team
     )
@@ -1320,21 +1429,19 @@ module.exports = class GameLobby extends LobbyBase {
   OnUpdateEffectCooldown() {
     for (let item of this.serverItems) {
       if (item?.isActive != undefined && !item.isActive) {
-        if (item instanceof Potion && item.coolDown()) {
+        if (item instanceof Potion && !item.isDead && item.coolDown()) {
           for (let connection of this.connections)
             connection.socket.emit("stopLoading", item.id);
         }
-      }
-      if (item instanceof Helipad && item.coolDown()) {
-        this.spawnRandomItem(item.position);
+        if (item instanceof Helipad && item.coolDown()) {
+          this.spawnRandomItem(item);
+          item.isActive = true;
+        }
       }
     }
   }
   OnUpdateEffectTime() {
     for (let connection of this.connections) {
-      // if (connection.player.effect.healing.value != 0) {
-      //   LobbyEffect.healHp(connection, this);
-      // }
       if (connection.player.effect.slowled.length > 0) {
         LobbyEffect.onSlowEffect(connection, this);
       }

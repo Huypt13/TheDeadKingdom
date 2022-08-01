@@ -95,17 +95,17 @@ public class ColliderDestroy : MonoBehaviour
                     return;
                 }
 
-                if (ni.tag == "WoodBox" && niActive.IsControlling())
+                if (ni.tag == "Box" && niActive.IsControlling())
                 {
-
+                    Debug.Log("chma");
                     Destroy(gameObject);
                     NetworkClient.serverObjects.Remove(networkIdentity.GetId());
-                    networkIdentity.GetSocket().Emit("collisionDestroyWoodBox", new JSONObject(JsonUtility.ToJson(new IDData()
-                    {
-                        id = networkIdentity.GetId(),
-                        enemyId = ni.GetId()
-                    })));
-
+                    networkIdentity.GetSocket().Emit("collisionDestroyBox", new JSONObject(JsonUtility.ToJson(new IDData()
+                        {
+                            id = networkIdentity.GetId(),
+                            enemyId = ni.GetId()
+                        })));
+                    
                 }
 
 

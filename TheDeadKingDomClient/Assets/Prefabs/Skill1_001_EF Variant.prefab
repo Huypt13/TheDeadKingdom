@@ -88,16 +88,48 @@ PrefabInstance:
       value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 199853632989489234, guid: 45aa15e72a6d4f34eb8e8395f133451c, type: 3}
+      propertyPath: m_SortingLayer
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 199853632989489234, guid: 45aa15e72a6d4f34eb8e8395f133451c, type: 3}
+      propertyPath: m_SortingOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 199853632989489234, guid: 45aa15e72a6d4f34eb8e8395f133451c, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 966209371
+      objectReference: {fileID: 0}
+    - target: {fileID: 199853632989489234, guid: 45aa15e72a6d4f34eb8e8395f133451c, type: 3}
       propertyPath: m_Materials.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 199916641442587738, guid: 45aa15e72a6d4f34eb8e8395f133451c, type: 3}
+      propertyPath: m_SortingLayer
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 199916641442587738, guid: 45aa15e72a6d4f34eb8e8395f133451c, type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 199916641442587738, guid: 45aa15e72a6d4f34eb8e8395f133451c, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 966209371
       objectReference: {fileID: 0}
     - target: {fileID: 199916641442587738, guid: 45aa15e72a6d4f34eb8e8395f133451c, type: 3}
       propertyPath: m_Materials.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 212182236168707486, guid: 45aa15e72a6d4f34eb8e8395f133451c, type: 3}
+      propertyPath: m_SortingLayer
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 212182236168707486, guid: 45aa15e72a6d4f34eb8e8395f133451c, type: 3}
       propertyPath: m_SortingOrder
-      value: 5
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 212182236168707486, guid: 45aa15e72a6d4f34eb8e8395f133451c, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 966209371
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 45aa15e72a6d4f34eb8e8395f133451c, type: 3}

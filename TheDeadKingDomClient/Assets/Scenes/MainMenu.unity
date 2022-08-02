@@ -439,8 +439,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 117507004}
   m_TextComponent: {fileID: 735826249}
   m_Placeholder: {fileID: 1954036521}
-  m_ContentType: 0
-  m_InputType: 0
+  m_ContentType: 7
+  m_InputType: 2
   m_AsteriskChar: 42
   m_KeyboardType: 0
   m_LineType: 0
@@ -956,8 +956,8 @@ MonoBehaviour:
   queueButton: {fileID: 666735896}
   signInContainer: {fileID: 1096806554}
   message: {fileID: 1552559992}
-  txtUsername: {fileID: 164759075}
-  txtPassword: {fileID: 735826249}
+  inputUsername: {fileID: 1231159841}
+  inputPassword: {fileID: 117507003}
 --- !u!4 &527993504
 Transform:
   m_ObjectHideFlags: 0

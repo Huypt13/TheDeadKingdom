@@ -108,7 +108,6 @@ public class GameUI : MonoBehaviour
     }
     private void OnKillDeadUpdate(SocketIOEvent E)
     {
-
         //string kill1 = (NetworkClient.MyTeam == 1) ? $"<color=red><b>{E.data["kill1"].f}</b></color>" : E.data["kill1"].f + "";
         //string kill2 = (NetworkClient.MyTeam == 2) ? $"<color=red><b>{E.data["kill2"].f}</b></color>" : E.data["kill2"].f + "";
         //Text text = killDeadTransform.GetComponent<Text>();

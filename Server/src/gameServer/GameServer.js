@@ -30,7 +30,7 @@ class GameServer {
     }
   }
 
-  onConnected(socket, { username, id }) {
+  onConnected(socket, { username, id, _id }) {
     // tao connection va add vao connections
     // join lobby
     // startlobby index =0
@@ -43,6 +43,7 @@ class GameServer {
     connection.player = new Player({
       username,
       id,
+      _id,
     });
     connection.player.lobby = gameServer.startLobby.id;
     connection.gameServer = gameServer;

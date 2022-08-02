@@ -11,6 +11,7 @@ const Authentication = require("./src/api/middlewares/Authentication.midleware")
 const TankRouter = require("./src/api/hero/Tank.router");
 const History = require("./src/api/history/History.service");
 const SocketAuthen = require("./src/api/middlewares/SocketAuthen.middleware");
+const UserService = require("./src/api/user/User.service");
 
 const app = express();
 const server = require("http").createServer(app);
@@ -33,7 +34,7 @@ io.on("connection", (socket) => {
     let _id = await SocketAuthen.getUserId(id);
     // neu chua trong game
     if (!gameServer.connections[id]) {
-      const connection = gameServer.onConnected(socket, { username, id: _id });
+      const connection = gameServer.onConnected(socket, { username, id, _id });
       connection.createEvents();
       socket.emit("register", { id: connection.player.id });
     } else {
@@ -77,6 +78,7 @@ server.listen(8080);
 //console.log(GameMechanism.getDame({ armor: 99 }, 1000));
 
 const a = (async () => {
+  // await UserService.aa();
   // const saltRounds = 10;
   // let hash = await bcrypt.hash("123", saltRounds);
   // let compare = await bcrypt.compare(

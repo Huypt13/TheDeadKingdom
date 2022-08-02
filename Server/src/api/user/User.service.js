@@ -38,6 +38,10 @@ class UserService {
       throw new Error(error.message);
     }
   }
+
+  async aa() {
+    return await User.updateMany({}, { numOfStars: 1 });
+  }
 }
 
 module.exports = new UserService();

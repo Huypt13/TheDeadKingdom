@@ -92,6 +92,11 @@ public class GameUI : MonoBehaviour
 
         string kill1 = (NetworkClient.MyTeam == 1) ? $"<color=red><b>{E.data["kill1"].f}</b></color>" : E.data["kill1"].f + "";
         string kill2 = (NetworkClient.MyTeam == 2) ? $"<color=red><b>{E.data["kill2"].f}</b></color>" : E.data["kill2"].f + "";
+        var listPlayer = E.data["listPlayer"].list;
+        listPlayer.ForEach(kd =>
+        {
+            Debug.Log(kd["id"] + " " + kd["kill"] + " " + kd["dead"]);
+        });
         Text text = killDeadTransform.GetComponent<Text>();
         text.text = $"{kill1} - {kill2}";
     }
@@ -102,3 +107,5 @@ public class GameUI : MonoBehaviour
         networkClient.OnQuit();
     }
 }
+
+

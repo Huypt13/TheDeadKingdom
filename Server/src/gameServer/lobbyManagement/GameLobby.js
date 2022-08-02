@@ -143,6 +143,13 @@ module.exports = class GameLobby extends LobbyBase {
     const returnData = {
       kill1: team1Kill + this.ai1Kill,
       kill2: team2Kill + this.ai2Kill,
+      listPlayer: this.connections.map((connection) => {
+        return {
+          id: connection.player.id,
+          kill: connection.player.kill,
+          dead: connection.player.dead,
+        };
+      }),
     };
     this.connections[0].socket.emit("killUpdate", returnData);
     this.connections[0].socket.broadcast
@@ -354,7 +361,7 @@ module.exports = class GameLobby extends LobbyBase {
   }
   async someOneChooseHero(connection, _id) {
     console.log("choose hero", connection.player.id);
-    const tank = await TankService.getByTankId(_id, connection.player.id);
+    const tank = await TankService.getByTankId(_id, connection.player._id);
     connection.player.tank = JSON.parse(JSON.stringify(tank));
     connection.player.startTank = JSON.parse(JSON.stringify(tank));
     connection.player.maxHealth = connection.player.startTank.health;
@@ -1254,7 +1261,7 @@ module.exports = class GameLobby extends LobbyBase {
     let tank = connection.player?.startTank;
     // chua chon tank
     if (!tank) {
-      const tankList = await TankService.getTankByUserId(connection.player.id);
+      const tankList = await TankService.getTankByUserId(connection.player._id);
       if (!tankList[0]?.tankList) {
         console.log(connection.player.id, "ko co tank");
         return false;
@@ -1276,7 +1283,7 @@ module.exports = class GameLobby extends LobbyBase {
     }
     const tankUser = await TankService.getByTankUserById(
       connection.player.startTank.tankUserId,
-      connection.player.id
+      connection.player._id
     );
     console.log("xxx", connection.player.startTank.tankUserId, tankUser);
 

@@ -1,4 +1,4 @@
-const User = require("./User.Schema");
+const User = require("./User.schema");
 const bcrypt = require("bcrypt");
 const Ranking = require("../../helper/Ranking.helper");
 

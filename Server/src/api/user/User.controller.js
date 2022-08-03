@@ -50,5 +50,27 @@ class UserController {
       return ApiResponse.serverErrorResponse(res, error.message);
     }
   }
+  async getUserInfor(req, res) {
+    try {
+      let _id = res.locals?.user?._id.toString();
+      if (req.query?.userId) {
+        _id = req.query.userId;
+      }
+      const userInfor = await UserService.getUserInfor(_id);
+      return ApiResponse.successResponseWithData(res, "Success", userInfor);
+    } catch (error) {
+      return ApiResponse.serverErrorResponse(res, error.message);
+    }
+  }
+  async getTopRank(req, res) {
+    try {
+      const { top } = req.query;
+      const topRank = await UserService.getTopRank(top);
+      return ApiResponse.successResponseWithData(res, "Success", topRank);
+    } catch (error) {
+      console.log(error.message);
+      return ApiResponse.serverErrorResponse(res, error.message);
+    }
+  }
 }
 module.exports = new UserController();

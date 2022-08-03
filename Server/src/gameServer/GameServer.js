@@ -9,6 +9,8 @@ const GameLobbySetting = require("./lobbyManagement/GameLobbySetting");
 const GameInfor = require("../helper/GameInfor.helper");
 const GameType = require("./lobbyManagement/GameType");
 const Maps = require("./lobbyManagement/Maps");
+const UserService = require("../api/user/User.service");
+const Ranking = require("../helper/Ranking.helper");
 
 // server game manage all lobby , all connections
 // co the tao nhieu server
@@ -97,14 +99,17 @@ class GameServer {
     lobbys[lobbyID].onEnterLobby(connection);
   }
 
-  onAttemptToJoinGame(connection = Connection) {
+  async onAttemptToJoinGame(connection = Connection) {
     let lobbyFound = false;
     let gameLobbies = [];
+    const userInfor = await UserService.getUserInfor(connection.player._id);
     for (let id in this.lobbys) {
       if (
         this.lobbys[id] instanceof GameLobby &&
         this.lobbys[id].lobbyState.currentState ==
-          this.lobbys[id].lobbyState.LOBBY
+          this.lobbys[id].lobbyState.LOBBY &&
+        this.lobbys[id].settings?.roomLevel ==
+          Ranking.getLevelRank(userInfor.numOfStars)
       ) {
         gameLobbies.push(this.lobbys[id]);
       }
@@ -132,13 +137,14 @@ class GameServer {
           type,
           GameInfor.CountKillMaxPlayer,
           GameInfor.CountKillMinPlayer,
-          null
+          null,
+          Ranking.getLevelRank(userInfor.numOfStars)
         )
       );
       // random map
       gamelobby.settings.map = _.shuffle(Maps[type])[0];
 
-      console.log("random game", type, gamelobby.map);
+      console.log("random game", type, gamelobby.settings.map);
       gamelobby.endGameLobby = () => {
         console.log("end lobby");
         this.closeDownLobby(gamelobby.id);

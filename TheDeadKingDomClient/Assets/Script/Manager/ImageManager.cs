@@ -12,6 +12,7 @@ public class ImageManager : Singleton<ImageManager>
         TankIcon,
         TankIconCircle,
         TankBackground,
+        TankDetail,
         TankEndMatch,
         Skill1,
         Skill2,
@@ -36,6 +37,7 @@ public class ImageManager : Singleton<ImageManager>
                 childDictionary.Add(ImageType.TankEndMatch, $"Images/{tankType}/level{level}-endmatch");
                 childDictionary.Add(ImageType.TankIcon, $"Images/{tankType}/level{level}-icon");
                 childDictionary.Add(ImageType.TankIconCircle, $"Images/{tankType}/level{level}-icon-circle");
+                childDictionary.Add(ImageType.TankDetail, $"Images/{tankType}/level{level}-detail");
                 childDictionary.Add(ImageType.Skill1, $"Images/{tankType}/skill1-icon");
                 childDictionary.Add(ImageType.Skill2, $"Images/{tankType}/skill2-icon");
                 childDictionary.Add(ImageType.Skill3, $"Images/{tankType}/skill3-icon");

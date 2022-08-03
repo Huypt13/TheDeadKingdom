@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using SocketIO;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class WaitingSceneManagement : MonoBehaviour
@@ -48,7 +49,12 @@ public class WaitingSceneManagement : MonoBehaviour
     [SerializeField]
     private GameObject skill3Icon;
 
+    [SerializeField]
+    private GameObject tooltip;
 
+    private string skill1Description;
+    private string skill2Description;
+    private string skill3Description;
 
     public SocketIOComponent SocketReference
     {
@@ -65,8 +71,29 @@ public class WaitingSceneManagement : MonoBehaviour
         LoadListTank();
         NetworkClient.OnUpdatePlayer = UpdatePlayer;
         NetworkClient.OnChangeHero = ChangeHero;
+    }
 
+    public void DisplayTooltip(int skill)
+    {
 
+        switch (skill)
+        {
+            case 1:
+                tooltip.GetComponent<Tooltip>().ShowTooltip(skill1Description);
+                break;
+            case 2:
+                tooltip.GetComponent<Tooltip>().ShowTooltip(skill2Description);
+                break;
+            case 3:
+                tooltip.GetComponent<Tooltip>().ShowTooltip(skill3Description);
+                break;
+        }
+
+    }
+
+    public void HideTooltip()
+    {
+        tooltip.GetComponent<Tooltip>().HideTooltip();
     }
 
     void SetTime()
@@ -145,16 +172,22 @@ public class WaitingSceneManagement : MonoBehaviour
 
         LobbyScreenManager.myTankList.ForEach(e =>
         {
+
+            GameObject btnPickTank = Instantiate(prefabButtonPickTank);
+            btnPickTank.transform.parent = playerTanksContainer.transform;
+            btnPickTank.transform.localScale = new Vector3(1f, 1f, 1f);
+            btnPickTank.transform.localPosition = new Vector3(btnPickTank.transform.localPosition.x, btnPickTank.transform.localPosition.y, 0f);
+            btnPickTank.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(e.tank.typeId, e.tank.level, ImageManager.ImageType.TankIcon);
             if (e.remaining > 0)
             {
-                GameObject btnPickTank = Instantiate(prefabButtonPickTank);
-                btnPickTank.transform.parent = playerTanksContainer.transform;
-                btnPickTank.transform.localScale = new Vector3(1f, 1f, 1f);
-                btnPickTank.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(e.tank.typeId, e.tank.level, ImageManager.ImageType.TankIcon);
                 btnPickTank.GetComponent<Button>().onClick.AddListener(() =>
                 {
-                    ChooseHero(e._id, e.tank.typeId, e.tank.level, e.remaining);
+                    ChooseHero(e);
                 });
+            }
+            else
+            {
+                btnPickTank.GetComponent<Button>().interactable = false;
             }
 
 
@@ -162,15 +195,19 @@ public class WaitingSceneManagement : MonoBehaviour
     }
 
 
-    public void ChooseHero(string tankId, string typeId, float level, float remaining)
+    public void ChooseHero(TankRemain t)
     {
         // gui _id
-        SocketReference.Emit("chooseHero", tankId);
-        tankPickedName.GetComponent<Text>().text = typeId + "-" + level;
-        tankPickedRole.GetComponent<Text>().text = "Remain: " + remaining;
-        tankPickedBackground.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(typeId, level, ImageManager.ImageType.TankBackground);
-        skill1Icon.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(typeId, level, ImageManager.ImageType.Skill1);
-        skill2Icon.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(typeId, level, ImageManager.ImageType.Skill2);
-        skill3Icon.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(typeId, level, ImageManager.ImageType.Skill3);
+        SocketReference.Emit("chooseHero", t._id);
+        tankPickedName.GetComponent<Text>().text = t.tank.name + " - level " + t.tank.level;
+        tankPickedRole.GetComponent<Text>().text = "Remain: " + t.remaining;
+        tankPickedBackground.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(t.tank.typeId, t.tank.level, ImageManager.ImageType.TankBackground);
+        skill1Icon.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(t.tank.typeId, t.tank.level, ImageManager.ImageType.Skill1);
+        skill2Icon.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(t.tank.typeId, t.tank.level, ImageManager.ImageType.Skill2);
+        skill3Icon.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(t.tank.typeId, t.tank.level, ImageManager.ImageType.Skill3);
+
+        skill1Description = t.tank.skill1.name + ": " + t.tank.skill1.description;
+        skill2Description = t.tank.skill2.name + ": " + t.tank.skill2.description;
+        skill3Description = t.tank.skill3.name + ": " + t.tank.skill3.description;
     }
 }

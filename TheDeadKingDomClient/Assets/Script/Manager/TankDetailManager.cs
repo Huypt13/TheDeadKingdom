@@ -11,6 +11,8 @@ public class TankDetailManager : MonoBehaviour
     [SerializeField]
     private Text remaining;
     [SerializeField]
+    private Image imageTankDetail;
+    [SerializeField]
     private Text tankName;
     [SerializeField]
     private Text tankRole;
@@ -47,6 +49,8 @@ public class TankDetailManager : MonoBehaviour
     void Start()
     {
         TankRemain tankDetail = InventoryManager.tankDetail;
+
+        imageTankDetail.sprite = ImageManager.Instance.GetImage(tankDetail.tank.typeId, tankDetail.tank.level, ImageManager.ImageType.TankDetail);
 
         level.text = tankDetail.tank.level + "";
         remaining.text = tankDetail.remaining + "";

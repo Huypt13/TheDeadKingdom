@@ -9,4 +9,9 @@ const getStar = (star) => {
   return star % 100;
 };
 
-module.exports = { getRank, getStar };
+// cung co the dau cung nhau cung muc thuong
+const getLevelRank = (star) => {
+  return Math.floor(star / 30);
+};
+
+module.exports = { getRank, getStar, getLevelRank };

@@ -7,6 +7,7 @@ const HistorySchema = new Schema({
   members: [
     {
       userId: String,
+      tank: String,
       team: Number,
       isWin: Boolean,
       kill: Number,

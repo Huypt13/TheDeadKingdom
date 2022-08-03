@@ -1,12 +1,13 @@
 const User = require("./User.Schema");
 const bcrypt = require("bcrypt");
+const Ranking = require("../../helper/Ranking.helper");
 
 class UserService {
   constructor() {
     this.SaltRounds = 10;
   }
   async getById(_id) {
-    return await User.findOne({ _id });
+    return await User.findOne({ _id }).lean();
   }
   async getUser({ username, password }) {
     try {
@@ -39,8 +40,46 @@ class UserService {
     }
   }
 
-  async aa() {
-    return await User.updateMany({}, { numOfStars: 1 });
+  async updateStar(type, _id) {
+    const user = await this.getById(_id);
+    if (user && user?.numOfStars <= 20 && type == -1) return;
+    return await User.findByIdAndUpdate(_id, { $inc: { numOfStars: type } });
+  }
+  async getUserInfor(_id) {
+    try {
+      const user = await this.getById(_id);
+      if (user) {
+        const { numOfStars, password, __v, ...userInfor } = user;
+        return {
+          ...userInfor,
+          numOfStars,
+          ranking: {
+            rank: Ranking.getRank(numOfStars),
+            star: Ranking.getStar(numOfStars),
+          },
+        };
+      }
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+  async getTopRank(num) {
+    const listTop = await User.find({})
+      .sort({ numOfStars: -1 })
+      .limit(num)
+      .lean();
+    return {
+      top: num,
+      listTop: listTop.map(({ password, __v, ...e }) => {
+        return {
+          ...e,
+          ranking: {
+            rank: Ranking.getRank(e.numOfStars),
+            star: Ranking.getStar(e.numOfStars),
+          },
+        };
+      }),
+    };
   }
 }
 

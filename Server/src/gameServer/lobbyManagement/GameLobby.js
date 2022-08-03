@@ -34,6 +34,7 @@ const MapProp = require("./MapProps");
 const GameLobbySettings = require("./GameLobbySetting");
 const History = require("../../api/history/History.service");
 const SocketAuthen = require("../../api/middlewares/SocketAuthen.middleware");
+const User = require("../../api/user/User.service");
 
 module.exports = class GameLobby extends LobbyBase {
   constructor(settings = GameLobbySetting) {
@@ -68,7 +69,7 @@ module.exports = class GameLobby extends LobbyBase {
       lobby.OnUpdateEffectTime();
       lobby.onUpdateItemTime();
     }
-    lobby.onWinning();
+    await lobby.onWinning();
     await lobby.onJoinGame();
     //
 
@@ -113,12 +114,12 @@ module.exports = class GameLobby extends LobbyBase {
     }
   }
 
-  onWinning() {
+  async onWinning() {
     if (this.lobbyState.currentState == this.lobbyState.GAME) {
       if (this.settings.gameMode == "CountKill") {
         this.onCountKillWin();
       }
-      this.onSendResult();
+      await this.onSendResult();
     }
     //
   }
@@ -173,7 +174,7 @@ module.exports = class GameLobby extends LobbyBase {
     );
   }
 
-  onSendResult() {
+  async onSendResult() {
     if (
       this.lobbyState.currentState == this.lobbyState.ENDGAME &&
       this.isSendRs == 0
@@ -205,15 +206,20 @@ module.exports = class GameLobby extends LobbyBase {
         time: Date.now(),
       };
       let members = [];
-      this.connections.forEach((connection) => {
+      for (const connection of this.connections) {
         if (connection.player.team == this.teamWin) {
+          await User.updateStar(1, connection.player._id);
+
           members.push({
-            userId: connection.player.id,
+            tank: connection.player.startTank.tankUserId,
+            userId: connection.player._id,
             team: connection.player.team,
             isWin: true,
             kill: connection.player.kill,
             dead: connection.player.dead,
           });
+          console.log("aaaa", connection.player.startTank.tankUserId, members);
+
           returnData = {
             ...returnData,
             result: "win",
@@ -221,8 +227,10 @@ module.exports = class GameLobby extends LobbyBase {
             kill2: team2Kill + this.ai2Kill,
           };
         } else {
+          await User.updateStar(-1, connection.player._id);
           members.push({
-            userId: connection.player.id,
+            tank: connection.player.startTank.tankUserId,
+            userId: connection.player._id,
             team: connection.player.team,
             isWin: false,
             kill: connection.player.kill,
@@ -236,15 +244,16 @@ module.exports = class GameLobby extends LobbyBase {
           };
         }
         connection.socket.emit("rsmatch", returnData);
-      });
+      }
       // save history:
       history = { ...history, members };
-      History.insertMatchHistory(history);
+      await History.insertMatchHistory(history);
       console.log(
         "out room",
         this.connections.length,
         this?.connections[1]?.player.id
       );
+      // update star
       while (this.connections.length > 0) {
         const connection = this.connections[0];
         console.log("out room", connection.player.id);

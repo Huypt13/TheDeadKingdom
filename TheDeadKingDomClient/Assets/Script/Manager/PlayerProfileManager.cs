@@ -1,10 +1,12 @@
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class PlayerProfileHandle : MonoBehaviour
+public class PlayerProfileManager : MonoBehaviour
 {
     // main screen
     public Button btnClose;
@@ -25,6 +27,19 @@ public class PlayerProfileHandle : MonoBehaviour
     public Button btnApplyChange;
     public InputField inputNewName;
 
+    public static List<MatchHistory> matchHistories;
+
+    [SerializeField]
+    private GameObject prefabMatchHistoryUI;
+
+    [SerializeField]
+    private GameObject matchHistoryContainer;
+
+    [SerializeField]
+    private Sprite imageWin;
+
+    [SerializeField]
+    private Sprite imageLose;
 
     // battlelog section
 
@@ -47,6 +62,8 @@ public class PlayerProfileHandle : MonoBehaviour
         btnClosePopup.onClick.AddListener(CloseEditNamePopup);
         btnApplyChange.onClick.AddListener(ApplyNewName);
 
+        StartCoroutine(GetMatchHistory(MenuManager.uri));
+
     }
 
     // Update is called once per frame
@@ -55,7 +72,86 @@ public class PlayerProfileHandle : MonoBehaviour
 
     //}
 
-    #region main screen actions
+
+    private IEnumerator GetMatchHistory(string uri)
+    {
+        using (UnityWebRequest request = UnityWebRequest.Get(uri + "/history"))
+        {
+            request.SetRequestHeader("x-access-token", MenuManager.access_token);
+            yield return request.SendWebRequest();
+
+            if (request.isNetworkError)
+            {
+                Debug.Log("Error: " + request.error);
+            }
+            else
+            {
+                var jo = JObject.Parse(request.downloadHandler.text);
+                matchHistories = jo["data"].ToObject<List<MatchHistory>>();
+                Debug.Log(matchHistories.Count);
+
+                DisplayMatchHistory();
+            }
+        }
+    }
+
+    private void DisplayMatchHistory()
+    {
+        foreach (Transform child in matchHistoryContainer.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+
+        matchHistories.ForEach(matchData =>
+        {
+            GameObject matchHistoryGameObject = Instantiate(prefabMatchHistoryUI);
+            matchHistoryGameObject.transform.parent = matchHistoryContainer.transform;
+            matchHistoryGameObject.transform.localScale = new Vector3(1f, 1f, 1f);
+
+            Member myself = new Member();
+
+            matchData.members.ForEach(mem =>
+            {
+                if (mem.isMe) myself = mem;
+                Debug.Log(myself.user.username);
+            });
+
+            GameObject imgTankIcon = matchHistoryGameObject.transform.GetChild(0).gameObject;
+            imgTankIcon.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(myself.tank.typeId, myself.tank.level, ImageManager.ImageType.TankEndMatch);
+
+            GameObject imageResult = matchHistoryGameObject.transform.GetChild(1).gameObject;
+            imageResult.GetComponent<Image>().sprite = myself.isWin ? imageWin : imageLose;
+
+            GameObject txtTankName = matchHistoryGameObject.transform.GetChild(4).gameObject;
+            txtTankName.GetComponent<Text>().text = myself.tank.name + "";
+
+            GameObject txtMatchType = matchHistoryGameObject.transform.GetChild(5).gameObject;
+            txtMatchType.GetComponent<Text>().text = "Summoner Rift";
+
+            GameObject txtTime = matchHistoryGameObject.transform.GetChild(6).gameObject;
+            txtTime.GetComponent<Text>().text = matchData.time + "";
+
+            GameObject txtKill = matchHistoryGameObject.transform.GetChild(7).gameObject;
+            txtKill.GetComponent<Text>().text = myself.kill + "";
+
+            GameObject txtDead = matchHistoryGameObject.transform.GetChild(8).gameObject;
+            txtDead.GetComponent<Text>().text = myself.dead + "";
+
+            //matchHistoryGameObject.GetComponent<Button>().onClick.AddListener(() =>
+            //{
+            //    tankDetail = matchData;
+            //    SceneManagement.Instance.LoadLevel(SceneList.TANK_DETAIL, (levelName) =>
+            //    {
+            //        //SceneManagement.Instance.UnLoadLevel(SceneList.LOBBY_SCREEN);
+            //    });
+            //});
+
+
+        });
+
+
+    }
+
     private void DisplaySummaryFilter()
     {
         if (!popupChangePlayerName.activeSelf)
@@ -100,13 +196,12 @@ public class PlayerProfileHandle : MonoBehaviour
     {
         if (!popupChangePlayerName.activeSelf)
         {
-            SceneManager.LoadScene("LobbyScreen");
+            SceneManagement.Instance.UnLoadLevel(SceneList.PLAYER_PROFILE);
         }
 
     }
-    #endregion
 
-    #region summary section actions
+
     private void OpenEditNamePopup()
     {
         if (!popupChangePlayerName.activeSelf)
@@ -135,6 +230,5 @@ public class PlayerProfileHandle : MonoBehaviour
             Debug.Log("Click CopyID");
         }
     }
-    #endregion
 
 }

@@ -110,7 +110,16 @@ public class LobbyScreenManager : MonoBehaviour
         {
             SceneManagement.Instance.LoadLevel(SceneList.TANK_INVENTORY, (levelName) =>
             {
-                //SceneManagement.Instance.UnLoadLevel(SceneList.LOBBY_SCREEN);
+            });
+        }
+    }
+
+    public void LoadPlayerProfile()
+    {
+        if (!isFinding)
+        {
+            SceneManagement.Instance.LoadLevel(SceneList.PLAYER_PROFILE, (levelName) =>
+            {
             });
         }
     }

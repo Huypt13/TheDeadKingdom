@@ -20,7 +20,7 @@ function Skill1Handler(connection, data, lobby) {
   }
 
   let isDead = false;
-  if (subjectOfAttack.team != skillObject.team) {
+  if (subjectOfAttack?.team != skillObject?.team) {
     isDead = subjectOfAttack.dealDamage(skillEffect.damage);
   } else {
     if (typeEnemy == "Player") {
@@ -78,7 +78,7 @@ function Skill2Handler(connection, data, lobby) {
   });
   const subjectOfAttack = connection1.player;
   const skillEffect = skillObject.skill;
-  if (subjectOfAttack.team != skillObject.team) {
+  if (subjectOfAttack?.team != skillObject?.team) {
     connection.socket.emit("skillEffectAnimation", {
       enemyId,
       efId: id,
@@ -174,7 +174,7 @@ function Skill3Handler(connection, data, lobby) {
   }
 
   let isDead = false;
-  if (subjectOfAttack.team != skillObject.team) {
+  if (subjectOfAttack?.team != skillObject?.team) {
     isDead = subjectOfAttack.dealDamage(skillEffect.damage);
   } else {
     if (typeEnemy == "Player") {

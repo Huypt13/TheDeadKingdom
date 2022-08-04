@@ -14,18 +14,17 @@ function Skill1Handler(connection, data, lobby) {
     return e.id == id;
   });
 
-  const skillEffect = skillObject.skill;
+  const skillEffect = skillObject?.skill;
   if (!subjectOfAttack) {
-    return;
   }
 
   let isDead = false;
   if (subjectOfAttack?.team != skillObject?.team) {
-    isDead = subjectOfAttack.dealDamage(skillEffect.damage);
+    isDead = subjectOfAttack.dealDamage(skillEffect?.damage);
   }
   if (isDead) {
     // ng chet la player hoac tank ai
-    lobby.deadUpdate(connection, subjectOfAttack, skillObject.activator);
+    lobby.deadUpdate(connection, subjectOfAttack, skillObject?.activator);
   } else {
     // send dame cho client
     let returnData = {
@@ -41,8 +40,8 @@ function Skill1Handler(connection, data, lobby) {
     if (typeEnemy == "Player") {
       subjectOfAttack.effect.slowled.push({
         id,
-        value: skillEffect.slowled.value,
-        time: skillEffect.slowled.time,
+        value: skillEffect?.slowled?.value,
+        time: skillEffect?.slowled?.time,
       });
 
       console.log("slow array", subjectOfAttack.effect.slowled);

@@ -4,5 +4,6 @@ const HistoryController = require("./History.controler");
 
 const router = express.Router();
 router.get("/", HistoryController.getHistory);
+router.get("/summary", HistoryController.getUserSummary);
 
 module.exports = router;

@@ -1,11 +1,19 @@
 const History = require("./History.schema");
 
 class HistoryService {
-  async insertMatchHistory({ teamWin, team1Kill, team2Kill, members, time }) {
+  async insertMatchHistory({
+    teamWin,
+    team1Kill,
+    gameMode,
+    team2Kill,
+    members,
+    time,
+  }) {
     try {
       return await new History({
         teamWin,
         team1Kill,
+        gameMode,
         team2Kill,
         members,
         time,
@@ -131,6 +139,59 @@ class HistoryService {
         }),
       };
     });
+  }
+  async getUserSummary(_id) {
+    const sumary = await History.aggregate([
+      {
+        $match: { "members.userId": _id },
+      },
+      {
+        $unwind: "$members",
+      },
+      {
+        $match: { "members.userId": _id },
+      },
+      {
+        $project: {
+          win: {
+            $cond: [
+              {
+                $eq: ["$members.isWin", true],
+              },
+              1,
+              0,
+            ],
+          },
+          lose: {
+            $cond: [
+              {
+                $eq: ["$members.isWin", false],
+              },
+              1,
+              0,
+            ],
+          },
+        },
+      },
+      {
+        $group: {
+          _id,
+          win: { $sum: "$win" },
+          lose: { $sum: "$lose" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          win: "$win",
+          lose: "$lose",
+          winRate: {
+            $divide: ["$win", { $sum: ["$win", "$lose"] }],
+          },
+        },
+      },
+    ]);
+    return sumary;
   }
 }
 

@@ -607,7 +607,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a0bc66cc9ff548ff9d97e652d8c9b5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  url: ws://44.204.11.10:8080/socket.io/?EIO=3&transport=websocket
+  url: ws://localhost:8080/socket.io/?EIO=3&transport=websocket
   autoConnect: 1
   reconnectDelay: 5
   ackExpirationTime: 30

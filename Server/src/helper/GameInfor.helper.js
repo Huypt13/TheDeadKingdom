@@ -1,5 +1,5 @@
 module.exports = {
-  CountKillMaxPlayer: 2,
+  CountKillMaxPlayer: 1,
   CountKillMinPlayer: 1,
   CountKillTime: 15,
   WaitChoolseTime: 10,

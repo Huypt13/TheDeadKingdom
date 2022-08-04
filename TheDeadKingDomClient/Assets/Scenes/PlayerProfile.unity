@@ -1446,7 +1446,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.81837463, y: -0.5762836}
+  m_AnchoredPosition: {x: -0.5, y: -0.625}
   m_SizeDelta: {x: 75.54, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &291700263
@@ -2111,7 +2111,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1.137207, y: -1.23}
+  m_AnchoredPosition: {x: 1.137207, y: -1.28}
   m_SizeDelta: {x: 75.54, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &465661474
@@ -3916,7 +3916,7 @@ GameObject:
   - component: {fileID: 899721270}
   - component: {fileID: 899721269}
   m_Layer: 5
-  m_Name: TxtWinNum
+  m_Name: TxtWinRateNum
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3939,7 +3939,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.81837463, y: -1.2300001}
+  m_AnchoredPosition: {x: -0.5, y: -1.28}
   m_SizeDelta: {x: 75.54, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &899721269
@@ -4292,7 +4292,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.7567749, y: -0.62}
+  m_AnchoredPosition: {x: 1, y: -0.62}
   m_SizeDelta: {x: 75.54, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1066975123
@@ -4892,7 +4892,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '% Win:'
+  m_Text: 'WinRate:'
 --- !u!222 &1236070162
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6360,7 +6360,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.7567749, y: -1.2737013}
+  m_AnchoredPosition: {x: 1, y: -1.2737013}
   m_SizeDelta: {x: 75.54, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1643325088
@@ -6748,7 +6748,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1.137207, y: -0.5762836}
+  m_AnchoredPosition: {x: 1.137207, y: -0.625}
   m_SizeDelta: {x: 75.54, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1767764552
@@ -7302,6 +7302,10 @@ MonoBehaviour:
   matchHistoryContainer: {fileID: 2000917283}
   imageWin: {fileID: 21300000, guid: 6bf753f4b78a7e8469e04d43bbdfbecc, type: 3}
   imageLose: {fileID: 21300000, guid: 1450e3453e905a243b3d97bf42a25751, type: 3}
+  txtCountBattle: {fileID: 291700263}
+  txtCountWin: {fileID: 1767764552}
+  txtWinRate: {fileID: 899721269}
+  txtCountTank: {fileID: 465661474}
 --- !u!4 &1952555310
 Transform:
   m_ObjectHideFlags: 0

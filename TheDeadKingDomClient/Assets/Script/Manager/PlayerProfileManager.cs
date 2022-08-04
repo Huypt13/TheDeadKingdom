@@ -1,4 +1,5 @@
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -41,6 +42,18 @@ public class PlayerProfileManager : MonoBehaviour
     [SerializeField]
     private Sprite imageLose;
 
+    [SerializeField]
+    private Text txtCountBattle;
+
+    [SerializeField]
+    private Text txtCountWin;
+
+    [SerializeField]
+    private Text txtWinRate;
+
+    [SerializeField]
+    private Text txtCountTank;
+
     // battlelog section
 
     //public Button btnClose;
@@ -63,6 +76,8 @@ public class PlayerProfileManager : MonoBehaviour
         btnApplyChange.onClick.AddListener(ApplyNewName);
 
         StartCoroutine(GetMatchHistory(MenuManager.uri));
+
+        StartCoroutine(GetMatchSummary(MenuManager.uri));
 
     }
 
@@ -95,6 +110,31 @@ public class PlayerProfileManager : MonoBehaviour
         }
     }
 
+    private IEnumerator GetMatchSummary(string uri)
+    {
+        using (UnityWebRequest request = UnityWebRequest.Get(uri + "/history/summary"))
+        {
+            request.SetRequestHeader("x-access-token", MenuManager.access_token);
+            yield return request.SendWebRequest();
+
+            if (request.isNetworkError)
+            {
+                Debug.Log("Error: " + request.error);
+            }
+            else
+            {
+                var jo = JObject.Parse(request.downloadHandler.text);
+                int win = jo["data"]["win"].ToObject<int>();
+                int lose = jo["data"]["lose"].ToObject<int>();
+                float winRate = jo["data"]["winRate"].ToObject<float>();
+                txtCountBattle.text = (win + lose) + "";
+                txtCountTank.text = LobbyScreenManager.myTankList.Count + "";
+                txtCountWin.text = win + "";
+                txtWinRate.text = Math.Round(winRate * 100, 1) + "%";
+            }
+        }
+    }
+
     private void DisplayMatchHistory()
     {
         foreach (Transform child in matchHistoryContainer.transform)
@@ -113,7 +153,6 @@ public class PlayerProfileManager : MonoBehaviour
             matchData.members.ForEach(mem =>
             {
                 if (mem.isMe) myself = mem;
-                Debug.Log(myself.user.username);
             });
 
             GameObject imgTankIcon = matchHistoryGameObject.transform.GetChild(0).gameObject;

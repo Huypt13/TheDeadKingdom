@@ -201,10 +201,12 @@ module.exports = class GameLobby extends LobbyBase {
       let { team1Kill, team2Kill } = this.getTeamKill();
       let history = {
         teamWin: this.teamWin,
+        gameMode: this.settings.gameMode,
         team1Kill: team1Kill + this.ai1Kill,
         team2Kill: team2Kill + this.ai2Kill,
         time: Date.now(),
       };
+
       let members = [];
       for (const connection of this.connections) {
         if (connection.player.team == this.teamWin) {
@@ -1415,7 +1417,7 @@ module.exports = class GameLobby extends LobbyBase {
     console.log("potion xx", potion);
     if (
       !potion ||
-      // !potion.isActive ||
+      !potion.isActive ||
       connection.player.health === connection.player.maxHealth ||
       connection.player.team != potion.team
     )

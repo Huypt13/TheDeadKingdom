@@ -37,7 +37,7 @@ function Skill2Handler(connection, data, lobby) {
   }
 
   let isDead = false;
-  if (subjectOfAttack.team != skillObject.team) {
+  if (subjectOfAttack?.team != skillObject?.team) {
     isDead = subjectOfAttack.dealDamage(skillEffect?.damage);
   }
   if (isDead) {

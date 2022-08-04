@@ -13,5 +13,16 @@ class HistoryrController {
     );
     return ApiResponse.successResponseWithData(res, "Ok", history);
   }
+  async getUserSummary(req, res) {
+    try {
+      const { user } = res.locals;
+      const history = await HistoryServices.getUserSummary(user._id.toString());
+      if (history && history.length > 0)
+        return ApiResponse.successResponseWithData(res, "Ok", history[0]);
+      return ApiResponse.successResponse(res, "No data");
+    } catch (error) {
+      return ApiResponse.serverErrorResponse(res, error.message);
+    }
+  }
 }
 module.exports = new HistoryrController();

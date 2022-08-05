@@ -78,6 +78,7 @@ class TankService {
   async updateRemaining(id) {
     return await TankUser.findByIdAndUpdate(id, { $inc: { remaining: -1 } });
   }
+
   async insertAll(userId) {
     const listTank = await Tank.find({}).lean();
     listTank.forEach(async (l) => {

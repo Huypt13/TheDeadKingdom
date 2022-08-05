@@ -2,9 +2,10 @@ const GameMechanism = require("../gamePlay/GameMechanism");
 const Vector2 = require("../../dto/Vector2");
 
 class Player {
-  constructor({ username, id }) {
+  constructor({ username, id, _id }) {
     this.username = username;
-    this.id = id;
+    this.id = id; // token ng choi
+    this._id = _id; // _id real
     this.isOnline;
     this.position = new Vector2();
     this.lobby = 0; // Id cua lobby

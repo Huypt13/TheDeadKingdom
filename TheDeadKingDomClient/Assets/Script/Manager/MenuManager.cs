@@ -11,8 +11,9 @@ using TMPro;
 
 public class MenuManager : MonoBehaviour
 {
-    [SerializeField]
-    private string uri;
+    //[SerializeField]
+    //  public static string uri = "http://44.204.11.10:8080";
+    public static string uri = "http://localhost:8080";
     public static string access_token = "";
     public static string myName = "";
     [Header("Join Now")]
@@ -28,11 +29,15 @@ public class MenuManager : MonoBehaviour
 
     public Text message;
 
-    private string username;
-    private string password;
     private bool iswaiting = false;
     private SocketIOComponent socketReference;
     public static List<TankRemain> myTankList;
+
+    [SerializeField]
+    private InputField inputUsername;
+
+    [SerializeField]
+    private InputField inputPassword;
 
     public SocketIOComponent SocketReference
     {
@@ -124,8 +129,10 @@ public class MenuManager : MonoBehaviour
     private IEnumerator LoginRequest(string uri)
     {
         var userInfor = new UserInfor();
-        userInfor.username = username;
-        userInfor.password = password;
+
+        userInfor.username = inputUsername.text;
+        userInfor.password = inputPassword.text;
+
         using (UnityWebRequest request = UnityWebRequest.Post(uri + "/user", new JSONObject(JsonUtility.ToJson(userInfor))))
         {
             yield return request.SendWebRequest();
@@ -182,8 +189,8 @@ public class MenuManager : MonoBehaviour
     private IEnumerator CreateRequest(string uri)
     {
         var userInfor = new UserInfor();
-        userInfor.username = username;
-        userInfor.password = password;
+        userInfor.username = inputUsername.text;
+        userInfor.password = inputPassword.text;
         using (UnityWebRequest request = UnityWebRequest.Post(uri, new JSONObject(JsonUtility.ToJson(userInfor))))
         {
             yield return request.SendWebRequest();
@@ -202,13 +209,4 @@ public class MenuManager : MonoBehaviour
         }
     }
 
-    public void EditUsername(string text)
-    {
-        username = text;
-    }
-
-    public void EditPassword(string text)
-    {
-        password = text;
-    }
 }

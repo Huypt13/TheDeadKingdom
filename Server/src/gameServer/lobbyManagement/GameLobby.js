@@ -38,6 +38,7 @@ const filter = new Filter();
 const BadWords = require("../../helper/BadWords");
 const shortID = require("shortid");
 const SocketAuthen = require("../../api/middlewares/SocketAuthen.middleware");
+const User = require("../../api/user/User.service");
 
 module.exports = class GameLobby extends LobbyBase {
   constructor(settings = GameLobbySetting) {
@@ -72,7 +73,7 @@ module.exports = class GameLobby extends LobbyBase {
       lobby.OnUpdateEffectTime();
       lobby.onUpdateItemTime();
     }
-    lobby.onWinning();
+    await lobby.onWinning();
     await lobby.onJoinGame();
     //
 
@@ -117,12 +118,12 @@ module.exports = class GameLobby extends LobbyBase {
     }
   }
 
-  onWinning() {
+  async onWinning() {
     if (this.lobbyState.currentState == this.lobbyState.GAME) {
       if (this.settings.gameMode == "CountKill") {
         this.onCountKillWin();
       }
-      this.onSendResult();
+      await this.onSendResult();
     }
     //
   }
@@ -147,6 +148,13 @@ module.exports = class GameLobby extends LobbyBase {
     const returnData = {
       kill1: team1Kill + this.ai1Kill,
       kill2: team2Kill + this.ai2Kill,
+      listPlayer: this.connections.map((connection) => {
+        return {
+          id: connection.player.id,
+          kill: connection.player.kill,
+          dead: connection.player.dead,
+        };
+      }),
     };
     this.connections[0].socket.emit("killUpdate", returnData);
     this.connections[0].socket.broadcast
@@ -170,7 +178,7 @@ module.exports = class GameLobby extends LobbyBase {
     );
   }
 
-  onSendResult() {
+  async onSendResult() {
     if (
       this.lobbyState.currentState == this.lobbyState.ENDGAME &&
       this.isSendRs == 0
@@ -197,20 +205,27 @@ module.exports = class GameLobby extends LobbyBase {
       let { team1Kill, team2Kill } = this.getTeamKill();
       let history = {
         teamWin: this.teamWin,
+        gameMode: this.settings.gameMode,
         team1Kill: team1Kill + this.ai1Kill,
         team2Kill: team2Kill + this.ai2Kill,
         time: Date.now(),
       };
+
       let members = [];
-      this.connections.forEach((connection) => {
+      for (const connection of this.connections) {
         if (connection.player.team == this.teamWin) {
+          await User.updateStar(1, connection.player._id);
+
           members.push({
-            userId: connection.player.id,
+            tank: connection.player.startTank.tankUserId,
+            userId: connection.player._id,
             team: connection.player.team,
             isWin: true,
             kill: connection.player.kill,
             dead: connection.player.dead,
           });
+          console.log("aaaa", connection.player.startTank.tankUserId, members);
+
           returnData = {
             ...returnData,
             result: "win",
@@ -218,8 +233,10 @@ module.exports = class GameLobby extends LobbyBase {
             kill2: team2Kill + this.ai2Kill,
           };
         } else {
+          await User.updateStar(-1, connection.player._id);
           members.push({
-            userId: connection.player.id,
+            tank: connection.player.startTank.tankUserId,
+            userId: connection.player._id,
             team: connection.player.team,
             isWin: false,
             kill: connection.player.kill,
@@ -233,15 +250,16 @@ module.exports = class GameLobby extends LobbyBase {
           };
         }
         connection.socket.emit("rsmatch", returnData);
-      });
+      }
       // save history:
       history = { ...history, members };
-      History.insertMatchHistory(history);
+      await History.insertMatchHistory(history);
       console.log(
         "out room",
         this.connections.length,
         this?.connections[1]?.player.id
       );
+      // update star
       while (this.connections.length > 0) {
         const connection = this.connections[0];
         console.log("out room", connection.player.id);
@@ -353,7 +371,7 @@ module.exports = class GameLobby extends LobbyBase {
   }
   async someOneChooseHero(connection, _id) {
     console.log("choose hero", connection.player.id);
-    const tank = await TankService.getByTankId(_id, connection.player.id);
+    const tank = await TankService.getByTankId(_id, connection.player._id);
     connection.player.tank = JSON.parse(JSON.stringify(tank));
     connection.player.startTank = JSON.parse(JSON.stringify(tank));
     connection.player.maxHealth = connection.player.startTank.health;
@@ -1268,7 +1286,7 @@ module.exports = class GameLobby extends LobbyBase {
     let tank = connection.player?.startTank;
     // chua chon tank
     if (!tank) {
-      const tankList = await TankService.getTankByUserId(connection.player.id);
+      const tankList = await TankService.getTankByUserId(connection.player._id);
       if (!tankList[0]?.tankList) {
         console.log(connection.player.id, "ko co tank");
         return false;
@@ -1290,7 +1308,7 @@ module.exports = class GameLobby extends LobbyBase {
     }
     const tankUser = await TankService.getByTankUserById(
       connection.player.startTank.tankUserId,
-      connection.player.id
+      connection.player._id
     );
     console.log("xxx", connection.player.startTank.tankUserId, tankUser);
 

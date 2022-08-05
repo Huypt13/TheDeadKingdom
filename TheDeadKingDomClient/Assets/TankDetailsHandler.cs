@@ -36,7 +36,8 @@ public class TankDetailsHandler : MonoBehaviour
     //}
 
     #region main screen actions
-    private void DisplayTankStats() {
+    private void DisplayTankStats()
+    {
         // if player select other category display then change background color
         bool isOtherCategoryDisplay = currentCategoryDisplay.image.sprite != btnStasCategory.image.sprite;
         if (isOtherCategoryDisplay)
@@ -51,8 +52,9 @@ public class TankDetailsHandler : MonoBehaviour
             currentCategoryDisplay = btnStasCategory;
         }
     }
-    
-    private void DisplayTankSkills() {
+
+    private void DisplayTankSkills()
+    {
         // if player select other category display then change background color
         bool isOtherCategoryDisplay = currentCategoryDisplay.image.sprite != btnSkillsCategory.image.sprite;
         if (isOtherCategoryDisplay)
@@ -70,7 +72,8 @@ public class TankDetailsHandler : MonoBehaviour
 
     private void BackToListTank()
     {
-        SceneManager.LoadScene("ListTank");
+        //SceneManager.LoadScene("ListTank");
+        SceneManagement.Instance.UnLoadLevel(SceneList.TANK_DETAIL);
     }
 
     private void SelectTankAndNavigate()

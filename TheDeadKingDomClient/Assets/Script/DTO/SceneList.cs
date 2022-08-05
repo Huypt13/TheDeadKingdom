@@ -7,6 +7,9 @@ public class SceneList
     public const string LEVEL = "Level";
     public const string ONLINE = "Online";
     public const string LOBBY_SCREEN = "LobbyScreen";
+    public const string TANK_INVENTORY = "ListTank";
+    public const string TANK_DETAIL = "TankDetails";
+    public const string PLAYER_PROFILE = "PlayerProfile";
     public const string WAITING = "ChooseTank";
     public const string MATCHRS = "EndOfMatch";
 

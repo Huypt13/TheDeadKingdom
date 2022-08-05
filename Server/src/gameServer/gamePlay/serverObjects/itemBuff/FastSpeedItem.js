@@ -2,11 +2,7 @@ const BaseItem = require("./BaseItem");
 module.exports = class FastSpeedItem extends BaseItem {
   constructor() {
     super();
-    this.type = "Speed";
-    this.speedUp = {
-      value: -0.5,
-      time: 8,
-    };
+    this.speedUp;
   }
   buffSpeed(connection, data, lobby) {
     const enemyId = data.enemyId;

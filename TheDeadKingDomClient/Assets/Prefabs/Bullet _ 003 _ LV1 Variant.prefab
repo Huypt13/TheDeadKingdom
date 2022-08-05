@@ -69,7 +69,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4961480242618882449, guid: 77d7e407c746f45fab7c0f8d64cb9dce, type: 3}
       propertyPath: m_UseFullKinematicContacts
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7787227297416949685, guid: 77d7e407c746f45fab7c0f8d64cb9dce, type: 3}
       propertyPath: m_Size.y

@@ -35,7 +35,7 @@ public class TankGeneral : MonoBehaviour
     [SerializeField]
     private NetworkIdentity networkIdentity;
 
-    public CapsuleCollider2D capsuleCollider;
+    public BoxCollider2D boxCollider;
     private RaycastHit2D hit;
 
 
@@ -66,7 +66,7 @@ public class TankGeneral : MonoBehaviour
         bulletData = new BulletData();
         bulletData.position = new Position();
         bulletData.direction = new Position();
-        capsuleCollider = GetComponent<CapsuleCollider2D>();
+        boxCollider = GetComponent<BoxCollider2D>();
 
     }
 
@@ -119,7 +119,7 @@ public class TankGeneral : MonoBehaviour
             float vertical = Input.GetAxis("Vertical");
             Vector3 direction = transform.up;
             if (vertical < 0) direction *= -1;
-            hit = Physics2D.BoxCast(transform.position, new Vector2(capsuleCollider.size.x - 0.5f, capsuleCollider.size.y - 0.5f), 0, direction, Mathf.Abs(vertical * Speed * Time.deltaTime), LayerMask.GetMask("Wall"));
+            hit = Physics2D.BoxCast(transform.position, new Vector2(boxCollider.size.x - 0.5f, boxCollider.size.y - 0.5f), 0, direction, Mathf.Abs(vertical * Speed * Time.deltaTime), LayerMask.GetMask("Wall"));
             if (hit.collider == null)
             {
                 transform.position += transform.up * vertical * Speed * Time.deltaTime;
@@ -129,7 +129,7 @@ public class TankGeneral : MonoBehaviour
         else
         {
 
-            hit = Physics2D.BoxCast(transform.position, new Vector2(capsuleCollider.size.x - 0.5f, capsuleCollider.size.y - 0.5f), 0, -AutoDirection, Mathf.Abs(AutoSpeed * Time.deltaTime), LayerMask.GetMask("Wall"));
+            hit = Physics2D.BoxCast(transform.position, new Vector2(boxCollider.size.x - 0.5f, boxCollider.size.y - 0.5f), 0, -AutoDirection, Mathf.Abs(AutoSpeed * Time.deltaTime), LayerMask.GetMask("Wall"));
             if (hit.collider == null)
             {
                 transform.position -= new Vector3(AutoDirection.x, AutoDirection.y, 0) * AutoSpeed * Time.deltaTime;

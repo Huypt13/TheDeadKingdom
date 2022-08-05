@@ -1,7 +1,7 @@
 module.exports = {
-  CountKillMaxPlayer: 4,
+  CountKillMaxPlayer: 1,
   CountKillMinPlayer: 1,
   CountKillTime: 300,
-  WaitChoolseTime: 10,
+  WaitChoolseTime: 5,
   SECRET_KEY: "huydtr",
 };

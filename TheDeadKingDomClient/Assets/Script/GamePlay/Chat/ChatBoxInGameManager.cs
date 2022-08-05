@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class ChatBoxHander : MonoBehaviour
+public class ChatBoxInGameManager : MonoBehaviour
 {
     public Button btnSendMessage;
     public GameObject chatPanel, textObject;
@@ -25,8 +25,10 @@ public class ChatBoxHander : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        NetworkClient.OnChat = ReceivedMessage;
-        btnSendMessage.onClick.AddListener(changeRecevied);
+        Debug.Log("start2");
+        NetworkClient.OnStartChat = ChangeOnChat;
+
+        btnSendMessage.onClick.AddListener(ChangeRecevied);
     }
     public SocketIOComponent SocketReference
     {
@@ -53,7 +55,13 @@ public class ChatBoxHander : MonoBehaviour
             inputChatBox.ActivateInputField();
         }
     }
-    private void changeRecevied()
+    private void ChangeOnChat(SocketIOEvent e)
+    {
+        ResetChatBox();
+        NetworkClient.OnChat = ReceivedMessage;
+
+    }
+    private void ChangeRecevied()
     {
         if (sendTo.GetComponent<TextMeshProUGUI>().text == "Team")
         {
@@ -75,13 +83,13 @@ public class ChatBoxHander : MonoBehaviour
     }
     private void ReceivedMessage(SocketIOEvent e)
     {
+        Debug.Log("de");
         ChatMessage.messageType messageType;
         if (messageList.Count >= maxMessages)
         {
             Destroy(messageList[0].textObject.gameObject);
             messageList.Remove(messageList[0]);
         }
-        ChatBoxInfor.MessageList = messageList;
         chatBox.gameObject.SetActive(true);
         chatBox.Find("ScrollView").transform.gameObject
                 .SetActive(true);
@@ -141,6 +149,27 @@ public class ChatBoxHander : MonoBehaviour
                 break;
         }
         return color;
+    }
+    private void ClearListMessage()
+    {
+        Debug.Log("clear");
+        messageList.ForEach((message) =>
+        {
+            DestroyImmediate(message.textObject);
+        });
+        messageList.Clear();
+    }
+    public void ResetChatBox()
+    {
+        chatBox.Find("Input").transform.gameObject
+          .SetActive(false);
+        chatBox.Find("ScrollView").transform.gameObject
+          .SetActive(false);
+        chatBox.Find("Input").transform.gameObject
+                .SetActive(false);
+        ChatBoxInfor.IsTurnChatBox = false;
+        inputChatBox.text = "";
+        ClearListMessage();
     }
 
 }

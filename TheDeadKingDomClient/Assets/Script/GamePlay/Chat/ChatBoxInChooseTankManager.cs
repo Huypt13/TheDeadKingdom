@@ -1,10 +1,11 @@
+using SocketIO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class ChooseTankHandler : MonoBehaviour
+public class ChatBoxInChooseTankManager : MonoBehaviour
 {
     public Button btnSendMessage;
     [SerializeField]
@@ -14,31 +15,31 @@ public class ChooseTankHandler : MonoBehaviour
     public GameObject chatPanel, textObject;
     public InputField chatBox;
     public Color playerMessage, info;
-
-    private int maxMessages = 25;
+    private SocketIOComponent socketReference;
+    private int maxMessages = 4;
+    private bool toTeam = true;
 
     [SerializeField]
     private List<Message> messageList = new List<Message>();
-    private string username = "Kingwisdom";
 
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log("start1");
+        NetworkClient.OnChat = ReceivedMessage;
         btnSendMessage.onClick.AddListener(SendPlayerMessage);
         timeRemaining = float.Parse(txtCountTime.text);
     }
-
+    public SocketIOComponent SocketReference
+    {
+        get
+        {
+            return socketReference = (socketReference == null) ? FindObjectOfType<NetworkClient>() : socketReference;
+        }
+    }
     // Update is called once per frame
     void Update()
     {
-        // count time and move to next sceme
-        timeRemaining -= Time.deltaTime;
-        txtCountTime.text = Mathf.CeilToInt(timeRemaining).ToString();
-        if (timeRemaining <= 0)
-        {
-            SceneManager.LoadScene("WaittingMatch");
-        }
-
         // box chat
 
         if (chatBox.text != "")
@@ -55,11 +56,37 @@ public class ChooseTankHandler : MonoBehaviour
 
     private void SendPlayerMessage()
     {
-        SendMessageToChat(username + ": " + chatBox.text, Message.messageType.playerMessage);
+        SendMessageToChat(NetworkClient.ClientName + ": " + chatBox.text);
         chatBox.text = "";
     }
+    private void ReceivedMessage(SocketIOEvent e)
+    {
+        Message.messageType messageType;
+        if (messageList.Count >= maxMessages)
+        {
+            Destroy(messageList[0].textObject.gameObject);
+            messageList.Remove(messageList[0]);
+        }
+        Message newMessage = new Message();
+        string text = e.data["text"].str;
+        string id = e.data["id"].str;
+        if (NetworkClient.ClientID == id)
+        {
+            messageType = Message.messageType.playerMessage;
+        }
+        else
+        {
+            messageType = Message.messageType.info;
+        }
+        newMessage.text = text;
 
-    private void SendMessageToChat(string text, Message.messageType messageType)
+        GameObject newText = Instantiate(textObject, chatPanel.transform);
+        newMessage.textObject = newText.GetComponent<Text>();
+        newMessage.textObject.text = newMessage.text;
+        newMessage.textObject.color = MesssageTypeColor(messageType);
+        messageList.Add(newMessage);
+    }
+    private void SendMessageToChat(string text)
     {
         if (messageList.Count >= maxMessages)
         {
@@ -68,14 +95,11 @@ public class ChooseTankHandler : MonoBehaviour
         }
         Message newMessage = new Message();
         newMessage.text = text;
-
-        // init new Text Object inside chatPanel
-        GameObject newText = Instantiate(textObject, chatPanel.transform);
-        newMessage.textObject = newText.GetComponent<Text>();
-        newMessage.textObject.text = newMessage.text;
-        newMessage.textObject.color = MesssageTypeColor(messageType);
-
-        messageList.Add(newMessage);
+        SocketReference.Emit("sendMessage", new JSONObject(JsonUtility.ToJson(new MessageData()
+        {
+            text = text,
+            toTeam = toTeam,
+        })));
     }
 
     private Color MesssageTypeColor(Message.messageType messageType)

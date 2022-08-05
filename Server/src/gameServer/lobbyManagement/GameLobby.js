@@ -13,7 +13,7 @@ const IronBox = require("../gamePlay/serverObjects/Box/IronBox");
 const PileBox = require("../gamePlay/serverObjects/Box/PileBox");
 const FastSpeedItem = require("../gamePlay/serverObjects/itemBuff/FastSpeedItem");
 const BuffArmorItem = require("../gamePlay/serverObjects/itemBuff/BuffArmorItem");
-const BuffDamageItem = require("../gamePlay/serverObjects/itemBuff/BuffDamage");
+const BuffDamageItem = require("../gamePlay/serverObjects/itemBuff/BuffDamageItem");
 const HealHpItem = require("../gamePlay/serverObjects//itemBuff/HealHpItem");
 const Helipad = require("../gamePlay/serverObjects/Helipad");
 const BaseItem = require("../gamePlay/serverObjects/itemBuff/BaseItem");
@@ -36,6 +36,7 @@ const History = require("../../api/history/History.service");
 const Filter = require("bad-words")
 const filter = new Filter();
 const BadWords = require("../../helper/BadWords");
+const shortID = require("shortid");
 const SocketAuthen = require("../../api/middlewares/SocketAuthen.middleware");
 
 module.exports = class GameLobby extends LobbyBase {
@@ -52,7 +53,7 @@ module.exports = class GameLobby extends LobbyBase {
     this.ai1Kill = 0;
     this.ai2Kill = 0;
     this.isSendRs = 0;
-    this.endGameLobby = function () {};
+    this.endGameLobby = function () { };
     this.listItem = [];
   }
   async onUpdate() {
@@ -283,26 +284,21 @@ module.exports = class GameLobby extends LobbyBase {
     }
   }
   setInitialListItem() {
-    const buffArmorItem = new BuffArmorItem();
-    const fastSpeedItem = new FastSpeedItem();
-    const healHpItem = new HealHpItem();
-    const buffDamageItem = new BuffDamageItem();
-    const buffArmorItem2 = new BuffArmorItem();
-    const fastSpeedItem2 = new FastSpeedItem();
-    const healHpItem2 = new HealHpItem();
-    const buffDamageItem2 = new BuffDamageItem();
-    this.listItem.push(
-      buffArmorItem,
-      fastSpeedItem,
-      healHpItem,
-      buffDamageItem
-    );
-    this.listItem.push(
-      buffArmorItem2,
-      fastSpeedItem2,
-      healHpItem2,
-      buffDamageItem2
-    );
+    const amountEachItem = 2;
+    const itemNames = [];
+    itemNames["BuffArmorItem"] = BuffArmorItem;
+    itemNames["FastSpeedItem"] = FastSpeedItem;
+    itemNames["HealHpItem"] = HealHpItem;
+    itemNames["BuffDamageItem"] = BuffDamageItem;
+    const buffItems = MapProp.buffItem;
+    for (let buffItemName in buffItems) {
+      const buffItem = new itemNames[buffItemName]();
+      for (let property in buffItems[buffItemName]) {
+        buffItem[property] = buffItems[buffItemName][property]
+      }
+      for (let i = 0; i < amountEachItem; i++)
+        this.listItem.push(buffItem);
+    }
   }
   onJoinGameInit() {
     this.connections.forEach((connection) => {
@@ -460,7 +456,7 @@ module.exports = class GameLobby extends LobbyBase {
       damage: 80,
       health: 1000,
       attackSpeed: 1,
-      bulletSpeed: 1, // 100 ms
+      bulletSpeed: 1,
       shootingRange: 6,
     };
 
@@ -472,10 +468,10 @@ module.exports = class GameLobby extends LobbyBase {
     //   new TankAI("01", new Vector2(-6, 4), 4, tankAi, 0),
     //   new Vector2(-6, 4)
     // );
-    this.onServerSpawn(
-      new TankAI("01", new Vector2(-3, 4), 4, tankAi, 2),
-      new Vector2(-3, 4)
-    );
+    // this.onServerSpawn(
+    //   new TankAI("01", new Vector2(-3, 4), 4, tankAi, 2),
+    //   new Vector2(-3, 4)
+    // );
     // this.onServerSpawn(
     //   new TankAI("01", new Vector2(-6, 6), 4, tankAi, 0),
     //   new Vector2(5, 2)
@@ -483,32 +479,47 @@ module.exports = class GameLobby extends LobbyBase {
     //this.onServerSpawn(new TowerAI("01", tankAi, 1), new Vector2(-3, 0));
     // this.onServerSpawn(new TowerAI("01", tankAi, 0), new Vector2(-5, 0));
     // this.onServerSpawn(new TowerAI("01", tankAi, 2), new Vector2(-1, 0));
+    let objectWithName = [];
+    objectWithName["BlueTeamPotion"] = Potion;
+    objectWithName["RedTeamPotion"] = Potion;
+    objectWithName["WoodBox"] = WoodBox;
+    objectWithName["IronBox"] = IronBox;
+    objectWithName["PileBox"] = PileBox;
+    // objectWithName["BlueTeamTankAI"] = TankAI;
+    objectWithName["RedTeamTankAI"] = TankAI;
+    objectWithName["BlueTeamBigTurret"] = TowerAI;
+    objectWithName["RedTeamBigTurret"] = TowerAI;
+    objectWithName["BlueTeamSmallTurret"] = TowerAI;
+    objectWithName["RedTeamSmallTurret"] = TowerAI;
+    objectWithName["Helipad1"] = Helipad;
+    objectWithName["Helipad2"] = Helipad;
+    objectWithName["Helipad3"] = Helipad;
+    let currentMap = this.settings.map;
+    let objectPositions = MapProp.map[currentMap];
+    let objectProperties = MapProp.props;
+    for (let objectName in objectPositions) {
+      if (!objectWithName[objectName]) continue;
 
-    // let allObject = [];
-    // allObject["WoodBox"] = WoodBox;
-    // let map = this.settings.map;
-    // const props = MapProp.map[map];
-    // for (const key in props) {
-    //   const listProps = props[key];
-    //   listProps.forEach(e=>{
-    //     const pos = new Vector2(e.position.x,e.position.y);
+      for (let pos of objectPositions[objectName]) {
+        let objectPosition = new Vector2(pos.position.x, pos.position.y);
+        let gameObject = null;
+        if ((objectWithName[objectName] != TankAI) && (objectWithName[objectName] != TowerAI)) {
+          gameObject = new objectWithName[objectName]();
+        }
 
-    //     let object = new allObject[key]();
-    //     for (const key1 in MapProp.props[key]) {
-    //       object[key1]= MapProp.props[key][key1];
-    //     }
-    //     this.onServerSpawn(object, pos);
-    //     console.log(pos,object);
-
-    //   })
-    // }
-    this.onServerSpawn(new Potion(1), new Vector2(7, -5));
-    this.onServerSpawn(new Potion(2), new Vector2(7, -1));
-    this.onServerSpawn(new WoodBox(), new Vector2(-1, 3));
-    this.onServerSpawn(new IronBox(), new Vector2(2, 3));
-    this.onServerSpawn(new PileBox(), new Vector2(4, 3));
-    this.onServerSpawn(new Helipad(13), new Vector2(-3, 1));
-    this.onServerSpawn(new Helipad(16), new Vector2(-3, 3));
+        for (let property in objectProperties[objectName]) {
+          if (property == "AIBase") {
+            console.log(objectProperties[objectName][property]);
+            gameObject = new objectWithName[objectName](...objectProperties[objectName][property], { ...objectPosition });
+            continue;
+          }
+          gameObject[property] = objectProperties[objectName][property]
+        }
+        // console.log(gameObject);
+        // console.log(objectPosition);
+        this.onServerSpawn(gameObject, objectPosition);
+      }
+    }
   }
   onUnspawnAllAIInGame(connection = Connection) {
     let lobby = this;
@@ -1402,7 +1413,7 @@ module.exports = class GameLobby extends LobbyBase {
     console.log("potion xx", potion);
     if (
       !potion ||
-      // !potion.isActive ||
+      !potion.isActive ||
       connection.player.health === connection.player.maxHealth ||
       connection.player.team != potion.team
     )
@@ -1483,23 +1494,25 @@ module.exports = class GameLobby extends LobbyBase {
     let content = filter.clean(data.text);
     const toTeam = data.toTeam;
     const returnData = {
-      text : content,
-      id : connection.player.id,
-      
+      text: content,
+      id: connection.player.id,
+
     }
-    if(!toTeam) {
+    if (!toTeam) {
       console.log("dd");
       connection.socket.emit("receivedMessage", returnData);
       connection.socket.broadcast.to(this.id).emit("receivedMessage", returnData);
     } else {
-      this.connections.forEach(c => { 
-        if(c.player.team == connection.player.team) {
-            c.socket.emit("receivedMessage", returnData);
+      console.log("dd1");
+      this.connections.forEach(c => {
+        if (c.player.team == connection.player.team) {
+          console.log("dd1");
+          c.socket.emit("receivedMessage", returnData);
         }
       })
     }
   }
 
-  getRandomSpawn() {}
-  getRndInteger(min, max) {}
+  getRandomSpawn() { }
+  getRndInteger(min, max) { }
 };

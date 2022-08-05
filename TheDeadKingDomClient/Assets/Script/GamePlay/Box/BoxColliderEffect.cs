@@ -9,12 +9,18 @@ public class BoxColliderEffect : MonoBehaviour
     public void OnCollisionEnter2D(Collision2D collision)
     {
         NetworkIdentity ni = collision.gameObject.GetComponent<NetworkIdentity>();
-        NetworkIdentity boxNi = GetComponent<NetworkIdentity>();
         if (ni == null) return;
+        NetworkIdentity potionNi = GetComponent<NetworkIdentity>();
+        NetworkIdentity niActive;
+        WhoActivatedMe whoActivatedMe = ni.GetComponent<WhoActivatedMe>();
+        if (whoActivatedMe)
+        {
+            niActive = NetworkClient.serverObjects[whoActivatedMe.GetActivator()];
+            if (niActive.Team == potionNi.Team) return;
+        }
+     
         if (ni.GetComponent<WhoActivatedMe>() == null && ni.IsControlling())
         {
-            Debug.Log("hoi mau");
-            //transform.gameObject.SetActive(false);
             ni.GetSocket().Emit("onCollisionHealHpEffects", new JSONObject(JsonUtility.ToJson(new Potion()
             {
                 id = GetComponent<NetworkIdentity>().GetId()
@@ -23,7 +29,7 @@ public class BoxColliderEffect : MonoBehaviour
         }
         if (ni.GetComponent<WhoActivatedMe>() != null)
         {
-            GameObject HealthBar = transform.Find("Health : " + boxNi.GetId())?.gameObject;
+            GameObject HealthBar = transform.Find("Health : " + potionNi.GetId())?.gameObject;
             if (!HealthBar) return;
             HealthBar.SetActive(true);
             StartCoroutine(DoEvent());
@@ -34,8 +40,8 @@ public class BoxColliderEffect : MonoBehaviour
     public IEnumerator DoEvent()
     {
         yield return new WaitForSecondsRealtime(2);
-        NetworkIdentity boxNi = GetComponent<NetworkIdentity>();
-        GameObject HealthBar = transform.Find("Health : " + boxNi.GetId())?.gameObject;
+        NetworkIdentity potionNi = GetComponent<NetworkIdentity>();
+        GameObject HealthBar = transform.Find("Health : " + potionNi.GetId())?.gameObject;
         if (HealthBar)
             HealthBar.SetActive(false);
 

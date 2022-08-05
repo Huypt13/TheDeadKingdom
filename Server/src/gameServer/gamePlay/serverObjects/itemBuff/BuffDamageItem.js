@@ -1,12 +1,8 @@
 const BaseItem = require("./BaseItem");
-module.exports = class BuffDamage extends BaseItem {
+module.exports = class BuffDamageItem extends BaseItem {
   constructor() {
     super();
-    this.type = "Damage";
-    this.damageUp = {
-      value: 1,
-      time: 7,
-    };
+    this.damageUp;
   }
   buffDamage(connection, data, lobby) {
     const enemyId = data.enemyId;

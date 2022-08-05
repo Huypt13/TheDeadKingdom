@@ -4,23 +4,41 @@ const AIBase = require("./AIBase");
 const Vector2 = require("../../dto/Vector2");
 
 module.exports = class TowerAI extends AIBase {
-  constructor(Id, Tower, Team) {
+  constructor(Tower, Team) {
     super(Tower.health, null, Team);
     this.id = shortid.generate();
-    this.aiId = Id;
-    this.username = "AI_TOWER";
+    this.aiId;
+    this.username;
 
     this.target;
-    this.hasTarget = false;
+    this.hasTarget;
     this.tank = { ...Tower };
     //Tank Stats
-    this.rotation = 0;
+    this.rotation;
 
     //Shooting
-    this.canShoot = false;
-    this.currentTime = Number(0);
+    this.canShoot;
+    this.currentTime;
     this.reloadTime = Number(Tower.attackSpeed);
   }
+
+  // constructor(Id, Tower, Team) {
+  //   super(Tower.health, null, Team);
+  //   this.id = shortid.generate();
+  //   this.aiId = Id;
+  //   this.username = "AI_TOWER";
+
+  //   this.target;
+  //   this.hasTarget = false;
+  //   this.tank = { ...Tower };
+  //   //Tank Stats
+  //   this.rotation = 0;
+
+  //   //Shooting
+  //   this.canShoot = false;
+  //   this.currentTime = Number(0);
+  //   this.reloadTime = Number(Tower.attackSpeed);
+  // }
 
   onUpdate(onUpdateTower, onFireBullet) {
     let targetConnection = this.target;
@@ -30,12 +48,24 @@ module.exports = class TowerAI extends AIBase {
       direction.x = targetPosition.x - this.position.x;
       direction.y = targetPosition.y - this.position.y;
       direction = direction.Normalized();
+    } else {
+      onUpdateTower({
+        id: this.id,
+        username: this.username,
+        barrelRotation: this.rotation,
+      });
+      return;
     }
     //Calculate barrel rotation
     let rotation =
       Math.atan2(direction.y, direction.x) * this.radiansToDegrees();
 
     if (isNaN(rotation)) {
+      onUpdateTower({
+        id: this.id,
+        username: this.username,
+        barrelRotation: this.rotation,
+      });
       return;
     }
 

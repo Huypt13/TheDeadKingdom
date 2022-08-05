@@ -55,7 +55,6 @@ public class GameUI : MonoBehaviour
                 gameLobbyContainer.SetActive(true);
                 break;
             case "EndGame":
-                resetChatBox();
                 gameLobbyContainer.SetActive(false);
                 break;
             case "Lobby":
@@ -110,7 +109,6 @@ public class GameUI : MonoBehaviour
 
     public void OnQuit()
     {
-        resetChatBox();
         networkClient.OnQuit();
     }
     public float time;
@@ -152,26 +150,8 @@ public class GameUI : MonoBehaviour
                 .SetActive(false);
         }
     }
-    public void resetChatBox()
-    {
-        chatBox.Find("Input").transform.gameObject
-          .SetActive(false);
-        chatBox.Find("ScrollView").transform.gameObject
-          .SetActive(false);
-        chatBox.Find("Input").transform.gameObject
-                .SetActive(false);
-        ChatBoxInfor.IsTurnChatBox = false;
-        inputChatBox.text = "";
-        clearListMessage();
-    }
-    private void clearListMessage()
-    {
-        ChatBoxInfor.MessageList.ForEach((message) =>
-        {
-            DestroyImmediate(message.textObject);
-        });
-        ChatBoxInfor.MessageList.Clear();
-    }
+
+   
 
 
 }

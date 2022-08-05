@@ -2,12 +2,7 @@ const BaseItem = require("./BaseItem")
 module.exports = class HealHpItem extends BaseItem {
     constructor(){
         super();
-        this.type = "Hp";
-        this.healing = {
-            value: -240,
-            waiting: 0.3,
-            times: 2
-          }
+        this.healing;
     }
 
     buffHp(connection, data, lobby) {

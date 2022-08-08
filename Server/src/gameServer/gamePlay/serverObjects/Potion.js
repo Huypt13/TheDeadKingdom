@@ -4,23 +4,19 @@ const GameMechanism = require("../GameMechanism");
 module.exports = class Potion extends ServerObject {
   constructor(Team) {
     super();
-    this.username = "Hp_Potion";
-    this.reHealTime = 10;
-    this.reHealTicket = 0;
-    this.coolDownTime = 15;
-    this.isActive = true;
-    this.health = 500;
-    this.isDead = false;
-    this.maxHealth = 500;
-    this.reSpawnTime = 0;
-    this.reSpawnTicket = 0;
-    this.healAmount = 50;
-    this.team = Team;
-    this.healing = {
-      value: -20, // value mau moi lan hoi
-      times: 15, // so lan hoi mau
-      waiting: 0.3, // time giua moi lan hoi mau
-    };
+    this.username;
+    this.reHealTime;
+    this.reHealTicket;
+    this.coolDownTime;
+    this.isActive;
+    this.health;
+    this.isDead;
+    this.maxHealth;
+    this.reSpawnTime;
+    this.reSpawnTicket;
+    this.healAmount;
+    this.team;
+    this.healing;
   }
 
   dealDamage(amount) {

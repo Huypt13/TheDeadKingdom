@@ -4968,6 +4968,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   level: {fileID: 349349691}
   remaining: {fileID: 140609618}
+  imageTankDetail: {fileID: 121246006}
   tankName: {fileID: 975657987}
   tankRole: {fileID: 1825752215}
   armor: {fileID: 894758609}

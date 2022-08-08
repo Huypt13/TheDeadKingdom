@@ -3,7 +3,7 @@ const TankNFT = require('../../../Contract/demo-client/contracts/TankNFT.json');
 const Marketplace = require('../../../Contract/demo-client/contracts/Marketplace.json');
 
 const Database = require("../../src/api/database/Database");
-const BoxService = require("./Box/Box.service")
+const BoxService = require("../api/Box/Box.service")
 
 const init = async () => {
     const web3 = new Web3('ws://127.0.0.1:7545');
@@ -28,14 +28,18 @@ const init = async () => {
         })
         .on('error', console.error);
 
-    // tankNFTContract.events.Transfer({})
-    //     .on('data', async function (event) {
-    //         console.log("===============TransferNFT=================");
-    //         console.log(event.returnValues);
-    //         // Phai check xem la from va to co phai cua marketplace hay khong
 
-    //     })
-    //     .on('error', console.error);
+
+
+
+        // event NFTListed(
+        //     uint256 marketItemId,
+        //     address nftContract,
+        //     uint256 tokenId,
+        //     address seller,
+        //     address buyer,
+        //     uint256 price
+        // );
 
     marketplaceContract.events.NFTListed({})
         .on('data', async function (event) {

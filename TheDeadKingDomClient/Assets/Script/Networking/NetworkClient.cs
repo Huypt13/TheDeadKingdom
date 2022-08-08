@@ -15,6 +15,11 @@ public class NetworkClient : SocketIOComponent
         get;
         private set;
     }
+    public static string ClientName
+    {
+        get;
+        set;
+    }
     public static float MyTeam;
 
     [SerializeField]
@@ -31,6 +36,9 @@ public class NetworkClient : SocketIOComponent
     public static Action<SocketIOEvent> OnTimeSkillUpdate = (E) => { };
     public static Action<SocketIOEvent> OnKillDeadUpdate = (E) => { };
     public static Action<SocketIOEvent> OnResultMatch = (E) => { };
+    public static Action<SocketIOEvent> OnChat = (E) => { };
+    public static Action<SocketIOEvent> OnStartChat = (E) => { };
+
     public static Action<SocketIOEvent> OnUpdatePosition = (E) => { };
 
     private string myMap = "";
@@ -245,6 +253,11 @@ public class NetworkClient : SocketIOComponent
 
         });
 
+        On("receivedMessage", (E) =>
+        {
+            OnChat.Invoke(E);
+        });
+
         On("updateTime", (E) =>
         {
             //      float time = E.data["matchTime"].f;
@@ -332,6 +345,7 @@ public class NetworkClient : SocketIOComponent
                     GameObject spawnedObject1 = Instantiate(sod1.Prefab, networkContainer);
                     spawnedObject1.transform.position = new Vector3(x, y, 0);
                     NetworkIdentity ni1 = spawnedObject1.GetComponent<NetworkIdentity>();
+                    ni1.Team = team;
                     ni1.SetControllerId(id);
                     ni1.SetSocketReference(this);
                     serverObjects.Add(id, ni1);
@@ -769,6 +783,7 @@ public class NetworkClient : SocketIOComponent
             Debug.Log("reload game");
             string map = E.data["map"].str;
             myMap = map;
+            OnStartChat.Invoke(E);
             SceneManagement.Instance.LoadLevel(map, (levelName) =>
             {
                 SceneManagement.Instance.UnLoadLevel(SceneList.MAIN_MENU);
@@ -779,10 +794,12 @@ public class NetworkClient : SocketIOComponent
             Debug.Log("Join game");
             string map = E.data["map"].str;
             myMap = map;
+            OnStartChat.Invoke(E);
             SceneManagement.Instance.LoadLevel(map, (levelName) =>
             {
                 SceneManagement.Instance.UnLoadLevel(SceneList.WAITING);
             });
+
         });
 
         On("startAutoMove", (E) =>
@@ -810,7 +827,7 @@ public class NetworkClient : SocketIOComponent
                 }
                 Debug.Log(ni.transform.position);
                 Debug.Log(ni.transform.position - range * new Vector3(x, y, 0));
-                RaycastHit2D hit = Physics2D.BoxCast(ni.transform.position - range * new Vector3(x, y, 0), new Vector2(tankgen.capsuleCollider.size.x, tankgen.capsuleCollider.size.y), 0, -new Vector2(x, y), 0, LayerMask.GetMask("Wall"));
+                RaycastHit2D hit = Physics2D.BoxCast(ni.transform.position - range * new Vector3(x, y, 0), new Vector2(tankgen.boxCollider.size.x, tankgen.boxCollider.size.y), 0, -new Vector2(x, y), 0, LayerMask.GetMask("Wall"));
                 if (hit.collider == null)
                 {
                     StartCoroutine(AIPositionSmoothing(ni.transform, ni.transform.position - range * new Vector3(x, y, 0)));

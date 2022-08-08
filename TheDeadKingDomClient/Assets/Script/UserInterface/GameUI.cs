@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using SocketIO;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,6 +20,9 @@ public class GameUI : MonoBehaviour
     [SerializeField]
     private Text totalKillTeam1;
 
+    [SerializeField]
+    private Transform chatBox;
+    private float count = 0;
     [SerializeField]
     private Text totalKillTeam2;
 
@@ -45,6 +49,11 @@ public class GameUI : MonoBehaviour
         NetworkClient.OnTimeSkillUpdate = OnTimeSKillUpdate;
         //Initial Turn off screens
         gameLobbyContainer.SetActive(false);
+    }
+    public void Update()
+    {
+        OnChatBoxUpdate();
+        OnChatBoxViewUpdate();
     }
 
     private void OnGameStateChange(SocketIOEvent e)
@@ -131,6 +140,49 @@ public class GameUI : MonoBehaviour
     {
         networkClient.OnQuit();
     }
+    public float time;
+    private void OnChatBoxUpdate()
+    {
+        if (!ChatBoxInfor.IsTurnChatBox &&Input.GetKeyDown(KeyCode.Return))
+        {
+            
+            chatBox.Find("Input").transform.gameObject
+                .SetActive(true);
+            chatBox.Find("ScrollView").transform.gameObject
+                .SetActive(true);
+            ChatBoxInfor.IsTurnChatBox = true;
+            ChatBoxInfor.IsTurnChatView = false;
+            return;
+        }
+        if (ChatBoxInfor.IsTurnChatBox && Input.GetKeyDown(KeyCode.Return))
+        {
+            chatBox.Find("Input").transform.gameObject
+                .SetActive(false);
+            count = Time.time;
+            StartCoroutine(DoEvent());     
+
+           ChatBoxInfor.IsTurnChatBox = false;
+        }
+    }
+    public IEnumerator DoEvent()
+    {
+        yield return new WaitUntil(() => Mathf.Floor(Time.time - count) > 3); 
+        if(!ChatBoxInfor.IsTurnChatBox)
+        ChatBoxInfor.IsTurnChatView = true;
+                
+    }
+    public void OnChatBoxViewUpdate()
+    {
+        if(ChatBoxInfor.IsTurnChatView && !ChatBoxInfor.IsTurnChatBox)
+        {
+            chatBox.Find("ScrollView").transform.gameObject
+                .SetActive(false);
+        }
+    }
+
+   
+
+
 }
 
 

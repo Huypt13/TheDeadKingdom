@@ -7,7 +7,7 @@ module.exports = {
   DestroyMinPlayer: 1,
   DestroyTime: 600,
 
-  FlagMaxPlayer: 1,
+  FlagMaxPlayer: 2,
   FlagMaxPlayer: 1,
   FlagTime: 300,
 

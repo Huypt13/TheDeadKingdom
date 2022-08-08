@@ -11,6 +11,8 @@ public class TankSkill002 : MonoBehaviour
     private NetworkIdentity networkIdentity;
     SkillOrientationData skdata;
     RegionSkill rData;
+    private GameUI gameUI;
+    private NetworkClient networkClient;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,8 +23,6 @@ public class TankSkill002 : MonoBehaviour
         rData = new RegionSkill();
         rData.position = new Position();
     }
-
-
     // Update is called once per frame
     void Update()
     {
@@ -37,12 +37,10 @@ public class TankSkill002 : MonoBehaviour
             Skill3();
         }
     }
-
-
     // skill e phong 1 luong nang luong lam cham ke dich tren duong di
     private void Skill1()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (!ChatBoxInfor.IsTurnChatBox && Input.GetKeyDown(KeyCode.E))
         {
             //Define skill1
             skdata.activator = NetworkClient.ClientID;
@@ -62,7 +60,7 @@ public class TankSkill002 : MonoBehaviour
     // skill r phong day xich troi ke dich dau tien gap phai
     private void Skill2()
     {
-        if (Input.GetKeyDown(KeyCode.R))
+        if (!ChatBoxInfor.IsTurnChatBox && Input.GetKeyDown(KeyCode.R))
         {
             Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
@@ -80,7 +78,7 @@ public class TankSkill002 : MonoBehaviour
 
     private void Skill3()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (!ChatBoxInfor.IsTurnChatBox && Input.GetKeyDown(KeyCode.Space))
         {
             rData.activator = NetworkClient.ClientID;
             rData.num = 3;

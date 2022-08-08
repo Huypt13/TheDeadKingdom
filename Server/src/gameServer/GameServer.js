@@ -130,9 +130,9 @@ class GameServer {
     });
     //All game lobbies full or we have never created one
     if (!lobbyFound) {
-      console.log("Making a new game lobby");
       // random type
       const type = _.shuffle(GameType.types)[0]; // random type
+      console.log("Making a new game lobby", type);
 
       let gamelobby = new GameLobby(
         new GameLobbySetting(
@@ -146,7 +146,12 @@ class GameServer {
       // random map
       gamelobby.settings.map = _.shuffle(Maps[type])[0];
 
-      console.log("random game", type, gamelobby.settings.map);
+      console.log(
+        "random game",
+        type,
+        gamelobby.settings.map,
+        GameInfor[`${type}MaxPlayer`]
+      );
       gamelobby.endGameLobby = () => {
         console.log("end lobby");
         this.closeDownLobby(gamelobby.id);

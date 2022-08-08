@@ -1,7 +1,8 @@
 ﻿using System;
 [Serializable]
-class UserInfor
+public class UserInfor
 {
+    public string email;
     public string username;
     public string password;
 }

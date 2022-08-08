@@ -21,6 +21,9 @@ public class LobbyScreenManager : MonoBehaviour
     [SerializeField]
     private Text findMatchText;
 
+    [SerializeField]
+    private Dropdown dropdownResolution;
+
     public SocketIOComponent SocketReference
     {
         get
@@ -32,6 +35,8 @@ public class LobbyScreenManager : MonoBehaviour
     void Start()
     {
         StartCoroutine(GetListTank(MenuManager.uri));
+
+        dropdownResolution.onValueChanged.AddListener((option) => { ChangeResolution(option); });
     }
 
     // Update is called once per frame
@@ -122,5 +127,12 @@ public class LobbyScreenManager : MonoBehaviour
             {
             });
         }
+    }
+
+    public void ChangeResolution(int option)
+    {
+        int[] width = { 1920, 1366, 1280 };
+        int[] height = { 1080, 768, 720 };
+        Screen.SetResolution(width[option], height[option], FullScreenMode.Windowed);
     }
 }

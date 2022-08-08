@@ -54,6 +54,20 @@ public class PlayerProfileManager : MonoBehaviour
     [SerializeField]
     private Text txtCountTank;
 
+    [SerializeField]
+    private Text txtRank;
+
+    [SerializeField]
+    private Image imageRank;
+
+    [SerializeField]
+    private Image imageStar;
+
+    [SerializeField]
+    private Text txtMasterStar;
+    [SerializeField]
+    private Image imageSingleStar;
+
     // battlelog section
 
     //public Button btnClose;
@@ -79,6 +93,19 @@ public class PlayerProfileManager : MonoBehaviour
 
         StartCoroutine(GetMatchSummary(MenuManager.uri));
 
+        int star = 133;
+        txtRank.text = ImageManager.Instance.GetRankName(star);
+        imageRank.sprite = ImageManager.Instance.GetRankImage(star);
+        if (star <= 100)
+        {
+            imageStar.sprite = ImageManager.Instance.GetStarImage(star);
+        }
+        else
+        {
+            imageStar.gameObject.SetActive(false);
+            imageSingleStar.gameObject.SetActive(true);
+            txtMasterStar.text = (star % 100) + "";
+        }
     }
 
     // Update is called once per frame

@@ -24,6 +24,21 @@ public class LobbyScreenManager : MonoBehaviour
     [SerializeField]
     private Dropdown dropdownResolution;
 
+    [SerializeField]
+    private Text txtRank;
+
+    [SerializeField]
+    private Image imageRank;
+
+    [SerializeField]
+    private Image imageStar;
+
+
+    [SerializeField]
+    private Text txtMasterStar;
+    [SerializeField]
+    private Image imageSingleStar;
+
     public SocketIOComponent SocketReference
     {
         get
@@ -37,6 +52,20 @@ public class LobbyScreenManager : MonoBehaviour
         StartCoroutine(GetListTank(MenuManager.uri));
 
         dropdownResolution.onValueChanged.AddListener((option) => { ChangeResolution(option); });
+
+        int star = 21;
+        txtRank.text = ImageManager.Instance.GetRankName(star);
+        imageRank.sprite = ImageManager.Instance.GetRankImage(star);
+        if (star <= 100)
+        {
+            imageStar.sprite = ImageManager.Instance.GetStarImage(star);
+        }
+        else
+        {
+            imageStar.gameObject.SetActive(false);
+            imageSingleStar.gameObject.SetActive(true);
+            txtMasterStar.text = (star % 100) + "";
+        }
     }
 
     // Update is called once per frame
@@ -114,6 +143,16 @@ public class LobbyScreenManager : MonoBehaviour
         if (!isFinding)
         {
             SceneManagement.Instance.LoadLevel(SceneList.TANK_INVENTORY, (levelName) =>
+            {
+            });
+        }
+    }
+
+    public void LoadLeaderboard()
+    {
+        if (!isFinding)
+        {
+            SceneManagement.Instance.LoadLevel(SceneList.LEADERBOARD, (levelName) =>
             {
             });
         }

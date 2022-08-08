@@ -5,6 +5,7 @@ const MethodExtensions = require("../../../utility/MethodExtensions");
 module.exports = class Bullet extends ServerObject {
   constructor(Position, Tank, Direction) {
     super();
+    this.name = "Bullet";
     this.direction = { ...Direction };
     this.speed = Tank?.bulletSpeed || 0.5;
     this.shootingRange = Tank?.shootingRange || 3;

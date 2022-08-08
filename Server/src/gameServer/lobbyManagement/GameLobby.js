@@ -197,7 +197,6 @@ module.exports = class GameLobby extends LobbyBase {
 
   dealPointFlag(data, connection) {
     const { id, team } = data;
-    console.log("update point", data);
     this.serverItems.forEach((item) => {
       if (item instanceof Flag && item.id === id) {
         const end = item.dealPoint(team);
@@ -206,7 +205,6 @@ module.exports = class GameLobby extends LobbyBase {
           point: item.point,
           team: item.team,
         };
-        console.log("point deal", returnData, end);
         if (!end) {
           connection.socket.emit("updateFlagPoint", returnData);
           connection.socket.broadcast
@@ -492,6 +490,8 @@ module.exports = class GameLobby extends LobbyBase {
           };
         }),
         time: GameInfor.WaitChoolseTime,
+        map: this.settings.map,
+        gameMode: this.settings.gameMode,
       };
 
       console.log("load waiting", returnData1);
@@ -571,11 +571,14 @@ module.exports = class GameLobby extends LobbyBase {
       let house1 = new MainHouse();
       house1.team = 1;
       house1.health = 2000;
+      house1.maxHealth = 2000;
       this.onServerSpawn(house1, new Vector2(7, -8));
 
       let house2 = new MainHouse();
       house2.team = 2;
       house2.health = 2000;
+      house1.maxHealth = 2000;
+
       console.log(house2);
       this.onServerSpawn(house2, new Vector2(7, 1));
     }
@@ -1025,7 +1028,7 @@ module.exports = class GameLobby extends LobbyBase {
         connection.player.tank.skill3.tower,
         connection.player.team
       );
-      towerAI.username = 
+
       towerAI.aiId = "003_3";
       towerAI.oldPosition = new Vector2(data.position.x, data.position.y);
       console.log("xxxx1", new Vector2(data.position.x, data.position.y));
@@ -1329,7 +1332,7 @@ module.exports = class GameLobby extends LobbyBase {
     // reload kill dead
     this.killUpdate();
     // reload all player
-    console.log("reload game", connection.player.id);
+    console.log("reload game", connection.player._id);
     console.log("reload game", this.connections.length);
     this.connections.forEach((c) => {
       connection.socket.emit("spawn", {
@@ -1337,6 +1340,8 @@ module.exports = class GameLobby extends LobbyBase {
         position: c.player.position,
         team: c.player.team,
         tank: c.player.tank,
+        health: c.player.health,
+        maxHealth: c.player.startTank.health,
       });
     });
 
@@ -1347,9 +1352,12 @@ module.exports = class GameLobby extends LobbyBase {
         aiId: item?.aiId,
         name: item.username,
         health: item?.health,
+        maxHealth: item?.maxHealth,
         team: item?.team || 0,
         position: item?.position,
         type: item?.type,
+        point: item?.point,
+        maxPoint: item?.maxPoint,
       });
     });
     // reload list item
@@ -1421,7 +1429,10 @@ module.exports = class GameLobby extends LobbyBase {
       position: connection.player.position,
       team: connection.player.team,
       tank,
+      health: tank?.health,
+      maxHealth: connection?.player?.startTank?.health,
     };
+    console.log("sp player", connection?.startTank?.health);
     socket.emit("spawn", returnData); //tell myself I have spawned
     socket.broadcast.to(lobby.id).emit("spawn", returnData); // Tell other
 
@@ -1496,7 +1507,7 @@ module.exports = class GameLobby extends LobbyBase {
                 x: ai.position.x,
                 y: ai.position.y,
               },
-              health: ai.maxhealth,
+              health: ai.maxHealth,
             };
 
             socket.emit("playerRespawn", returnData);

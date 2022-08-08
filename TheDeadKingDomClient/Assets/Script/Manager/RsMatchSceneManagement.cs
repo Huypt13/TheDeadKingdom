@@ -105,10 +105,9 @@ public class RsMatchSceneManagement : MonoBehaviour
 
     public void GoToMenu()
     {
-        SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
+        SceneManagement.Instance.LoadLevel(SceneList.LOBBY_SCREEN, (levelName) =>
         {
             SceneManagement.Instance.UnLoadLevel(SceneList.MATCHRS);
-            FindObjectOfType<MenuManager>().OnSignInComplete();
         });
     }
 }

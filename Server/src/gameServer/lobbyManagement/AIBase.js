@@ -2,13 +2,13 @@ const ServerItem = require("../../utility/ServerItem");
 const Vector2 = require("../../dto/Vector2");
 
 module.exports = class AIBase extends ServerItem {
-  constructor(Maxhealth, OldPosition, Team) {
+  constructor(maxHealth, OldPosition, Team) {
     super();
     this.team = Team || 0;
     this.username = "AI_Base";
     this.oldPosition = OldPosition;
-    this.health = Maxhealth;
-    this.maxHealth = Maxhealth;
+    this.health = maxHealth;
+    this.maxHealth = maxHealth;
     this.isDead = false;
     this.respawnTicker = new Number(0);
     this.respawnTime = new Number(0);

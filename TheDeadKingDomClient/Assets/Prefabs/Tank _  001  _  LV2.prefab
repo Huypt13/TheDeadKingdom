@@ -72,10 +72,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bullet: {fileID: 4147309264590899289, guid: 8feef1f7a520743cea78725034208de2, type: 3}
-  effectZone: {fileID: 3280501661014859587}
+  effectZone: {fileID: 5996830720812398036}
   skill1: {fileID: 2148707699454983006, guid: 8c5d0f118c3454e68af006a66845a61d, type: 3}
   skill2: {fileID: 8858050853015008802, guid: 2744df9dd860c41b391aa33d218c517d, type: 3}
   skill3: {fileID: 8440711446829702452, guid: 535857f8bf4cb4d009a6a13220ba082d, type: 3}
+  flash: {fileID: 0}
 --- !u!114 &5473886553321932487
 MonoBehaviour:
   m_ObjectHideFlags: 0

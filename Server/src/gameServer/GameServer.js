@@ -53,8 +53,8 @@ class GameServer {
     let player = connection.player;
     let lobbys = gameServer.lobbys;
 
-    console.log("Added new player to the server (" + player.id + ")");
-    gameServer.connections[player.id] = connection;
+    console.log("Added new player to the server (" + player._id + ")");
+    gameServer.connections[player._id] = connection;
 
     socket.join(player.lobby);
     connection.lobby = lobbys[player.lobby];
@@ -67,13 +67,13 @@ class GameServer {
     // leave khoi game lobby
 
     const gameServer = this;
-    const id = connection.player.id;
+    const _id = connection.player._id;
 
     console.log("Player " + connection.player._id + " has disconnected");
     const currentLobbyId = connection.player.lobby;
     // neu dang o general lobby thi leave
     if (currentLobbyId == gameServer.generalServerID) {
-      delete gameServer.connections[id];
+      delete gameServer.connections[_id];
       gameServer.lobbys[currentLobbyId].onLeaveLobby(connection);
     }
     connection.player.isOnline = false;

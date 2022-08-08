@@ -8,6 +8,7 @@ module.exports = class MainHouse extends ServerObject {
     this.team;
     this.isDead = false;
     this.health;
+    this.maxHealth;
   }
 
   dealDamage(amount) {

@@ -38,12 +38,13 @@ io.on("connection", (socket) => {
   socket.on("clientJoin", async ({ username, id }) => {
     let _id = await SocketAuthen.getUserId(id);
     // neu chua trong game
-    if (!gameServer.connections[id]) {
+    if (!gameServer.connections[_id]) {
       const connection = gameServer.onConnected(socket, { username, id, _id });
       connection.createEvents();
       socket.emit("register", { id: connection.player.id });
     } else {
-      let connection = gameServer.connections[id];
+      console.log("vao lai game");
+      let connection = gameServer.connections[_id];
       socket.emit("register", { id: connection.player.id });
 
       connection.socket = socket;

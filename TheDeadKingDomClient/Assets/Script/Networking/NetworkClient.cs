@@ -81,7 +81,8 @@ public class NetworkClient : SocketIOComponent
             float team = E.data["team"].f;
             string tankId = E.data["tank"]["typeId"].str;
             float tankLevel = E.data["tank"]["level"].f;
-            float health = E.data["tank"]["health"].f;
+            float health = E.data["health"].f;
+            float maxHealth = E.data["maxHealth"].f;
             float speed = E.data["tank"]["speed"].f;
             float attackSpeed = E.data["tank"]["attackSpeed"].f;
             float rotation = E.data["tank"]["rotationSpeed"].f;
@@ -112,8 +113,8 @@ public class NetworkClient : SocketIOComponent
                 }
 
                 healthBar.team = team;
+                healthBar.SetMaxHealth(maxHealth);
                 healthBar.SetHealth(health);
-                healthBar.SetMaxHealth(health);
 
                 healthBar.setMyGamTransform(go.transform);
                 h.name = $"Health : {id}";
@@ -317,6 +318,7 @@ public class NetworkClient : SocketIOComponent
                     float team = E.data["team"].f;
 
                     float health = E.data["health"].f;
+                    float maxHealth = E.data["maxHealth"].f;
                     ServerObjectData sod = serverSpawnables.GetObjectByName($"{name}_{aiId}");
                     GameObject spawnedObject = Instantiate(sod.Prefab, networkContainer);
                     spawnedObject.name = $"{name}: " + id + " - type: " + aiId;
@@ -332,7 +334,8 @@ public class NetworkClient : SocketIOComponent
                     var healthBar = h.transform.GetComponentInChildren<HealthBar>();
                     healthBar.setIsMyHealth(false);
                     healthBar.team = team;
-                    healthBar.SetMaxHealth(health);
+                    healthBar.SetMaxHealth(maxHealth);
+                    healthBar.SetHealth(health);
                     healthBar.setMyGamTransform(spawnedObject.transform);
                     h.name = $"Health : {id}";
                     ni.setHealthBar(healthBar);
@@ -340,6 +343,8 @@ public class NetworkClient : SocketIOComponent
                 if (name == "Hp_Potion")
                 {
                     float health = E.data["health"].f;
+                    float maxHealth = E.data["maxHealth"].f;
+
                     float team = E.data["team"].f;
                     ServerObjectData sod1 = serverSpawnables.GetObjectByName(name + "_" + team);
                     GameObject spawnedObject1 = Instantiate(sod1.Prefab, networkContainer);
@@ -358,8 +363,9 @@ public class NetworkClient : SocketIOComponent
                     }
 
                     healthBar.team = team;
-                    healthBar.SetHealth(health);
+
                     healthBar.SetMaxHealth(health);
+                    healthBar.SetHealth(health);
 
                     healthBar.setMyGamTransform(spawnedObject1.transform);
                     h.name = $"Health : {id}";
@@ -381,6 +387,7 @@ public class NetworkClient : SocketIOComponent
                 if (name == "Box")
                 {
                     float health = E.data["health"].f;
+                    float maxHealth = E.data["maxHealth"].f;
                     string type = E.data["type"].ToString().RemoveQuotes();
                     ServerObjectData sod1 = serverSpawnables.GetObjectByName(name + "_" + type);
                     GameObject spawnedObject1 = Instantiate(sod1.Prefab, networkContainer);
@@ -392,13 +399,10 @@ public class NetworkClient : SocketIOComponent
                     GameObject h = Instantiate(healthComponent, spawnedObject1.transform);
                     h.SetActive(false);
                     var healthBar = h.transform.GetComponentInChildren<HealthBar>();
-                    if (ClientID == id)
-                    {
-                        healthBar.setIsMyHealth(true);
-                    }
 
+
+                    healthBar.SetMaxHealth(maxHealth);
                     healthBar.SetHealth(health);
-                    healthBar.SetMaxHealth(health);
 
                     healthBar.setMyGamTransform(spawnedObject1.transform);
                     h.name = $"Health : {id}";
@@ -418,6 +422,8 @@ public class NetworkClient : SocketIOComponent
                 {
                     float health = E.data["health"].f;
                     float team = E.data["team"].f;
+                    float maxHealth = E.data["maxHealth"].f;
+
                     ServerObjectData sod1 = serverSpawnables.GetObjectByName(name + "_" + team);
                     GameObject spawnedObject1 = Instantiate(sod1.Prefab, networkContainer);
                     spawnedObject1.transform.position = new Vector3(x, y, 0);
@@ -428,15 +434,11 @@ public class NetworkClient : SocketIOComponent
                     GameObject h = Instantiate(healthComponent, networkContainer);
                     h.SetActive(true);
                     var healthBar = h.transform.GetComponentInChildren<HealthBar>();
-                    if (ClientID == id)
-                    {
-                        healthBar.setIsMyHealth(true);
-                    }
 
                     healthBar.team = team;
-                    healthBar.SetHealth(health);
-                    healthBar.SetMaxHealth(health);
 
+                    healthBar.SetMaxHealth(maxHealth);
+                    healthBar.SetHealth(health);
                     healthBar.setMyGamTransform(spawnedObject1.transform);
                     h.name = $"Health : {id}";
                     ni1.setHealthBar(healthBar);
@@ -444,6 +446,7 @@ public class NetworkClient : SocketIOComponent
                 if (name == "Flag")
                 {
                     float maxPoint = E.data["maxPoint"].f;
+                    float point = E.data["point"].f;
                     float team = E.data["team"].f;
                     ServerObjectData sod1 = serverSpawnables.GetObjectByName(name);
                     GameObject spawnedObject1 = Instantiate(sod1.Prefab, networkContainer);
@@ -462,7 +465,8 @@ public class NetworkClient : SocketIOComponent
 
                     healthBar.team = team;
                     healthBar.SetMaxHealth(maxPoint);
-                    healthBar.SetHealth(0);
+                    healthBar.SetHealth(point);
+
                     healthBar.setMyGamTransform(spawnedObject1.transform);
                     h.name = $"Health : {id}";
                     ni1.setHealthBar(healthBar);
@@ -786,7 +790,7 @@ public class NetworkClient : SocketIOComponent
             OnStartChat.Invoke(E);
             SceneManagement.Instance.LoadLevel(map, (levelName) =>
             {
-                SceneManagement.Instance.UnLoadLevel(SceneList.MAIN_MENU);
+                SceneManagement.Instance.UnLoadLevel(SceneList.LOBBY_SCREEN);
             });
         });
         On("loadGame", (E) =>
@@ -970,12 +974,12 @@ public class NetworkClient : SocketIOComponent
         {
             GameObject.Destroy(child.gameObject);
         }
-        SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
+        SceneManagement.Instance.LoadLevel(SceneList.LOBBY_SCREEN, (levelName) =>
         {
             SceneManagement.Instance.UnLoadLevel(myMap);
-            FindObjectOfType<MenuManager>().OnSignInComplete();
         });
     }
+
     private void ReturnToMainMenuLogin(string error)
     {
         foreach (var keyValuePair in serverObjects)
@@ -996,6 +1000,8 @@ public class NetworkClient : SocketIOComponent
             FindObjectOfType<MenuManager>().message.text = error;
         });
     }
+
+
     private void ReturnToMainMenuWithError(string error)
     {
         foreach (var keyValuePair in serverObjects)
@@ -1010,11 +1016,10 @@ public class NetworkClient : SocketIOComponent
         {
             GameObject.Destroy(child.gameObject);
         }
-        SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
+        SceneManagement.Instance.LoadLevel(SceneList.LOBBY_SCREEN, (levelName) =>
         {
             SceneManagement.Instance.UnLoadLevel(myMap);
-            FindObjectOfType<MenuManager>().OnSignInComplete();
-            FindObjectOfType<MenuManager>().message.text = error;
+            //  FindObjectOfType<MenuManager>().message.text = error;
         });
     }
 

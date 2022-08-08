@@ -11,14 +11,14 @@ module.exports = class TowerAI extends AIBase {
     this.username = "AI_TOWER";
 
     this.target;
-    this.hasTarget;
+    this.hasTarget = false;
     this.tank = { ...Tower };
     //Tank Stats
-    this.rotation;
+    this.rotation = 0;
 
     //Shooting
-    this.canShoot;
-    this.currentTime;
+    this.canShoot = false;
+    this.currentTime = 0;
     this.reloadTime = Number(Tower.attackSpeed);
   }
 
@@ -70,6 +70,7 @@ module.exports = class TowerAI extends AIBase {
     }
 
     //Shooting
+
     if (this.canShoot && !this.isDead && this.hasTarget) {
       onFireBullet({
         activator: this.id,

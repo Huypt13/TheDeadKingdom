@@ -26,6 +26,10 @@ public class HealthBar : MonoBehaviour
     {
         isMyHealth = b;
     }
+    public void SetTeam(float t)
+    {
+        team = t;
+    }
     public void SetMaxHealth(float health)
     {
         slider.maxValue = health;

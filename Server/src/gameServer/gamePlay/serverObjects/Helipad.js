@@ -1,12 +1,12 @@
 const ServerObject = require("./ServerObject");
 module.exports = class Helipad extends ServerObject {
-    constructor(coolDownTime1 = 2){
+    constructor(){
         super();
-        this.username = "Helipad";
-        this.itemSpawnTicker = 0;
-        this.itemSpawnTime = 0;
-        this.coolDownTime = coolDownTime1;
-        this.isActive = false;
+        this.username;
+        this.itemSpawnTicker;
+        this.itemSpawnTime;
+        this.coolDownTime;
+        this.isActive;
     }
     coolDown() {    
         this.itemSpawnTicker += 1;

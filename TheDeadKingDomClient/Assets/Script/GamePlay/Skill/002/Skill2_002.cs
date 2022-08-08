@@ -60,4 +60,23 @@ public class Skill2_002 : MonoBehaviour
             return;
         }
     }
+    private void OnDestroy()
+    {
+        var ni = NetworkClient.serverObjects[NetworkClient.ClientID];
+        Debug.Log("exit " + ni.GetId());
+
+        networkIdentity.GetSocket().Emit("exitSkill", new JSONObject(JsonUtility.ToJson(new TouchData()
+        {
+            id = networkIdentity.GetId(),
+            num = 2,
+            typeId = "002",
+            enemyId = ni.GetId(),
+            typeEnemy = "Player",
+
+        })));
+
+
+        return;
+
+    }
 }

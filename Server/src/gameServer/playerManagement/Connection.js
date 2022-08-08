@@ -95,6 +95,15 @@ class Connection {
         this.lobby.onTouchItem(this, data);
       }
     });
+    socket.on("UpdatePoint", (data) => {
+      if (connection.lobby instanceof GameLobby) {
+        this.lobby.dealPointFlag(data, connection);
+      }
+    });
+    socket.on("sendMessage", (data) => {
+      if (connection.lobby instanceof GameLobby)
+        this.lobby.SendMessage(this, data);
+    })
   }
 }
 

@@ -13,7 +13,7 @@ const IronBox = require("../gamePlay/serverObjects/Box/IronBox");
 const PileBox = require("../gamePlay/serverObjects/Box/PileBox");
 const FastSpeedItem = require("../gamePlay/serverObjects/itemBuff/FastSpeedItem");
 const BuffArmorItem = require("../gamePlay/serverObjects/itemBuff/BuffArmorItem");
-const BuffDamageItem = require("../gamePlay/serverObjects/itemBuff/BuffDamage");
+const BuffDamageItem = require("../gamePlay/serverObjects/itemBuff/BuffDamageItem");
 const HealHpItem = require("../gamePlay/serverObjects//itemBuff/HealHpItem");
 const Helipad = require("../gamePlay/serverObjects/Helipad");
 const BaseItem = require("../gamePlay/serverObjects/itemBuff/BaseItem");
@@ -33,8 +33,14 @@ const GameLobbySetting = require("./GameLobbySetting");
 const MapProp = require("./MapProps");
 const GameLobbySettings = require("./GameLobbySetting");
 const History = require("../../api/history/History.service");
+const Filter = require("bad-words");
+const filter = new Filter();
+const BadWords = require("../../helper/BadWords");
+const shortID = require("shortid");
 const SocketAuthen = require("../../api/middlewares/SocketAuthen.middleware");
 const User = require("../../api/user/User.service");
+const MainHouse = require("../gamePlay/serverObjects/MainHouse");
+const Flag = require("../gamePlay/serverObjects/Flag");
 
 module.exports = class GameLobby extends LobbyBase {
   constructor(settings = GameLobbySetting) {
@@ -119,10 +125,96 @@ module.exports = class GameLobby extends LobbyBase {
       if (this.settings.gameMode == "CountKill") {
         this.onCountKillWin();
       }
+      if (this.settings.gameMode == "Destroy") {
+        this.onDestroyWin();
+      }
+      if (this.settings.gameMode == "Flag") {
+        this.onFlagWin();
+      }
       await this.onSendResult();
     }
     //
   }
+  onFlagWin() {
+    let num = 0;
+    let numEnd = 0;
+    let team = 0;
+    this.serverItems.forEach((item) => {
+      if (item instanceof Flag) {
+        num++;
+        if (item?.end) {
+          numEnd++;
+          team = item.team;
+        }
+      }
+    });
+    if (num == numEnd && num != 0) {
+      this.lobbyState.currentState = this.lobbyState.ENDGAME;
+      this.teamWin = team;
+    }
+
+    // het time
+  }
+  onDestroyWin() {
+    let houseDead = [];
+    let house1 = {};
+    let house2 = {};
+    this.serverItems.forEach((item) => {
+      if (item instanceof MainHouse) {
+        if (item?.team == 1) {
+          house1 = { ...item };
+        } else {
+          house2 = { ...item };
+        }
+        if (item?.isDead) {
+          console.log("dead item", item);
+          houseDead.push(item);
+        }
+      }
+    });
+    if (houseDead?.length == 2) {
+      this.lobbyState.currentState = this.lobbyState.ENDGAME;
+      this.teamWin = Math.floor(Math.random() * 2) + 1;
+      return;
+    }
+    if (houseDead?.length == 1) {
+      this.lobbyState.currentState = this.lobbyState.ENDGAME;
+      this.teamWin = 3 - houseDead[0]?.team;
+      return;
+    }
+    if (this.matchTime >= GameInfor.DestroyTime - 0.1) {
+      this.lobbyState.currentState = this.lobbyState.ENDGAME;
+      if (house1.health == house2.health) {
+        this.teamWin = Math.floor(Math.random() * 2) + 1;
+      } else if (house1.health > house2.health) {
+        this.teamWin = 1;
+      } else {
+        this.teamWin = 2;
+      }
+      return;
+    }
+  }
+
+  dealPointFlag(data, connection) {
+    const { id, team } = data;
+    this.serverItems.forEach((item) => {
+      if (item instanceof Flag && item.id === id) {
+        const end = item.dealPoint(team);
+        const returnData = {
+          id: item.id,
+          point: item.point,
+          team: item.team,
+        };
+        if (!end) {
+          connection.socket.emit("updateFlagPoint", returnData);
+          connection.socket.broadcast
+            .to(this.id)
+            .emit("updateFlagPoint", returnData);
+        }
+      }
+    });
+  }
+
   onCountKillWin() {
     if (this.matchTime >= GameInfor.CountKillTime - 0.1) {
       console.log("count kill win");
@@ -298,26 +390,20 @@ module.exports = class GameLobby extends LobbyBase {
     }
   }
   setInitialListItem() {
-    const buffArmorItem = new BuffArmorItem();
-    const fastSpeedItem = new FastSpeedItem();
-    const healHpItem = new HealHpItem();
-    const buffDamageItem = new BuffDamageItem();
-    const buffArmorItem2 = new BuffArmorItem();
-    const fastSpeedItem2 = new FastSpeedItem();
-    const healHpItem2 = new HealHpItem();
-    const buffDamageItem2 = new BuffDamageItem();
-    this.listItem.push(
-      buffArmorItem,
-      fastSpeedItem,
-      healHpItem,
-      buffDamageItem
-    );
-    this.listItem.push(
-      buffArmorItem2,
-      fastSpeedItem2,
-      healHpItem2,
-      buffDamageItem2
-    );
+    const amountEachItem = 2;
+    const itemNames = [];
+    itemNames["BuffArmorItem"] = BuffArmorItem;
+    itemNames["FastSpeedItem"] = FastSpeedItem;
+    itemNames["HealHpItem"] = HealHpItem;
+    itemNames["BuffDamageItem"] = BuffDamageItem;
+    const buffItems = MapProp.buffItem;
+    for (let buffItemName in buffItems) {
+      const buffItem = new itemNames[buffItemName]();
+      for (let property in buffItems[buffItemName]) {
+        buffItem[property] = buffItems[buffItemName][property];
+      }
+      for (let i = 0; i < amountEachItem; i++) this.listItem.push(buffItem);
+    }
   }
   onJoinGameInit() {
     this.connections.forEach((connection) => {
@@ -404,6 +490,8 @@ module.exports = class GameLobby extends LobbyBase {
           };
         }),
         time: GameInfor.WaitChoolseTime,
+        map: this.settings.map,
+        gameMode: this.settings.gameMode,
       };
 
       console.log("load waiting", returnData1);
@@ -475,55 +563,77 @@ module.exports = class GameLobby extends LobbyBase {
       damage: 80,
       health: 1000,
       attackSpeed: 1,
-      bulletSpeed: 1, // 100 ms
+      bulletSpeed: 1,
       shootingRange: 6,
     };
 
-    // this.onServerSpawn(
-    //   new TankAI("01", new Vector2(-6, 2), 4, tankAi, 1),
-    //   new Vector2(-6, 2)
-    // );
-    // this.onServerSpawn(
-    //   new TankAI("01", new Vector2(-6, 4), 4, tankAi, 0),
-    //   new Vector2(-6, 4)
-    // );
-    this.onServerSpawn(
-      new TankAI("01", new Vector2(-3, 4), 4, tankAi, 2),
-      new Vector2(-3, 4)
-    );
-    // this.onServerSpawn(
-    //   new TankAI("01", new Vector2(-6, 6), 4, tankAi, 0),
-    //   new Vector2(5, 2)
-    // );
-    //this.onServerSpawn(new TowerAI("01", tankAi, 1), new Vector2(-3, 0));
-    // this.onServerSpawn(new TowerAI("01", tankAi, 0), new Vector2(-5, 0));
-    // this.onServerSpawn(new TowerAI("01", tankAi, 2), new Vector2(-1, 0));
+    if (this.settings.gameMode == "Destroy") {
+      let house1 = new MainHouse();
+      house1.team = 1;
+      house1.health = 2000;
+      house1.maxHealth = 2000;
+      this.onServerSpawn(house1, new Vector2(7, -8));
 
-    // let allObject = [];
-    // allObject["WoodBox"] = WoodBox;
-    // let map = this.settings.map;
-    // const props = MapProp.map[map];
-    // for (const key in props) {
-    //   const listProps = props[key];
-    //   listProps.forEach(e=>{
-    //     const pos = new Vector2(e.position.x,e.position.y);
+      let house2 = new MainHouse();
+      house2.team = 2;
+      house2.health = 2000;
+      house1.maxHealth = 2000;
 
-    //     let object = new allObject[key]();
-    //     for (const key1 in MapProp.props[key]) {
-    //       object[key1]= MapProp.props[key][key1];
-    //     }
-    //     this.onServerSpawn(object, pos);
-    //     console.log(pos,object);
+      console.log(house2);
+      this.onServerSpawn(house2, new Vector2(7, 1));
+    }
+    if (this.settings.gameMode == "Flag") {
+      let flag = new Flag();
+      flag.maxPoint = 50;
+      this.onServerSpawn(flag, new Vector2(0, 0));
+    }
+    let objectWithName = [];
+    objectWithName["BlueTeamPotion"] = Potion;
+    objectWithName["RedTeamPotion"] = Potion;
+    objectWithName["WoodBox"] = WoodBox;
+    objectWithName["IronBox"] = IronBox;
+    objectWithName["PileBox"] = PileBox;
+    // objectWithName["BlueTeamTankAI"] = TankAI;
+    objectWithName["RedTeamTankAI"] = TankAI;
+    objectWithName["BlueTeamBigTurret"] = TowerAI;
+    objectWithName["RedTeamBigTurret"] = TowerAI;
+    objectWithName["BlueTeamSmallTurret"] = TowerAI;
+    objectWithName["RedTeamSmallTurret"] = TowerAI;
+    objectWithName["Helipad1"] = Helipad;
+    objectWithName["Helipad2"] = Helipad;
+    objectWithName["Helipad3"] = Helipad;
+    let currentMap = this.settings.map;
+    let objectPositions = MapProp.map[currentMap];
+    let objectProperties = MapProp.props;
+    for (let objectName in objectPositions) {
+      if (!objectWithName[objectName]) continue;
 
-    //   })
-    // }
-    this.onServerSpawn(new Potion(1), new Vector2(7, -5));
-    this.onServerSpawn(new Potion(2), new Vector2(7, -1));
-    this.onServerSpawn(new WoodBox(), new Vector2(-1, 3));
-    this.onServerSpawn(new IronBox(), new Vector2(2, 3));
-    this.onServerSpawn(new PileBox(), new Vector2(4, 3));
-    this.onServerSpawn(new Helipad(13), new Vector2(-3, 1));
-    this.onServerSpawn(new Helipad(16), new Vector2(-3, 3));
+      for (let pos of objectPositions[objectName]) {
+        let objectPosition = new Vector2(pos.position.x, pos.position.y);
+        let gameObject = null;
+        if (
+          objectWithName[objectName] != TankAI &&
+          objectWithName[objectName] != TowerAI
+        ) {
+          gameObject = new objectWithName[objectName]();
+        }
+
+        for (let property in objectProperties[objectName]) {
+          if (property == "AIBase") {
+            console.log(objectProperties[objectName][property]);
+            gameObject = new objectWithName[objectName](
+              ...objectProperties[objectName][property],
+              { ...objectPosition }
+            );
+            continue;
+          }
+          gameObject[property] = objectProperties[objectName][property];
+        }
+        // console.log(gameObject);
+        // console.log(objectPosition);
+        this.onServerSpawn(gameObject, objectPosition);
+      }
+    }
   }
   onUnspawnAllAIInGame(connection = Connection) {
     let lobby = this;
@@ -647,7 +757,6 @@ module.exports = class GameLobby extends LobbyBase {
     });
 
     if (!isAI) {
-      console.log("3 tia", activeBy.player.effect.threeBullet);
       if (activeBy?.player?.effect?.threeBullet != 0) {
         this.onFireBullet3Tia(connection, data);
         return;
@@ -701,7 +810,6 @@ module.exports = class GameLobby extends LobbyBase {
 
     skillObject.activator = activator;
     skillObject.team = activeBy?.player?.team;
-
     this.skill.push(skillObject);
     const returnData = {
       name: `OrientationSkill`,
@@ -904,8 +1012,8 @@ module.exports = class GameLobby extends LobbyBase {
         };
         activeBy.player.tank.skill2.activeId = "";
       } else {
-        data.position.x -= data.direction.x * 1;
-        data.position.y -= data.direction.y * 1;
+        data.position.x -= data.direction.x * 0.5;
+        data.position.y -= data.direction.y * 0.5;
         this.createRegionSkill(
           data,
           activeBy,
@@ -915,11 +1023,16 @@ module.exports = class GameLobby extends LobbyBase {
         );
       }
     } else if (typeId === "003" && num === 3) {
+      console.log("xxxx", connection.player.tank.skill3.range);
       let towerAI = new TowerAI(
-        "002_3",
         connection.player.tank.skill3.tower,
         connection.player.team
       );
+
+      towerAI.aiId = "003_3";
+      towerAI.oldPosition = new Vector2(data.position.x, data.position.y);
+      console.log("xxxx1", new Vector2(data.position.x, data.position.y));
+
       towerAI.timeRemain = connection.player.tank.skill3.timeEffect;
       if (
         connection.player.position.Distance(
@@ -929,6 +1042,8 @@ module.exports = class GameLobby extends LobbyBase {
         connection.player.tank.skill3.timeCounter = 0;
         return;
       }
+      console.log("xxxx2");
+
       this.onServerSpawn(
         towerAI,
         new Vector2(data.position.x, data.position.y)
@@ -1038,13 +1153,9 @@ module.exports = class GameLobby extends LobbyBase {
         return;
       }
       let isDead = false;
-      // console.log("health before", subjectOfAttack.health);
-      // console.log(bullet?.tank?.damage);
       if (subjectOfAttack.team != bullet.team) {
         isDead = subjectOfAttack.dealDamage(bullet?.tank?.damage);
       }
-
-      // console.log("health ", subjectOfAttack.health);
 
       if (isDead) {
         // ng chet la player hoac tank ai
@@ -1221,7 +1332,7 @@ module.exports = class GameLobby extends LobbyBase {
     // reload kill dead
     this.killUpdate();
     // reload all player
-    console.log("reload game", connection.player.id);
+    console.log("reload game", connection.player._id);
     console.log("reload game", this.connections.length);
     this.connections.forEach((c) => {
       connection.socket.emit("spawn", {
@@ -1229,6 +1340,8 @@ module.exports = class GameLobby extends LobbyBase {
         position: c.player.position,
         team: c.player.team,
         tank: c.player.tank,
+        health: c.player.health,
+        maxHealth: c.player.startTank.health,
       });
     });
 
@@ -1239,9 +1352,12 @@ module.exports = class GameLobby extends LobbyBase {
         aiId: item?.aiId,
         name: item.username,
         health: item?.health,
+        maxHealth: item?.maxHealth,
         team: item?.team || 0,
         position: item?.position,
         type: item?.type,
+        point: item?.point,
+        maxPoint: item?.maxPoint,
       });
     });
     // reload list item
@@ -1296,7 +1412,6 @@ module.exports = class GameLobby extends LobbyBase {
       connection.player.startTank.tankUserId,
       connection.player._id
     );
-    console.log("xxx", connection.player.startTank.tankUserId, tankUser);
 
     if (!tankUser || tankUser?.remaining <= 0) {
       console.log("chon tank check remain fail", connection.player.id);
@@ -1314,7 +1429,10 @@ module.exports = class GameLobby extends LobbyBase {
       position: connection.player.position,
       team: connection.player.team,
       tank,
+      health: tank?.health,
+      maxHealth: connection?.player?.startTank?.health,
     };
+    console.log("sp player", connection?.startTank?.health);
     socket.emit("spawn", returnData); //tell myself I have spawned
     socket.broadcast.to(lobby.id).emit("spawn", returnData); // Tell other
 
@@ -1389,7 +1507,7 @@ module.exports = class GameLobby extends LobbyBase {
                 x: ai.position.x,
                 y: ai.position.y,
               },
-              health: ai.maxhealth,
+              health: ai.maxHealth,
             };
 
             socket.emit("playerRespawn", returnData);
@@ -1414,7 +1532,6 @@ module.exports = class GameLobby extends LobbyBase {
       "hoi mau",
       connection.player.health + "||" + connection.player.maxHealth
     );
-    console.log("potion xx", potion);
     if (
       !potion ||
       !potion.isActive ||
@@ -1491,6 +1608,30 @@ module.exports = class GameLobby extends LobbyBase {
         LobbyEffect.onFoucusEffect(connection, this);
       }
       connection.player.onSkillCounter(connection);
+    }
+  }
+  SendMessage(connection, data) {
+    filter.addWords(...BadWords);
+    let content = filter.clean(data.text);
+    const toTeam = data.toTeam;
+    const returnData = {
+      text: content,
+      id: connection.player.id,
+    };
+    if (!toTeam) {
+      console.log("dd");
+      connection.socket.emit("receivedMessage", returnData);
+      connection.socket.broadcast
+        .to(this.id)
+        .emit("receivedMessage", returnData);
+    } else {
+      console.log("dd1");
+      this.connections.forEach((c) => {
+        if (c.player.team == connection.player.team) {
+          console.log("dd1");
+          c.socket.emit("receivedMessage", returnData);
+        }
+      });
     }
   }
 

@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: fdb1f318b7e4e1c4d81af3abd118a656
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Hyperspace Race
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 309f2caaafae7b749ace57886a8b3409, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -4,29 +4,44 @@ const AIBase = require("./AIBase");
 const Vector2 = require("../../dto/Vector2");
 
 module.exports = class TankAI extends AIBase {
-  constructor(Id, OldPosition, Zone, TankAi, Team) {
+  constructor(Zone, TankAi, Team, OldPosition) {
     super(TankAi.health, OldPosition, Team);
     this.id = shortid.generate();
-    this.aiId = Id;
-    this.username = "AI_Tank";
+    this.aiId;
+    this.username;
     this.target;
-    this.hasTarget = false;
+    this.hasTarget;
     this.zone = Zone;
     this.tank = { ...TankAi };
-    this.iscommback = false;
+    this.iscommback;
     //Tank Stats
-    this.rotation = 0;
-
+    this.rotation;
     //Shooting
-    this.canShoot = false;
-    this.currentTime = Number(0);
+    this.canShoot;
+    this.currentTime;
     this.reloadTime = Number(TankAi.attackSpeed);
   }
-
+    // constructor(Id, OldPosition, Zone, TankAi, Team) {
+    //   super(TankAi.health, OldPosition, Team);
+    //   this.id = shortid.generate();
+    //   this.aiId = Id;
+    //   this.username = "AI_Tank";
+    //   this.target;
+    //   this.hasTarget = false;
+    //   this.zone = Zone;
+    //   this.tank = { ...TankAi };
+    //   this.iscommback = false;
+    //   //Tank Stats
+    //   this.rotation = 0;
+  
+    //   //Shooting
+    //   this.canShoot = false;
+    //   this.currentTime = Number(0);
+    //   this.reloadTime = Number(TankAi.attackSpeed);
+    // }
   onUpdate(onUpdateAI, onFireBullet, onUpdateHealthAi) {
     let ai = this;
     let zoneChange = ai.position.Distance(this.oldPosition);
-
     if (!ai.hasTarget || zoneChange > this.zone) {
       if (!this.iscommback && zoneChange != 0) {
         this.health = this.tank.health;

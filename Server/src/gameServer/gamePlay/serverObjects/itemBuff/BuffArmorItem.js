@@ -2,11 +2,7 @@ const BaseItem = require("./BaseItem");
 module.exports = class BuffArmorItem extends BaseItem {
   constructor() {
     super();
-    this.type = "Armor";
-    this.armorUp = {
-      value: 1,
-      time: 8,
-    };
+    this.armorUp;
   }
   buffArmor(connection, data, lobby) {
     const enemyId = data.enemyId;

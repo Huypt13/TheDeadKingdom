@@ -8,7 +8,7 @@ module.exports = class AIBase extends ServerItem {
     this.username = "AI_Base";
     this.oldPosition = OldPosition;
     this.health = Maxhealth;
-    this.maxhealth = Maxhealth;
+    this.maxHealth = Maxhealth;
     this.isDead = false;
     this.respawnTicker = new Number(0);
     this.respawnTime = new Number(0);
@@ -34,7 +34,7 @@ module.exports = class AIBase extends ServerItem {
         this.isDead = false;
         this.respawnTicker = new Number(0);
         this.respawnTime = new Number(0);
-        this.health = this.maxhealth;
+        this.health = this.maxHealth;
         this.position = new Vector2(this.oldPosition.x, this.oldPosition.y);
 
         return true;

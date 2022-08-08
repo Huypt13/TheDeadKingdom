@@ -1,6 +1,7 @@
 const User = require("./User.schema");
 const bcrypt = require("bcrypt");
 const Ranking = require("../../helper/Ranking.helper");
+const Jwt = require("../../helper/Jwt.helper");
 
 class UserService {
   constructor() {
@@ -9,31 +10,42 @@ class UserService {
   async getById(_id) {
     return await User.findOne({ _id }).lean();
   }
-  async getUser({ username, password }) {
+  async getUser({ email, password }) {
     try {
-      const user = await this.getByUsername(username);
-      const passCheck = await bcrypt.compare(password, user.password);
+      const user = await this.getByEmail(email);
+      const passCheck = await bcrypt.compare(password, user?.password);
       if (passCheck) return user;
     } catch (error) {
       console.log("error", error.message);
       throw new Error(error.message);
     }
   }
-  async getByUsername(username) {
+  async getByEmail(email) {
     try {
-      return await User.findOne({ username });
+      return await User.findOne({ email });
     } catch (error) {
       throw new Error(error.message);
     }
   }
-  async insertUser({ username, password }) {
+  async insertUser({ email, username, password }) {
     try {
-      const user1 = await this.getByUsername(username);
+      const user1 = await this.getByEmail(email);
       if (user1) {
         return null;
       }
       password = await bcrypt.hash(password, this.SaltRounds);
-      const user = await new User({ username, password }).save();
+      const activeCode = await Jwt.signData({ email });
+
+      const user = await new User({
+        email,
+        username,
+        password,
+        numOfStars: 0,
+        walletAdress: null,
+        balances: 0,
+        activeCode,
+        active: false,
+      }).save();
       return user;
     } catch (error) {
       throw new Error(error.message);
@@ -80,6 +92,15 @@ class UserService {
         };
       }),
     };
+  }
+  async verifyUser(activeCode) {
+    let user = await User.findOne({ activeCode });
+
+    if (user) {
+      return await User.findByIdAndUpdate(user._id, {
+        $set: { active: true },
+      });
+    }
   }
 }
 

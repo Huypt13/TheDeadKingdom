@@ -53,8 +53,8 @@ class GameServer {
     let player = connection.player;
     let lobbys = gameServer.lobbys;
 
-    console.log("Added new player to the server (" + player.id + ")");
-    gameServer.connections[player.id] = connection;
+    console.log("Added new player to the server (" + player._id + ")");
+    gameServer.connections[player._id] = connection;
 
     socket.join(player.lobby);
     connection.lobby = lobbys[player.lobby];
@@ -67,13 +67,13 @@ class GameServer {
     // leave khoi game lobby
 
     const gameServer = this;
-    const id = connection.player.id;
+    const _id = connection.player._id;
 
-    console.log("Player " + connection.player.id + " has disconnected");
+    console.log("Player " + connection.player._id + " has disconnected");
     const currentLobbyId = connection.player.lobby;
     // neu dang o general lobby thi leave
     if (currentLobbyId == gameServer.generalServerID) {
-      delete gameServer.connections[id];
+      delete gameServer.connections[_id];
       gameServer.lobbys[currentLobbyId].onLeaveLobby(connection);
     }
     connection.player.isOnline = false;
@@ -103,6 +103,7 @@ class GameServer {
     let lobbyFound = false;
     let gameLobbies = [];
     const userInfor = await UserService.getUserInfor(connection.player._id);
+    console.log(userInfor);
     for (let id in this.lobbys) {
       if (
         this.lobbys[id] instanceof GameLobby &&
@@ -129,14 +130,15 @@ class GameServer {
     });
     //All game lobbies full or we have never created one
     if (!lobbyFound) {
-      console.log("Making a new game lobby");
       // random type
       const type = _.shuffle(GameType.types)[0]; // random type
+      console.log("Making a new game lobby", type);
+
       let gamelobby = new GameLobby(
         new GameLobbySetting(
           type,
-          GameInfor.CountKillMaxPlayer,
-          GameInfor.CountKillMinPlayer,
+          GameInfor[`${type}MaxPlayer`],
+          GameInfor[`${type}MinPlayer`],
           null,
           Ranking.getLevelRank(userInfor.numOfStars)
         )
@@ -144,7 +146,12 @@ class GameServer {
       // random map
       gamelobby.settings.map = _.shuffle(Maps[type])[0];
 
-      console.log("random game", type, gamelobby.settings.map);
+      console.log(
+        "random game",
+        type,
+        gamelobby.settings.map,
+        GameInfor[`${type}MaxPlayer`]
+      );
       gamelobby.endGameLobby = () => {
         console.log("end lobby");
         this.closeDownLobby(gamelobby.id);

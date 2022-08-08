@@ -51,7 +51,7 @@ public class TankSkill003 : MonoBehaviour
     // skill e phong 1 luong nang luong lam cham ke dich tren duong di
     private void Skill1()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (!ChatBoxInfor.IsTurnChatBox && Input.GetKeyDown(KeyCode.E))
         {
             //Define skill1
             skdata.activator = NetworkClient.ClientID;
@@ -72,7 +72,7 @@ public class TankSkill003 : MonoBehaviour
     // skill r phong day xich troi ke dich dau tien gap phai
     private void Skill2()
     {
-        if (Input.GetKeyDown(KeyCode.R))
+        if (!ChatBoxInfor.IsTurnChatBox && Input.GetKeyDown(KeyCode.R))
         {
             skdata.activator = NetworkClient.ClientID;
             skdata.enemyId = NetworkClient.ClientID;
@@ -91,7 +91,7 @@ public class TankSkill003 : MonoBehaviour
 
     private void Skill3()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (!ChatBoxInfor.IsTurnChatBox && Input.GetKeyDown(KeyCode.Space))
         {
             Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 

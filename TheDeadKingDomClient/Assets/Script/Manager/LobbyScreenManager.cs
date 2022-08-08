@@ -14,6 +14,10 @@ public class LobbyScreenManager : MonoBehaviour
 
     public static List<TankRemain> myTankList;
 
+    public static int playerStar;
+
+    public static string playerName;
+
     private float time = 0;
 
     private bool canJoin = false;
@@ -39,6 +43,9 @@ public class LobbyScreenManager : MonoBehaviour
     [SerializeField]
     private Image imageSingleStar;
 
+    [SerializeField]
+    private Text txtPlayerName;
+
     public SocketIOComponent SocketReference
     {
         get
@@ -50,22 +57,10 @@ public class LobbyScreenManager : MonoBehaviour
     void Start()
     {
         StartCoroutine(GetListTank(MenuManager.uri));
+        StartCoroutine(GetUserInfor(MenuManager.uri));
 
         dropdownResolution.onValueChanged.AddListener((option) => { ChangeResolution(option); });
 
-        int star = 21;
-        txtRank.text = ImageManager.Instance.GetRankName(star);
-        imageRank.sprite = ImageManager.Instance.GetRankImage(star);
-        if (star <= 100)
-        {
-            imageStar.sprite = ImageManager.Instance.GetStarImage(star);
-        }
-        else
-        {
-            imageStar.gameObject.SetActive(false);
-            imageSingleStar.gameObject.SetActive(true);
-            txtMasterStar.text = (star % 100) + "";
-        }
     }
 
     // Update is called once per frame
@@ -134,6 +129,41 @@ public class LobbyScreenManager : MonoBehaviour
                         canJoin = true;
                     }
                 });
+            }
+        }
+    }
+
+    private IEnumerator GetUserInfor(string uri)
+    {
+        using (UnityWebRequest request = UnityWebRequest.Get(uri + "/user/infor"))
+        {
+            request.SetRequestHeader("x-access-token", MenuManager.access_token);
+            yield return request.SendWebRequest();
+
+            if (request.isNetworkError)
+            {
+                Debug.Log("Error: " + request.error);
+            }
+            else
+            {
+                var jo = JObject.Parse(request.downloadHandler.text);
+                playerStar = jo["data"]["numOfStars"].ToObject<int>();
+                playerName = jo["data"]["username"].ToObject<string>();
+
+                txtPlayerName.text = playerName;
+
+                txtRank.text = ImageManager.Instance.GetRankName(playerStar);
+                imageRank.sprite = ImageManager.Instance.GetRankImage(playerStar);
+                if (playerStar <= 100)
+                {
+                    imageStar.sprite = ImageManager.Instance.GetStarImage(playerStar);
+                }
+                else
+                {
+                    imageStar.gameObject.SetActive(false);
+                    imageSingleStar.gameObject.SetActive(true);
+                    txtMasterStar.text = (playerStar % 100) + "";
+                }
             }
         }
     }

@@ -68,6 +68,9 @@ public class PlayerProfileManager : MonoBehaviour
     [SerializeField]
     private Image imageSingleStar;
 
+    [SerializeField]
+    private Text txtPlayerName;
+
     // battlelog section
 
     //public Button btnClose;
@@ -93,7 +96,8 @@ public class PlayerProfileManager : MonoBehaviour
 
         StartCoroutine(GetMatchSummary(MenuManager.uri));
 
-        int star = 133;
+        int star = LobbyScreenManager.playerStar;
+        txtPlayerName.text = LobbyScreenManager.playerName;
         txtRank.text = ImageManager.Instance.GetRankName(star);
         imageRank.sprite = ImageManager.Instance.GetRankImage(star);
         if (star <= 100)
@@ -150,14 +154,22 @@ public class PlayerProfileManager : MonoBehaviour
             }
             else
             {
-                var jo = JObject.Parse(request.downloadHandler.text);
-                int win = jo["data"]["win"].ToObject<int>();
-                int lose = jo["data"]["lose"].ToObject<int>();
-                float winRate = jo["data"]["winRate"].ToObject<float>();
-                txtCountBattle.text = (win + lose) + "";
-                txtCountTank.text = LobbyScreenManager.myTankList.Count + "";
-                txtCountWin.text = win + "";
-                txtWinRate.text = Math.Round(winRate * 100, 1) + "%";
+                try
+                {
+                    txtCountTank.text = LobbyScreenManager.myTankList.Count + "";
+                    var jo = JObject.Parse(request.downloadHandler.text);
+                    int win = jo["data"]["win"].ToObject<int>();
+                    int lose = jo["data"]["lose"].ToObject<int>();
+                    float winRate = jo["data"]["winRate"].ToObject<float>();
+                    txtCountBattle.text = (win + lose) + "";
+                    txtCountWin.text = win + "";
+                    txtWinRate.text = Math.Round(winRate * 100, 1) + "%";
+                }
+                catch
+                {
+                    Debug.Log("Chua co lich su dau");
+                }
+
             }
         }
     }

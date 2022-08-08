@@ -3658,6 +3658,7 @@ MonoBehaviour:
   imageStar: {fileID: 1239896873}
   txtMasterStar: {fileID: 791880410}
   imageSingleStar: {fileID: 531516070}
+  txtPlayerName: {fileID: 763107726}
 --- !u!4 &1153119710
 Transform:
   m_ObjectHideFlags: 0

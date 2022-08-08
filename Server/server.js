@@ -80,13 +80,7 @@ server.listen(8080);
 
 //console.log(GameMechanism.getDame({ armor: 99 }, 1000));
 
-const a = (async () => {
-  //console.log(await HistoryService.getUserHistory("62979d10f7a5a3b40c332a04"));
-  // const saltRounds = 10;
-  // let hash = await bcrypt.hash("123", saltRounds);
-  // let compare = await bcrypt.compare(
-  //   "123",
-  //   "$2b$10$Q/gCCCsDdNDzplSHDjH27.Luk3mj.v.0dCUv745wz2bJjUU5IKudW"
-  // );
-  // console.log(hash, compare);
-})();
+// const a = (async () => {
+//  console.log("tank cong",await Tank.insertAll("62ef8b9359f656820c803049"));
+
+// })();

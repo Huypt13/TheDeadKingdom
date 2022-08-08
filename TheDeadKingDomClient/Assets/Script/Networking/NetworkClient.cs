@@ -733,6 +733,7 @@ public class NetworkClient : SocketIOComponent
             {
                 SceneManagement.Instance.UnLoadLevel(SceneList.WAITING);
             });
+
         });
 
         On("startAutoMove", (E) =>

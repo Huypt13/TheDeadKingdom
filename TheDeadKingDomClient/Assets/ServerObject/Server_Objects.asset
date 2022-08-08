@@ -44,7 +44,7 @@ MonoBehaviour:
   - Name: Tank_003_1
     Prefab: {fileID: 694932519919396962, guid: d6491164f377977489bc0f8a741c307f, type: 3}
   - Name: AI_TOWER_002_3
-    Prefab: {fileID: 6665555187601314377, guid: 16578d841cfed4587849bfdbb401a28e, type: 3}
+    Prefab: {fileID: 6665555187601314377, guid: 775ee3aa6ac74b340b65db9d01470f81, type: 3}
   - Name: Box_Iron
     Prefab: {fileID: 5827310782098950646, guid: 5c3210e0b1323624fa9b1fd557e99180, type: 3}
   - Name: Box_Pile

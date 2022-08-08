@@ -83,7 +83,6 @@ public class ChatBoxInGameManager : MonoBehaviour
     }
     private void ReceivedMessage(SocketIOEvent e)
     {
-        Debug.Log("de");
         ChatMessage.messageType messageType;
         if (messageList.Count >= maxMessages)
         {

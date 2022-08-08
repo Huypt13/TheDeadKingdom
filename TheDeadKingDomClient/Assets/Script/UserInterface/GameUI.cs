@@ -22,11 +22,8 @@ public class GameUI : MonoBehaviour
 
     [SerializeField]
     private Transform chatBox;
-    [SerializeField]
-    private Transform skillTransform;
-    [SerializeField]
-    private TMP_InputField inputChatBox;
     private float count = 0;
+    [SerializeField]
     private Text totalKillTeam2;
 
     [SerializeField]

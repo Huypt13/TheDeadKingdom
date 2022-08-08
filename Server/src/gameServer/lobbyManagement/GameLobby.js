@@ -929,11 +929,16 @@ module.exports = class GameLobby extends LobbyBase {
         );
       }
     } else if (typeId === "003" && num === 3) {
+      console.log("xxxx",connection.player.tank.skill3.range);
       let towerAI = new TowerAI(
-        "002_3",
+       
         connection.player.tank.skill3.tower,
         connection.player.team
       );
+      towerAI.aiId= "002_3",
+      towerAI.oldPosition=   new Vector2(data.position.x, data.position.y);
+      console.log("xxxx1",  new Vector2(data.position.x, data.position.y));
+
       towerAI.timeRemain = connection.player.tank.skill3.timeEffect;
       if (
         connection.player.position.Distance(
@@ -943,6 +948,8 @@ module.exports = class GameLobby extends LobbyBase {
         connection.player.tank.skill3.timeCounter = 0;
         return;
       }
+      console.log("xxxx2");
+
       this.onServerSpawn(
         towerAI,
         new Vector2(data.position.x, data.position.y)

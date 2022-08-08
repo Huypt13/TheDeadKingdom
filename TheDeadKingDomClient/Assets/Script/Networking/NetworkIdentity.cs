@@ -24,6 +24,8 @@ public class NetworkIdentity : MonoBehaviour
     [SerializeField]
     private GameObject skill3;
 
+    [SerializeField]
+    private GameObject flash;
     private string typeId;
     public float Team { get => team; set => team = value; }
     public string TypeId { get => typeId; set => typeId = value; }
@@ -55,6 +57,10 @@ public class NetworkIdentity : MonoBehaviour
     public string GetId()
     {
         return id;
+    }
+    public GameObject GetFlash()
+    {
+        return flash;
     }
     public GameObject GetBullet()
     {

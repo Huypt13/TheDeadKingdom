@@ -15,6 +15,7 @@ module.exports = class SkillOrientation extends ServerObject {
     this.activator = "";
     this.position = { ...Position };
     this.oldPosition = { ...Position };
+    this.isWait = false;
   }
 
   onUpdate() {

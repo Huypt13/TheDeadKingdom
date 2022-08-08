@@ -69,7 +69,7 @@ class GameServer {
     const gameServer = this;
     const id = connection.player.id;
 
-    console.log("Player " + connection.player.id + " has disconnected");
+    console.log("Player " + connection.player._id + " has disconnected");
     const currentLobbyId = connection.player.lobby;
     // neu dang o general lobby thi leave
     if (currentLobbyId == gameServer.generalServerID) {
@@ -103,6 +103,7 @@ class GameServer {
     let lobbyFound = false;
     let gameLobbies = [];
     const userInfor = await UserService.getUserInfor(connection.player._id);
+    console.log(userInfor);
     for (let id in this.lobbys) {
       if (
         this.lobbys[id] instanceof GameLobby &&
@@ -132,11 +133,12 @@ class GameServer {
       console.log("Making a new game lobby");
       // random type
       const type = _.shuffle(GameType.types)[0]; // random type
+
       let gamelobby = new GameLobby(
         new GameLobbySetting(
           type,
-          GameInfor.CountKillMaxPlayer,
-          GameInfor.CountKillMinPlayer,
+          GameInfor[`${type}MaxPlayer`],
+          GameInfor[`${type}MinPlayer`],
           null,
           Ranking.getLevelRank(userInfor.numOfStars)
         )

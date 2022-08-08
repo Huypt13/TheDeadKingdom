@@ -400,6 +400,59 @@ public class NetworkClient : SocketIOComponent
                     ni1.SetSocketReference(this);
                     serverObjects.Add(id, ni1);
                 }
+                if (name == "MainHouse")
+                {
+                    float health = E.data["health"].f;
+                    float team = E.data["team"].f;
+                    ServerObjectData sod1 = serverSpawnables.GetObjectByName(name + "_" + team);
+                    GameObject spawnedObject1 = Instantiate(sod1.Prefab, networkContainer);
+                    spawnedObject1.transform.position = new Vector3(x, y, 0);
+                    NetworkIdentity ni1 = spawnedObject1.GetComponent<NetworkIdentity>();
+                    ni1.SetControllerId(id);
+                    ni1.SetSocketReference(this);
+                    serverObjects.Add(id, ni1);
+                    GameObject h = Instantiate(healthComponent, networkContainer);
+                    h.SetActive(true);
+                    var healthBar = h.transform.GetComponentInChildren<HealthBar>();
+                    if (ClientID == id)
+                    {
+                        healthBar.setIsMyHealth(true);
+                    }
+
+                    healthBar.team = team;
+                    healthBar.SetHealth(health);
+                    healthBar.SetMaxHealth(health);
+
+                    healthBar.setMyGamTransform(spawnedObject1.transform);
+                    h.name = $"Health : {id}";
+                    ni1.setHealthBar(healthBar);
+                }
+                if (name == "Flag")
+                {
+                    float maxPoint = E.data["maxPoint"].f;
+                    float team = E.data["team"].f;
+                    ServerObjectData sod1 = serverSpawnables.GetObjectByName(name);
+                    GameObject spawnedObject1 = Instantiate(sod1.Prefab, networkContainer);
+                    spawnedObject1.transform.position = new Vector3(x, y, 0);
+                    NetworkIdentity ni1 = spawnedObject1.GetComponent<NetworkIdentity>();
+                    ni1.SetControllerId(id);
+                    ni1.SetSocketReference(this);
+                    serverObjects.Add(id, ni1);
+                    GameObject h = Instantiate(healthComponent, networkContainer);
+                    h.SetActive(true);
+                    var healthBar = h.transform.GetComponentInChildren<HealthBar>();
+                    if (ClientID == id)
+                    {
+                        healthBar.setIsMyHealth(true);
+                    }
+
+                    healthBar.team = team;
+                    healthBar.SetMaxHealth(maxPoint);
+                    healthBar.SetHealth(0);
+                    healthBar.setMyGamTransform(spawnedObject1.transform);
+                    h.name = $"Health : {id}";
+                    ni1.setHealthBar(healthBar);
+                }
             }
         });
 
@@ -464,7 +517,7 @@ public class NetworkClient : SocketIOComponent
             {
 
                 var playerImpacted = E.data["playerImpacted"].list;
-                playerImpacted.ForEach(playid =>
+                playerImpacted?.ForEach(playid =>
                 {
                     var ni = serverObjects[playid.str];
                     if (typeId == "001" && num == 3)
@@ -517,6 +570,7 @@ public class NetworkClient : SocketIOComponent
                     float rot = Mathf.Atan2(directionY, directionX) * Mathf.Rad2Deg;
                     Vector3 currentRotation = new Vector3(0, 0, rot + 90);
                     spawnedObject.transform.rotation = Quaternion.Euler(currentRotation);
+
                 }
                 spawnedObject.transform.position = new Vector3(x, y, 0);
                 ni = spawnedObject.GetComponent<NetworkIdentity>();
@@ -685,6 +739,18 @@ public class NetworkClient : SocketIOComponent
 
         });
 
+        On("updateFlagPoint", (e) =>
+        {
+            string id = e.data["id"].str;
+            float point = e.data["point"].f;
+            float team = e.data["team"].f;
+            var ni = serverObjects[id];
+            //   ni.gameObject.SetActive(false);
+            var healthBar = ni.getHealthBar();
+            healthBar.SetTeam(team);
+            healthBar.SetHealth(point);
+        });
+
         On("loadWaiting", (E) =>
         {
             Debug.Log("Switching to waiting choose hero");
@@ -735,6 +801,13 @@ public class NetworkClient : SocketIOComponent
             //toc bien
             if (autoSpeed == 30)
             {
+                var flashEf = ni.GetFlash();
+                if (flashEf != null)
+                {
+                    flashEf.transform.position = ni.transform.position - range * new Vector3(x, y, 0);
+                    var fl = Instantiate(flashEf, networkContainer);
+                    Destroy(fl, 0.3f);
+                }
                 Debug.Log(ni.transform.position);
                 Debug.Log(ni.transform.position - range * new Vector3(x, y, 0));
                 RaycastHit2D hit = Physics2D.BoxCast(ni.transform.position - range * new Vector3(x, y, 0), new Vector2(tankgen.capsuleCollider.size.x, tankgen.capsuleCollider.size.y), 0, -new Vector2(x, y), 0, LayerMask.GetMask("Wall"));

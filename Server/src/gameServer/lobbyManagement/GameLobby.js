@@ -35,6 +35,8 @@ const GameLobbySettings = require("./GameLobbySetting");
 const History = require("../../api/history/History.service");
 const SocketAuthen = require("../../api/middlewares/SocketAuthen.middleware");
 const User = require("../../api/user/User.service");
+const MainHouse = require("../gamePlay/serverObjects/MainHouse");
+const Flag = require("../gamePlay/serverObjects/Flag");
 
 module.exports = class GameLobby extends LobbyBase {
   constructor(settings = GameLobbySetting) {
@@ -119,10 +121,98 @@ module.exports = class GameLobby extends LobbyBase {
       if (this.settings.gameMode == "CountKill") {
         this.onCountKillWin();
       }
+      if (this.settings.gameMode == "Destroy") {
+        this.onDestroyWin();
+      }
+      if (this.settings.gameMode == "Flag") {
+        this.onFlagWin();
+      }
       await this.onSendResult();
     }
     //
   }
+  onFlagWin() {
+    let num = 0;
+    let numEnd = 0;
+    let team = 0;
+    this.serverItems.forEach((item) => {
+      if (item instanceof Flag) {
+        num++;
+        if (item?.end) {
+          numEnd++;
+          team = item.team;
+        }
+      }
+    });
+    if (num == numEnd && num != 0) {
+      this.lobbyState.currentState = this.lobbyState.ENDGAME;
+      this.teamWin = team;
+    }
+
+    // het time
+  }
+  onDestroyWin() {
+    let houseDead = [];
+    let house1 = {};
+    let house2 = {};
+    this.serverItems.forEach((item) => {
+      if (item instanceof MainHouse) {
+        if (item?.team == 1) {
+          house1 = { ...item };
+        } else {
+          house2 = { ...item };
+        }
+        if (item?.isDead) {
+          console.log("dead item", item);
+          houseDead.push(item);
+        }
+      }
+    });
+    if (houseDead?.length == 2) {
+      this.lobbyState.currentState = this.lobbyState.ENDGAME;
+      this.teamWin = Math.floor(Math.random() * 2) + 1;
+      return;
+    }
+    if (houseDead?.length == 1) {
+      this.lobbyState.currentState = this.lobbyState.ENDGAME;
+      this.teamWin = 3 - houseDead[0]?.team;
+      return;
+    }
+    if (this.matchTime >= GameInfor.DestroyTime - 0.1) {
+      this.lobbyState.currentState = this.lobbyState.ENDGAME;
+      if (house1.health == house2.health) {
+        this.teamWin = Math.floor(Math.random() * 2) + 1;
+      } else if (house1.health > house2.health) {
+        this.teamWin = 1;
+      } else {
+        this.teamWin = 2;
+      }
+      return;
+    }
+  }
+
+  dealPointFlag(data, connection) {
+    const { id, team } = data;
+    console.log("update point", data);
+    this.serverItems.forEach((item) => {
+      if (item instanceof Flag && item.id === id) {
+        const end = item.dealPoint(team);
+        const returnData = {
+          id: item.id,
+          point: item.point,
+          team: item.team,
+        };
+        console.log("point deal", returnData, end);
+        if (!end) {
+          connection.socket.emit("updateFlagPoint", returnData);
+          connection.socket.broadcast
+            .to(this.id)
+            .emit("updateFlagPoint", returnData);
+        }
+      }
+    });
+  }
+
   onCountKillWin() {
     if (this.matchTime >= GameInfor.CountKillTime - 0.1) {
       console.log("count kill win");
@@ -487,10 +577,10 @@ module.exports = class GameLobby extends LobbyBase {
     //   new TankAI("01", new Vector2(-6, 4), 4, tankAi, 0),
     //   new Vector2(-6, 4)
     // );
-    this.onServerSpawn(
-      new TankAI("01", new Vector2(-3, 4), 4, tankAi, 2),
-      new Vector2(-3, 4)
-    );
+    // this.onServerSpawn(
+    //   new TankAI("01", new Vector2(-3, 4), 4, tankAi, 2),
+    //   new Vector2(-3, 4)
+    // );
     // this.onServerSpawn(
     //   new TankAI("01", new Vector2(-6, 6), 4, tankAi, 0),
     //   new Vector2(5, 2)
@@ -524,6 +614,24 @@ module.exports = class GameLobby extends LobbyBase {
     this.onServerSpawn(new PileBox(), new Vector2(4, 3));
     this.onServerSpawn(new Helipad(13), new Vector2(-3, 1));
     this.onServerSpawn(new Helipad(16), new Vector2(-3, 3));
+
+    if (this.settings.gameMode == "Destroy") {
+      let house1 = new MainHouse();
+      house1.team = 1;
+      house1.health = 2000;
+      this.onServerSpawn(house1, new Vector2(7, -8));
+
+      let house2 = new MainHouse();
+      house2.team = 2;
+      house2.health = 2000;
+      console.log(house2);
+      this.onServerSpawn(house2, new Vector2(7, 1));
+    }
+    if (this.settings.gameMode == "Flag") {
+      let flag = new Flag();
+      flag.maxPoint = 50;
+      this.onServerSpawn(flag, new Vector2(0, 0));
+    }
   }
   onUnspawnAllAIInGame(connection = Connection) {
     let lobby = this;
@@ -647,7 +755,6 @@ module.exports = class GameLobby extends LobbyBase {
     });
 
     if (!isAI) {
-      console.log("3 tia", activeBy.player.effect.threeBullet);
       if (activeBy?.player?.effect?.threeBullet != 0) {
         this.onFireBullet3Tia(connection, data);
         return;
@@ -701,7 +808,6 @@ module.exports = class GameLobby extends LobbyBase {
 
     skillObject.activator = activator;
     skillObject.team = activeBy?.player?.team;
-
     this.skill.push(skillObject);
     const returnData = {
       name: `OrientationSkill`,
@@ -904,8 +1010,8 @@ module.exports = class GameLobby extends LobbyBase {
         };
         activeBy.player.tank.skill2.activeId = "";
       } else {
-        data.position.x -= data.direction.x * 1;
-        data.position.y -= data.direction.y * 1;
+        data.position.x -= data.direction.x * 0.5;
+        data.position.y -= data.direction.y * 0.5;
         this.createRegionSkill(
           data,
           activeBy,
@@ -1038,13 +1144,9 @@ module.exports = class GameLobby extends LobbyBase {
         return;
       }
       let isDead = false;
-      // console.log("health before", subjectOfAttack.health);
-      // console.log(bullet?.tank?.damage);
       if (subjectOfAttack.team != bullet.team) {
         isDead = subjectOfAttack.dealDamage(bullet?.tank?.damage);
       }
-
-      // console.log("health ", subjectOfAttack.health);
 
       if (isDead) {
         // ng chet la player hoac tank ai
@@ -1296,7 +1398,6 @@ module.exports = class GameLobby extends LobbyBase {
       connection.player.startTank.tankUserId,
       connection.player._id
     );
-    console.log("xxx", connection.player.startTank.tankUserId, tankUser);
 
     if (!tankUser || tankUser?.remaining <= 0) {
       console.log("chon tank check remain fail", connection.player.id);
@@ -1414,7 +1515,6 @@ module.exports = class GameLobby extends LobbyBase {
       "hoi mau",
       connection.player.health + "||" + connection.player.maxHealth
     );
-    console.log("potion xx", potion);
     if (
       !potion ||
       !potion.isActive ||

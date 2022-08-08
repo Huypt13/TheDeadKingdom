@@ -1,6 +1,7 @@
 const UserService = require("./User.service");
 const ApiResponse = require("../../utility/ApiResponse");
 const Jwt = require("../../helper/Jwt.helper");
+const { registerNotify } = require("../../helper/RabbitMq.helper");
 
 class UserController {
   async login(req, res) {
@@ -10,6 +11,12 @@ class UserController {
       const gameServer = res.locals.gameServer;
 
       if (user) {
+        if (!user.active) {
+          return ApiResponse.serverErrorResponse(
+            res,
+            "Please confirm email to active your account"
+          );
+        }
         if (gameServer.connections[user._id]) {
           gameServer.connections[user._id].socket.emit(
             "someoneLoginYourAccount",
@@ -39,17 +46,24 @@ class UserController {
     try {
       let userinfor = req.body;
       const user = await UserService.insertUser(userinfor);
+
       if (user) {
+        await registerNotify({
+          email: user?.email,
+          username: user?.username,
+          url: `${process.env.WEB_URL}/user/verify/${user?.activeCode}`,
+        });
         return ApiResponse.successResponse(
           res,
-          "Register success ,Login to play"
+          "Register success ,check email to active account"
         );
       }
-      return ApiResponse.badRequestResponse(res, "Username has already been");
+      return ApiResponse.badRequestResponse(res, "Email has already been");
     } catch (error) {
       return ApiResponse.serverErrorResponse(res, error.message);
     }
   }
+
   async getUserInfor(req, res) {
     try {
       let _id = res.locals?.user?._id.toString();
@@ -67,6 +81,19 @@ class UserController {
       const { top } = req.query;
       const topRank = await UserService.getTopRank(top);
       return ApiResponse.successResponseWithData(res, "Success", topRank);
+    } catch (error) {
+      console.log(error.message);
+      return ApiResponse.serverErrorResponse(res, error.message);
+    }
+  }
+  async verifyUser(req, res) {
+    const { activeCode } = req.params;
+    try {
+      const success = await UserService.verifyUser(activeCode);
+      if (success) {
+        return ApiResponse.successResponse(res, "active success");
+      }
+      return ApiResponse.badRequestResponse(res, "cannot active account");
     } catch (error) {
       console.log(error.message);
       return ApiResponse.serverErrorResponse(res, error.message);

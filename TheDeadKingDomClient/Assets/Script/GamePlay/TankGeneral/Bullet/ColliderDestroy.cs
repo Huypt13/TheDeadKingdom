@@ -71,7 +71,7 @@ public class ColliderDestroy : MonoBehaviour
 
                 //  ai trung dan , firer gui request
 
-                if (niActive.IsControlling() && ni.GetComponent<AiManager>() != null)
+                if ((niActive.IsControlling() && ni.GetComponent<AiManager>() != null) || ni.tag == "MainHouse")
                 {
                     NetworkClient.serverObjects.Remove(networkIdentity.GetId());
                     networkIdentity.GetSocket().Emit("collisionDestroy", new JSONObject(JsonUtility.ToJson(new IDData()
@@ -101,11 +101,11 @@ public class ColliderDestroy : MonoBehaviour
                     Destroy(gameObject);
                     NetworkClient.serverObjects.Remove(networkIdentity.GetId());
                     networkIdentity.GetSocket().Emit("collisionDestroyBox", new JSONObject(JsonUtility.ToJson(new IDData()
-                        {
-                            id = networkIdentity.GetId(),
-                            enemyId = ni.GetId()
-                        })));
-                    
+                    {
+                        id = networkIdentity.GetId(),
+                        enemyId = ni.GetId()
+                    })));
+
                 }
 
 

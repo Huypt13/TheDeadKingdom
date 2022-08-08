@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
+const dotenv = require("dotenv");
 
 const GameServer = require("./src/gameServer/GameServer");
 const UserRouter = require("./src/api/user/User.router");
@@ -14,10 +15,12 @@ const SocketAuthen = require("./src/api/middlewares/SocketAuthen.middleware");
 const UserService = require("./src/api/user/User.service");
 const HistoryService = require("./src/api/history/History.service");
 const HistoryRouter = require("./src/api/history/History.router");
+const RabbitMq = require("./src/helper/RabbitMq.helper");
 
 const app = express();
 const server = require("http").createServer(app);
 
+dotenv.config();
 app.get("/", (req, res) => {
   res.send("lala");
 });
@@ -77,8 +80,6 @@ app.use("/tank", Authentication, TankRouter);
 app.use("/history", Authentication, HistoryRouter);
 Database.connect();
 server.listen(8080);
-
-//console.log(GameMechanism.getDame({ armor: 99 }, 1000));
 
 const a = (async () => {
   //console.log(await HistoryService.getUserHistory("62979d10f7a5a3b40c332a04"));

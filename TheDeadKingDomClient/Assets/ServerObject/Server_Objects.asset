@@ -49,3 +49,9 @@ MonoBehaviour:
     Prefab: {fileID: 5827310782098950646, guid: 5c3210e0b1323624fa9b1fd557e99180, type: 3}
   - Name: Box_Pile
     Prefab: {fileID: 5827310782098950646, guid: 46bc00af3873cd0429b63f2608c407f4, type: 3}
+  - Name: MainHouse_1
+    Prefab: {fileID: 435882021389006184, guid: e8e873981de974e2ebe322955554cc5a, type: 3}
+  - Name: MainHouse_2
+    Prefab: {fileID: 8433155355017005797, guid: ea09b4433a8e74efb85995846dbe44dc, type: 3}
+  - Name: Flag
+    Prefab: {fileID: 8727531722703825445, guid: 9aacb2c5d9b3c487ead6a8221975653d, type: 3}

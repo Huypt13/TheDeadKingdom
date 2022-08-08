@@ -17,12 +17,22 @@ public class EffectAnimation : MonoBehaviour
 
     public void RemoveEffect(string efId)
     {
-        Debug.Log("remove");
+
         var ni = GetComponent<NetworkIdentity>();
         var efAni = ni.GetEffectZone().transform.Find(efId);
+        Debug.Log("remove " + efAni.name);
+
         if (efAni != null)
         {
-            Destroy(efAni.gameObject);
+            if (efAni.tag == "EfDestroy")
+            {
+                var ani = efAni.GetComponent<Animator>();
+                ani.SetBool("isDestroy", true);
+                Destroy(efAni.gameObject, 0.3f);
+
+            }
+            else
+                Destroy(efAni.gameObject);
         }
     }
 

@@ -18,7 +18,7 @@ module.exports = class LobbyBase {
     let player = connection.player;
 
     console.log(
-      "Player " + player.id + " has entered the lobby (" + lobby.id + ")"
+      "Player " + player._id + " has entered the lobby (" + lobby.id + ")"
     );
 
     lobby.connections.push(connection);
@@ -52,6 +52,7 @@ module.exports = class LobbyBase {
         aiId: item?.aiId,
         name: item.username,
         health: item?.health,
+        maxPoint: item?.maxPoint,
         team: item?.team || 0,
         position,
         type: item?.type,

@@ -63,6 +63,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4147309264590899288, guid: 77d7e407c746f45fab7c0f8d64cb9dce, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 52786b274c91b9343b42f43961fa9e13, type: 3}
     - target: {fileID: 4147309264590899289, guid: 77d7e407c746f45fab7c0f8d64cb9dce, type: 3}
       propertyPath: m_Name
       value: Bullet _ 003 _ LV1 Variant
@@ -72,12 +76,20 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7787227297416949685, guid: 77d7e407c746f45fab7c0f8d64cb9dce, type: 3}
+      propertyPath: m_Size.x
+      value: 0.4200151
+      objectReference: {fileID: 0}
+    - target: {fileID: 7787227297416949685, guid: 77d7e407c746f45fab7c0f8d64cb9dce, type: 3}
       propertyPath: m_Size.y
       value: 0.47877243
       objectReference: {fileID: 0}
     - target: {fileID: 7787227297416949685, guid: 77d7e407c746f45fab7c0f8d64cb9dce, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7787227297416949685, guid: 77d7e407c746f45fab7c0f8d64cb9dce, type: 3}
+      propertyPath: m_Offset.x
+      value: -0.0037719011
       objectReference: {fileID: 0}
     - target: {fileID: 7787227297416949685, guid: 77d7e407c746f45fab7c0f8d64cb9dce, type: 3}
       propertyPath: m_Offset.y

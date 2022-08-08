@@ -1,5 +1,5 @@
-const BaseBox = require("./BaseBox")
-module.exports =  class WoodBox extends BaseBox {
+const BaseBox = require("./BaseBox");
+module.exports = class WoodBox extends BaseBox {
   constructor() {
     super();
     this.type = "Wood";
@@ -8,5 +8,4 @@ module.exports =  class WoodBox extends BaseBox {
     this.maxHealth = 250;
     this.armor = 5;
   }
-
 };

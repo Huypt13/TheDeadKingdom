@@ -13,6 +13,7 @@ module.exports = class SkillOrientation extends ServerObject {
     this.position = { ...Position };
     this.direction;
     this.timeRemain;
+    this.isWait = false;
   }
 
   onUpdate() {

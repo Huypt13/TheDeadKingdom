@@ -130,7 +130,7 @@ public class MenuManager : MonoBehaviour
     {
         var userInfor = new UserInfor();
 
-        userInfor.username = inputUsername.text;
+        userInfor.email = inputUsername.text;
         userInfor.password = inputPassword.text;
 
         using (UnityWebRequest request = UnityWebRequest.Post(uri + "/user", new JSONObject(JsonUtility.ToJson(userInfor))))

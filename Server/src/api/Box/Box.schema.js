@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const BoxSchema = new Schema({
     price: { type: Number},
-    image: { type: String, require: true },
+    image: { type: String},
     rate: [{
         tankId: { type:  String},
         ratio : {type: Number}

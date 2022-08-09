@@ -7,5 +7,6 @@ router.post("/", UserController.login);
 router.post("/create", UserController.register);
 router.get("/infor", Authentication, UserController.getUserInfor);
 router.get("/rank", UserController.getTopRank);
+router.get("/verify/:activeCode", UserController.verifyUser);
 
 module.exports = router;

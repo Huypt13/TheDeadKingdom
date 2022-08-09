@@ -7,6 +7,8 @@ TagManager:
   - BulletThrough
   - HpBox
   - Box
+  - MainHouse
+  - EfDestroy
   layers:
   - Default
   - TransparentFX

@@ -98,9 +98,9 @@ GameObject:
   - component: {fileID: 5473886553321932487}
   - component: {fileID: 4903092221061466073}
   - component: {fileID: 8745201586875249716}
-  - component: {fileID: 6291447765690155079}
   - component: {fileID: 5011451865758560610}
   - component: {fileID: -4470742690439137278}
+  - component: {fileID: 4954157998795105458}
   m_Layer: 0
   m_Name: Tank _  003  _  LV2
   m_TagString: Untagged
@@ -142,7 +142,7 @@ MonoBehaviour:
   bulletSpawnPoint: {fileID: 3724264236492799861}
   rb: {fileID: 8745201586875249716}
   networkIdentity: {fileID: -2469973287835662438}
-  boxCollider: {fileID: 0}
+  boxCollider: {fileID: -4470742690439137278}
 --- !u!114 &-2469973287835662438
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -155,11 +155,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcc4b4838b11f4eb5aedfaaa3d24af3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bullet: {fileID: 4147309264590899289, guid: 77d7e407c746f45fab7c0f8d64cb9dce, type: 3}
+  bullet: {fileID: 4254847838113579267, guid: 2a9dff84a5690462ca1bb2908f1d9b95, type: 3}
   effectZone: {fileID: 5996830720812398036}
-  skill1: {fileID: 2148707699454983006, guid: 8c5d0f118c3454e68af006a66845a61d, type: 3}
-  skill2: {fileID: 8858050853015008802, guid: 2744df9dd860c41b391aa33d218c517d, type: 3}
-  skill3: {fileID: 8440711446829702452, guid: 535857f8bf4cb4d009a6a13220ba082d, type: 3}
+  skill1: {fileID: 7982844841170258264, guid: be40cd041758b4fb5be59eb55b38ebe7, type: 3}
+  skill2: {fileID: 2148707699454983006, guid: 631ef28977c6840ca835b9b65465e6a8, type: 3}
+  skill3: {fileID: 6665555187601314377, guid: 775ee3aa6ac74b340b65db9d01470f81, type: 3}
+  flash: {fileID: 2235466972956639928, guid: 2dea112c9be6b473c9170415ccd3b12e, type: 3}
 --- !u!114 &5473886553321932487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209,20 +210,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &6291447765690155079
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 694932519919396962}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 11f06538b148743fe93ff11f3ae034bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bulletSpawnPoint: {fileID: 3724264236492799861}
-  networkIdentity: {fileID: -2469973287835662438}
 --- !u!114 &5011451865758560610
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -261,6 +248,20 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.1169953, y: 1.0958003}
   m_EdgeRadius: 0
+--- !u!114 &4954157998795105458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 694932519919396962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ebb218a83184447cb741434c65520c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletSpawnPoint: {fileID: 3724264236492799861}
+  networkIdentity: {fileID: -2469973287835662438}
 --- !u!1 &1872485679592109532
 GameObject:
   m_ObjectHideFlags: 0

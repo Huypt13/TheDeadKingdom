@@ -1,5 +1,5 @@
 const ServerObject = require("../ServerObject");
-const GameMechanism = require("../../GameMechanism")
+const GameMechanism = require("../../GameMechanism");
 module.exports = class BaseBox extends ServerObject {
   constructor() {
     super();

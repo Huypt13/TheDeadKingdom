@@ -43,12 +43,18 @@ MonoBehaviour:
     Prefab: {fileID: 9189018206323813231, guid: b9a6aa6ee2c06f94ea592985becda5b7, type: 3}
   - Name: Tank_003_1
     Prefab: {fileID: 694932519919396962, guid: d6491164f377977489bc0f8a741c307f, type: 3}
-  - Name: AI_TOWER_002_3
+  - Name: AI_TOWER_003_3
     Prefab: {fileID: 6665555187601314377, guid: 775ee3aa6ac74b340b65db9d01470f81, type: 3}
   - Name: Box_Iron
     Prefab: {fileID: 5827310782098950646, guid: 5c3210e0b1323624fa9b1fd557e99180, type: 3}
   - Name: Box_Pile
     Prefab: {fileID: 5827310782098950646, guid: 46bc00af3873cd0429b63f2608c407f4, type: 3}
+  - Name: MainHouse_1
+    Prefab: {fileID: 435882021389006184, guid: e8e873981de974e2ebe322955554cc5a, type: 3}
+  - Name: MainHouse_2
+    Prefab: {fileID: 8433155355017005797, guid: ea09b4433a8e74efb85995846dbe44dc, type: 3}
+  - Name: Flag
+    Prefab: {fileID: 8727531722703825445, guid: 9aacb2c5d9b3c487ead6a8221975653d, type: 3}
   - Name: AI_TOWER_02
     Prefab: {fileID: 6665555187601314377, guid: 9b55b44e5d7771e499bb8b36ec9f7e98, type: 3}
   - Name: AI_TOWER_03

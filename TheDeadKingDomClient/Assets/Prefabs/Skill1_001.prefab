@@ -13,9 +13,10 @@ GameObject:
   - component: {fileID: 7589398278872881990}
   - component: {fileID: 6609494354165017309}
   - component: {fileID: -5557888013154430013}
-  - component: {fileID: -5320806763960698496}
   - component: {fileID: 529160271573454174}
   - component: {fileID: 8015965822461317355}
+  - component: {fileID: 9137010110401856132}
+  - component: {fileID: 8757823594090005310}
   m_Layer: 0
   m_Name: Skill1_001
   m_TagString: BulletThrough
@@ -32,7 +33,7 @@ Transform:
   m_GameObject: {fileID: 2148707699454983006}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.05, y: 0.89, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -79,12 +80,12 @@ SpriteRenderer:
   m_SortingLayerID: 966209371
   m_SortingLayer: 4
   m_SortingOrder: 5
-  m_Sprite: {fileID: 21300000, guid: 1aca68caf0b2b42f88108f08e2a387aa, type: 3}
+  m_Sprite: {fileID: -1916460821, guid: bf7d1d1d2ed4746e3a234041a6860d19, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.3125, y: 0.390625}
+  m_Size: {x: 0.3, y: 0.44}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -140,22 +141,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!70 &-5320806763960698496
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2148707699454983006}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.3125, y: 0.390625}
-  m_Direction: 0
 --- !u!114 &529160271573454174
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -182,3 +167,70 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   effect: {fileID: 1480453176265101687, guid: af81e5f851d0f47a1bd86d6372123f32, type: 3}
+--- !u!95 &9137010110401856132
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2148707699454983006}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 4a4974080ac8348c3851c50de423ad0d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!60 &8757823594090005310
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2148707699454983006}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.85, y: 0.45}
+    newSize: {x: 0.3, y: 0.44}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: -0.405, y: -0.16499999}
+      - {x: -0.42499998, y: -0.185}
+      - {x: -0.42499998, y: -0.21499999}
+      - {x: -0.415, y: -0.225}
+      - {x: -0.36499998, y: -0.225}
+      - {x: -0.355, y: -0.185}
+      - {x: -0.375, y: -0.16499999}
+    - - {x: 0.42499998, y: -0.105}
+      - {x: 0.42499998, y: -0.044999998}
+      - {x: 0.235, y: 0.155}
+      - {x: 0.13499999, y: 0.225}
+      - {x: -0.024999999, y: 0.225}
+      - {x: -0.175, y: 0.095}
+      - {x: -0.33499998, y: -0.074999996}
+      - {x: -0.375, y: -0.13499999}
+      - {x: -0.375, y: -0.175}
+      - {x: -0.355, y: -0.195}
+      - {x: -0.265, y: -0.195}
+      - {x: -0.074999996, y: -0.114999995}
+      - {x: 0.085, y: -0.044999998}
+      - {x: 0.345, y: -0.105}
+      - {x: 0.39499998, y: -0.114999995}

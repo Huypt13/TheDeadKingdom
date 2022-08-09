@@ -9,6 +9,18 @@ class UserService {
   async getById(_id) {
     return await User.findOne({ _id }).lean();
   }
+  async getByWalletAddress(walletAddress) {
+    return await User.findOne({ walletAddress }).lean();
+  }
+  async connectWallet(walletAddress, userId) {
+    try {
+      const user = await this.getByWalletAddress(walletAddress);
+      if (!user) return null
+      return User.findByIdAndUpdate(userId, { walletAddress: walletAddress }, { new: true });
+    } catch (e) {
+      throw new Error(error.message);
+    }
+  }
   async getUser({ username, password }) {
     try {
       const user = await this.getByUsername(username);

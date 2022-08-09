@@ -34,6 +34,19 @@ class UserController {
       return ApiResponse.serverErrorResponse(res, error.message);
     }
   }
+ 
+  async connectWalletAddress(req, res){
+    try {
+      const { userId } = req.locals.user._id.tostring();
+      const { walletAddress } = req.body;
+      const user = UserService.connectWallet(walletAddress, userId);
+      if(!user){
+        return ApiResponse.badRequestResponse(res, "Wallet address existed")
+      }
+    } catch (error) {
+      return ApiResponse.serverErrorResponse(res, "Connect to Wallet failed");
+    }
+  }
 
   async register(req, res) {
     try {

@@ -13,6 +13,7 @@ const TankSchema = new Schema({
   attackSpeed: { type: Number, require: true }, // time hoi ban ko phai attack
   bulletSpeed: { type: Number, require: true }, // 100 ms
   shootingRange: { type: Number, require: true },
+  image: { type: String, require: true},
   skill1: {
     name: String,
     description: String,

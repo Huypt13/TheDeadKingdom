@@ -72,6 +72,8 @@ class TankService {
     }
     return null;
   }
+
+  // get tankuser
   async getByTankUserById(_id, userId) {
     return await TankUser.findOne({ _id, userId }).lean();
   }

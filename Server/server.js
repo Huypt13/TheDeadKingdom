@@ -1,14 +1,23 @@
 const express = require("express");
+
+const test = require("./src/utility/test");
+
+
+const listener = require("./src/blockchainListenServer/listener");
+
+
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 
 const GameServer = require("./src/gameServer/GameServer");
 const UserRouter = require("./src/api/user/User.router");
+
 const Database = require("./src/api/database/Database");
 const Tank = require("./src/api/hero/Tank.service");
 
 const Authentication = require("./src/api/middlewares/Authentication.midleware");
 const TankRouter = require("./src/api/hero/Tank.router");
+const BoxRouter = require("./src/api/Box/Box.router");
 const History = require("./src/api/history/History.service");
 const SocketAuthen = require("./src/api/middlewares/SocketAuthen.middleware");
 const UserService = require("./src/api/user/User.service");
@@ -60,6 +69,8 @@ io.on("connection", (socket) => {
   });
 });
 
+// listen blockchain events 
+// listener.init()
 // rest api
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -74,10 +85,11 @@ app.use(
   UserRouter
 );
 app.use("/tank", Authentication, TankRouter);
+app.use("/box", Authentication, BoxRouter);
 app.use("/history", Authentication, HistoryRouter);
 Database.connect();
 server.listen(8080);
-
+test.runTest();
 //console.log(GameMechanism.getDame({ armor: 99 }, 1000));
 
 // const a = (async () => {

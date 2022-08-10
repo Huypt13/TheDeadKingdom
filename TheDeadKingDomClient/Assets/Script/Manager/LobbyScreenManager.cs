@@ -83,7 +83,7 @@ public class LobbyScreenManager : MonoBehaviour
             }
             else
             {
-                Debug.Log("Not enough tank");
+                NotificationManager.Instance.DisplayNotification("You do not have enough remaining", SceneList.LOBBY_SCREEN);
                 isFinding = false;
             }
         }

@@ -29,6 +29,6 @@ public class NotificationManager : Singleton<NotificationManager>
         {
             Destroy(notification);
         });
-        SceneManager.MoveGameObjectToScene(notification, SceneManager.GetSceneByName(SceneList.MAIN_MENU));
+        SceneManager.MoveGameObjectToScene(notification, SceneManager.GetSceneByName(sceneName));
     }
 }

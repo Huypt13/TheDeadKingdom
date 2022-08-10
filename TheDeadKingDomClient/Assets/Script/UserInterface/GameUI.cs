@@ -23,6 +23,7 @@ public class GameUI : MonoBehaviour
     [SerializeField]
     private Transform chatBox;
     private float count = 0;
+
     [SerializeField]
     private Text totalKillTeam2;
 
@@ -35,14 +36,14 @@ public class GameUI : MonoBehaviour
     [SerializeField]
     private Image imageSkill3;
 
+    [SerializeField]
+    private Text txtGameMode;
+
     public void Start()
     {
         InitKillDead();
-        imageSkill1.type = Image.Type.Filled;
-        imageSkill2.type = Image.Type.Filled;
-        imageSkill3.type = Image.Type.Filled;
-
-
+        NetworkClient.OnLoadGameMode = LoadGameMode;
+        NetworkClient.OnSpawnMyTank = ChangeTankUI;
         NetworkClient.OnGameStateChange = OnGameStateChange;
         NetworkClient.OnTimeUpdate = OnTimeUpdate;
         NetworkClient.OnKillDeadUpdate = OnKillDeadUpdate;
@@ -54,6 +55,29 @@ public class GameUI : MonoBehaviour
     {
         OnChatBoxUpdate();
         OnChatBoxViewUpdate();
+    }
+
+    private void LoadGameMode(string gameMode, string map)
+    {
+        txtGameMode.text = gameMode;
+    }
+
+    private void ChangeTankUI(string tankType, float tankLevel)
+    {
+        imageSkill1.type = Image.Type.Filled;
+        imageSkill2.type = Image.Type.Filled;
+        imageSkill3.type = Image.Type.Filled;
+
+        imageSkill1.sprite = ImageManager.Instance.GetImage(tankType, tankLevel, ImageManager.ImageType.Skill1);
+        imageSkill1.gameObject.transform.GetChild(0).GetComponent<Image>().sprite = ImageManager.Instance.GetImage(tankType, tankLevel, ImageManager.ImageType.Skill1);
+
+        imageSkill2.sprite = ImageManager.Instance.GetImage(tankType, tankLevel, ImageManager.ImageType.Skill2);
+        imageSkill2.gameObject.transform.GetChild(0).GetComponent<Image>().sprite = ImageManager.Instance.GetImage(tankType, tankLevel, ImageManager.ImageType.Skill2);
+
+        imageSkill3.sprite = ImageManager.Instance.GetImage(tankType, tankLevel, ImageManager.ImageType.Skill3);
+        imageSkill3.gameObject.transform.GetChild(0).GetComponent<Image>().sprite = ImageManager.Instance.GetImage(tankType, tankLevel, ImageManager.ImageType.Skill3);
+
+
     }
 
     private void OnGameStateChange(SocketIOEvent e)
@@ -143,9 +167,9 @@ public class GameUI : MonoBehaviour
     public float time;
     private void OnChatBoxUpdate()
     {
-        if (!ChatBoxInfor.IsTurnChatBox &&Input.GetKeyDown(KeyCode.Return))
+        if (!ChatBoxInfor.IsTurnChatBox && Input.GetKeyDown(KeyCode.Return))
         {
-            
+
             chatBox.Find("Input").transform.gameObject
                 .SetActive(true);
             chatBox.Find("ScrollView").transform.gameObject
@@ -159,28 +183,28 @@ public class GameUI : MonoBehaviour
             chatBox.Find("Input").transform.gameObject
                 .SetActive(false);
             count = Time.time;
-            StartCoroutine(DoEvent());     
+            StartCoroutine(DoEvent());
 
-           ChatBoxInfor.IsTurnChatBox = false;
+            ChatBoxInfor.IsTurnChatBox = false;
         }
     }
     public IEnumerator DoEvent()
     {
-        yield return new WaitUntil(() => Mathf.Floor(Time.time - count) > 3); 
-        if(!ChatBoxInfor.IsTurnChatBox)
-        ChatBoxInfor.IsTurnChatView = true;
-                
+        yield return new WaitUntil(() => Mathf.Floor(Time.time - count) > 3);
+        if (!ChatBoxInfor.IsTurnChatBox)
+            ChatBoxInfor.IsTurnChatView = true;
+
     }
     public void OnChatBoxViewUpdate()
     {
-        if(ChatBoxInfor.IsTurnChatView && !ChatBoxInfor.IsTurnChatBox)
+        if (ChatBoxInfor.IsTurnChatView && !ChatBoxInfor.IsTurnChatBox)
         {
             chatBox.Find("ScrollView").transform.gameObject
                 .SetActive(false);
         }
     }
 
-   
+
 
 
 }

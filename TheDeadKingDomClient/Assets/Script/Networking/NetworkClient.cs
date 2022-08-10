@@ -38,6 +38,8 @@ public class NetworkClient : SocketIOComponent
     public static Action<SocketIOEvent> OnResultMatch = (E) => { };
     public static Action<SocketIOEvent> OnChat = (E) => { };
     public static Action<SocketIOEvent> OnStartChat = (E) => { };
+    public static Action<string, float> OnSpawnMyTank = (type, level) => { };
+    public static Action<string, string> OnLoadGameMode = (gameMode, map) => { };
 
     public static Action<SocketIOEvent> OnUpdatePosition = (E) => { };
 
@@ -109,7 +111,7 @@ public class NetworkClient : SocketIOComponent
                 if (ClientID == id)
                 {
                     healthBar.setIsMyHealth(true);
-
+                    OnSpawnMyTank.Invoke(tankId, tankLevel);
                 }
 
                 healthBar.team = team;
@@ -786,6 +788,8 @@ public class NetworkClient : SocketIOComponent
         {
             Debug.Log("reload game");
             string map = E.data["map"].str;
+            string gameMode = E.data["gameMode"].str;
+            OnLoadGameMode.Invoke(gameMode, map);
             myMap = map;
             OnStartChat.Invoke(E);
             SceneManagement.Instance.LoadLevel(map, (levelName) =>
@@ -797,6 +801,8 @@ public class NetworkClient : SocketIOComponent
         {
             Debug.Log("Join game");
             string map = E.data["map"].str;
+            string gameMode = E.data["gameMode"].str;
+            OnLoadGameMode.Invoke(gameMode, map);
             myMap = map;
             OnStartChat.Invoke(E);
             SceneManagement.Instance.LoadLevel(map, (levelName) =>

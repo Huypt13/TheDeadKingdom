@@ -287,6 +287,8 @@ module.exports = class GameLobby extends LobbyBase {
             kill: connection.player.kill,
             dead: connection.player.dead,
             team: connection.player.team,
+            tankType: connection.player.startTank.typeId,
+            tankLevel: connection.player.startTank.level,
           };
         }),
       };
@@ -369,9 +371,11 @@ module.exports = class GameLobby extends LobbyBase {
           console.log("join game");
           this.connections[0].socket.emit("loadGame", {
             map: this.settings.map,
+            gameMode: this.settings.gameMode
           });
           this.connections[0].socket.broadcast.to(this.id).emit("loadGame", {
             map: this.settings.map,
+            gameMode: this.settings.gameMode
           });
           const returnData = {
             state: this.lobbyState.currentState,
@@ -1323,6 +1327,7 @@ module.exports = class GameLobby extends LobbyBase {
     // update map
     connection.socket.emit("reloadGame", {
       map: this.settings.map,
+      gameMode: this.settings.gameMode
     });
     const returnData = {
       state: this.lobbyState.currentState,

@@ -52,6 +52,12 @@ public class WaitingSceneManagement : MonoBehaviour
     [SerializeField]
     private GameObject tooltip;
 
+    [SerializeField]
+    private Text txtGameMode;
+
+    [SerializeField]
+    private Text txtGameMap;
+
     private string skill1Description;
     private string skill2Description;
     private string skill3Description;
@@ -71,6 +77,8 @@ public class WaitingSceneManagement : MonoBehaviour
         LoadListTank();
         NetworkClient.OnUpdatePlayer = UpdatePlayer;
         NetworkClient.OnChangeHero = ChangeHero;
+
+        tankPickedBackground.SetActive(false);
     }
 
     public void DisplayTooltip(int skill)
@@ -124,6 +132,12 @@ public class WaitingSceneManagement : MonoBehaviour
 
     private void UpdatePlayer(SocketIOEvent e)
     {
+        string gameMode = e.data["gameMode"].str;
+        string map = e.data["map"].str;
+        txtGameMode.text = "Game Mode: " + gameMode;
+        txtGameMap.text = "Map: " + map;
+        //Debug.Log("Game Mode: " + gameMode + " - Map: " + map);
+
         foreach (Transform child in teammateContainer.transform)
         {
             GameObject.Destroy(child.gameObject);
@@ -199,6 +213,9 @@ public class WaitingSceneManagement : MonoBehaviour
     {
         // gui _id
         SocketReference.Emit("chooseHero", t._id);
+
+        tankPickedBackground.SetActive(true);
+
         tankPickedName.GetComponent<Text>().text = t.tank.name + " - level " + t.tank.level;
         tankPickedRole.GetComponent<Text>().text = "Remain: " + t.remaining;
         tankPickedBackground.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(t.tank.typeId, t.tank.level, ImageManager.ImageType.TankBackground);

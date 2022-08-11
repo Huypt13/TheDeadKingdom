@@ -198,6 +198,16 @@ public class LobbyScreenManager : MonoBehaviour
         }
     }
 
+    public void LoadListRank()
+    {
+        if (!isFinding)
+        {
+            SceneManagement.Instance.LoadLevel(SceneList.LIST_RANK, (levelName) =>
+            {
+            });
+        }
+    }
+
     public void ChangeResolution(int option)
     {
         int[] width = { 1920, 1366, 1280 };

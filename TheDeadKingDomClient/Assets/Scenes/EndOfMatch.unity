@@ -965,7 +965,7 @@ MonoBehaviour:
   imageStar: {fileID: 1867008158}
   txtMasterStar: {fileID: 81219257}
   imageSingleStar: {fileID: 1836385727}
-  txtCoinReward: {fileID: 0}
+  txtCoinReward: {fileID: 1968758218}
   txtCongratulationRank: {fileID: 451936379}
   imageCongratulationRank: {fileID: 648114897}
   canvasResult: {fileID: 1403126996}

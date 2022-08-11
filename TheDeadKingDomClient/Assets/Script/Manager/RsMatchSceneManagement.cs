@@ -150,7 +150,7 @@ public class RsMatchSceneManagement : MonoBehaviour
                 txtPlayerName.GetComponent<Text>().color = Color.green;
                 txtKillDead.GetComponent<Text>().color = Color.green;
 
-                imgTankEndgame.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(tankType, tankLevel, ImageManager.ImageType.TankDetail);
+                imgTankEndgame.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(tankType, tankLevel, ImageManager.ImageType.TankEndMatch);
 
                 txtCoinReward.text = "x3";
             }

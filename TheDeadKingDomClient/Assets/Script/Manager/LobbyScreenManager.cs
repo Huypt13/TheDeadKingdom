@@ -61,6 +61,7 @@ public class LobbyScreenManager : MonoBehaviour
 
         dropdownResolution.onValueChanged.AddListener((option) => { ChangeResolution(option); });
 
+        myTankList = new List<TankRemain>();
     }
 
     // Update is called once per frame

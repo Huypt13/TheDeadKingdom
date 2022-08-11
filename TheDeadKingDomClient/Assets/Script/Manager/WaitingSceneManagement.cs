@@ -122,7 +122,7 @@ public class WaitingSceneManagement : MonoBehaviour
         Debug.Log("change hero" + id + "." + typeId + "." + level);
         GameObject teammatePickTank = teammateDictionary[id];
         GameObject txtTankName = teammatePickTank.transform.GetChild(2).gameObject;
-        txtTankName.GetComponent<Text>().text = typeId + "-" + level;
+        txtTankName.GetComponent<Text>().text = "";// typeId + "-" + level;
 
         GameObject imgTankIcon = teammatePickTank.transform.GetChild(0).gameObject;
         imgTankIcon.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(typeId, level, ImageManager.ImageType.TankIconCircle);
@@ -186,25 +186,33 @@ public class WaitingSceneManagement : MonoBehaviour
 
         LobbyScreenManager.myTankList.ForEach(e =>
         {
-
-            GameObject btnPickTank = Instantiate(prefabButtonPickTank);
-            btnPickTank.transform.parent = playerTanksContainer.transform;
-            btnPickTank.transform.localScale = new Vector3(1f, 1f, 1f);
-            btnPickTank.transform.localPosition = new Vector3(btnPickTank.transform.localPosition.x, btnPickTank.transform.localPosition.y, 0f);
-            btnPickTank.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(e.tank.typeId, e.tank.level, ImageManager.ImageType.TankIcon);
             if (e.remaining > 0)
             {
+                GameObject btnPickTank = Instantiate(prefabButtonPickTank);
+                btnPickTank.transform.parent = playerTanksContainer.transform;
+                btnPickTank.transform.localScale = new Vector3(1f, 1f, 1f);
+                btnPickTank.transform.localPosition = new Vector3(btnPickTank.transform.localPosition.x, btnPickTank.transform.localPosition.y, 0f);
+                btnPickTank.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(e.tank.typeId, e.tank.level, ImageManager.ImageType.TankIcon);
+
                 btnPickTank.GetComponent<Button>().onClick.AddListener(() =>
                 {
                     ChooseHero(e);
                 });
             }
-            else
+        });
+
+        LobbyScreenManager.myTankList.ForEach(e =>
+        {
+            if (e.remaining <= 0)
             {
+                GameObject btnPickTank = Instantiate(prefabButtonPickTank);
+                btnPickTank.transform.parent = playerTanksContainer.transform;
+                btnPickTank.transform.localScale = new Vector3(1f, 1f, 1f);
+                btnPickTank.transform.localPosition = new Vector3(btnPickTank.transform.localPosition.x, btnPickTank.transform.localPosition.y, 0f);
+                btnPickTank.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(e.tank.typeId, e.tank.level, ImageManager.ImageType.TankIcon);
+
                 btnPickTank.GetComponent<Button>().interactable = false;
             }
-
-
         });
     }
 

@@ -240,7 +240,10 @@ public class LobbyScreenManager : MonoBehaviour
         });
 
         if (PlayerPrefs.HasKey("gameResolution"))
+        {
             dropdownResolution.value = PlayerPrefs.GetInt("gameResolution");
+            PlayerPrefs.SetInt("gameResolution", dropdownResolution.value);
+        }
         dropdownResolution.onValueChanged.AddListener((option) => { ChangeResolution(option); });
     }
 

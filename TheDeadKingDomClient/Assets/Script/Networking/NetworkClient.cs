@@ -39,6 +39,8 @@ public class NetworkClient : SocketIOComponent
     public static Action<SocketIOEvent> OnChat = (E) => { };
     public static Action<SocketIOEvent> OnStartChat = (E) => { };
     public static Action<SocketIOEvent> OnSpawnMyTank = (E) => { };
+    public static Action<float> OnPlayerDied = (time) => { };
+    public static Action OnPlayerRespawn = () => { };
     public static Action<string, string> OnLoadGameMode = (gameMode, map) => { };
 
     public static Action<SocketIOEvent> OnUpdatePosition = (E) => { };
@@ -621,6 +623,11 @@ public class NetworkClient : SocketIOComponent
             if (ni.gameObject.tag != "HpBox")
                 ni.getHealthBar()?.transform.parent.gameObject.SetActive(true);
             ni.getHealthBar().SetHealth(health);
+
+            if (id == ClientID)
+            {
+                OnPlayerRespawn.Invoke();
+            }
         });
         On("stopLoading", (e) =>
         {
@@ -730,6 +737,11 @@ public class NetworkClient : SocketIOComponent
 
             ni.getHealthBar().transform.parent.gameObject.SetActive(false);
             ni.gameObject.SetActive(false);
+
+            if (id == ClientID)
+            {
+                OnPlayerDied.Invoke(3f);
+            }
         });
 
         On("boxDied", (e) =>

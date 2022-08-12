@@ -44,11 +44,21 @@ public class GameUI : MonoBehaviour
     private string skill3Description;
 
     [SerializeField]
+    private Text txtDeadTimeCountdown;
+
+    [SerializeField]
+    private GameObject panelDead;
+
+    private float deadTime;
+
+    [SerializeField]
     private GameObject tooltip;
 
     public void Start()
     {
         InitKillDead();
+        NetworkClient.OnPlayerDied = DisplayDeadPanel;
+        NetworkClient.OnPlayerRespawn = RemoveDeadPanel;
         NetworkClient.OnLoadGameMode = LoadGameMode;
         NetworkClient.OnSpawnMyTank = ChangeTankUI;
         NetworkClient.OnGameStateChange = OnGameStateChange;
@@ -90,6 +100,29 @@ public class GameUI : MonoBehaviour
 
         imageSkill3.sprite = ImageManager.Instance.GetImage(tankType, tankLevel, ImageManager.ImageType.Skill3);
         imageSkill3.gameObject.transform.GetChild(0).GetComponent<Image>().sprite = ImageManager.Instance.GetImage(tankType, tankLevel, ImageManager.ImageType.Skill3);
+    }
+
+    private void DisplayDeadPanel(float dtime)
+    {
+        deadTime = dtime;
+        panelDead.SetActive(true);
+        InvokeRepeating("SetTime", 0f, 1f);
+    }
+
+    private void RemoveDeadPanel()
+    {
+        //CancelInvoke("SetTime");
+        panelDead.SetActive(false);
+    }
+
+    void SetTime()
+    {
+        txtDeadTimeCountdown.text = deadTime.ToString();  //  time
+        if (deadTime == 0)
+        {
+            CancelInvoke("SetTime");
+        }
+        deadTime--;
     }
 
     public void DisplayTooltip(int skill)

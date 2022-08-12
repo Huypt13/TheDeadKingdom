@@ -39,6 +39,13 @@ public class GameUI : MonoBehaviour
     [SerializeField]
     private Text txtGameMode;
 
+    private string skill1Description;
+    private string skill2Description;
+    private string skill3Description;
+
+    [SerializeField]
+    private GameObject tooltip;
+
     public void Start()
     {
         InitKillDead();
@@ -62,8 +69,15 @@ public class GameUI : MonoBehaviour
         txtGameMode.text = gameMode;
     }
 
-    private void ChangeTankUI(string tankType, float tankLevel)
+    private void ChangeTankUI(SocketIOEvent E)
     {
+        string tankType = E.data["tank"]["typeId"].str;
+        float tankLevel = E.data["tank"]["level"].f;
+
+        skill1Description = E.data["tank"]["skill1"]["name"] + ": " + E.data["tank"]["skill1"]["description"];
+        skill2Description = E.data["tank"]["skill2"]["name"] + ": " + E.data["tank"]["skill2"]["description"];
+        skill3Description = E.data["tank"]["skill3"]["name"] + ": " + E.data["tank"]["skill3"]["description"];
+
         imageSkill1.type = Image.Type.Filled;
         imageSkill2.type = Image.Type.Filled;
         imageSkill3.type = Image.Type.Filled;
@@ -76,8 +90,29 @@ public class GameUI : MonoBehaviour
 
         imageSkill3.sprite = ImageManager.Instance.GetImage(tankType, tankLevel, ImageManager.ImageType.Skill3);
         imageSkill3.gameObject.transform.GetChild(0).GetComponent<Image>().sprite = ImageManager.Instance.GetImage(tankType, tankLevel, ImageManager.ImageType.Skill3);
+    }
 
+    public void DisplayTooltip(int skill)
+    {
 
+        switch (skill)
+        {
+            case 1:
+                tooltip.GetComponent<Tooltip>().ShowTooltip(skill1Description);
+                break;
+            case 2:
+                tooltip.GetComponent<Tooltip>().ShowTooltip(skill2Description);
+                break;
+            case 3:
+                tooltip.GetComponent<Tooltip>().ShowTooltip(skill3Description);
+                break;
+        }
+
+    }
+
+    public void HideTooltip()
+    {
+        tooltip.GetComponent<Tooltip>().HideTooltip();
     }
 
     private void OnGameStateChange(SocketIOEvent e)

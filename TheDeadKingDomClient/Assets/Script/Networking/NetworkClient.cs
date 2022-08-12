@@ -38,7 +38,7 @@ public class NetworkClient : SocketIOComponent
     public static Action<SocketIOEvent> OnResultMatch = (E) => { };
     public static Action<SocketIOEvent> OnChat = (E) => { };
     public static Action<SocketIOEvent> OnStartChat = (E) => { };
-    public static Action<string, float> OnSpawnMyTank = (type, level) => { };
+    public static Action<SocketIOEvent> OnSpawnMyTank = (E) => { };
     public static Action<string, string> OnLoadGameMode = (gameMode, map) => { };
 
     public static Action<SocketIOEvent> OnUpdatePosition = (E) => { };
@@ -111,7 +111,7 @@ public class NetworkClient : SocketIOComponent
                 if (ClientID == id)
                 {
                     healthBar.setIsMyHealth(true);
-                    OnSpawnMyTank.Invoke(tankId, tankLevel);
+                    OnSpawnMyTank.Invoke(E);
                 }
 
                 healthBar.team = team;

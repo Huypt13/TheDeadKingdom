@@ -29,6 +29,9 @@ public class LobbyScreenManager : MonoBehaviour
     private Dropdown dropdownResolution;
 
     [SerializeField]
+    private Slider sliderAudioVolume;
+
+    [SerializeField]
     private Text txtRank;
 
     [SerializeField]
@@ -46,6 +49,7 @@ public class LobbyScreenManager : MonoBehaviour
     [SerializeField]
     private Text txtPlayerName;
 
+
     public SocketIOComponent SocketReference
     {
         get
@@ -59,7 +63,7 @@ public class LobbyScreenManager : MonoBehaviour
         StartCoroutine(GetListTank(MenuManager.uri));
         StartCoroutine(GetUserInfor(MenuManager.uri));
 
-        dropdownResolution.onValueChanged.AddListener((option) => { ChangeResolution(option); });
+        SetupSetting();
 
         myTankList = new List<TankRemain>();
     }
@@ -214,5 +218,48 @@ public class LobbyScreenManager : MonoBehaviour
         int[] width = { 1920, 1366, 1280 };
         int[] height = { 1080, 768, 720 };
         Screen.SetResolution(width[option], height[option], FullScreenMode.Windowed);
+
+        PlayerPrefs.SetInt("gameResolution", option);
+    }
+
+    private void SetupSetting()
+    {
+        float volume = 1f;
+        if (PlayerPrefs.HasKey("gameVolume"))
+            volume = PlayerPrefs.GetFloat("gameVolume");
+
+        PlayerPrefs.SetFloat("gameVolume", volume);
+
+        AudioManager.Instance.SetVolume(volume);
+        sliderAudioVolume.value = volume;
+
+        sliderAudioVolume.onValueChanged.AddListener((float value) =>
+        {
+            PlayerPrefs.SetFloat("gameVolume", sliderAudioVolume.value);
+            AudioManager.Instance.SetVolume(sliderAudioVolume.value);
+        });
+
+        if (PlayerPrefs.HasKey("gameResolution"))
+            dropdownResolution.value = PlayerPrefs.GetInt("gameResolution");
+        dropdownResolution.onValueChanged.AddListener((option) => { ChangeResolution(option); });
+    }
+
+    public void Logout()
+    {
+        if (!isFinding)
+        {
+            Debug.Log("Acces token: " + MenuManager.access_token);
+            MenuManager.access_token = "";
+            SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
+            {
+                Debug.Log("Acces token: " + MenuManager.access_token);
+                SceneManagement.Instance.UnLoadLevel(SceneList.LOBBY_SCREEN);
+            });
+        }
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 }

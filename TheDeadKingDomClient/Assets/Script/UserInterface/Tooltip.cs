@@ -17,6 +17,8 @@ public class Tooltip : MonoBehaviour
         HideTooltip();
 
         GetComponentInParent<Canvas>().worldCamera = Camera.main;
+        GetComponentInParent<Canvas>().sortingLayerName = "GamePlay";
+        GetComponentInParent<Canvas>().sortingOrder = 1;
     }
 
     // Update is called once per frame

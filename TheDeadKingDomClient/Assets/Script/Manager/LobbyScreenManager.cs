@@ -14,12 +14,41 @@ public class LobbyScreenManager : MonoBehaviour
 
     public static List<TankRemain> myTankList;
 
+    public static int playerStar;
+
+    public static string playerName;
+
     private float time = 0;
 
     private bool canJoin = false;
 
     [SerializeField]
     private Text findMatchText;
+
+    [SerializeField]
+    private Dropdown dropdownResolution;
+
+    [SerializeField]
+    private Slider sliderAudioVolume;
+
+    [SerializeField]
+    private Text txtRank;
+
+    [SerializeField]
+    private Image imageRank;
+
+    [SerializeField]
+    private Image imageStar;
+
+
+    [SerializeField]
+    private Text txtMasterStar;
+    [SerializeField]
+    private Image imageSingleStar;
+
+    [SerializeField]
+    private Text txtPlayerName;
+
 
     public SocketIOComponent SocketReference
     {
@@ -32,6 +61,11 @@ public class LobbyScreenManager : MonoBehaviour
     void Start()
     {
         StartCoroutine(GetListTank(MenuManager.uri));
+        StartCoroutine(GetUserInfor(MenuManager.uri));
+
+        SetupSetting();
+
+        myTankList = new List<TankRemain>();
     }
 
     // Update is called once per frame
@@ -54,7 +88,7 @@ public class LobbyScreenManager : MonoBehaviour
             }
             else
             {
-                Debug.Log("Not enough tank");
+                NotificationManager.Instance.DisplayNotification("You do not have enough remaining", SceneList.LOBBY_SCREEN);
                 isFinding = false;
             }
         }
@@ -104,11 +138,56 @@ public class LobbyScreenManager : MonoBehaviour
         }
     }
 
+    private IEnumerator GetUserInfor(string uri)
+    {
+        using (UnityWebRequest request = UnityWebRequest.Get(uri + "/user/infor"))
+        {
+            request.SetRequestHeader("x-access-token", MenuManager.access_token);
+            yield return request.SendWebRequest();
+
+            if (request.isNetworkError)
+            {
+                Debug.Log("Error: " + request.error);
+            }
+            else
+            {
+                var jo = JObject.Parse(request.downloadHandler.text);
+                playerStar = jo["data"]["numOfStars"].ToObject<int>();
+                playerName = jo["data"]["username"].ToObject<string>();
+
+                txtPlayerName.text = playerName;
+
+                txtRank.text = ImageManager.Instance.GetRankName(playerStar);
+                imageRank.sprite = ImageManager.Instance.GetRankImage(playerStar);
+                if (playerStar <= 100)
+                {
+                    imageStar.sprite = ImageManager.Instance.GetStarImage(playerStar);
+                }
+                else
+                {
+                    imageStar.gameObject.SetActive(false);
+                    imageSingleStar.gameObject.SetActive(true);
+                    txtMasterStar.text = (playerStar % 100) + "";
+                }
+            }
+        }
+    }
+
     public void LoadTanksInventory()
     {
         if (!isFinding)
         {
             SceneManagement.Instance.LoadLevel(SceneList.TANK_INVENTORY, (levelName) =>
+            {
+            });
+        }
+    }
+
+    public void LoadLeaderboard()
+    {
+        if (!isFinding)
+        {
+            SceneManagement.Instance.LoadLevel(SceneList.LEADERBOARD, (levelName) =>
             {
             });
         }
@@ -122,5 +201,68 @@ public class LobbyScreenManager : MonoBehaviour
             {
             });
         }
+    }
+
+    public void LoadListRank()
+    {
+        if (!isFinding)
+        {
+            SceneManagement.Instance.LoadLevel(SceneList.LIST_RANK, (levelName) =>
+            {
+            });
+        }
+    }
+
+    public void ChangeResolution(int option)
+    {
+        int[] width = { 1920, 1366, 1280 };
+        int[] height = { 1080, 768, 720 };
+        Screen.SetResolution(width[option], height[option], FullScreenMode.Windowed);
+
+        PlayerPrefs.SetInt("gameResolution", option);
+    }
+
+    private void SetupSetting()
+    {
+        float volume = 1f;
+        if (PlayerPrefs.HasKey("gameVolume"))
+            volume = PlayerPrefs.GetFloat("gameVolume");
+
+        PlayerPrefs.SetFloat("gameVolume", volume);
+
+        AudioManager.Instance.SetVolume(volume);
+        sliderAudioVolume.value = volume;
+
+        sliderAudioVolume.onValueChanged.AddListener((float value) =>
+        {
+            PlayerPrefs.SetFloat("gameVolume", sliderAudioVolume.value);
+            AudioManager.Instance.SetVolume(sliderAudioVolume.value);
+        });
+
+        if (PlayerPrefs.HasKey("gameResolution"))
+        {
+            dropdownResolution.value = PlayerPrefs.GetInt("gameResolution");
+            PlayerPrefs.SetInt("gameResolution", dropdownResolution.value);
+        }
+        dropdownResolution.onValueChanged.AddListener((option) => { ChangeResolution(option); });
+    }
+
+    public void Logout()
+    {
+        if (!isFinding)
+        {
+            Debug.Log("Acces token: " + MenuManager.access_token);
+            MenuManager.access_token = "";
+            SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
+            {
+                Debug.Log("Acces token: " + MenuManager.access_token);
+                SceneManagement.Instance.UnLoadLevel(SceneList.LOBBY_SCREEN);
+            });
+        }
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 }

@@ -38,6 +38,10 @@ public class NetworkClient : SocketIOComponent
     public static Action<SocketIOEvent> OnResultMatch = (E) => { };
     public static Action<SocketIOEvent> OnChat = (E) => { };
     public static Action<SocketIOEvent> OnStartChat = (E) => { };
+    public static Action<SocketIOEvent> OnSpawnMyTank = (E) => { };
+    public static Action<float> OnPlayerDied = (time) => { };
+    public static Action OnPlayerRespawn = () => { };
+    public static Action<string, string> OnLoadGameMode = (gameMode, map) => { };
 
     public static Action<SocketIOEvent> OnUpdatePosition = (E) => { };
 
@@ -109,7 +113,7 @@ public class NetworkClient : SocketIOComponent
                 if (ClientID == id)
                 {
                     healthBar.setIsMyHealth(true);
-
+                    OnSpawnMyTank.Invoke(E);
                 }
 
                 healthBar.team = team;
@@ -619,6 +623,11 @@ public class NetworkClient : SocketIOComponent
             if (ni.gameObject.tag != "HpBox")
                 ni.getHealthBar()?.transform.parent.gameObject.SetActive(true);
             ni.getHealthBar().SetHealth(health);
+
+            if (id == ClientID)
+            {
+                OnPlayerRespawn.Invoke();
+            }
         });
         On("stopLoading", (e) =>
         {
@@ -728,6 +737,11 @@ public class NetworkClient : SocketIOComponent
 
             ni.getHealthBar().transform.parent.gameObject.SetActive(false);
             ni.gameObject.SetActive(false);
+
+            if (id == ClientID)
+            {
+                OnPlayerDied.Invoke(3f);
+            }
         });
 
         On("boxDied", (e) =>
@@ -786,6 +800,8 @@ public class NetworkClient : SocketIOComponent
         {
             Debug.Log("reload game");
             string map = E.data["map"].str;
+            string gameMode = E.data["gameMode"].str;
+            OnLoadGameMode.Invoke(gameMode, map);
             myMap = map;
             OnStartChat.Invoke(E);
             SceneManagement.Instance.LoadLevel(map, (levelName) =>
@@ -797,6 +813,8 @@ public class NetworkClient : SocketIOComponent
         {
             Debug.Log("Join game");
             string map = E.data["map"].str;
+            string gameMode = E.data["gameMode"].str;
+            OnLoadGameMode.Invoke(gameMode, map);
             myMap = map;
             OnStartChat.Invoke(E);
             SceneManagement.Instance.LoadLevel(map, (levelName) =>

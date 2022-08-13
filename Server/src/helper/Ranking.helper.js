@@ -16,5 +16,4 @@ const getStar = (star) => {
 const getLevelRank = (star) => {
   return Math.floor(star / 30);
 };
-console.log(getRank(119) + " " + getStar(119));
 module.exports = { getRank, getStar, getLevelRank };

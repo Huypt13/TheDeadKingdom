@@ -2,6 +2,7 @@ const UserService = require("./User.service");
 const ApiResponse = require("../../utility/ApiResponse");
 const Jwt = require("../../helper/Jwt.helper");
 const { registerNotify } = require("../../helper/RabbitMq.helper");
+const Redis = require("../../helper/Redis.helper");
 
 class UserController {
   async login(req, res) {
@@ -17,16 +18,25 @@ class UserController {
             "Please confirm email to active your account"
           );
         }
-        if (gameServer.connections[user._id]) {
-          gameServer.connections[user._id].socket.emit(
-            "someoneLoginYourAccount",
-            { id: user._id }
-          );
-          // leave gameserver
-          gameServer.onDisconnected(gameServer.connections[user._id]);
+        if (userinfor?.inWeb) {
+          if (gameServer.connections[user._id]) {
+            gameServer.connections[user._id].socket.emit(
+              "someoneLoginYourAccount",
+              { id: user._id }
+            );
+            // leave gameserver
+            gameServer.onDisconnected(gameServer.connections[user._id]);
+          }
         }
-        const tokenData = await Jwt.signData({ _id: user?._id });
-        console.log("lala", tokenData);
+        const tokenData = await Jwt.signData(
+          { _id: user?._id },
+          +process.env.AccessToken_Time
+        );
+        await Redis.saveWithTtl(
+          tokenData,
+          user?._id.toString(),
+          +process.env.AccessToken_Time
+        );
         return ApiResponse.successResponseWithData(res, "Success", {
           // tra ve token ms dung
           token: tokenData,
@@ -42,6 +52,15 @@ class UserController {
     }
   }
 
+  async logout(req, res) {
+    try {
+      let token = req.header("x-access-token");
+      await Redis.saveWithTtl(token, "", 0);
+      return ApiResponse.successResponse(res, "Login success");
+    } catch (error) {
+      return ApiResponse.serverErrorResponse(res, error.message);
+    }
+  }
   async register(req, res) {
     try {
       let userinfor = req.body;
@@ -76,6 +95,7 @@ class UserController {
       return ApiResponse.serverErrorResponse(res, error.message);
     }
   }
+
   async getTopRank(req, res) {
     try {
       const { top } = req.query;

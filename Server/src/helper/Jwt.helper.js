@@ -1,14 +1,19 @@
 const jwt = require("jsonwebtoken");
 const GameInfor = require("./GameInfor.helper");
 
-module.exports.signData = (data) => {
+module.exports.signData = (data, expire) => {
   return new Promise((resolve, reject) => {
-    jwt.sign(data, GameInfor.SECRET_KEY, (err, token) => {
-      if (err) {
-        reject(err);
+    jwt.sign(
+      data,
+      GameInfor.SECRET_KEY,
+      { expiresIn: expire },
+      (err, token) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(token);
       }
-      resolve(token);
-    });
+    );
   });
 };
 

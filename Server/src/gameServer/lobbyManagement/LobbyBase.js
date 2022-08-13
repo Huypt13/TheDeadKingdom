@@ -27,7 +27,7 @@ module.exports = class LobbyBase {
     connection.lobby = lobby;
   }
   onLeaveLobby(connection = Connection) {
-    console.log(`player ${connection.player.id} leave lobby ${this.id}`);
+    console.log(`player ${connection.player._id} leave lobby ${this.id}`);
     connection.lobby = undefined;
     let index = this.connections.indexOf(connection);
     if (index > -1) {

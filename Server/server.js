@@ -6,17 +6,11 @@ const dotenv = require("dotenv");
 const GameServer = require("./src/gameServer/GameServer");
 const UserRouter = require("./src/api/user/User.router");
 const Database = require("./src/api/database/Database");
-const Tank = require("./src/api/hero/Tank.service");
 
 const Authentication = require("./src/api/middlewares/Authentication.midleware");
 const TankRouter = require("./src/api/hero/Tank.router");
-const History = require("./src/api/history/History.service");
 const SocketAuthen = require("./src/api/middlewares/SocketAuthen.middleware");
-const UserService = require("./src/api/user/User.service");
-const HistoryService = require("./src/api/history/History.service");
 const HistoryRouter = require("./src/api/history/History.router");
-const RabbitMq = require("./src/helper/RabbitMq.helper");
-
 const app = express();
 const server = require("http").createServer(app);
 
@@ -81,14 +75,3 @@ app.use("/tank", Authentication, TankRouter);
 app.use("/history", Authentication, HistoryRouter);
 Database.connect();
 server.listen(8080);
-
-const a = (async () => {
-  //console.log(await HistoryService.getUserHistory("62979d10f7a5a3b40c332a04"));
-  // const saltRounds = 10;
-  // let hash = await bcrypt.hash("123", saltRounds);
-  // let compare = await bcrypt.compare(
-  //   "123",
-  //   "$2b$10$Q/gCCCsDdNDzplSHDjH27.Luk3mj.v.0dCUv745wz2bJjUU5IKudW"
-  // );
-  // console.log(hash, compare);
-})();

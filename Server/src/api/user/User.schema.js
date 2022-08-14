@@ -10,7 +10,7 @@ const UserSchema = new Schema({
   active: { type: Boolean, default: false },
   activeCode: String,
   resetCode: String,
-  avatar: { type: String, default: "http://thedeathkingdom.tk/images/avatar.png"}
+  avatar: { type: String}
 });
 
 module.exports = mongoose.model("User", UserSchema);

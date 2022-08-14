@@ -3,8 +3,6 @@ const express = require("express");
 const MarketPlaceRouter = require("./src/api/marketPlaceItem/MarketPlace.router");
 
 
-const test = require("./src/utility/test");
-
 
 const listener = require("./src/blockchainListenServer/listener");
 
@@ -91,10 +89,10 @@ app.use(
   },
   UserRouter
 );
-app.use("/tank", Authentication, TankRouter);
-app.use("/box", Authentication, BoxRouter);
+app.use("/tank", TankRouter);
+app.use("/box", BoxRouter);
 app.use("/history", Authentication, HistoryRouter);
-app.use("/marketPlace", Authentication, MarketPlaceRouter);
+app.use("/marketPlace", MarketPlaceRouter);
 Database.connect();
 server.listen(8080);
 //console.log(GameMechanism.getDame({ armor: 99 }, 1000));

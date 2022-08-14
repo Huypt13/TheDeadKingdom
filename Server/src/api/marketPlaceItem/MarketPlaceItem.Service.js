@@ -22,7 +22,7 @@ class MarketPlaceItemService {
             const tank = listTank[0].tanks[0];
             marketPlace.price = Number(marketPlace.price);
             const newMarketPlaceItem = { ...marketPlace, finishedAt: null, isSelling: true };
-            const marketPlaceItem =  await new MarketPlaceItem(newMarketPlaceItem).save();
+            const marketPlaceItem = await new MarketPlaceItem(newMarketPlaceItem).save();
             if (marketPlaceItem) {
                 await RabbitMq.listedNotify({
                     message: "Listed successful",
@@ -183,9 +183,23 @@ class MarketPlaceItemService {
             throw new Error(error.message);
         }
     }
-    async getSucceedTransaction (){
-        try{
-           return await MarketPlaceItem.find({isSelling: false, buyer: {$ne:null}, finishedAt:{$ne:null}})
+    async getSucceedTransaction(id) {
+        try {
+            return await MarketPlaceItem.aggregate([
+                {
+                    $match: {
+                        $and: [
+                            { $or: [{ seller: id }, { buyer: id }] },
+                            { $and: [{ isSelling: false }, { buyer: { $ne: null } }] }
+                        ]
+                    }
+                },
+                { $set: {RoleOfCurrentUser:{$cond:[{$eq:["$seller",id]},"seller","buyer"]}}},
+                { $sort: {finishedAt:-1}}
+ 
+                
+            ])
+
         } catch (error) {
             console.log(err);
             throw new Error(error.message);

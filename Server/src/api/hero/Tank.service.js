@@ -132,7 +132,7 @@ class TankService {
       ])
       return listTank;
     } catch (err) {
-      console.log(err.message);
+      console.log(err);
       throw new Error(err.message)
     }
 
@@ -172,7 +172,7 @@ class TankService {
       ])
       return listTank;
     } catch (err) {
-      console.log(err.message);
+      console.log(err);
       throw new Error(err.message)
     }
   }
@@ -217,7 +217,7 @@ class TankService {
       ])
       return { listTankAfterPaging, totalRecord: totalRecord.length };
     } catch (err) {
-      console.log(err.message);
+      console.log(err);
       throw new Error(err.message)
     }
 
@@ -356,7 +356,7 @@ class TankService {
       console.log(listTank);
       return listTank;
     } catch (err) {
-      console.log(err.message);
+      console.log(err);
       throw new Error(err.message)
     }
   }
@@ -438,7 +438,7 @@ class TankService {
 
       return listTankOwner;
     } catch (err) {
-      console.log(err.message);
+      console.log(err);
       throw new Error(err.message)
     }
   }
@@ -533,7 +533,7 @@ class TankService {
 
       return { listTankOwner, totalTank };
     } catch (err) {
-      console.log(err.message);
+      console.log(err);
       throw new Error(err.message)
     }
   }
@@ -584,7 +584,7 @@ class TankService {
 
       return { listTankOwner, totalTank: totalTank }
     } catch (err) {
-      console.log(err.message);
+      console.log(err);
       throw new Error(err.message)
     }
   }
@@ -625,7 +625,7 @@ class TankService {
 
       return listTankOwner;
     } catch (err) {
-      console.log(err.message);
+      console.log(err);
       throw new Error(err.message)
     }
   }

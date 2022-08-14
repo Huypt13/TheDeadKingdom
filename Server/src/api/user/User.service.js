@@ -19,7 +19,7 @@ class UserService {
   async connectWallet(walletAddress, userId) {
     try {
       const user = await this.getByWalletAddress(walletAddress);
-      if (!user) return null
+      if (user) return null
       return User.findByIdAndUpdate(userId, { walletAddress: walletAddress }, { new: true });
     } catch (e) {
       throw new Error(error.message);

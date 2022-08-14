@@ -46,6 +46,16 @@ class BoxController {
             ApiResponse.serverErrorResponse(res, err.message)
         }
     }
+    async getAllBoxOwner(req, res) {
+        try {
+            const { _id } = req.locals.user;
+            const allBox = await BoxService.getAllBoxOwner(_id.toStirng());
+            return ApiResponse.successResponseWithData(res, "Ok", allBox);
+        } catch (err) {
+            console.log(err);
+            ApiResponse.serverErrorResponse(res, err.message)
+        }
+    }
 }
 
 

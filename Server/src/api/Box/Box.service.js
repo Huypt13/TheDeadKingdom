@@ -1,5 +1,9 @@
 const Box = require("./Box.Schema");
 
+const TankUser = require("../hero/TankUser.schema");
+const mongoose = require("mongoose");
+const ObjectId = mongoose.Types.ObjectId;
+
 class BoxService {
     async getByBoxId(boxId) {
         return await Box.findOne({ boxId });
@@ -9,7 +13,7 @@ class BoxService {
         return await Box.find({});
     }
     async getAllBoxeId() {
-        return await Box.find({}).select({_id: 1});
+        return await Box.find({}).select({ _id: 1 });
     }
 
     async unbox(boxId) {
@@ -17,13 +21,13 @@ class BoxService {
         return await this.randomTank(boxRate.rate);
     }
 
-    async randomBoxId(){
+    async randomBoxId() {
         const listBoxId = await this.getAllBoxeId();
         const index = Math.floor(Math.random() * listBoxId.length);
         return listBoxId[index]._id.toString();
     }
 
-    async getAllBoxes(){
+    async getAllBoxes() {
         return await Box.find({});
     }
 
@@ -49,7 +53,31 @@ class BoxService {
         return result.tankId;
     }
 
+    async getAllBoxOwner(id) {
+        try {
+            return await TankUser.aggregate([
+                { $match: { tankId: null, userId: id } },
+                {
+                    $group: { _id: "$boxId",quantity: { $count: {} } }
+                },
+                {
+                    $lookup: {
+                        from: "boxes",
+                        let: { boxId: { $toObjectId: "$_id" } },
+                        pipeline: [
+                            { $match: { $expr: { $eq: ["$_id", "$$boxId"] } } }
+                        ],
+                        as: "box"
+                    }
+                }
+            ])
+        } catch (err) {
+            console.log(err);
+            throw new Error(err.message)
+        }
+    }
 
 }
+
 
 module.exports = new BoxService();

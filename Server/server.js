@@ -1,5 +1,8 @@
 const express = require("express");
 
+const MarketPlaceRouter = require("./src/api/marketPlaceItem/MarketPlace.router");
+
+
 const test = require("./src/utility/test");
 
 
@@ -91,9 +94,9 @@ app.use(
 app.use("/tank", Authentication, TankRouter);
 app.use("/box", Authentication, BoxRouter);
 app.use("/history", Authentication, HistoryRouter);
+app.use("/marketPlace", Authentication, MarketPlaceRouter);
 Database.connect();
 server.listen(8080);
-// test.runTest();
 //console.log(GameMechanism.getDame({ armor: 99 }, 1000));
 
 // const a = (async () => {
@@ -101,7 +104,7 @@ server.listen(8080);
 
 // })();
 
-const a = (async () => {
+// const a = (async () => {
   //console.log(await HistoryService.getUserHistory("62979d10f7a5a3b40c332a04"));
   // const saltRounds = 10;
   // let hash = await bcrypt.hash("123", saltRounds);
@@ -110,4 +113,4 @@ const a = (async () => {
   //   "$2b$10$Q/gCCCsDdNDzplSHDjH27.Luk3mj.v.0dCUv745wz2bJjUU5IKudW"
   // );
   // console.log(hash, compare);
-})();
+// })();

@@ -60,4 +60,115 @@ async function registerNotify(data) {
     }
   );
 }
-module.exports = { connectRabbitMQ, registerNotify };
+
+async function soldNotify(data) {
+  const { message, email, price, buyer, tankName, url } = data;
+  if (channel == null) {
+    console.log("data null");
+    channel = await connectRabbitMQ();
+  }
+  await channel.sendToQueue(
+    queue,
+    Buffer.from(
+      JSON.stringify({
+        pattern: "sold",
+        data: {
+          message, email, price, buyer, tankName, url
+        },
+      })
+    ),
+    {
+      // RabbitMQ - Khi khởi động lại, tiếp tục chạy
+      persistent: true,
+    }
+  )
+};
+async function boughtNotify(data) {
+  const { message, email, price, seller, tankName, url } = data;
+  if (channel == null) {
+    console.log("data null");
+    channel = await connectRabbitMQ();
+  }
+  await channel.sendToQueue(
+    queue,
+    Buffer.from(
+      JSON.stringify({
+        pattern: "bought",
+        data: {
+          message, email, price, seller, tankName, url
+        },
+      })
+    ),
+    {
+      // RabbitMQ - Khi khởi động lại, tiếp tục chạy
+      persistent: true,
+    }
+  )
+};
+async function cancelNotify(data) {
+  const { message, email, price, tankName, url } = data;
+  if (channel == null) {
+    console.log("data null");
+    channel = await connectRabbitMQ();
+  }
+  await channel.sendToQueue(
+    queue,
+    Buffer.from(
+      JSON.stringify({
+        pattern: "cancelListed",
+        data: {
+          message, email, price, tankName, url
+        },
+      })
+    ),
+    {
+      // RabbitMQ - Khi khởi động lại, tiếp tục chạy
+      persistent: true,
+    }
+  );
+}
+async function listedNotify(data) {
+  const { message, email, price, tankName, url } = data;
+  if (channel == null) {
+    console.log("data null");
+    channel = await connectRabbitMQ();
+  }
+  await channel.sendToQueue(
+    queue,
+    Buffer.from(
+      JSON.stringify({
+        pattern: "Listed",
+        data: {
+          message, email, price, tankName, url
+        },
+      })
+    ),
+    {
+      // RabbitMQ - Khi khởi động lại, tiếp tục chạy
+      persistent: true,
+    }
+  );
+}
+async function resetPasswordNotify(data) {
+  const { url, email } = data;
+  if (channel == null) {
+    console.log("data null");
+    channel = await connectRabbitMQ();
+  }
+  await channel.sendToQueue(
+    queue,
+    Buffer.from(
+      JSON.stringify({
+        pattern: "resetPassword",
+        data: {
+          url, email
+        },
+      })
+    ),
+    {
+      // RabbitMQ - Khi khởi động lại, tiếp tục chạy
+      persistent: true,
+    }
+  );
+}
+module.exports = { connectRabbitMQ, registerNotify, soldNotify, boughtNotify, cancelNotify, listedNotify, resetPasswordNotify } 

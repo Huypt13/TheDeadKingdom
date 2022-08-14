@@ -58,7 +58,7 @@ MonoBehaviour:
   bulletSpawnPoint: {fileID: 3724264236492799861}
   rb: {fileID: 8745201586875249716}
   networkIdentity: {fileID: -2469973287835662438}
-  boxCollider: {fileID: 0}
+  boxCollider: {fileID: 8707550739361398125}
 --- !u!114 &-2469973287835662438
 MonoBehaviour:
   m_ObjectHideFlags: 0

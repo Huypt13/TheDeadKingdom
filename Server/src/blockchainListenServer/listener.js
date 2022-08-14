@@ -26,7 +26,6 @@ const init = async () => {
             // console.log(event.returnValues);
             const {listTokenId, tokenOwner, boxId} = event.returnValues;
             const newBox = await TankUserService.createTankUser(listTokenId, tokenOwner, boxId);
-            console.log(newBox);
         })
         .on('error', console.error);
 

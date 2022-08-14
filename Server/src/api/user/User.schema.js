@@ -8,7 +8,9 @@ const UserSchema = new Schema({
   walletAddress: { type: String },
   balances: Number,
   active: { type: Boolean, default: false },
-  activeCode: String
+  activeCode: String,
+  resetCode: String,
+  avatar: { type: String, default: "http://thedeathkingdom.tk/images/avatar.png"}
 });
 
 module.exports = mongoose.model("User", UserSchema);

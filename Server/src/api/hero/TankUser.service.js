@@ -9,7 +9,7 @@ class TankUserService {
         try {
             return await TankUser.findOneAndUpdate(filter, data, { new: true })
         } catch (err) {
-            console.log(err.message);
+            console.log(err);
             throw new Error(err.message);
         }
     }
@@ -17,11 +17,11 @@ class TankUserService {
         try {
             const listTankUser = [];
             const tankUser = await TankUser.find({ nftId: { $in: listToken } })
-            if (tankUser){
+            if (tankUser.length >= 1) {
                 console.log("boxId is already existed!");
-                 throw new Error("boxId is already existed!");
+                throw new Error("boxId is already existed!");
             }
-                const owerId = await UserService.getByWalletAddress(tokenOwner);
+            const owerId = await UserService.getByWalletAddress(tokenOwner);
             for (let token of listToken) {
                 const tankUser = {
                     userId: owerId._id.toString(),
@@ -31,24 +31,49 @@ class TankUserService {
                     openDate: null,
                     boughtDate: new Date(),
                     boxId: boxId,
-                    
+
                 }
                 listTankUser.push(tankUser);
             }
             return await TankUser.insertMany(listTankUser);
 
         } catch (err) {
-            console.log(err.message);
+            console.log(err);
             throw new Error(err.message);
         }
     }
-    async getBoxId(tankUserId){
+    async getBoxId(tankUserId) {
         try {
-           const  tankUser = await TankUser.findById(tankUserId);
-           if(!tankUser) throw new Error("TankUser not found");
-           return tankUser.boxId;
+            const tankUser = await TankUser.findById(tankUserId);
+            if (!tankUser) throw new Error("TankUser not found");
+            return tankUser.boxId;
         } catch (err) {
-            console.log(err.message);
+            console.log(err);
+            throw new Error(err.message);
+        }
+    }
+    async getTankBuyUserIdAndnftId(userId, nftId) {
+        try {
+            const tank = await TankUser.aggregate([
+                { $match: { userId: userId, nftId: nftId } },
+                {
+                    $lookup: {
+                        from: "tanks",
+                        let: { tankId: { $toObjectId: "$tankId" } },
+                        pipeline: [
+                            { $match: { $expr: { $eq: ["$_id", "$$tankId"] } } }
+                        ],
+                        as: "tanks"
+                    }
+                }
+
+            ])
+            if (!tank) {
+                throw new Error("Tank not existed");
+            }
+            return tank;
+        } catch (err) {
+            console.log(err);
             throw new Error(err.message);
         }
     }

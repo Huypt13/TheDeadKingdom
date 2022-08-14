@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 const BoxSchema = new Schema({
     price: { type: Number},
     image: { type: String},
+    name: { type: String},
     rate: [{
         tankId: { type:  String},
         ratio : {type: Number}

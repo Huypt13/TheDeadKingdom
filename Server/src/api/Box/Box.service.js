@@ -23,6 +23,10 @@ class BoxService {
         return listBoxId[index]._id.toString();
     }
 
+    async getAllBoxes(){
+        return await Box.find({});
+    }
+
     async randomTank(boxRate) {
         let random = Math.random();
         let arr = boxRate;               //[{tankId:"a",ratio:0.6},{tankId:"b",ratio:0.3},{tankId:"c",ratio:0.1}]

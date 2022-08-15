@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const MarketPlaceItem = require("../marketPlaceItem/MarketPlaceItem.shema");
+const MarketPlaceItem = require("../marketPlaceItem/MarketPlaceItem.schema");
 
 
 const _ = require("lodash");

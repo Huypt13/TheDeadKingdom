@@ -1,4 +1,4 @@
-const Box = require("./Box.Schema");
+const Box = require("./Box.schema");
 
 const TankUser = require("../hero/TankUser.schema");
 const mongoose = require("mongoose");

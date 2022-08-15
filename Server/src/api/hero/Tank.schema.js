@@ -20,7 +20,7 @@ const TankSchema = new Schema({
     damage: { type: Number, default: 0 }, // dame nhan tuc thi
     healing: { type: Number, default: 0 }, // hoi mau tuc thi
     range: { type: Number, default: 0 }, // tam xa skill
-
+    image: String,
     // thuoc tinh hieu ung
 
     // bat loi
@@ -77,7 +77,7 @@ const TankSchema = new Schema({
     damage: { type: Number, default: 0 }, // dame nhan tuc thi
     healing: { type: Number, default: 0 }, // hoi mau tuc thi
     range: { type: Number, default: 0 }, // tam xa skill
-
+    image: String,
     // thuoc tinh hieu ung
 
     // bat loi
@@ -135,7 +135,7 @@ const TankSchema = new Schema({
     damage: { type: Number, default: 0 }, // dame nhan tuc thi
     healing: { type: Number, default: 0 }, // hoi mau tuc thi
     range: { type: Number, default: 0 }, // tam xa skill
-
+    image: String,
     // thuoc tinh hieu ung
 
     // bat loi

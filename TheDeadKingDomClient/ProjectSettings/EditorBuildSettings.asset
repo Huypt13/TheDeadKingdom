@@ -66,6 +66,9 @@ EditorBuildSettings:
     path: Assets/Scenes/LoadGame.unity
     guid: fa3c53f1ca4c0344b99ae3c996d2c538
   - enabled: 1
+    path: Assets/Scenes/RankingReward.unity
+    guid: 3e0a36fde4f65984dbce24c436da7b8f
+  - enabled: 1
     path: Assets/Scenes/LobbyScreen.unity
     guid: b3e007b81211e634382a35ef1aeb9233
   m_configObjects: {}

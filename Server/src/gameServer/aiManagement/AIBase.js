@@ -1,5 +1,6 @@
 const ServerItem = require("../../utility/ServerItem");
 const Vector2 = require("../../dto/Vector2");
+const GameInfor = require("../../helper/GameInfor.helper");
 
 module.exports = class AIBase extends ServerItem {
   constructor(Maxhealth, OldPosition, Team) {
@@ -10,35 +11,21 @@ module.exports = class AIBase extends ServerItem {
     this.health = Maxhealth;
     this.maxHealth = Maxhealth;
     this.isDead = false;
-    this.respawnTicker = new Number(0);
-    this.respawnTime = new Number(0);
+    this.respawnTime = 0;
     this.kill = 0;
   }
 
-  onUpdate(onUpdateAI) {
-    //Calculate Statemachine
-  }
-
-  onObtainTarget(connections) {}
-
   respawnCounter() {
-    this.respawnTicker = this.respawnTicker + 1;
+    this.respawnTime = this.respawnTime + 0.1;
 
-    if (this.respawnTicker >= 10) {
-      this.respawnTicker = new Number(0);
-      this.respawnTime = this.respawnTime + 1;
-
-      //Three second respond time
-      if (this.respawnTime >= 3) {
-        console.log("Respawning AI: " + this.id);
-        this.isDead = false;
-        this.respawnTicker = new Number(0);
-        this.respawnTime = new Number(0);
-        this.health = this.maxHealth;
-        this.position = new Vector2(this.oldPosition.x, this.oldPosition.y);
-
-        return true;
-      }
+    //Three second respond time
+    if (this.respawnTime >= GameInfor.AIRespawnTime) {
+      console.log("Respawning AI: " + this.id);
+      this.isDead = false;
+      this.respawnTime = 0;
+      this.health = this.maxHealth;
+      this.position = new Vector2(this.oldPosition.x, this.oldPosition.y);
+      return true;
     }
 
     return false;
@@ -52,8 +39,7 @@ module.exports = class AIBase extends ServerItem {
     //Check if we are dead
     if (this.health <= 0) {
       this.isDead = true;
-      this.respawnTicker = new Number(0);
-      this.respawnTime = new Number(0);
+      this.respawnTime = 0;
     }
 
     return this.isDead;

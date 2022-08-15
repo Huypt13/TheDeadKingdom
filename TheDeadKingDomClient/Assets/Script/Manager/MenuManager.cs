@@ -8,6 +8,7 @@ using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
@@ -147,8 +148,11 @@ public class MenuManager : MonoBehaviour
                 Debug.Log(jo["status"].ToString());
                 if (jo["status"].ToString() == "0")
                 {
-                    message.gameObject.SetActive(true);
-                    message.text = jo["message"].ToString();
+                    //message.gameObject.SetActive(true);
+                    //message.text = jo["message"].ToString();
+
+                    NotificationManager.Instance.DisplayNotification(jo["message"].ToString(), SceneList.MAIN_MENU);
+
                 }
                 else
                 {

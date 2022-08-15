@@ -220,6 +220,7 @@ GameObject:
   - component: {fileID: 954220401}
   - component: {fileID: 954220403}
   - component: {fileID: 954220404}
+  - component: {fileID: 954220405}
   m_Layer: 0
   m_Name: '[Code]'
   m_TagString: Untagged
@@ -293,6 +294,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c1259d93a9e3e145b40b8e9692ef192, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &954220405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 954220399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41b08e46e33089f4aacc2c9b6bc8db34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefabCanvasNotification: {fileID: 413175993093182819, guid: c4e2b5bdc00cee14dbb91fba3f95e165, type: 3}
 --- !u!1 &1301508736
 GameObject:
   m_ObjectHideFlags: 0

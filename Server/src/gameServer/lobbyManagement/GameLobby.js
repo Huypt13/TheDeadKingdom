@@ -91,6 +91,7 @@ module.exports = class GameLobby extends LobbyBase {
         if (item.timeRemain < 0) {
           let returnData = {
             id: item.id,
+            time: 0,
           };
           this.connections[0].socket.emit("playerDied", returnData);
           this.connections[0].socket.broadcast
@@ -236,6 +237,7 @@ module.exports = class GameLobby extends LobbyBase {
     const returnData = {
       kill1: team1Kill + this.ai1Kill,
       kill2: team2Kill + this.ai2Kill,
+      waitingTime: GameInfor.PlayerRespawnTime,
       listPlayer: this.connections.map((connection) => {
         return {
           id: connection.player.id,
@@ -287,6 +289,8 @@ module.exports = class GameLobby extends LobbyBase {
             kill: connection.player.kill,
             dead: connection.player.dead,
             team: connection.player.team,
+            tankType: connection.player.startTank.typeId,
+            tankLevel: connection.player.startTank.level,
           };
         }),
       };
@@ -369,9 +373,11 @@ module.exports = class GameLobby extends LobbyBase {
           console.log("join game");
           this.connections[0].socket.emit("loadGame", {
             map: this.settings.map,
+            gameMode: this.settings.gameMode,
           });
           this.connections[0].socket.broadcast.to(this.id).emit("loadGame", {
             map: this.settings.map,
+            gameMode: this.settings.gameMode,
           });
           const returnData = {
             state: this.lobbyState.currentState,
@@ -1126,6 +1132,7 @@ module.exports = class GameLobby extends LobbyBase {
     }
     let returnData = {
       id: subjectOfAttack.id,
+      time: GameInfor.PlayerRespawnTime,
     };
     connection.socket.emit("playerDied", returnData);
     connection.socket.broadcast.to(this.id).emit("playerDied", returnData);
@@ -1323,6 +1330,7 @@ module.exports = class GameLobby extends LobbyBase {
     // update map
     connection.socket.emit("reloadGame", {
       map: this.settings.map,
+      gameMode: this.settings.gameMode,
     });
     const returnData = {
       state: this.lobbyState.currentState,
@@ -1619,22 +1627,16 @@ module.exports = class GameLobby extends LobbyBase {
       id: connection.player.id,
     };
     if (!toTeam) {
-      console.log("dd");
       connection.socket.emit("receivedMessage", returnData);
       connection.socket.broadcast
         .to(this.id)
         .emit("receivedMessage", returnData);
     } else {
-      console.log("dd1");
       this.connections.forEach((c) => {
         if (c.player.team == connection.player.team) {
-          console.log("dd1");
           c.socket.emit("receivedMessage", returnData);
         }
       });
     }
   }
-
-  getRandomSpawn() {}
-  getRndInteger(min, max) {}
 };

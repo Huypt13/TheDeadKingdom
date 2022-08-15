@@ -55,6 +55,29 @@ public class ImageManager : Singleton<ImageManager>
 
     }
 
+    public Sprite GetRankImage(int star)
+    {
+        string rankName = GetRankName(star);
+        return Resources.Load<Sprite>($"Images/RankImage/{rankName}");
+    }
+
+    public Sprite GetStarImage(int star)
+    {
+        int starNum = star % 5 == 0 ? 5 : star % 5;
+        //return star % 100;
+        return Resources.Load<Sprite>($"Images/RankImage/{starNum}-star");
+    }
+
+    public string GetRankName(int star)
+    {
+        if (star > 100) return "MASTER";
+        string[] ranks = { "BRONZE", "SILVER", "GOLD", "PLATINUM", "DIAMOND", "MASTER" };
+        string rankName = ranks[(star - 1) / 20];
+        string[] rankIndexes = { "", "I", "II", "III", "IV" };
+        string rankIndex = rankIndexes[4 - ((star - 1) % 20) / 5];
+        return rankName + " " + rankIndex;
+    }
+
     // Update is called once per frame
     void Update()
     {

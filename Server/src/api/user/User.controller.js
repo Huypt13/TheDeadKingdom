@@ -2,6 +2,7 @@ const UserService = require("./User.service");
 const ApiResponse = require("../../utility/ApiResponse");
 const Jwt = require("../../helper/Jwt.helper");
 const { registerNotify } = require("../../helper/RabbitMq.helper");
+const Redis = require("../../helper/Redis.helper");
 
 class UserController {
   async login(req, res) {
@@ -17,16 +18,25 @@ class UserController {
             "Please confirm email to active your account"
           );
         }
-        if (gameServer.connections[user._id]) {
-          gameServer.connections[user._id].socket.emit(
-            "someoneLoginYourAccount",
-            { id: user._id }
-          );
-          // leave gameserver
-          gameServer.onDisconnected(gameServer.connections[user._id]);
+        if (userinfor?.inWeb) {
+          if (gameServer.connections[user._id]) {
+            gameServer.connections[user._id].socket.emit(
+              "someoneLoginYourAccount",
+              { id: user._id }
+            );
+            // leave gameserver
+            gameServer.onDisconnected(gameServer.connections[user._id]);
+          }
         }
-        const tokenData = await Jwt.signData({ _id: user?._id });
-        console.log("lala", tokenData);
+        const tokenData = await Jwt.signData(
+          { _id: user?._id },
+          +process.env.AccessToken_Time
+        );
+        await Redis.saveWithTtl(
+          tokenData,
+          user?._id.toString(),
+          +process.env.AccessToken_Time
+        );
         return ApiResponse.successResponseWithData(res, "Success", {
           // tra ve token ms dung
           token: tokenData,
@@ -69,20 +79,29 @@ class UserController {
       return ApiResponse.serverErrorResponse(res, error.message);
     }
   }
- 
-  async connectWalletAddress(req, res){
+
+  async connectWalletAddress(req, res) {
     try {
       const { userId } = res.locals.user._id.tostring();
       const { walletAddress } = req.query;
       const user = UserService.connectWallet(walletAddress, userId);
-      if(!user){
-        return ApiResponse.badRequestResponse(res, "Wallet address existed")
+      if (!user) {
+        return ApiResponse.badRequestResponse(res, "Wallet address existed");
       }
     } catch (error) {
       return ApiResponse.serverErrorResponse(res, "Connect to Wallet failed");
     }
   }
 
+  async logout(req, res) {
+    try {
+      let token = req.header("x-access-token");
+      await Redis.saveWithTtl(token, "", 0);
+      return ApiResponse.successResponse(res, "Login success");
+    } catch (error) {
+      return ApiResponse.serverErrorResponse(res, error.message);
+    }
+  }
   async register(req, res) {
     try {
       let userinfor = req.body;
@@ -117,6 +136,7 @@ class UserController {
       return ApiResponse.serverErrorResponse(res, error.message);
     }
   }
+
   async getTopRank(req, res) {
     try {
       const { top } = req.query;
@@ -141,33 +161,35 @@ class UserController {
     }
   }
   async changePassword(req, res) {
-    try{
-       const infor  = req.body;
-       const email = res.locals.user.email;
-       const user = await UserService.changePassword(infor,email)
-       if(!user) throw new Error(`Cannot change password`);
-       return ApiResponse.successResponse(res, "Change password success");
+    try {
+      const infor = req.body;
+      const email = res.locals.user.email;
+      const user = await UserService.changePassword(infor, email);
+      if (!user) throw new Error(`Cannot change password`);
+      return ApiResponse.successResponse(res, "Change password success");
     } catch (error) {
-      return ApiResponse.serverErrorResponse(res, error.message)
+      return ApiResponse.serverErrorResponse(res, error.message);
     }
   }
   async forgotPassword(req, res) {
-    try{
-       const {email} = req.query;
-       await UserService.forgotPassword(email);
-       return ApiResponse.successResponse(res, "Send resetPassword to email success");
+    try {
+      const { email } = req.body;
+      await UserService.forgotPassword(email);
+      return ApiResponse.successResponse(
+        res,
+        "Send resetPassword to email success"
+      );
     } catch (error) {
-      return ApiResponse.serverErrorResponse(res, error.message)
+      return ApiResponse.serverErrorResponse(res, error.message);
     }
   }
   async changePasswordToken(req, res) {
-    try{
-       const token = req.header("x-access-token");
-       const infor = req.body;
-       await UserService.changePasswordToken(token,infor);
-       return ApiResponse.successResponse(res, "Change password success");
+    try {
+      const { token, ...infor } = req.body;
+      await UserService.changePasswordToken(token, infor);
+      return ApiResponse.successResponse(res, "Change password success");
     } catch (error) {
-      return ApiResponse.serverErrorResponse(res, error.message)
+      return ApiResponse.serverErrorResponse(res, error.message);
     }
   }
 }

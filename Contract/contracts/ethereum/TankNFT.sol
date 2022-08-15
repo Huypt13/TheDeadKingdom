@@ -12,25 +12,34 @@ contract TankNFT is ERC721, Ownable {
     Counters.Counter private _tokenIds;
     address public marketAddress;
     ERC20 public deathKingdomCoin;
-    uint256 public boxPrice;
+    mapping(uint256 => uint256) boxPrices;
 
     constructor(address _mrketplaceContract, address _deathKingdomCoinContract)
         ERC721("TankNFTToken", "DKT")
     {
         marketAddress = _mrketplaceContract;
         deathKingdomCoin = ERC20(_deathKingdomCoinContract);
-        boxPrice = 200 * 10**deathKingdomCoin.decimals();
+        setBoxPrice(1, 200);
+    }
+
+    function setBoxPrice(uint256 _boxId, uint256 _price) public onlyOwner {
+        require(_boxId > 0);
+        require(_price > 10);
+        boxPrices[_boxId] = _price * 10**deathKingdomCoin.decimals();
     }
 
     function _baseURI() internal pure override returns (string memory) {
-        return "https://api.thedeathkingdom.com/metadata/";
+        return "http://44.204.11.10:8080/metadata/";
     }
 
-    event NFTMinted(uint256 tokenId, address tokenOwner);
+    event BoxSold(uint256[] listTokenId, address tokenOwner, uint256 boxId);
 
-    function buyBoxes(uint256 _amount) public returns (uint256[] memory) {
+    function buyBoxes(uint256 _boxId, uint256 _amount)
+        public
+        returns (uint256[] memory)
+    {
         require(_amount > 0, "BoxAmount must > 0");
-        uint256 totalPrice = _amount * boxPrice;
+        uint256 totalPrice = _amount * boxPrices[_boxId];
 
         uint256 allowance = deathKingdomCoin.allowance(
             msg.sender,
@@ -47,6 +56,7 @@ contract TankNFT is ERC721, Ownable {
         for (uint256 i = 0; i < _amount; i++) {
             nfts[i] = createToken();
         }
+        emit BoxSold(nfts, msg.sender, _boxId);
         return nfts;
     }
 
@@ -56,8 +66,6 @@ contract TankNFT is ERC721, Ownable {
 
         _mint(msg.sender, newTokenId);
         _setApprovalForAll(_msgSender(), marketAddress, true);
-
-        emit NFTMinted(newTokenId, msg.sender);
         return newTokenId;
     }
 

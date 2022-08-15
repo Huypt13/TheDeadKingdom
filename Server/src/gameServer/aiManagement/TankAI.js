@@ -21,24 +21,7 @@ module.exports = class TankAI extends AIBase {
     this.currentTime;
     this.reloadTime = Number(TankAi.attackSpeed);
   }
-    // constructor(Id, OldPosition, Zone, TankAi, Team) {
-    //   super(TankAi.health, OldPosition, Team);
-    //   this.id = shortid.generate();
-    //   this.aiId = Id;
-    //   this.username = "AI_Tank";
-    //   this.target;
-    //   this.hasTarget = false;
-    //   this.zone = Zone;
-    //   this.tank = { ...TankAi };
-    //   this.iscommback = false;
-    //   //Tank Stats
-    //   this.rotation = 0;
-  
-    //   //Shooting
-    //   this.canShoot = false;
-    //   this.currentTime = Number(0);
-    //   this.reloadTime = Number(TankAi.attackSpeed);
-    // }
+
   onUpdate(onUpdateAI, onFireBullet, onUpdateHealthAi) {
     let ai = this;
     let zoneChange = ai.position.Distance(this.oldPosition);

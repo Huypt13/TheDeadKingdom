@@ -1,5 +1,6 @@
 const GameMechanism = require("../gamePlay/GameMechanism");
 const Vector2 = require("../../dto/Vector2");
+const GameInfor = require("../../helper/GameInfor.helper");
 
 class Player {
   constructor({ username, id, _id }) {
@@ -16,7 +17,6 @@ class Player {
     this.startTank;
     this.health;
     this.isDead = false;
-    this.respawnTicker = 0;
     this.respawnTime = 0;
     this.healTicker = 0;
     this.healTime = 0;
@@ -56,24 +56,18 @@ class Player {
     this.health -= GameMechanism.getDame(this.tank, amount);
     if (this.health <= 0) {
       this.isDead = true;
-      this.respawnTicker = 0;
       this.respawnTime = 0;
     }
     return this.isDead;
   }
   respawnCounter() {
     const tank = this.tank;
-    this.respawnTicker += 1;
-    if (this.respawnTicker >= 10) {
-      this.respawnTicker = 0;
-      this.respawnTime += 1;
-      if (this.respawnTime >= 3) {
-        this.isDead = false;
-        this.respawnTicker = 0;
-        this.respawnTime = 0;
-        this.health = tank.health;
-        return true;
-      }
+    this.respawnTime += 0.1;
+    if (this.respawnTime >= GameInfor.PlayerRespawnTime) {
+      this.isDead = false;
+      this.respawnTime = 0;
+      this.health = tank.health;
+      return true;
     }
     return false;
   }
@@ -386,7 +380,6 @@ class Player {
     this.kill = 0;
     this.dead = 0;
     this.isDead = false;
-    this.respawnTicker = 0;
     this.respawnTime = 0;
     this.tankRotation = 0;
     this.berrelRotaion = 0;

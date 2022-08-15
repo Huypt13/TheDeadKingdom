@@ -17,6 +17,8 @@ public class Tooltip : MonoBehaviour
         HideTooltip();
 
         GetComponentInParent<Canvas>().worldCamera = Camera.main;
+        GetComponentInParent<Canvas>().sortingLayerName = "GamePlay";
+        GetComponentInParent<Canvas>().sortingOrder = 1;
     }
 
     // Update is called once per frame
@@ -36,7 +38,7 @@ public class Tooltip : MonoBehaviour
         gameObject.SetActive(true);
         tooltipText.text = content;
         float textPaddingSize = 4f;
-        Vector2 backgroundSize = new Vector2(tooltipText.preferredWidth + textPaddingSize * 4f, tooltipText.preferredHeight + textPaddingSize * 2f);
+        Vector2 backgroundSize = new Vector2(Mathf.Min(280, tooltipText.preferredWidth + textPaddingSize * 4f), tooltipText.preferredHeight + textPaddingSize * 2f);
         backgroundTransform.sizeDelta = backgroundSize;
     }
 

@@ -7,11 +7,14 @@ module.exports = {
   DestroyMinPlayer: 1,
   DestroyTime: 600,
 
-  FlagMaxPlayer: 2,
+  FlagMaxPlayer: 1,
   FlagMinPlayer: 1,
   FlagTime: 300,
 
   WaitChoolseTime: 10,
   SECRET_KEY: "huydtr",
   Ranking: ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Master"],
+
+  AIRespawnTime: 3,
+  PlayerRespawnTime: 4,
 };

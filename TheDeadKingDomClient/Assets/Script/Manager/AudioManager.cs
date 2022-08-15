@@ -7,8 +7,8 @@ public class AudioManager : Singleton<AudioManager>
     [SerializeField]
     private AudioClip pickTank, countDownFight, hitSound;
 
-    private static AudioSource backgroundAudioSource;
-    private static AudioSource effectAudioSource;
+    private AudioSource backgroundAudioSource;
+    private AudioSource effectAudioSource;
 
     // Start is called before the first frame update
     void Start()
@@ -17,6 +17,13 @@ public class AudioManager : Singleton<AudioManager>
         effectAudioSource.loop = false;
         backgroundAudioSource = gameObject.AddComponent<AudioSource>();
         backgroundAudioSource.loop = true;
+    }
+
+    public void SetVolume(float volume)
+    {
+        effectAudioSource.volume = volume;
+        backgroundAudioSource.volume = volume;
+        Debug.Log("Volume: " + effectAudioSource.volume);
     }
 
     public void PlayEffectSoundOneShot(string soundType)

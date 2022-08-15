@@ -22,24 +22,6 @@ module.exports = class TowerAI extends AIBase {
     this.reloadTime = Number(Tower.attackSpeed);
   }
 
-  // constructor(Id, Tower, Team) {
-  //   super(Tower.health, null, Team);
-  //   this.id = shortid.generate();
-  //   this.aiId = Id;
-  //   this.username = "AI_TOWER";
-
-  //   this.target;
-  //   this.hasTarget = false;
-  //   this.tank = { ...Tower };
-  //   //Tank Stats
-  //   this.rotation = 0;
-
-  //   //Shooting
-  //   this.canShoot = false;
-  //   this.currentTime = Number(0);
-  //   this.reloadTime = Number(Tower.attackSpeed);
-  // }
-
   onUpdate(onUpdateTower, onFireBullet) {
     let targetConnection = this.target;
     let direction = new Vector2(1, 0);

@@ -371,11 +371,11 @@ module.exports = class GameLobby extends LobbyBase {
           console.log("join game");
           this.connections[0].socket.emit("loadGame", {
             map: this.settings.map,
-            gameMode: this.settings.gameMode
+            gameMode: this.settings.gameMode,
           });
           this.connections[0].socket.broadcast.to(this.id).emit("loadGame", {
             map: this.settings.map,
-            gameMode: this.settings.gameMode
+            gameMode: this.settings.gameMode,
           });
           const returnData = {
             state: this.lobbyState.currentState,
@@ -1327,7 +1327,7 @@ module.exports = class GameLobby extends LobbyBase {
     // update map
     connection.socket.emit("reloadGame", {
       map: this.settings.map,
-      gameMode: this.settings.gameMode
+      gameMode: this.settings.gameMode,
     });
     const returnData = {
       state: this.lobbyState.currentState,
@@ -1624,22 +1624,16 @@ module.exports = class GameLobby extends LobbyBase {
       id: connection.player.id,
     };
     if (!toTeam) {
-      console.log("dd");
       connection.socket.emit("receivedMessage", returnData);
       connection.socket.broadcast
         .to(this.id)
         .emit("receivedMessage", returnData);
     } else {
-      console.log("dd1");
       this.connections.forEach((c) => {
         if (c.player.team == connection.player.team) {
-          console.log("dd1");
           c.socket.emit("receivedMessage", returnData);
         }
       });
     }
   }
-
-  getRandomSpawn() {}
-  getRndInteger(min, max) {}
 };

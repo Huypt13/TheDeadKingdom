@@ -11,9 +11,9 @@ public class ItemTrigger : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         NetworkIdentity ni = collision?.gameObject?.GetComponent<NetworkIdentity>();
-        if(ni.GetComponent<WhoActivatedMe>() == null && ni.IsControlling())
+        if (ni.GetComponent<WhoActivatedMe>() == null && ni.IsControlling())
         {
-            if(networkIdentity.TypeId == "Hp")
+            if (networkIdentity.TypeId == "Hp")
             {
                 Slider slider = ni.getHealthBar().slider;
                 if (slider.value == slider.maxValue) return;
@@ -27,3 +27,4 @@ public class ItemTrigger : MonoBehaviour
         }
     }
 }
+

@@ -139,7 +139,6 @@ class GameServer {
           type,
           GameInfor[`${type}MaxPlayer`],
           GameInfor[`${type}MinPlayer`],
-          null,
           Ranking.getLevelRank(userInfor.numOfStars)
         )
       );

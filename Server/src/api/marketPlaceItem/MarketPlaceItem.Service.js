@@ -1,4 +1,4 @@
-const MarketPlaceItem = require('./MarketPlaceItem.shema')
+const MarketPlaceItem = require('./MarketPlaceItem.schema')
 const UserService = require('../user/User.service')
 const TankUserService = require('../hero/TankUser.service')
 const RabbitMq = require('../../helper/RabbitMq.helper')

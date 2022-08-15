@@ -12,7 +12,7 @@ class BoxController {
     async unbox(req, res) {
         try {
             const { tankUserId } = req.params;
-            const { _id } = req.locals.user;
+            const { _id } = res.locals.user;
             const tankUser = await TankService.getByTankUserById(tankUserId, _id.toString());
             if (!tankUser || tankUser.tankId) {
                 throw new Error("Unbox Fail!");
@@ -48,7 +48,7 @@ class BoxController {
     }
     async getAllBoxOwner(req, res) {
         try {
-            const { _id } = req.locals.user;
+            const { _id } = res.locals.user;
             const allBox = await BoxService.getAllBoxOwner(_id.toStirng());
             return ApiResponse.successResponseWithData(res, "Ok", allBox);
         } catch (err) {

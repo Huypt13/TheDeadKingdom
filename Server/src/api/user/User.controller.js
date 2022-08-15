@@ -72,7 +72,7 @@ class UserController {
  
   async connectWalletAddress(req, res){
     try {
-      const { userId } = req.locals.user._id.tostring();
+      const { userId } = res.locals.user._id.tostring();
       const { walletAddress } = req.query;
       const user = UserService.connectWallet(walletAddress, userId);
       if(!user){
@@ -143,7 +143,7 @@ class UserController {
   async changePassword(req, res) {
     try{
        const infor  = req.body;
-       const email = req.locals.user.email;
+       const email = res.locals.user.email;
        const user = await UserService.changePassword(infor,email)
        if(!user) throw new Error(`Cannot change password`);
        return ApiResponse.successResponse(res, "Change password success");

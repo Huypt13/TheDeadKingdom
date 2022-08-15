@@ -16,7 +16,6 @@ function Skill2Handler(connection, data, lobby) {
     return c.player.id === activator;
   });
 
-  activeBy.player.tank.skill2.timeCounter = 0;
   let connection1 = lobby.connections.find((c) => {
     return c.player.id === enemyId;
   });
@@ -26,6 +25,10 @@ function Skill2Handler(connection, data, lobby) {
   });
 
   const subjectOfAttack = typeEnemy == "AI" ? ai : connection1?.player;
+
+  if (connection1?.player) {
+    activeBy.player.tank.skill2.timeCounter = 0;
+  }
 
   const skillObject = lobby.skill.find((e) => {
     return e.id == id;

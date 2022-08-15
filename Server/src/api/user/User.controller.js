@@ -51,6 +51,47 @@ class UserController {
       return ApiResponse.serverErrorResponse(res, error.message);
     }
   }
+  async loginMarket(req, res) {
+    try {
+      const userinfor = req.body;
+      const user = await UserService.getUser(userinfor);
+
+      if (user) {
+        if (!user.active) {
+          return ApiResponse.serverErrorResponse(
+            res,
+            "Please confirm email to active your account"
+          );
+        }
+        const tokenData = await Jwt.signData({ _id: user?._id });
+        console.log("lala", tokenData);
+        return ApiResponse.successResponseWithData(res, "Success", {
+          // tra ve token ms dung
+          token: tokenData,
+          username: user?.username,
+        });
+      }
+      return ApiResponse.serverErrorResponse(
+        res,
+        "Invalid username or password"
+      );
+    } catch (error) {
+      return ApiResponse.serverErrorResponse(res, error.message);
+    }
+  }
+
+  async connectWalletAddress(req, res) {
+    try {
+      const { userId } = res.locals.user._id.tostring();
+      const { walletAddress } = req.query;
+      const user = UserService.connectWallet(walletAddress, userId);
+      if (!user) {
+        return ApiResponse.badRequestResponse(res, "Wallet address existed");
+      }
+    } catch (error) {
+      return ApiResponse.serverErrorResponse(res, "Connect to Wallet failed");
+    }
+  }
 
   async logout(req, res) {
     try {
@@ -116,6 +157,38 @@ class UserController {
       return ApiResponse.badRequestResponse(res, "cannot active account");
     } catch (error) {
       console.log(error.message);
+      return ApiResponse.serverErrorResponse(res, error.message);
+    }
+  }
+  async changePassword(req, res) {
+    try {
+      const infor = req.body;
+      const email = res.locals.user.email;
+      const user = await UserService.changePassword(infor, email);
+      if (!user) throw new Error(`Cannot change password`);
+      return ApiResponse.successResponse(res, "Change password success");
+    } catch (error) {
+      return ApiResponse.serverErrorResponse(res, error.message);
+    }
+  }
+  async forgotPassword(req, res) {
+    try {
+      const { email } = req.body;
+      await UserService.forgotPassword(email);
+      return ApiResponse.successResponse(
+        res,
+        "Send resetPassword to email success"
+      );
+    } catch (error) {
+      return ApiResponse.serverErrorResponse(res, error.message);
+    }
+  }
+  async changePasswordToken(req, res) {
+    try {
+      const { token, ...infor } = req.body;
+      await UserService.changePasswordToken(token, infor);
+      return ApiResponse.successResponse(res, "Change password success");
+    } catch (error) {
       return ApiResponse.serverErrorResponse(res, error.message);
     }
   }

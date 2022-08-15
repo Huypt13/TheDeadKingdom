@@ -29,6 +29,17 @@ async function saveWithTtl(key, value, ttlSeconds = 60) {
   return rs;
 }
 
+async function delAllByValue(value) {
+  let arr = await redisClient.keys("*");
+  for (const key of arr) {
+    let rdValue = await get(key);
+    if (rdValue === value) {
+      console.log("remove :", key);
+      await redisClient.del(key);
+    }
+  }
+}
+
 async function get(key) {
   return await redisClient.get(key);
 }
@@ -36,4 +47,5 @@ async function get(key) {
 module.exports = {
   saveWithTtl,
   get,
+  delAllByValue,
 };

@@ -9,8 +9,8 @@ module.exports.connect = async (app) => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     },
-      function (err, res) {
-        if (err) {
+    function (err, res) {
+      if (err) {
         console.log("Error connecting to the database.. " + err);
       } else {
         console.log("Connected to Database: " + uri);

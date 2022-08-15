@@ -33,6 +33,94 @@ export class AppController {
     });
 
   }
+  @EventPattern('sold')
+  async confirmSold(data) {
+    const { message, email, price, buyer, tankName, url } = data;
+    console.log(data);
+
+    await this.mailerService.sendMail({
+      to: `${email}`,
+      subject: message,
+      template: './soldTank',
+      context: {
+        message,
+        buyer,
+        price,
+        tankName,
+        url,
+      },
+    })
+
+  }
+  @EventPattern('bought')
+  async confirmBought(data) {
+    const { message, email, price, seller, tankName, url } = data;
+    console.log(data);
+
+    await this.mailerService.sendMail({
+      to: `${email}`,
+      subject: message,
+      template: './boughtTank',
+      context: {
+        message,
+        seller,
+        price,
+        tankName,
+        url,
+      },
+    })
+
+  }
+  @EventPattern('cancelListed')
+  async confirmCancel(data) {
+    const { message, email, price, tankName, url } = data;
+    console.log(data);
+
+    await this.mailerService.sendMail({
+      to: `${email}`,
+      subject: message,
+      template: './cancelSelling',
+      context: {
+        message,
+        price,
+        tankName,
+        url,
+      },
+    })
+
+  }
+  @EventPattern('Listed')
+  async confirmListed(data) {
+    const { message, email, price, tankName, url } = data;
+    console.log(data);
+    await this.mailerService.sendMail({
+      to: `${email}`,
+      subject: message,
+      template: './listed',
+      context: {
+        message,
+        price,
+        tankName,
+        url,
+      },
+    })
+
+  }
+  @EventPattern('resetPassword')
+  async resetPassword(data) {
+    const { email,url } = data;
+    console.log(data);
+
+    await this.mailerService.sendMail({
+      to: `${email}`,
+      subject: "Reset you password",
+      template: './forgotPassword',
+      context: {
+        url
+      },
+    })
+
+  }
 
   // @MessagePattern('test')
   // async test(@Payload() data: any, @Ctx() context: RmqContext) {

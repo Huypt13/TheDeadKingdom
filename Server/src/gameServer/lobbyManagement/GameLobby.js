@@ -91,6 +91,7 @@ module.exports = class GameLobby extends LobbyBase {
         if (item.timeRemain < 0) {
           let returnData = {
             id: item.id,
+            time: 0,
           };
           this.connections[0].socket.emit("playerDied", returnData);
           this.connections[0].socket.broadcast
@@ -236,6 +237,7 @@ module.exports = class GameLobby extends LobbyBase {
     const returnData = {
       kill1: team1Kill + this.ai1Kill,
       kill2: team2Kill + this.ai2Kill,
+      waitingTime: GameInfor.PlayerRespawnTime,
       listPlayer: this.connections.map((connection) => {
         return {
           id: connection.player.id,
@@ -1130,6 +1132,7 @@ module.exports = class GameLobby extends LobbyBase {
     }
     let returnData = {
       id: subjectOfAttack.id,
+      time: GameInfor.PlayerRespawnTime,
     };
     connection.socket.emit("playerDied", returnData);
     connection.socket.broadcast.to(this.id).emit("playerDied", returnData);

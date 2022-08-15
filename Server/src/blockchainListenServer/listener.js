@@ -1,6 +1,15 @@
 const Web3 = require("web3");
+
+const MarketPlaceItemService = require('../api/marketPlaceItem/MarketPlaceItem.Service');
+
+
+const MarketPlaceItem = require('../api/marketPlaceItem/MarketPlaceItem.Service');
+
+
+const TankUserService = require('../api/hero/TankUser.service');
+
 const TankNFT = require('../../../Contract/demo-client/contracts/TankNFT.json');
-const Marketplace = require('../../../Contract/demo-client/contracts/Marketplace.json');
+
 
 const Database = require("../../src/api/database/Database");
 const BoxService = require("../api/Box/Box.service")
@@ -11,25 +20,14 @@ const init = async () => {
     const accounts = await web3.eth.getAccounts();
     const tankNFTContract = new web3.eth.Contract(TankNFT.abi, TankNFT.networks[networkId].address);
     const marketplaceContract = new web3.eth.Contract(Marketplace.abi, Marketplace.networks[networkId].address);
-
-    Database.connect();
-
-    tankNFTContract.events.NFTMinted({})
+        tankNFTContract.events.BoxSold({})
         .on('data', async function (event) {
-            console.log("===============NFTMinted=================");
+            console.log("===============BoxSold=================");
             // console.log(event.returnValues);
-            console.log(event.returnValues.tokenId, event.returnValues.tokenOwner);
-            let tokenId = event.returnValues.tokenId;
-            let tokenOwner = event.returnValues.tokenOwner;
-
-            const newBox = await BoxService.insertBox(tokenId, tokenOwner);
-            console.log(newBox);
-
+            const {listTokenId, tokenOwner, boxId} = event.returnValues;
+            const newBox = await TankUserService.createTankUser(listTokenId, tokenOwner, boxId);
         })
         .on('error', console.error);
-
-
-
 
 
         // event NFTListed(
@@ -45,7 +43,8 @@ const init = async () => {
         .on('data', async function (event) {
             console.log("===============NFTListed=================");
             console.log(event.returnValues);
-            // Do something here
+            MarketPlaceItemService.createAfterListed(event.returnValues);
+   
         })
         .on('error', console.error);
 
@@ -53,7 +52,8 @@ const init = async () => {
         .on('data', async function (event) {
             console.log("===============NFTSaleCanceled=================");
             console.log(event.returnValues);
-            // Do something here
+            MarketPlaceItemService.updateAfterSellCanceled(event.returnValues);
+
         })
         .on('error', console.error);
 
@@ -61,14 +61,13 @@ const init = async () => {
         .on('data', async function (event) {
             console.log("===============NFTSold=================");
             console.log(event.returnValues);
-            // Do something here
+            MarketPlaceItemService.updateAfterSold(event.returnValues);
         })
         .on('error', console.error);
 
 }
 
-init();
-
+module.exports = {init}
 
 
 

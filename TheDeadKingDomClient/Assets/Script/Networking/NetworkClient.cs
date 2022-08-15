@@ -740,7 +740,9 @@ public class NetworkClient : SocketIOComponent
 
             if (id == ClientID)
             {
-                OnPlayerDied.Invoke(3f);
+                float time = e.data["time"].f;
+                Debug.Log(time);
+                OnPlayerDied.Invoke(time);
             }
         });
 

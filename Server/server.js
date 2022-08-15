@@ -1,16 +1,24 @@
 const express = require("express");
+
+const MarketPlaceRouter = require("./src/api/marketPlaceItem/MarketPlace.router");
+
+const listener = require("./src/blockchainListenServer/listener");
+
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const dotenv = require("dotenv");
 
 const GameServer = require("./src/gameServer/GameServer");
 const UserRouter = require("./src/api/user/User.router");
+
 const Database = require("./src/api/database/Database");
 
 const Authentication = require("./src/api/middlewares/Authentication.midleware");
 const TankRouter = require("./src/api/hero/Tank.router");
 const SocketAuthen = require("./src/api/middlewares/SocketAuthen.middleware");
 const HistoryRouter = require("./src/api/history/History.router");
+const BoxRouter = require("./src/api/box/Box.router");
+
 const app = express();
 const server = require("http").createServer(app);
 
@@ -58,6 +66,8 @@ io.on("connection", (socket) => {
   });
 });
 
+// listen blockchain events
+// listener.init()
 // rest api
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -71,7 +81,9 @@ app.use(
   },
   UserRouter
 );
-app.use("/tank", Authentication, TankRouter);
+app.use("/tank", TankRouter);
+app.use("/box", BoxRouter);
 app.use("/history", Authentication, HistoryRouter);
+app.use("/marketPlace", MarketPlaceRouter);
 Database.connect();
 server.listen(8080);

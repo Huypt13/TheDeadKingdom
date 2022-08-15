@@ -14,7 +14,7 @@ class MarketPlaceItemController {
     }
     async getSucceedTransaction(req, res) {
         try{
-            const {_id} = req.locals.user;
+            const {_id} = res.locals.user;
             const Transaction = await MarketPlaceItemService.getSucceedTransaction(_id.toString());
             return ApiResponse.successResponseWithData(res,"Ok",Transaction);
         } catch(e){

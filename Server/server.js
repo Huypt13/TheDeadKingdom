@@ -85,6 +85,6 @@ app.use("/tank", TankRouter);
 app.use("/box", BoxRouter);
 app.use("/history", Authentication, HistoryRouter);
 app.use("/marketPlace", MarketPlaceRouter);
-Database.connect();
+Database.connect(app);
 server.listen(8080);
 

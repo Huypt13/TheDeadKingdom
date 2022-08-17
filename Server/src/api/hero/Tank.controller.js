@@ -76,8 +76,12 @@ class TankController {
   async getTotalTankOwnerWithStatusAndPaging(req, res) {
     try {
       const { _id } = res.locals.user;
-      const {filter} = req.body;
-      const totalTankOwner = await TankService.getTotalTankOwnerWithStatusAndPaging(filter, _id.toString());
+      const { filter } = req.body;
+      const totalTankOwner =
+        await TankService.getTotalTankOwnerWithStatusAndPaging(
+          filter,
+          _id.toString()
+        );
       return ApiResponse.successResponseWithData(res, "Ok", totalTankOwner);
     } catch (error) {
       return ApiResponse.serverErrorResponse(res, error.message);

@@ -140,6 +140,8 @@ module.exports = class GameLobby extends LobbyBase {
     let num = 0;
     let numEnd = 0;
     let team = 0;
+    let team1point = 0;
+    let team2point = 0;
     this.serverItems.forEach((item) => {
       if (item instanceof Flag) {
         num++;
@@ -147,6 +149,8 @@ module.exports = class GameLobby extends LobbyBase {
           numEnd++;
           team = item.team;
         }
+        team1point = team1point + (item.team == 1) ? item.point : 0;
+        team2point = team2point + (item.team == 2) ? item.point : 0;
       }
     });
     if (num == numEnd && num != 0) {
@@ -155,6 +159,16 @@ module.exports = class GameLobby extends LobbyBase {
     }
 
     // het time
+    if (this.matchTime >= GameInfor.DestroyTime - 0.1) {
+      this.lobbyState.currentState = this.lobbyState.ENDGAME;
+      if (team1point > team2point) {
+        this.teamWin = 1;
+      } else if (team1point < team2point) {
+        this.teamWin = 2;
+      } else {
+        this.teamWin = Math.floor(Math.random() * 2) + 1;
+      }
+    }
   }
   onDestroyWin() {
     let houseDead = [];
@@ -1132,7 +1146,7 @@ module.exports = class GameLobby extends LobbyBase {
     }
     let returnData = {
       id: subjectOfAttack.id,
-      time: GameInfor.PlayerRespawnTime,
+      time: GameInfor.PlayerRespawnTime * subjectOfAttack.dead,
     };
     connection.socket.emit("playerDied", returnData);
     connection.socket.broadcast.to(this.id).emit("playerDied", returnData);

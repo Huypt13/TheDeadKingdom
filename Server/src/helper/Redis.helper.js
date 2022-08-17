@@ -1,24 +1,19 @@
 const redis = require("redis");
 const dotenv = require("dotenv");
 
-//const config = require('../config');
-// {
-//     host: config.redis.host,
-//     port: config.redis.port,
-//     password: config.redis.password
-// }
 dotenv.config();
-
-const redisClient = redis.createClient({
+let config = {
   url: `redis://default:${process.env.REDIS_PASSWORD}@${process.env.REDIS_URI}:${process.env.REDIS_PORT}`,
-});
+};
+if (process.env.NODE_ENV == "test") {
+  config = {
+    host: "localhost",
+    port: 6379,
+  };
+}
+const redisClient = redis.createClient(config);
 
-// const redisClient = redis.createClient({
-//   host: "redis-18906.c114.us-east-1-4.ec2.cloud.redislabs.com",
-//   port: 18906,
-//   // password: "MNRQAgRq4YOHFEisFKnLJxv96fbekIOB",
-// });
-redisClient.on("connect", () => console.log("Connected to Redis!"));
+redisClient.on("connect", () => console.log("Connected to Redis!", config));
 redisClient.on("error", (err) => console.log("Redis Client Error", err));
 redisClient.connect();
 

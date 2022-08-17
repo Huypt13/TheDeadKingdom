@@ -34,8 +34,8 @@ class UserService {
       const passCheck = await bcrypt.compare(password, user?.password);
       if (passCheck) return user;
     } catch (error) {
-      console.log("error", error.message);
-      throw new Error(error.message);
+      console.log("error", error);
+      throw new Error("Wrong email or password");
     }
   }
   async getByEmail(email) {
@@ -52,7 +52,12 @@ class UserService {
         return null;
       }
       password = await bcrypt.hash(password, this.SaltRounds);
-      const activeCode = await Jwt.signData({ email });
+      const activeCode = await Jwt.signData(
+        {
+          email,
+        },
+        process.env.AccessToken_Time || 3600
+      );
 
       const user = await new User({
         email,
@@ -72,8 +77,12 @@ class UserService {
 
   async updateStar(type, _id) {
     const user = await this.getById(_id);
-    if (user && user?.numOfStars <= 20 && type == -1) return;
-    return await User.findByIdAndUpdate(_id, { $inc: { numOfStars: type } });
+    if (user && user?.numOfStars <= 20 && type == -1) return null;
+    return await User.findByIdAndUpdate(
+      _id,
+      { $inc: { numOfStars: type } },
+      { new: true }
+    );
   }
   async getUserInfor(_id) {
     try {
@@ -94,39 +103,55 @@ class UserService {
     }
   }
   async getTopRank(num) {
-    const listTop = await User.find({})
-      .sort({ numOfStars: -1 })
-      .limit(num)
-      .lean();
-    return {
-      top: num,
-      listTop: listTop.map(({ password, __v, ...e }) => {
-        return {
-          ...e,
-          ranking: {
-            rank: Ranking.getRank(e.numOfStars),
-            star: Ranking.getStar(e.numOfStars),
-          },
-        };
-      }),
-    };
+    try {
+      const listTop = await User.find({})
+        .sort({ numOfStars: -1 })
+        .limit(num)
+        .lean();
+      return {
+        top: num,
+        listTop: listTop.map(({ password, __v, ...e }) => {
+          return {
+            ...e,
+            ranking: {
+              rank: Ranking.getRank(e.numOfStars),
+              star: Ranking.getStar(e.numOfStars),
+            },
+          };
+        }),
+      };
+    } catch (error) {
+      console.log(error);
+      throw new Error(error.message);
+    }
   }
   async verifyUser(activeCode) {
     let user = await User.findOne({ activeCode });
 
     if (user) {
-      return await User.findByIdAndUpdate(user._id, {
-        $set: { active: true },
-      });
+      return await User.findByIdAndUpdate(
+        user._id,
+        {
+          $set: { active: true },
+        },
+        { new: true }
+      );
     }
+    return null;
   }
   async changePassword(infor, email) {
     try {
       const { password, newPassword } = infor;
       const user = await this.getByEmail(email);
+      if (!user) {
+        throw new Error(`Invalid email`);
+      }
       const passCheck = await bcrypt.compare(password, user.password);
-      if (!passCheck && password != newPassword) {
+      if (!passCheck) {
         throw new Error(`Invalid password`);
+      }
+      if (password == newPassword) {
+        throw new Error(`New password must be different old password`);
       }
       const bcryptPassword = await bcrypt.hash(newPassword, this.SaltRounds);
       await Redis.delAllByValue(user._id.toString());

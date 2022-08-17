@@ -60,10 +60,11 @@ class Player {
     }
     return this.isDead;
   }
+
   respawnCounter() {
     const tank = this.tank;
     this.respawnTime += 0.1;
-    if (this.respawnTime >= GameInfor.PlayerRespawnTime) {
+    if (this.respawnTime >= GameInfor.PlayerRespawnTime * this.dead) {
       this.isDead = false;
       this.respawnTime = 0;
       this.health = tank.health;

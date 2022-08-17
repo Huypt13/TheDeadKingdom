@@ -120,9 +120,8 @@ class UserService {
       });
     }
   }
-  async changePassword(infor, email) {
+  async changePassword(password, newPassword, email) {
     try {
-      const { password, newPassword } = infor;
       const user = await this.getByEmail(email);
       const passCheck = await bcrypt.compare(password, user.password);
       if (!passCheck && password != newPassword) {
@@ -159,8 +158,7 @@ class UserService {
       throw new Error(error.message);
     }
   }
-  async changePasswordToken(token, infor) {
-    const { newPassword } = infor;
+  async changePasswordToken(token, newPassword) {
     try {
       let passCheck;
       try {

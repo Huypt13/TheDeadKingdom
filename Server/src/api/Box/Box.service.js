@@ -2,7 +2,6 @@ const Box = require("./Box.schema");
 
 const TankUser = require("../hero/TankUser.schema");
 const mongoose = require("mongoose");
-const Box = require("./Box.schema");
 
 const ObjectId = mongoose.Types.ObjectId;
 

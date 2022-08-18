@@ -7,7 +7,7 @@ const ObjectId = mongoose.Types.ObjectId;
 
 class BoxService {
   async getByBoxId(boxId) {
-    return await Box.findOne({ boxId });
+    return await Box.findById(boxId);
   }
 
   async getAllBoxes() {
@@ -18,8 +18,13 @@ class BoxService {
   }
 
   async unbox(boxId) {
-    const boxRate = await this.getByBoxId(boxId);
-    return await this.randomTank(boxRate.rate);
+    try {
+      const boxRate = await this.getByBoxId(boxId);
+      if (!boxRate) return null;
+      return await this.randomTank(boxRate.rate);
+    } catch (err) {
+      throw new Error("Unbox Fail")
+    }
   }
 
   async randomBoxId() {
@@ -28,23 +33,20 @@ class BoxService {
     return listBoxId[index]._id.toString();
   }
 
-  async getAllBoxes() {
-    return await Box.find({});
-  }
-
   async randomTank(boxRate) {
+    if(!boxRate)return null;
     let random = Math.random();
-    let arr = boxRate; //[{tankId:"a",ratio:0.6},{tankId:"b",ratio:0.3},{tankId:"c",ratio:0.1}]
+    let boxArray = boxRate; //[{tankId:"a",ratio:0.6},{tankId:"b",ratio:0.3},{tankId:"c",ratio:0.1}]
     let pre = 0;
-    let arr2 = [];
-    for (var k of arr) {
+    let newArray = [];
+    for (var k of boxArray) {
       k.ratio += pre;
-      arr2.push(k);
+      newArray.push(k);
       pre = k.ratio;
     }
     let first = 0;
     let result = {};
-    for (var i of arr2) {
+    for (var i of newArray) {
       if (first <= random && random < i.ratio) {
         result = i;
         break;

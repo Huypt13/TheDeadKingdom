@@ -175,7 +175,7 @@ class UserController {
       if (password.length > 30 || password.length < 8) {
         return ApiResponse.badRequestResponse(res, "Password must >= 8 and <=30");
       }
-      const user = await UserService.changePassword(password, newPassword,email);
+      const user = await UserService.changePassword({password, newPassword},email);
       if (!user) throw new Error(`Cannot change password`);
       return ApiResponse.successResponse(res, "Change password success");
     } catch (error) {

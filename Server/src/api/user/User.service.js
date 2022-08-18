@@ -139,9 +139,10 @@ class UserService {
     }
     return null;
   }
-  async changePassword(password, newPassword, email) {
+  async changePassword({password, newPassword}, email) {
     try {
       const user = await this.getByEmail(email);
+      console.log("uuuu",user);
       if (!user) {
         throw new Error(`Invalid email`);
       }

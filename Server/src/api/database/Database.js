@@ -3,7 +3,7 @@ const uri = process.env.MONGO_URI;
 
 module.exports.connect = async (app) => {
   mongoose.connect(
-    uri || "mongodb://localhost:27017/tank_db?retryWrites=true&w=majority",
+    uri || "mongodb://localhost:27017/tank_dbtest?retryWrites=true&w=majority",
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,

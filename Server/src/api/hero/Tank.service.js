@@ -165,7 +165,7 @@ class TankService {
         { "$unwind": "$tank" },
         { $sort: { finishedAt: -1 } },
         {
-          $$project: {
+          $project: {
             tank: "$tank", createdAt: "$createAt", price: "$price", tankUser: "$tankUser"
           }
         }
@@ -181,7 +181,7 @@ class TankService {
       const totalRecord = await this.getTotalTankSoldLasted()
       const displayedTankNumber = (pageNumber - 1) * Number(limit);
       if (displayedTankNumber >= totalRecord.length) {
-        throw new Error("Don't have tank anymore");
+        throw new Error("Don't have tank");
       }
       const listTankAfterPaging = await MarketPlaceItem.aggregate([
         { $match: { isSelling: false, buyer: { $ne: null } } },
@@ -364,6 +364,7 @@ class TankService {
   async getTotalTankOwnerWithStatus(filter, _id) {
     try {
       let { limit, pageNumbers, sortBy, status } = filter
+      let listTankOwner;
       if (status == "Owned") {
         listTankOwner = await TankUser.aggregate([
           { $match: { userId: _id, tankId: { $ne: null }, nftId: { $ne: null } } },
@@ -447,13 +448,11 @@ class TankService {
       const total = await this.getTotalTankOwnerWithStatus(filter, _id);
       let totalTank = total.length;
       let { limit, pageNumbers, sortBy, status } = filter
-
-
       const displayedTankNumber = (pageNumbers - 1) * limit;
       if (displayedTankNumber >= totalTank) {
-        throw new Error("Don't have enough tank");
+        throw new Error("Don't have tank");
       }
-      let listTankOwner;
+      let listTankOwner=null;
       if (status == "Owned") {
         listTankOwner = await TankUser.aggregate([
           { $match: { userId: _id, tankId: { $ne: null }, nftId: { $ne: null } } },
@@ -545,7 +544,7 @@ class TankService {
       const {pageNumber, limit} = paging;
       const displayedTankNumber = (pageNumber-1) * limit;
       if(displayedTankNumber >= totalTank) {
-        throw new Error("Don't have tank anymore'")
+        throw new Error("Don't have tank'")
       }
       const listTankOwner = await TankUser.aggregate([
         { $match: { userId: _id, tankId: { $ne: null }, nftId: { $ne: null } } },

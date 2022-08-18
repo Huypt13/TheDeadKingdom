@@ -121,7 +121,7 @@ class MarketPlaceItemService {
             const listTank = await TankUserService.getTankBuyUserIdAndnftId(seller._id.toString(), marketPlace.tokenId);
             const tank = listTank[0].tanks[0];
             const marketPlaceId = marketPlace.marketPlaceId;
-            const marketPlaceItem = await MarketPlaceItem.findOneAndUpdate({ seller: seller._id.toString(), tokenId: marketPlace.tokenId },
+            const marketPlaceItem = await MarketPlaceItem.findOneAndUpdate({ seller: seller._id.toString(), tokenId: marketPlace.tokenId, isSelling: true },
                 { finishedAt: new Date(), isSelling: false, marketPlaceItemId: marketPlaceId },
                 { new: true }
             );

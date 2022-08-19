@@ -75,7 +75,7 @@ class TankController {
   }
   async getTotalTankOwnerWithStatusAndPaging(req, res) {
     try {
-      const { _id } = req.locals.user;
+      const { _id } = res.locals.user;
       const { filter } = req.body;
       const totalTankOwner =
         await TankService.getTotalTankOwnerWithStatusAndPaging(
@@ -89,7 +89,7 @@ class TankController {
   }
   async getTotalTankOwnerPaging(req, res) {
     try {
-      const { _id } = req.locals.user;
+      const { _id } = res.locals.user;
       const paging = req.query;
       const totalTankOwner = await TankService.getTotalTankOwnerPaging(
         _id.toString(),

@@ -239,23 +239,43 @@ public class LobbyScreenManager : MonoBehaviour
             AudioManager.Instance.SetVolume(sliderAudioVolume.value);
         });
 
+        dropdownResolution.onValueChanged.AddListener((option) => { ChangeResolution(option); });
+
         if (PlayerPrefs.HasKey("gameResolution"))
         {
             dropdownResolution.value = PlayerPrefs.GetInt("gameResolution");
-            PlayerPrefs.SetInt("gameResolution", dropdownResolution.value);
+            ChangeResolution(PlayerPrefs.GetInt("gameResolution"));
         }
-        dropdownResolution.onValueChanged.AddListener((option) => { ChangeResolution(option); });
+    }
+
+    private IEnumerator CallLogoutApi(string uri)
+    {
+        using (UnityWebRequest request = UnityWebRequest.Post(uri + "/user/logout", ""))
+        {
+            request.SetRequestHeader("x-access-token", MenuManager.access_token);
+            yield return request.SendWebRequest();
+
+            if (request.isNetworkError)
+            {
+                Debug.Log("Error: " + request.error);
+            }
+            else
+            {
+                Debug.Log("Logout Successfully");
+            }
+        }
     }
 
     public void Logout()
     {
         if (!isFinding)
         {
-            Debug.Log("Acces token: " + MenuManager.access_token);
+            //Debug.Log("Acces token: " + MenuManager.access_token);
+
             MenuManager.access_token = "";
             SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
             {
-                Debug.Log("Acces token: " + MenuManager.access_token);
+                StartCoroutine(CallLogoutApi(MenuManager.uri));
                 SceneManagement.Instance.UnLoadLevel(SceneList.LOBBY_SCREEN);
             });
         }

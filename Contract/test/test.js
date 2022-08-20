@@ -225,6 +225,13 @@ contract("Marketplace", (accounts) => {
         );
       });
 
+      it("List NFT with wrong owner", async () => {
+        await truffleAssert.reverts(
+          marketplace.listNft(tankNFT.address, 1, 10, { from: accounts[2] }),
+          "You are not NFT's owner"
+        );
+      });
+
       it("List NFT with Price < 0", async () => {
         await truffleAssert.fails(
           marketplace.listNft(tankNFT.address, 1, -1, { from: accounts[1] }),

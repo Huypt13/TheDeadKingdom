@@ -785,6 +785,7 @@ module.exports = class GameLobby extends LobbyBase {
       bullet.activator = activator;
       bullet.team = activeBy?.player?.team;
       this.bullets.push(bullet);
+      console.log("tao bullet", this.bullets, bullet);
       const returnData = {
         name: "Bullet",
         id: bullet.id,

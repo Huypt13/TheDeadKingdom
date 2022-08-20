@@ -73,7 +73,12 @@ async function soldNotify(data) {
       JSON.stringify({
         pattern: "sold",
         data: {
-          message, email, price, buyer, tankName, url
+          message,
+          email,
+          price,
+          buyer,
+          tankName,
+          url,
         },
       })
     ),
@@ -81,8 +86,8 @@ async function soldNotify(data) {
       // RabbitMQ - Khi khởi động lại, tiếp tục chạy
       persistent: true,
     }
-  )
-};
+  );
+}
 async function boughtNotify(data) {
   const { message, email, price, seller, tankName, url } = data;
   if (channel == null) {
@@ -95,7 +100,12 @@ async function boughtNotify(data) {
       JSON.stringify({
         pattern: "bought",
         data: {
-          message, email, price, seller, tankName, url
+          message,
+          email,
+          price,
+          seller,
+          tankName,
+          url,
         },
       })
     ),
@@ -103,8 +113,8 @@ async function boughtNotify(data) {
       // RabbitMQ - Khi khởi động lại, tiếp tục chạy
       persistent: true,
     }
-  )
-};
+  );
+}
 async function cancelNotify(data) {
   const { message, email, price, tankName, url } = data;
   if (channel == null) {
@@ -117,7 +127,11 @@ async function cancelNotify(data) {
       JSON.stringify({
         pattern: "cancelListed",
         data: {
-          message, email, price, tankName, url
+          message,
+          email,
+          price,
+          tankName,
+          url,
         },
       })
     ),
@@ -139,7 +153,11 @@ async function listedNotify(data) {
       JSON.stringify({
         pattern: "Listed",
         data: {
-          message, email, price, tankName, url
+          message,
+          email,
+          price,
+          tankName,
+          url,
         },
       })
     ),
@@ -161,7 +179,8 @@ async function resetPasswordNotify(data) {
       JSON.stringify({
         pattern: "resetPassword",
         data: {
-          url, email
+          url,
+          email,
         },
       })
     ),
@@ -171,4 +190,12 @@ async function resetPasswordNotify(data) {
     }
   );
 }
-module.exports = { connectRabbitMQ, registerNotify, soldNotify, boughtNotify, cancelNotify, listedNotify, resetPasswordNotify } 
+module.exports = {
+  connectRabbitMQ,
+  registerNotify,
+  soldNotify,
+  boughtNotify,
+  cancelNotify,
+  listedNotify,
+  resetPasswordNotify,
+};

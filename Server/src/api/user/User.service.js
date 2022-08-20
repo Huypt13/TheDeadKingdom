@@ -10,14 +10,28 @@ class UserService {
     this.SaltRounds = 10;
   }
   async getById(_id) {
-    return await User.findOne({ _id }).lean();
+    try {
+      return await User.findOne({ _id }).lean();
+    } catch (error) {
+      throw new Error(e.message);
+    }
   }
   async getByWalletAddress(walletAddress) {
+    if (!walletAddress) {
+      return null;
+    }
     return await User.findOne({ walletAddress }).lean();
   }
   async connectWallet(walletAddress, userId) {
     try {
       const user = await this.getByWalletAddress(walletAddress);
+      const user1 = await this.getById(userId);
+      if (!user1) {
+        return null;
+      }
+      if (user1 && user1?.walletAddress) {
+        return null;
+      }
       if (user) return null;
       return User.findByIdAndUpdate(
         userId,
@@ -25,7 +39,7 @@ class UserService {
         { new: true }
       );
     } catch (e) {
-      throw new Error(error.message);
+      throw new Error(e.message);
     }
   }
   async getUser({ email, password }) {
@@ -77,6 +91,7 @@ class UserService {
 
   async updateStar(type, _id) {
     const user = await this.getById(_id);
+    if (type != 1 && type != -1) return null;
     if (user && user?.numOfStars <= 20 && type == -1) return null;
     return await User.findByIdAndUpdate(
       _id,
@@ -127,7 +142,7 @@ class UserService {
   }
   async verifyUser(activeCode) {
     let user = await User.findOne({ activeCode });
-
+    if (!activeCode) return null;
     if (user) {
       return await User.findByIdAndUpdate(
         user._id,
@@ -174,11 +189,16 @@ class UserService {
         60 * EXPIRES_IN
       );
       console.log("token rs", resetToken);
-      await User.findOneAndUpdate({ email: email }, { resetCode: resetToken });
+      const user = await User.findOneAndUpdate(
+        { email: email },
+        { resetCode: resetToken },
+        { new: true }
+      );
       await RabbitMq.resetPasswordNotify({
         email: email,
         url: "https://www.thedeathkingdom.tk/login/" + resetToken,
       });
+      return user;
     } catch (error) {
       console.log(error);
       throw new Error(error.message);

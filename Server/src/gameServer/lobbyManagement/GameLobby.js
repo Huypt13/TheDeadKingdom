@@ -1155,8 +1155,6 @@ module.exports = class GameLobby extends LobbyBase {
     const lobby = this;
     const returnBullet = this.bullets.filter((e) => e.id == data.id);
     returnBullet.forEach((bullet) => {
-      //new
-
       bullet.isDestroyed = true;
       let enemyId = data?.enemyId;
 
@@ -1169,7 +1167,7 @@ module.exports = class GameLobby extends LobbyBase {
       });
 
       const subjectOfAttack = connection1?.player ? connection1?.player : ai;
-
+      console.log("bi tan cong", subjectOfAttack);
       if (!subjectOfAttack) {
         return;
       }

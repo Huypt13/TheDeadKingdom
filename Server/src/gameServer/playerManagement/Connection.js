@@ -53,7 +53,7 @@ class Connection {
     });
     socket.on("collisionDestroy", (data) => {
       if (connection.lobby instanceof GameLobby) {
-        console.log("trung dan");
+        console.log("trung dan", data);
         this.lobby.onCollisionDestroy(this, data);
       }
     });

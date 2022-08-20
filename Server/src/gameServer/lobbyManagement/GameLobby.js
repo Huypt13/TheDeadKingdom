@@ -1293,6 +1293,7 @@ module.exports = class GameLobby extends LobbyBase {
   }
 
   despawnBullet(bullet = Bullet) {
+    console.log("de bullet", bullet.id);
     let index = this.bullets.indexOf(bullet);
     if (index > -1) {
       this.bullets.splice(index, 1);

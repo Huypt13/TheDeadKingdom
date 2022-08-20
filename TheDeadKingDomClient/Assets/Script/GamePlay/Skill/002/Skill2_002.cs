@@ -17,7 +17,7 @@ public class Skill2_002 : MonoBehaviour
         NetworkIdentity ni = collision?.gameObject?.GetComponent<NetworkIdentity>();
 
         // client trung dan gui request
-        if (ni.IsControlling())
+        if (niActive.IsControlling() && ni.GetComponent<TankGeneral>() != null)
         {
             Debug.Log("touch " + ni.GetId());
 

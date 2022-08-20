@@ -1416,7 +1416,9 @@ module.exports = class GameLobby extends LobbyBase {
         return false;
       }
       for (const tankRemain of tankList[0]?.tankList) {
-        if (tankRemain.remaining > 0) {
+        // dang ban
+
+        if (tankRemain.remaining > 0 && !tankRemain?.isSelling) {
           tank = tankRemain.tank;
           connection.player.startTank = JSON.parse(JSON.stringify(tank));
           connection.player.startTank.tankUserId = tankRemain._id;
@@ -1435,7 +1437,7 @@ module.exports = class GameLobby extends LobbyBase {
       connection.player._id
     );
 
-    if (!tankUser || tankUser?.remaining <= 0) {
+    if (!tankUser || tankUser?.remaining <= 0 || tankUser?.isSelling) {
       console.log("chon tank check remain fail", connection.player.id);
       return false;
     }

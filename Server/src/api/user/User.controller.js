@@ -1,3 +1,5 @@
+const emailValidator = require("email-validator");
+
 const UserService = require("./User.service");
 const ApiResponse = require("../../utility/ApiResponse");
 const Jwt = require("../../helper/Jwt.helper");
@@ -82,7 +84,7 @@ class UserController {
 
   async connectWalletAddress(req, res) {
     try {
-      const { userId } = res.locals.user._id.tostring();
+      const userId = res.locals.user._id.tostring();
       const { walletAddress } = req.query;
       const user = UserService.connectWallet(walletAddress, userId);
       if (!user) {
@@ -140,6 +142,11 @@ class UserController {
   async getTopRank(req, res) {
     try {
       const { top } = req.query;
+      if (!Number.isInteger(top)) {
+        top = 20;
+      } else if (top < 1) {
+        top = 20;
+      }
       const topRank = await UserService.getTopRank(top);
       return ApiResponse.successResponseWithData(res, "Success", topRank);
     } catch (error) {
@@ -174,6 +181,9 @@ class UserController {
   async forgotPassword(req, res) {
     try {
       const { email } = req.body;
+      if (!emailValidator.validate(email)) {
+        return ApiResponse.badRequestResponse(res, "Wrong email");
+      }
       await UserService.forgotPassword(email);
       return ApiResponse.successResponse(
         res,

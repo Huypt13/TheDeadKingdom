@@ -29,6 +29,7 @@ module.exports = class Bullet extends ServerObject {
       ) >=
       this.shootingRange - 0.1
     ) {
+      console.log("pos des", this.position, this.oldPosition);
       this.isDestroyed = true;
     }
 

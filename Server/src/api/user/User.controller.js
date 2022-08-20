@@ -20,7 +20,7 @@ class UserController {
             "Please confirm email to active your account"
           );
         }
-        if (userinfor?.inWeb) {
+        if (!userinfor?.inWeb) {
           if (gameServer.connections[user._id]) {
             gameServer.connections[user._id].socket.emit(
               "someoneLoginYourAccount",

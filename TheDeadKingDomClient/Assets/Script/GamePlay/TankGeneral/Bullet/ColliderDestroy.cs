@@ -64,36 +64,39 @@ public class ColliderDestroy : MonoBehaviour
                     || (niActive.IsControlling() && ni.tag == "MainHouse")  // main house trung dan
                     || (ni.IsControlling() && niActive.GetComponent<AiManager>() != null))  // ai ban nguoi nguoi bi ban gui request 
                 {
-                    Debug.Log("trung dan");
-                    NetworkClient.serverObjects.Remove(networkIdentity.GetId());
                     networkIdentity.GetSocket().Emit("collisionDestroy", new JSONObject(JsonUtility.ToJson(new IDData()
                     {
                         id = networkIdentity.GetId(),
                         enemyId = ni.GetId()
                     })));
+                    NetworkClient.serverObjects.Remove(networkIdentity.GetId());
+                    Debug.Log("trung dan");
+
                     return;
                 }
 
                 // ban trung hop mau firer gui reques
                 if (ni.tag == "HpBox" && niActive.IsControlling())
                 {
-                    NetworkClient.serverObjects.Remove(networkIdentity.GetId());
                     networkIdentity.GetSocket().Emit("collisionDestroyHpBox", new JSONObject(JsonUtility.ToJson(new IDData()
                     {
                         id = networkIdentity.GetId(),
                         enemyId = ni.GetId()
                     })));
+                    NetworkClient.serverObjects.Remove(networkIdentity.GetId());
+
                     return;
                 }
 
                 if (ni.tag == "Box" && niActive.IsControlling())
                 {
-                    NetworkClient.serverObjects.Remove(networkIdentity.GetId());
                     networkIdentity.GetSocket().Emit("collisionDestroyBox", new JSONObject(JsonUtility.ToJson(new IDData()
                     {
                         id = networkIdentity.GetId(),
                         enemyId = ni.GetId()
                     })));
+                    NetworkClient.serverObjects.Remove(networkIdentity.GetId());
+
                     return;
 
                 }

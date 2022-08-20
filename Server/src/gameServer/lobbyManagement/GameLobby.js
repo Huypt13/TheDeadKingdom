@@ -1152,7 +1152,7 @@ module.exports = class GameLobby extends LobbyBase {
     connection.socket.broadcast.to(this.id).emit("playerDied", returnData);
   }
   onCollisionDestroy(connection = Connection, data) {
-    console.log("bi trung dan r");
+    console.log("bi trung dan r", this.bullets, data);
     const lobby = this;
     const returnBullet = this.bullets.filter((e) => e.id == data.id);
     console.log("bullet get", returnBullet);

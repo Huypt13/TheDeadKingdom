@@ -45,7 +45,7 @@ module.exports = class Bullet extends ServerObject {
           new Vector2(this.oldPosition.x, this.oldPosition.y)
         )
       ) >=
-      2 * this.shootingRange - 0.1
+      10 * this.shootingRange - 0.1
     ) {
       return true;
     }

@@ -61,17 +61,42 @@ class BoxService {
       return await TankUser.aggregate([
         { $match: { tankId: null, userId: id } },
         {
-          $group: { _id: "$boxId", quantity: { $count: {} } },
-        },
-        {
           $lookup: {
             from: "boxes",
-            let: { boxId: { $toObjectId: "$_id" } },
+            let: { boxId: { $toObjectId: "$boxId" } },
             pipeline: [{ $match: { $expr: { $eq: ["$_id", "$$boxId"] } } }],
             as: "box",
           },
         },
       ]);
+    } catch (err) {
+      console.log(err);
+      throw new Error(err.message);
+    }
+  }
+  async getAllBoxOwnerAndPaging({pageNumbers,limit},id){
+    try {
+      const listBox = await this.getAllBoxOwner(id);
+      console.log("object",listBox);
+      const total = listBox.length;
+      const displayedBoxNumber = (pageNumbers-1)*limit;
+      if(total<= displayedBoxNumber){
+        throw new Error("Don't have box")
+      }
+      const listBoxes = await TankUser.aggregate([
+        { $match: { tankId: null, userId: id } },
+        {
+          $lookup: {
+            from: "boxes",
+            let: { boxId: { $toObjectId: "$boxId" } },
+            pipeline: [{ $match: { $expr: { $eq: ["$_id", "$$boxId"] } } }],
+            as: "box",
+          },
+        },
+        {$skip: displayedBoxNumber},
+        {$limit:+limit}
+      ]);
+      return {listBoxes,total}
     } catch (err) {
       console.log(err);
       throw new Error(err.message);

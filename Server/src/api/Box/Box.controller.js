@@ -19,9 +19,10 @@ class BoxController {
       const tankId = await BoxService.unbox(boxId);
       await TankUserService.updateData(
         { _id: tankUserId },
-        { tankId, remaining: 100 }
+        { tankId, remaining: 100, openedDate: new Date()}
       );
-      const tank = await TankService.getByTankId(tankId);
+      const tank = await TankService.getTankInfo(tankId);
+      if(!tank) return ApiResponse.serverErrorResponse(res, "Unbox Fail!");
       return ApiResponse.successResponseWithData(res, "Unbox Success", tank);
     } catch (err) {
       console.log(err);
@@ -30,33 +31,34 @@ class BoxController {
   }
 
   async getAllBoxes(req, res) {
-      try {
-        const allBox = await BoxService.getAllBoxes();
-        return ApiResponse.successResponseWithData(res, "Ok", allBox);
-      } catch (err) {
-        ApiResponse.serverErrorResponse(res, err.message);
-      }
-    }
-  async getBoxDetails(req, res) {
-      try {
-        const { id } = req.params;
-        const allBox = await BoxService.getByBoxId(id);
-        return ApiResponse.successResponseWithData(res, "Ok", allBox);
-      } catch (err) {
-        console.log(err);
-        ApiResponse.serverErrorResponse(res, err.message);
-      }
-  }
-  async getAllBoxOwner(req, res) {
     try {
-      const { _id } = res.locals.user;
-      const allBox = await BoxService.getAllBoxOwner(_id.toStirng());
+      const allBox = await BoxService.getAllBoxes();
+      return ApiResponse.successResponseWithData(res, "Ok", allBox);
+    } catch (err) {
+      ApiResponse.serverErrorResponse(res, err.message);
+    }
+  }
+  async getBoxDetails(req, res) {
+    try {
+      const { id } = req.params;
+      const allBox = await BoxService.getByBoxId(id);
       return ApiResponse.successResponseWithData(res, "Ok", allBox);
     } catch (err) {
       console.log(err);
       ApiResponse.serverErrorResponse(res, err.message);
-      }
     }
   }
+  async getAllBoxOwnerAndPaging(req, res) {
+    try {
+      const { _id } = res.locals.user;
+      const { pageNumbers, limit } = req.query;
+      const allBox = await BoxService.getAllBoxOwnerAndPaging({pageNumbers, limit},_id.toString());
+      return ApiResponse.successResponseWithData(res, "Ok", allBox);
+    } catch (err) {
+      console.log(err);
+      ApiResponse.serverErrorResponse(res, err.message);
+    }
+  }
+}
 
 module.exports = new BoxController();

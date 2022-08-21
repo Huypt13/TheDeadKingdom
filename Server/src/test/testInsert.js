@@ -291,6 +291,7 @@ module.exports.insertMarketPlaceItemData = async () => {
   await MarketPlaceItem.insertMany([{
     "_id": mongoose.Types.ObjectId("62f387a2f62fd1f6f4d367de"),
     "tokenId": "1",
+    "marketItemId": "1231",
     "price": 103.4,
     "seller": "6296d14fb263c0630e920036",
     "buyer": "6296d13fb263c0630e920031",
@@ -301,6 +302,7 @@ module.exports.insertMarketPlaceItemData = async () => {
     },{
     "_id": mongoose.Types.ObjectId("62f387a2f62fd1f6f4d367dc"),
     "tokenId": "2",
+    "marketItemId": "1233",
     "price": 103.4,
     "seller": "6296d14fb263c0630e920036",
     "buyer": null,
@@ -313,6 +315,7 @@ module.exports.insertMarketPlaceItemData = async () => {
     "_id": mongoose.Types.ObjectId("62f387a2f62fd1f6f4d367da"),
     "tokenId": "3",
     "price": 103.4,
+    "marketItemId": "131",
     "seller": "6296d14fb263c0630e920036",
     "buyer": null,
     "nftContract": "ad123",

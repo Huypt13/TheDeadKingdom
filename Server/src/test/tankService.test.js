@@ -44,9 +44,18 @@ describe("Test Tank Service", () => {
     expect(tank[0].userId.toString()).toBe(id)
   });
   test("test get tank by user id fail", async () => {
-    let id = "6296d14fb263c0630e9240036";
+    let id = "6296d14fb263c0630e9240037";
     const tank = await TankService.getTankByUserId(id);
     expect(tank.length).toBe(0);
+  });
+  test("test get tank by user id can't convert", async () => {
+    try{
+      let id = "6296d14fb263c0630";
+      const tank = await TankService.getTankByUserId(id);
+      expect(tank.length).toBe(0);
+    } catch(err){
+      expect(err).not.toBe(null);
+    }
   });
   test("test get tank by id success", async () => {
     const tank = await TankService.getByTankId("62ef8e9da0b3eafa898cabd4", "6296d14fb263c0630e920036")
@@ -64,7 +73,7 @@ describe("Test Tank Service", () => {
     }
   });
   test("test get tank by id fail with userId not exist", async () => {
-    const tank = await TankService.getByTankId("62ef8e9da0b3eafa898cabd5", "6296d14fb263c0630e920037")
+    const tank = await TankService.getByTankId("62ef8e9da0b3eafa898cabd4", "6296d14fb263c0630e920037")
     expect(tank).toBe(null)
   });
   test("test get tank by id fail with userId can't convert", async () => {
@@ -116,22 +125,26 @@ describe("Test Tank Service", () => {
       expect(error).not.toBe(null);
     }
   });
-  test("test get top n tank listed lasted", async () => {
-    const listTank = await TankService.getTopTankListedLasted(5);
-    expect(listTank.length).not.toBeGreaterThan(5);
+  test("test get top n tank listed lasted success", async () => {
+    const listTank = await TankService.getTopTankListedLastedAndPaging(1,2,1);
+
     if (listTank.length > 0) {
       expect(listTank[0].tankUser.tankId).not.toBe(null)
     }
     expect(listTank).not.null;
   })
-  test("test get top tank listed lasted fail n <0", async () => {
+  test("test get top tank listed lasted fail with pageNumbers to much", async () => {
     try {
-      const listTank = await TankService.getTopTankListedLasted(-5);
-      if (listTank.length > 0) {
-        expect(listTank[0].tankUser.tankId).not.toBe(null)
-      }
+      const listTank = await TankService.getTopTankListedLastedAndPaging(100,2,3);
     } catch (err) {
-      expect(err).not.toBe(null)
+      expect(err.message).toBe("Don't have tank")
+    }
+  })
+  test("test get top tank listed lasted fail with limit to much", async () => {
+    try {
+      const listTank = await TankService.getTopTankListedLastedAndPaging(1,1000,4);
+    } catch (err) {
+      expect(err.message).toBe("Don't have tank")
     }
   })
   test("test get total tank sold lasted success", async () => {
@@ -142,7 +155,7 @@ describe("Test Tank Service", () => {
     expect(listTank).not.toBe(null)
   })
   test("test get tanks sold lasted paging success", async () => {
-    const listTank = await TankService.getTankSoldLastedAndPaging(1, 2);
+    const listTank = await TankService.getTankSoldLastedAndPaging(1, 1);
     if (listTank.length > 0) {
       expect(listTank[0].tankUser.tankId).not.toBe(null)
     }
@@ -151,6 +164,16 @@ describe("Test Tank Service", () => {
   test("test get tanks sold lasted and paging fail with page number to much", async () => {
     try {
       const listTank = await TankService.getTankSoldLastedAndPaging(134, 2);
+      if (listTank.length > 0) {
+        expect(listTank[0].tankUser.tankId).not.toBe(null)
+      }
+    } catch (err) {
+      expect(err.message).toContain("Don't have tank");
+    }
+  })
+  test("test get tanks sold lasted and paging fail with page number to much", async () => {
+    try {
+      const listTank = await TankService.getTankSoldLastedAndPaging(1, 200);
       if (listTank.length > 0) {
         expect(listTank[0].tankUser.tankId).not.toBe(null)
       }
@@ -211,6 +234,21 @@ describe("Test Tank Service", () => {
     const listTank = await TankService.getTopListedLastedWithFilter(filter);
     expect(listTank).not.toBe(null);
   })
+  test("test get top listed lasted with filter success ", async () => {
+    const filter = { levels: [1, 2, 3], classTypes: [1, 2, 3], typeIds: ["001", "002", "003"], sortBy: { createdAt: -1 } }
+    const listTank = await TankService.getTopListedLastedWithFilter(filter);
+    expect(listTank).not.toBe(null);
+  })
+  test("test get top listed lasted with filter success ", async () => {
+    const filter = { levels: [3, 4, 5], classTypes: [1, 2, 3], typeIds: ["001", "002", "003"], sortBy: { createdAt: -1 } }
+    const listTank = await TankService.getTopListedLastedWithFilter(filter);
+    expect(listTank).not.toBe(null);
+  })
+  test("test get top listed lasted with filter success ", async () => {
+    const filter = { levels: [3, 4, 5], classTypes: [6, 7, 8], typeIds: ["004", "005", "006"], sortBy: { remaining: -1 } }
+    const listTank = await TankService.getTopListedLastedWithFilter(filter);
+    expect(listTank).not.toBe(null);
+  })
 
   test("test get tanks owner  success ", async () => {
     const listTank = await TankService.getTotalTankOwner("6296d14fb263c0630e920036");
@@ -231,33 +269,33 @@ describe("Test Tank Service", () => {
     }
   })
   test("test get tanks owner with filter success ", async () => {
-    const listTank = await TankService.getTotalTankOwnerPaging("6296d14fb263c0630e920036", { pageNumber: 1, limit: 2 });
+    const listTank = await TankService.getTotalTankOwnerPaging("6296d14fb263c0630e920036", { pageNumbers: 1, limit: 2 });
     expect(listTank).not.toBe(null);
   })
   test("test get tanks owner with filter fail with id not found", async () => {
     try {
-      const listTank = await TankService.getTotalTankOwnerPaging("6296d14fb263c0630e920078", { pageNumber: 1, limit: 1 });
+      const listTank = await TankService.getTotalTankOwnerPaging("6296d14fb263c0630e920078", { pageNumbers: 1, limit: 1 });
     } catch (err) {
       expect(err.message).toContain("Don't have tank");
     }
   })
   test("test get tanks owner with filter fail with page number to much", async () => {
     try {
-      const listTank = await TankService.getTotalTankOwnerPaging("6296d14fb263c0630e920036", { pageNumber: 133, limit: 1 });
+      const listTank = await TankService.getTotalTankOwnerPaging("6296d14fb263c0630e920036", { pageNumbers: 133, limit: 1 });
     } catch (err) {
       expect(err.message).toContain("Don't have tank");
     }
   })
   test("test get tanks owner with filter fail with limt number to much", async () => {
     try {
-      const listTank = await TankService.getTotalTankOwnerPaging("6296d14fb263c0630e920036", { pageNumber: 133, limit: 1000 });
+      const listTank = await TankService.getTotalTankOwnerPaging("6296d14fb263c0630e920036", { pageNumbers: 133, limit: 1000 });
     } catch (err) {
       expect(err.message).toContain("Don't have tank");
     }
   })
   test("test get tanks owner with filter fail with id can't convert'", async () => {
     try {
-      const listTank = await TankService.getTotalTankOwnerPaging("6296d14fb263c0", { pageNumber: 133, limit: 1 });
+      const listTank = await TankService.getTotalTankOwnerPaging("6296d14fb263c0", { pageNumbers: 133, limit: 1 });
     } catch (err) {
       expect(err.message).not.toBe(null);
     }
@@ -278,59 +316,22 @@ describe("Test Tank Service", () => {
   test("test get tanks owner with status 'Owned'  and paging fail with id can't convert", async() => {
     try{
       const filter = {limit: 1, pageNumbers:1, sortBy:{name: -1 }, status: "Owned"}
-      const listTank = await TankService.getTotalTankOwnerWithStatusAndPaging(filter,"6296d14fb263c0630e920090")
+      const listTank = await TankService.getTotalTankOwnerWithStatusAndPaging(filter,"6296d14fb263c0")
     }catch(err){
       expect(err).not.toBe(null);
     }
   })
   test("test get tanks owner with status 'Owned'  and paging fail with pageNumbers to much", async() => {
     try{
-      const filter = {limit: 1, pageNumbers:1000, sortBy:{name: -1 }, status: "Owned"}
-      const listTank = await TankService.getTotalTankOwnerWithStatusAndPaging(filter,"6296d14fb263c0630e920090")
+      const filter = {limit: 1, pageNumbers:1000, sortBy:{remaning: -1 }, status: "isSelling"}
+      const listTank = await TankService.getTotalTankOwnerWithStatusAndPaging(filter,"6296d14fb263c0630e920036")
     }catch(err){
       expect(err.message).toContain("Don't have tank")
     }
   })
   test("test get tanks owner with status 'Owned'  and paging fail with limit to much", async() => {
     try{
-      const filter = {limit: 1000, pageNumbers:100, sortBy:{name: -1 }, status: "Owned"}
-      const listTank = await TankService.getTotalTankOwnerWithStatusAndPaging(filter,"6296d14fb263c0630e920090")
-    }catch(err){
-      expect(err.message).toContain("Don't have tank")
-    }
-  })
-  test("test get tanks owner with status 'isSelling' and paging success", async() => {
-     const filter = {limit: 1, pageNumbers:1, sortBy:{name: -1 }, status: "isSelling"}
-     const listTank = await TankService.getTotalTankOwnerWithStatusAndPaging(filter,"6296d14fb263c0630e920036")
-     expect(listTank.listTankOwner[0].marketplaceItem.isSelling).toBe(true);
-  })
-  test("test get tanks owner with status 'isSelling'  and paging false with id not found", async() => {
-    try{
-      const filter = {limit: 1, pageNumbers:1, sortBy:{name: -1 }, status: "isSelling"}
-      const listTank = await TankService.getTotalTankOwnerWithStatusAndPaging(filter,"6296d14fb263c0630e920090")
-    }catch(err){
-      expect(err.message).toContain("Don't have tank")
-    }
-  })
-  test("test get tanks owner with status 'isSelling'  and paging fail with id can't convert", async() => {
-    try{
-      const filter = {limit: 1, pageNumbers:1, sortBy:{name: -1 }, status: "isSelling"}
-      const listTank = await TankService.getTotalTankOwnerWithStatusAndPaging(filter,"6296d14fb263c0630e920090")
-    }catch(err){
-      expect(err).not.toBe(null);
-    }
-  })
-  test("test get tanks owner with status 'isSelling'  and paging fail with pageNumbers to much", async() => {
-    try{
-      const filter = {limit: 1, pageNumbers:1000, sortBy:{name: -1 }, status: "isSelling"}
-      const listTank = await TankService.getTotalTankOwnerWithStatusAndPaging(filter,"6296d14fb263c0630e920090")
-    }catch(err){
-      expect(err.message).toContain("Don't have tank")
-    }
-  })
-  test("test get tanks owner with status 'isSelling'  and paging fail with limit to much", async() => {
-    try{
-      const filter = {limit: 1000, pageNumbers:100, sortBy:{name: -1 }, status: "isSelling"}
+      const filter = {limit: 1000, pageNumbers:100, sortBy:{remaning: -1 }, status: "isSelling"}
       const listTank = await TankService.getTotalTankOwnerWithStatusAndPaging(filter,"6296d14fb263c0630e920090")
     }catch(err){
       expect(err.message).toContain("Don't have tank")
@@ -352,20 +353,20 @@ describe("Test Tank Service", () => {
  })
  test("test get tanks owner with status 'Owned' fail with id can't convert", async() => {
    try{
-     const filter = {sortBy:{name: -1 }, status: "Owned"}
-     const listTank = await TankService.getTotalTankOwnerWithStatus(filter,"6296d14fb263c0630e920090")
+     const filter = {sortBy:{remaining: -1 }, status: "Owned"}
+     const listTank = await TankService.getTotalTankOwnerWithStatus(filter,"6296d14fb263c0630e")
    }catch(err){
      expect(err).not.toBe(null);
    }
  })
   test("test get tanks owner with status 'isSelling'  success", async() => {
-    const filter = { sortBy:{name: -1 }, status: "isSelling"}
+    const filter = { sortBy:{remaining: -1 }, status: "isSelling"}
     const listTank = await TankService.getTotalTankOwnerWithStatus(filter,"6296d14fb263c0630e920036")
     expect(listTank[0].marketplaceItem.isSelling).toBe(true);
  })
  test("test get tanks owner with status 'isSelling' false with id not found", async() => {
    try{
-     const filter = { sortBy:{name: -1 }, status: "isSelling"}
+     const filter = { sortBy:{remaining: -1 }, status: "isSelling"}
      const listTank = await TankService.getTotalTankOwnerWithStatus(filter,"6296d14fb263c0630e920090")
    }catch(err){
      expect(err.message).toContain("Don't have tank")
@@ -374,7 +375,7 @@ describe("Test Tank Service", () => {
  test("test get tanks owner with status 'isSelling' fail with id can't convert", async() => {
    try{
      const filter = {sortBy:{name: -1 }, status: "isSelling"}
-     const listTank = await TankService.getTotalTankOwnerWithStatus(filter,"6296d14fb263c0630e920090")
+     const listTank = await TankService.getTotalTankOwnerWithStatus(filter,"6296d14fb263c0630e9")
    }catch(err){
      expect(err).not.toBe(null);
    }

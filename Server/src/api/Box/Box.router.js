@@ -6,5 +6,5 @@ const Authentication = require('../middlewares/Authentication.midleware');
 router.get('/unbox/:tankUserId', Authentication, BoxController.unbox);
 router.get('/allBox', BoxController.getAllBoxes)
 router.get('/boxDetails/:id', BoxController.getBoxDetails)
-router.get("/allBoxOwner", Authentication, BoxController.getAllBoxOwner)
+router.get("/allBoxOwner", Authentication, BoxController.getAllBoxOwnerAndPaging)
 module.exports = router;

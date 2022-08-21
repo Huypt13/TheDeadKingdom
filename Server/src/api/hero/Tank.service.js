@@ -85,6 +85,9 @@ class TankService {
   async updateRemaining(id) {
     return await TankUser.findByIdAndUpdate(id, { $inc: { remaining: -1 } });
   }
+  async getTankInfo(id) {
+    return await Tank.findById(id);
+  }
 
   async insertAll(userId) {
     const listTank = await Tank.find({}).lean();
@@ -123,14 +126,63 @@ class TankService {
         },
         { "$unwind": "$tank" },
         { $sort: { createdAt: -1 } },
-        { $limit: +number },
+        { $limit: +3 },
         {
           $project: {
             tank: "$tank", createdAt: "$createAt", price: "$price", tankUser: "$tankUser"
           }
-        }
+        },
+        {$count: "total"}
       ])
       return listTank;
+    } catch (err) {
+      console.log(err);
+      throw new Error(err.message)
+    }
+
+  }
+  async getTopTankListedLastedAndPaging(pageNumbers, limit,number) {
+    try {
+      const list = await this.getTopTankListedLasted(number);
+      const total = list[0]?.total ||0;
+      
+      const displayedTankNumber = (pageNumbers - 1) * limit;
+      if(displayedTankNumber >= total){
+        throw new Error("Don't have tank")
+      }
+      const listTank = await MarketPlaceItem.aggregate([
+        { $match: { isSelling: true } },
+        {
+          $lookup: {
+            from: "tankusers",
+            localField: "tokenId",
+            foreignField: "nftId",
+            as: "tankUser",
+          }
+        },
+        { "$unwind": "$tankUser" },
+        {
+          $lookup: {
+            from: "tanks",
+            let: { tankId: { $toObjectId: "$tankUser.tankId" } },
+            pipeline: [
+              { $match: { $expr: { $eq: ["$$tankId", "$_id"] } } },
+              { $project: { skill: 0 } }
+            ],
+            as: "tank"
+          }
+        },
+        { "$unwind": "$tank" },
+        { $sort: { createdAt: -1 } },
+        { $skip: displayedTankNumber},
+        { $limit: +limit },
+        {
+          $project: {
+            _id: "$tankUser._id",tank: "$tank", createdAt: "$createAt", price: "$price", tankUser: "$tankUser"
+          }
+        }
+      ])
+      return {listTank,total};
     } catch (err) {
       console.log(err);
       throw new Error(err.message)
@@ -211,7 +263,7 @@ class TankService {
         { $limit: +limit },
         {
           $project: {
-            tank: "$tank", createdAt: "$createAt", price: "$price", tankUser: "$tankUser"
+            _id: "$tankUser._id",tank: "$tank", createdAt: "$createAt", price: "$price", tankUser: "$tankUser"
           }
         }
       ])
@@ -222,16 +274,16 @@ class TankService {
     }
 
   }
-
+  //*
   async getTankUnsoldDetailsById(id) {
     const tankDetails = await TankUser.aggregate([
       { $match: { _id: ObjectId(id) } },
       {
         $lookup: {
           from: "marketplaceitems",
-          let: { tokenId: "$tokenId" },
+          let: { nftId: "$nftId" },
           pipeline: [
-            { $match: { $expr: { $eq: ["$nftId", "$$tokenId"] } } },
+            { $match: { $expr: { $eq: ["$tokenId", "$$nftId"] } } },
             { $match: { $expr: { $eq: ["$isSelling", true] } } }
           ],
           as: "marketplaceItem"
@@ -263,16 +315,16 @@ class TankService {
     ])
     return tankDetails;
   }
-
+  //*
   async getTankSoldDetailsById(id) {
     const tankDetails = await TankUser.aggregate([
       { $match: { _id: ObjectId(id) } },
       {
         $lookup: {
           from: "marketplaceitems",
-          let: { tokenId: "$tokenId" },
+          let: { nftId: "$nftId" },
           pipeline: [
-            { $match: { $expr: { $eq: ["$nftId", "$$tokenId"] } } },
+            { $match: { $expr: { $eq: ["$tokenId", "$$nftId"] } } },
             { $match: { $expr: { $eq: ["$isSelling", false] } } },
             { $sort: { finishedAt: -1 } },
             { $limit: 1 }
@@ -307,12 +359,12 @@ class TankService {
     return tankDetails;
   }
   async getTopListedLastedWithFilter(filter) {
-    const { levels, classTypes, typeIds, limit, pageNumbers, sortBy } = filter;
     try {
+      const { levels, classTypes, typeIds, limit, pageNumbers, sortBy } = filter;
       const listTank = await MarketPlaceItem.aggregate([
         {
           $match: {
-            isSelling: false,
+            isSelling: true,
           }
         },
         {
@@ -351,10 +403,74 @@ class TankService {
           }
         },
         { $sort: { createdAt: -1 } },
-        { $sort: sortBy }
+        { $sort: sortBy },
+        { $count: "total" },
       ])
-      console.log(listTank);
+
       return listTank;
+    } catch (err) {
+      console.log(err);
+      throw new Error(err.message)
+    }
+  }
+  async getTopListedLastedWithFilterAndPaging(filter) {
+
+    try {
+      const { levels, classTypes, typeIds, limit, pageNumbers, sortBy } = filter;
+      const tanks = await this.getTopListedLastedWithFilter(filter);
+      const total = tanks[0]?.total || 0;
+      const displayedTankNumber = (pageNumbers - 1) * limit;
+      if (displayedTankNumber >= total) {
+        throw new Error("Don't have tank")
+      }
+      const listTank = await MarketPlaceItem.aggregate([
+        {
+          $match: {
+            isSelling: true,
+          }
+        },
+        {
+          $lookup: {
+            from: "tankusers",
+            localField: "tokenId",
+            foreignField: "nftId",
+            as: "tankUser",
+          }
+        },
+        { "$unwind": "$tankUser" },
+        {
+          $lookup: {
+            from: "tanks",
+            let: { tankId: { $toObjectId: "$tankUser.tankId" } },
+            pipeline: [
+              { $match: { $expr: { $eq: ["$$tankId", "$_id"] } } },
+              {
+                $match: {
+                  $and: [
+                    { level: { $in: levels } },
+                    { classType: { $in: classTypes } },
+                    { typeId: { $in: typeIds } }
+                  ]
+                }
+              }
+            ],
+            as: "tank"
+          },
+        },
+        { "$unwind": "$tank" },
+        {
+          $project: {
+            _id:"$tankUser._id",
+            name: "$tank.name", price: 1, createdAt: "$createdAt",
+            remaining: "$tank.remaining", tank: "$tank", tankUser: "$tankUser",
+          }
+        },
+        { $sort: { createdAt: -1 } },
+        { $sort: sortBy },
+        { $skip: displayedTankNumber },
+        { $limit: limit }
+      ])
+      return { listTank, total: total };
     } catch (err) {
       console.log(err);
       throw new Error(err.message)
@@ -429,11 +545,12 @@ class TankService {
           { $unwind: "$tank" },
           {
             $project: {
-              name: "$tank.name", price: "$marketplaceItem.price",  boughtDate: "$boughtDate",
+              name: "$tank.name", price: "$marketplaceItem.price", boughtDate: "$boughtDate",
               remaining: "$tank.remaining", tank: "$tank", tankUser: "$tankUser", marketplaceItem: "$marketplaceItem"
             }
           },
           { $sort: sortBy },
+
         ])
       }
 
@@ -452,7 +569,7 @@ class TankService {
       if (displayedTankNumber >= totalTank) {
         throw new Error("Don't have tank");
       }
-      let listTankOwner=null;
+      let listTankOwner = null;
       if (status == "Owned") {
         listTankOwner = await TankUser.aggregate([
           { $match: { userId: _id, tankId: { $ne: null }, nftId: { $ne: null } } },
@@ -537,13 +654,12 @@ class TankService {
     }
   }
   async getTotalTankOwnerPaging(_id, paging) {
-     
     try {
       const total = await this.getTotalTankOwner(_id);
       const totalTank = total.length;
-      const {pageNumber, limit} = paging;
-      const displayedTankNumber = (pageNumber-1) * limit;
-      if(displayedTankNumber >= totalTank) {
+      const { pageNumbers, limit } = paging;
+      const displayedTankNumber = (pageNumbers - 1) * limit;
+      if (displayedTankNumber >= totalTank) {
         throw new Error("Don't have tank'")
       }
       const listTankOwner = await TankUser.aggregate([
@@ -577,8 +693,8 @@ class TankService {
             tank: "$tank", tankUser: "$tankUser", marketplaceItem: "$marketplaceItem"
           }
         },
-        {$skip: displayedTankNumber},
-        {$limit: +limit}
+        { $skip: displayedTankNumber },
+        { $limit: +limit }
       ])
 
       return { listTankOwner, totalTank: totalTank }

@@ -1,6 +1,10 @@
 const TankUser = require('./TankUser.schema')
 const BoxService = require('../Box/Box.service')
 const UserService = require('../user/User.service')
+const Box = require('../Box/Box.service')
+const RabbitMq = require('../../helper/RabbitMq.helper')
+
+
 
 
 
@@ -16,26 +20,52 @@ class TankUserService {
     async createTankUser(listToken, tokenOwner, boxId) {
         try {
             const listTankUser = [];
+            if(listToken.length <=0){
+                throw new Error("Buy box failed")
+            }
             const tankUser = await TankUser.find({ nftId: { $in: listToken } })
             if (tankUser.length >= 1) {
                 console.log("boxId is already existed!");
                 throw new Error("boxId is already existed!");
             }
-            const owerId = await UserService.getByWalletAddress(tokenOwner);
+            const owner = await UserService.getByWalletAddress(tokenOwner);
+            if(!owner){
+                throw new Error("buyer is not connect wallet");
+            }
+            const box = await BoxService.getByBoxId(boxId);
+            if(!box){
+                throw new Error("Box type not found")
+            }
             for (let token of listToken) {
                 const tankUser = {
-                    userId: owerId._id.toString(),
+                    userId: owner._id.toString(),
                     tankId: null,
                     remaining: null,
                     nftId: token,
-                    openDate: null,
+                    openedDate: null,
                     boughtDate: new Date(),
                     boxId: boxId,
 
                 }
                 listTankUser.push(tankUser);
             }
-            return await TankUser.insertMany(listTankUser);
+            const result = await TankUser.insertMany(listTankUser);
+            if(result.length > 0) {
+                await RabbitMq.boughtBoxNotify({
+                    message: `You bought ${listToken.length} box success`,
+                    email: owner.email,
+                    price: `${box.price * listToken.length} DKC`,
+                    url: `${process.env.WEB_URL}/user/login`,
+                })
+            } else {
+                await RabbitMq.boughtBoxNotify({
+                    message: `You bought box failed`,
+                    email: owner.email,
+                    price: "",
+                    url: `${process.env.WEB_URL}/user/login`,
+                })
+            }
+            return result;
 
         } catch (err) {
             console.log(err);
@@ -52,7 +82,7 @@ class TankUserService {
             throw new Error(err.message);
         }
     }
-    async getTankBuyUserIdAndnftId(userId, nftId) {
+    async getTankByUserIdAndnftId(userId, nftId) {
         try {
             const tank = await TankUser.aggregate([
                 { $match: { userId: userId, nftId: nftId } },
@@ -68,8 +98,8 @@ class TankUserService {
                 }
 
             ])
-            if (!tank) {
-                throw new Error("Tank not existed");
+            if (tank.length ==0 ) {
+                throw new Error("This tank is not exist");
             }
             return tank;
         } catch (err) {

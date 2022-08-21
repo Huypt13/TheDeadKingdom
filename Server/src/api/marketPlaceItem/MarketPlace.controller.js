@@ -6,7 +6,7 @@ class MarketPlaceItemController {
     try {
       const { day } = req.params;
       const statisticalTransaction =
-        await MarketPlaceItemService.getTotalTransitionsByDay(day);
+        await MarketPlaceItemService.getTotalTransactionsByDay(day);
       return ApiResponse.successResponseWithData(
         res,
         "Ok",

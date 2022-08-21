@@ -25,7 +25,7 @@ class UserService {
         { new: true }
       );
     } catch (e) {
-      throw new Error(error.message);
+      throw new Error(e.message);
     }
   }
   async getUser({ email, password }) {
@@ -142,7 +142,6 @@ class UserService {
   async changePassword({password, newPassword}, email) {
     try {
       const user = await this.getByEmail(email);
-      console.log("uuuu",user);
       if (!user) {
         throw new Error(`Invalid email`);
       }

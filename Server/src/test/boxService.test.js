@@ -101,11 +101,45 @@ describe("Test box service", () => {
     })
     test("test get all boxes owner fail with id can't convert", async ()=>{
         try{
-            const listBox = await BoxService.getAllBoxOwner("6296d13fb263c0630e920081");
+            const listBox = await BoxService.getAllBoxOwner("6296d13fb263c063");
         } catch(err){
             expect(err).not.toBe(null);
         }
       
+    })
+    test("test get all boxes owner and paging success", async ()=>{
+        const listBox = await BoxService.getAllBoxOwnerAndPaging({pageNumbers:1, limit:1},"6296d13fb263c0630e920031");
+        expect(listBox.length).toBeGreaterThanOrEqual(0)
+    })
+    test("test get all boxes owner and paging fail with id not found", async ()=>{
+        try{
+            const listBox = await BoxService.getAllBoxOwnerAndPaging({pageNumbers:1, limit:1},"6296d13fb263c0630e920081");
+        }catch(err){
+            expect(err.message).toBe("Don't have box")
+        }
+    })
+    test("test get all boxes owner and paging fail with id can't convert", async ()=>{
+        try{
+            const listBox = await BoxService.getAllBoxOwnerAndPaging({pageNumbers:1, limit:1},"6296d13fb263c06");
+        } catch(err){
+            expect(err).not.toBe(null);
+        }
+      
+    })
+
+    test("test get all boxes owner and paging fail with pageNumbers to much", async ()=>{
+        try{
+            const listBox = await BoxService.getAllBoxOwnerAndPaging({pageNumbers:90, limit:1},"6296d13fb263c0630e920081");
+        }catch(err){
+            expect(err.message).toBe("Don't have box")
+        }
+    })
+    test("test get all boxes owner and paging fail with limit to much", async ()=>{
+        try{
+            const listBox = await BoxService.getAllBoxOwnerAndPaging({pageNumbers:1, limit:98},"6296d13fb263c0630e920081");
+        }catch(err){
+            expect(err.message).toBe("Don't have box")
+        }
     })
 
 

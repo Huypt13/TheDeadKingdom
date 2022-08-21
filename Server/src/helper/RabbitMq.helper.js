@@ -171,4 +171,26 @@ async function resetPasswordNotify(data) {
     }
   );
 }
-module.exports = { connectRabbitMQ, registerNotify, soldNotify, boughtNotify, cancelNotify, listedNotify, resetPasswordNotify } 
+async function boughtBoxNotify(data) {
+  const { url, email, price, message } = data;
+  if (channel == null) {
+    console.log("data null");
+    channel = await connectRabbitMQ();
+  }
+  await channel.sendToQueue(
+    queue,
+    Buffer.from(
+      JSON.stringify({
+        pattern: "boughtBox",
+        data: {
+          url, email, price,message
+        },
+      })
+    ),
+    {
+      // RabbitMQ - Khi khởi động lại, tiếp tục chạy
+      persistent: true,
+    }
+  );
+}
+module.exports = { connectRabbitMQ, registerNotify, soldNotify, boughtNotify, cancelNotify, listedNotify, resetPasswordNotify, boughtBoxNotify } 

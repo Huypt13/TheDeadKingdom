@@ -84,7 +84,7 @@ class UserController {
 
   async connectWalletAddress(req, res) {
     try {
-      const { userId } = res.locals.user._id.tostring();
+      const userId  = res.locals.user._id.tostring();
       const { walletAddress } = req.query;
       if(!walletAddress){
         return ApiResponse.serverErrorResponse(res, "WalletAddress invalid");

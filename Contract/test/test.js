@@ -6,7 +6,7 @@ const Web3 = require("web3");
 const toBN = Web3.utils.toBN;
 const truffleAssert = require("truffle-assertions");
 
-contract("Marketplace", (accounts) => {
+contract("SmartContract Testing", (accounts) => {
   let marketplace;
   let tankNFT;
   let deathKingdomCoin;
@@ -55,6 +55,68 @@ contract("Marketplace", (accounts) => {
         "transfer amount exceeds balance"
       );
     });
+
+    it("Transfer 0 DKC", async () => {
+      await truffleAssert.passes(
+        deathKingdomCoin.transfer(accounts[1], 0, { from: accounts[2] }),
+        "passes"
+      );
+    });
+
+    it("Approve for 10 DKC", async () => {
+      await truffleAssert.passes(
+        deathKingdomCoin.approve(accounts[1], 10, { from: accounts[2] }),
+        "passes"
+      );
+      assert.equal(
+        (await deathKingdomCoin.allowance(accounts[2], accounts[1])).toString(),
+        "10"
+      );
+    });
+
+    it("Approve again for 10 DKC", async () => {
+      await truffleAssert.passes(
+        deathKingdomCoin.approve(accounts[1], 10, { from: accounts[2] }),
+        "passes"
+      );
+      assert.equal(
+        (await deathKingdomCoin.allowance(accounts[2], accounts[1])).toString(),
+        "10"
+      );
+    });
+
+    it("Approve for 0 DKC", async () => {
+      await truffleAssert.passes(
+        deathKingdomCoin.approve(accounts[1], 0, { from: accounts[2] }),
+        "passes"
+      );
+      assert.equal(
+        (await deathKingdomCoin.allowance(accounts[2], accounts[1])).toString(),
+        "0"
+      );
+    });
+
+    it("Check balance of accounts when smartcontract have just deployed", async () => {
+      assert.equal((await tankNFT.balanceOf(accounts[1])).toString(), "0");
+      assert.equal((await tankNFT.balanceOf(accounts[2])).toString(), "0");
+    });
+
+    it("Get all Lising NFT on Marketplace when smartcontract have just deployed", async () => {
+      let listingNFTs = await marketplace.getListingNfts();
+      assert.equal(listingNFTs.length, 0);
+    });
+
+    it("Get Lising NFT on Marketplace of an address when smartcontract have just deployed", async () => {
+      let listingNFTs = await marketplace.getMyListingNfts({
+        from: accounts[1],
+      });
+      assert.equal(listingNFTs.length, 0);
+    });
+
+    it("Get NFT Sell History on Marketplace when smartcontract have just deployed", async () => {
+      let listingNFTs = await marketplace.getNftSellHistory(1);
+      assert.equal(listingNFTs.length, 0);
+    });
   });
 
   describe("Buy Box state", () => {
@@ -83,6 +145,13 @@ contract("Marketplace", (accounts) => {
       it("Set Box Price correctly", async () => {
         await truffleAssert.passes(
           tankNFT.setBoxPrice(boxId1, priceBoxId1, { from: accounts[0] }),
+          "passes"
+        );
+      });
+
+      it("Set Box Price = 0", async () => {
+        await truffleAssert.passes(
+          tankNFT.setBoxPrice("boxId1", 0, { from: accounts[0] }),
           "passes"
         );
       });
@@ -213,6 +282,36 @@ contract("Marketplace", (accounts) => {
         assert.equal((await tankNFT.ownerOf(1)).toString(), accounts[1]);
         assert.equal((await tankNFT.balanceOf(accounts[1])).toString(), "1");
       });
+
+      it("Check OwnerOf tokenId < 0", async () => {
+        await truffleAssert.fails(tankNFT.ownerOf(-1), "value out-of-bounds");
+      });
+
+      it("Check OwnerOf tokenId = 0", async () => {
+        await truffleAssert.fails(
+          tankNFT.ownerOf(0),
+          "owner query for nonexistent token"
+        );
+      });
+
+      it("Check OwnerOf nonexists tokenId", async () => {
+        await truffleAssert.fails(
+          tankNFT.ownerOf(10),
+          "owner query for nonexistent token"
+        );
+      });
+
+      it("Buy 2 Box correctly", async () => {
+        await deathKingdomCoin.approve(tankNFT.address, DKCToWei("30"), {
+          from: accounts[1],
+        });
+        await truffleAssert.passes(
+          tankNFT.buyBoxes(boxId1, 2, { from: accounts[1] }),
+          "passes"
+        );
+
+        assert.equal((await tankNFT.balanceOf(accounts[1])).toString(), "3");
+      });
     });
   });
 
@@ -273,12 +372,29 @@ contract("Marketplace", (accounts) => {
         );
       });
 
+      it("Get all Lising NFT on Marketplace when account 1 list Tank 1 to Marketplace", async () => {
+        let listingNFTs = await marketplace.getListingNfts();
+        assert.equal(listingNFTs.length, 1);
+      });
+
+      it("Get Lising NFT on Marketplace of an address when account 1 list Tank 1 to Marketplace", async () => {
+        let listingNFTs = await marketplace.getMyListingNfts({
+          from: accounts[1],
+        });
+        assert.equal(listingNFTs.length, 1);
+      });
+
+      it("Get NFT Sell History on Marketplace when account 1 list Tank 1 to Marketplace", async () => {
+        let listingNFTs = await marketplace.getNftSellHistory(1);
+        assert.equal(listingNFTs.length, 0);
+      });
+
       it("Check owner of NFT after list NFT", async () => {
         assert.equal(
           (await tankNFT.ownerOf(1)).toString(),
           marketplace.address
         );
-        assert.equal((await tankNFT.balanceOf(accounts[1])).toString(), "0");
+        assert.equal((await tankNFT.balanceOf(accounts[1])).toString(), "2");
       });
 
       it("Check information of marketplace item", async () => {
@@ -344,6 +460,23 @@ contract("Marketplace", (accounts) => {
         assert.equal(marketItem.nftContract, tankNFT.address);
         assert.equal(marketItem.isSelling, false);
       });
+
+      it("Get all Lising NFT on Marketplace when account 1 cancel sell Tank 1 to Marketplace", async () => {
+        let listingNFTs = await marketplace.getListingNfts();
+        assert.equal(listingNFTs.length, 0);
+      });
+
+      it("Get Lising NFT on Marketplace of an address when account 1 cancel sell Tank 1 to Marketplace", async () => {
+        let listingNFTs = await marketplace.getMyListingNfts({
+          from: accounts[1],
+        });
+        assert.equal(listingNFTs.length, 0);
+      });
+
+      it("Get NFT Sell History on Marketplace when account 1 cancel sell Tank 1 to Marketplace", async () => {
+        let listingNFTs = await marketplace.getNftSellHistory(1);
+        assert.equal(listingNFTs.length, 1);
+      });
     });
     describe("Buy NFT", () => {
       it("Buy NFT with MarketplaceItemId = 0", async () => {
@@ -386,6 +519,23 @@ contract("Marketplace", (accounts) => {
           marketplace.buyNft(2, { from: accounts[1] }),
           "You can not buy your own NFT"
         );
+      });
+
+      it("Get all Lising NFT on Marketplace when account 1 list tank 1 again to Marketplace", async () => {
+        let listingNFTs = await marketplace.getListingNfts();
+        assert.equal(listingNFTs.length, 1);
+      });
+
+      it("Get Lising NFT on Marketplace of an address when account 1 list tank 1 again to Marketplace", async () => {
+        let listingNFTs = await marketplace.getMyListingNfts({
+          from: accounts[1],
+        });
+        assert.equal(listingNFTs.length, 1);
+      });
+
+      it("Get NFT Sell History on Marketplace when account 1 list tank 1 again to Marketplace", async () => {
+        let listingNFTs = await marketplace.getNftSellHistory(1);
+        assert.equal(listingNFTs.length, 1);
       });
 
       it("Buy NFT without DKC", async () => {
@@ -431,7 +581,16 @@ contract("Marketplace", (accounts) => {
           "passes"
         );
 
-        assert.equal((await tankNFT.balanceOf(accounts[1])).toString(), "0");
+        assert.equal((await tankNFT.balanceOf(accounts[1])).toString(), "2");
+        assert.equal((await tankNFT.balanceOf(accounts[2])).toString(), "1");
+      });
+
+      it("Check OwnerOf Tank 1 after bought account 2", async () => {
+        assert.equal((await tankNFT.ownerOf(1)).toString(), accounts[2]);
+      });
+
+      it("Check balance of accounts after account 2 buy tank 1", async () => {
+        assert.equal((await tankNFT.balanceOf(accounts[1])).toString(), "2");
         assert.equal((await tankNFT.balanceOf(accounts[2])).toString(), "1");
       });
 
@@ -461,25 +620,23 @@ contract("Marketplace", (accounts) => {
       it("Check owner of NFT after buy box", async () => {
         assert.equal((await tankNFT.ownerOf(1)).toString(), accounts[2]);
       });
-    });
-  });
 
-  describe("Get Information from Marketplace", () => {
-    it("Get all Lising NFT on Marketplace", async () => {
-      let listingNFTs = await marketplace.getListingNfts();
-      assert.equal(listingNFTs.length, 0);
-    });
-
-    it("Get Lising NFT on Marketplace of an address", async () => {
-      let listingNFTs = await marketplace.getMyListingNfts({
-        from: accounts[1],
+      it("Get all Lising NFT on Marketplace after account 2 buy Tank 1 on Marketplace", async () => {
+        let listingNFTs = await marketplace.getListingNfts();
+        assert.equal(listingNFTs.length, 0);
       });
-      assert.equal(listingNFTs.length, 0);
-    });
 
-    it("Get NFT Sell History on Marketplace", async () => {
-      let listingNFTs = await marketplace.getNftSellHistory(1);
-      assert.equal(listingNFTs.length, 2);
+      it("Get Lising NFT on Marketplace of an address after account 2 buy Tank 1 on Marketplace", async () => {
+        let listingNFTs = await marketplace.getMyListingNfts({
+          from: accounts[1],
+        });
+        assert.equal(listingNFTs.length, 0);
+      });
+
+      it("Get NFT Sell History on Marketplace after account 2 buy Tank 1 on Marketplace", async () => {
+        let listingNFTs = await marketplace.getNftSellHistory(1);
+        assert.equal(listingNFTs.length, 2);
+      });
     });
   });
 });

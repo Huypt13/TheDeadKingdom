@@ -785,7 +785,6 @@ module.exports = class GameLobby extends LobbyBase {
       bullet.activator = activator;
       bullet.team = activeBy?.player?.team;
       this.bullets.push(bullet);
-      console.log("tao bullet", this.bullets, bullet);
       const returnData = {
         name: "Bullet",
         id: bullet.id,
@@ -1153,7 +1152,6 @@ module.exports = class GameLobby extends LobbyBase {
     connection.socket.broadcast.to(this.id).emit("playerDied", returnData);
   }
   onCollisionDestroy(connection = Connection, data) {
-    console.log("bi trung dan r", this.bullets, data);
     const lobby = this;
     const returnBullet = this.bullets.filter((e) => e.id == data.id);
     console.log("bullet get", returnBullet);
@@ -1170,7 +1168,6 @@ module.exports = class GameLobby extends LobbyBase {
       });
 
       const subjectOfAttack = connection1?.player ? connection1?.player : ai;
-      console.log("bi tan cong", subjectOfAttack);
       if (!subjectOfAttack) {
         return;
       }

@@ -1,7 +1,7 @@
 const TankUser = require('./TankUser.schema')
-const BoxService = require('../Box/Box.service')
+const BoxService = require('../box/Box.service')
 const UserService = require('../user/User.service')
-const Box = require('../Box/Box.service')
+const Box = require('../box/Box.service')
 const RabbitMq = require('../../helper/RabbitMq.helper')
 
 
@@ -25,7 +25,6 @@ class TankUserService {
       }
       const tankUser = await TankUser.find({ nftId: { $in: listToken } })
       if (tankUser.length >= 1) {
-        console.log("boxId is already existed!");
         throw new Error("boxId is already existed!");
       }
       const owner = await UserService.getByWalletAddress(tokenOwner);
@@ -69,7 +68,7 @@ class TankUserService {
 
     } catch (err) {
       console.log(err);
-      throw new Error(err.message);
+     
     }
   }
 

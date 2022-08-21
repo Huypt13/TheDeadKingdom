@@ -4,7 +4,11 @@ const ApiResponse = require("../../utility/ApiResponse");
 class MarketPlaceItemController {
   async getTotalTransactionsByDay(req, res) {
     try {
-      const { day } = req.params;
+      let { day } = req.params;
+      day = parseInt(day);
+      if (!Number.isInteger(day)||day <= 0) {
+        return ApiResponse.badRequestResponse(res, "Day must be integer number greater than zero")
+      }
       const statisticalTransaction =
         await MarketPlaceItemService.getTotalTransactionsByDay(day);
       return ApiResponse.successResponseWithData(
@@ -19,11 +23,17 @@ class MarketPlaceItemController {
   async getSucceedTransaction(req, res) {
     try {
       const { _id } = res.locals.user;
+      let { day } = req.params;
+      day = parseInt(day);
+      if (!Number.isInteger(day)||day <= 0) {
+        return ApiResponse.badRequestResponse(res, "Day must be integer number greater than zero")
+      }
       const Transaction = await MarketPlaceItemService.getSucceedTransaction(
-        _id.toString()
+        _id.toString(), day
       );
       return ApiResponse.successResponseWithData(res, "Ok", Transaction);
     } catch (e) {
+      console.log(e);
       ApiResponse.serverErrorResponse(res, e.message);
     }
   }

@@ -1,15 +1,18 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
-import Web3 from 'web3'
-import Web3Modal from 'web3modal'
+import Web3 from 'web3';
+import Web3Modal from 'web3modal';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+
 import DeathKingdomCoin from '../contracts/DeathKingdomCoin.json'
 import TankNFT from '../contracts/TankNFT.json'
 import Marketplace from '../contracts/Marketplace.json'
 import BigNumber from 'big-number'
-import { useEffect, useState } from 'react';
 
 export default function Home() {
+    const [nfts, setNfts] = useState([])
+    const [loadingState, setLoadingState] = useState('not-loaded')
+
+    useEffect(() => { loadNFTs() }, [])
     var web3;
     var networkId;
     var accounts;
@@ -32,60 +35,77 @@ export default function Home() {
         marketplaceContract = new web3.eth.Contract(Marketplace.abi, Marketplace.networks[networkId].address);
     }
 
-    setWeb3Value();
+    async function loadNFTs() {
+        await setWeb3Value();
 
-    async function mintNFT() {
-        await tankNFTContract.methods.createToken().send({ from: accounts[0] })
-            .on('receipt', function () {
-                // thông bao mua box thanh cong
+        const listings = await marketplaceContract.methods.getMyListingNfts().call({ from: accounts[0] })
+        // Iterate over the listed NFTs and retrieve their metadata
+        const nfts = await Promise.all(listings.map(async (i) => {
+            try {
+                const tokenURI = await tankNFTContract.methods.tokenURI(i.tokenId).call()
+                // const meta = await axios.get("https://api.memeland.com/metadata/270")
+                const nft = {
+                    marketItemId: i.marketItemId,
+                    price: i.price,
+                    tokenId: i.tokenId,
+                    seller: i.seller,
+                    owner: i.buyer,
+                    image: "https://api.memeland.com/image/270.gif",
+                    name: "Tank#" + i.tokenId,
+                    description: "TankDes#" + i.tokenId,
+                }
+                return nft
+            } catch (err) {
+                console.log(err)
+                return null
+            }
+        }))
+        setNfts(nfts.filter(nft => nft !== null))
+        setLoadingState('loaded')
+    }
+
+    async function cancelSellNft(nftMarketItemId) {
+        await setWeb3Value();
+
+        let allowance = await deathKingdomCoinContract.methods.allowance(accounts[0], Marketplace.networks[networkId].address).call({ from: accounts[0] })
+
+        console.log(BigNumber(nftMarketItemId.price), BigNumber(allowance));
+
+        await marketplaceContract.methods.cancelSellNft(nftMarketItemId.marketItemId).send({ from: accounts[0] })
+            .on('receipt', function (receipt) {
+                console.log(receipt);
             });
+
+        loadNFTs()
     }
 
-    async function transferDKC(amount = 1) {
-        await deathKingdomCoinContract.methods.transfer("0xeA805C24E8352A0197e24E47A60729EFe4484828", new BigNumber(amount * Math.pow(10, 18))).send({ from: accounts[0] });
-        const a = await deathKingdomCoinContract.methods.balanceOf(accounts[0]).call();
-        console.log(a);
+    if (loadingState === 'loaded' && !nfts.length) {
+        return (<h1 className="px-20 py-10 text-3xl">You are selling no tanks</h1>)
+    } else {
+        return (
+            <div className="flex justify-center">
+                <div className="px-4" style={{ maxWidth: '1600px' }}>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
+                        {
+                            nfts.map((nft, i) => (
+                                <div key={i} className="border shadow rounded-xl overflow-hidden">
+                                    <img src={nft.image} />
+                                    <div className="p-4">
+                                        <p style={{ height: '64px' }} className="text-2xl font-semibold">{nft.name}</p>
+                                        <div style={{ height: '70px', overflow: 'hidden' }}>
+                                            <p className="text-gray-400">{nft.description}</p>
+                                        </div>
+                                    </div>
+                                    <div className="p-4 bg-black">
+                                        <p className="text-2xl font-bold text-white">{Web3.utils.fromWei(nft.price, "ether")} DKC</p>
+                                        <button className="mt-4 w-full bg-teal-400 text-white font-bold py-2 px-12 rounded" onClick={() => cancelSellNft(nft)}>Cancel Selling Market Item # {nft.marketItemId}</button>
+                                    </div>
+                                </div>
+                            ))
+                        }
+                    </div>
+                </div>
+            </div>
+        )
     }
-
-    async function sellNFT(price = 0.1) {
-        await marketplaceContract.methods.listNft(TankNFT.networks[networkId].address, 1, new BigNumber(price * Math.pow(10, 18))).send({ from: accounts[0] });
-
-        console.log(await marketplaceContract.methods.platformFee().call());
-
-    }
-    async function buyNFT() {
-        await marketplaceContract.methods.buyNft(1).send({ from: accounts[0] });
-
-        console.log(accounts[0]);
-    }
-
-    async function getListingNfts() {
-        const listings = await marketplaceContract.methods.getListingNfts().call();
-        console.log(listings);
-    }
-
-
-    async function getMyNfts() {
-        const myNfts = await tankNFTContract.methods.getMyNfts(accounts[0]).call();
-        console.log(myNfts);
-    }
-
-
-    return (
-        <div className={styles.container}>
-            <Head>
-                <title>Marketplace</title>
-                <meta name="description" content="Generated by create next app" />
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
-
-            <button type="button" onClick={() => mintNFT()}>MintNFT</button>
-            <button type="button" onClick={() => sellNFT()}>SellNFT</button>
-            <button type="button" onClick={() => buyNFT()}>BuyNFT</button>
-            <button type="button" onClick={() => getMyNfts()}>getMyNfts</button>
-            <button type="button" onClick={() => getListingNfts()}>getListingNfts</button>
-            <br></br>
-
-        </div>
-    )
 }

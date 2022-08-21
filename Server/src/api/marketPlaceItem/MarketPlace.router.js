@@ -5,7 +5,7 @@ const Authentication = require('../middlewares/Authentication.midleware');
 
 
 router.get("/transaction/:day", MarketPlaceController.getTotalTransactionsByDay)
-router.get("/succeedTransaction", Authentication,MarketPlaceController.getSucceedTransaction) //* soft by date
+router.get("/succeedTransaction/:day", Authentication,MarketPlaceController.getSucceedTransaction)
 
 
 module.exports = router;

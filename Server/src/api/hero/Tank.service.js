@@ -126,7 +126,7 @@ class TankService {
         },
         { "$unwind": "$tank" },
         { $sort: { createdAt: -1 } },
-        { $limit: +3 },
+        { $limit: +number },
         {
           $project: {
             tank: "$tank", createdAt: "$createAt", price: "$price", tankUser: "$tankUser"
@@ -176,6 +176,7 @@ class TankService {
         { $sort: { createdAt: -1 } },
         { $skip: displayedTankNumber},
         { $limit: +limit },
+        { $limit: +number },
         {
           $project: {
             _id: "$tankUser._id",tank: "$tank", createdAt: "$createAt", price: "$price", tankUser: "$tankUser"
@@ -360,18 +361,22 @@ class TankService {
   }
   async getTopListedLastedWithFilter(filter) {
     try {
-      const { levels, classTypes, typeIds, limit, pageNumbers, sortBy } = filter;
+      const { levels, classTypes, typeIds,sortBy, remaining, maxPrice, minPrice } = filter;
       const listTank = await MarketPlaceItem.aggregate([
         {
           $match: {
             isSelling: true,
+            price: { $gte: +minPrice, $lte: +maxPrice}
           }
         },
         {
           $lookup: {
             from: "tankusers",
-            localField: "tokenId",
-            foreignField: "nftId",
+            let : {tokenId : "$tokenId"},
+            pipeline: [
+              { $match: { $expr: { $eq: ["$nftId", "$$tokenId"] }}},
+              { $match: {remaining: {$lte : +remaining} }}
+            ],
             as: "tankUser",
           }
         },
@@ -399,7 +404,7 @@ class TankService {
         {
           $project: {
             name: "$tank.name", price: 1, createdAt: "$createdAt",
-            remaining: "$tank.remaining", tank: "$tank", tankUser: "$tankUser",
+            remaining: "$tankUser.remaining", tank: "$tank", tankUser: "$tankUser",
           }
         },
         { $sort: { createdAt: -1 } },
@@ -416,7 +421,8 @@ class TankService {
   async getTopListedLastedWithFilterAndPaging(filter) {
 
     try {
-      const { levels, classTypes, typeIds, limit, pageNumbers, sortBy } = filter;
+      const { levels, classTypes, typeIds, limit, pageNumbers, sortBy, remaining, maxPrice, minPrice } = filter;
+      console.log("filter",filter);
       const tanks = await this.getTopListedLastedWithFilter(filter);
       const total = tanks[0]?.total || 0;
       const displayedTankNumber = (pageNumbers - 1) * limit;
@@ -427,13 +433,17 @@ class TankService {
         {
           $match: {
             isSelling: true,
+            price: { $gte: +minPrice, $lte: +maxPrice}
           }
         },
         {
           $lookup: {
             from: "tankusers",
-            localField: "tokenId",
-            foreignField: "nftId",
+            let : {tokenId : "$tokenId"},
+            pipeline: [
+              { $match: { $expr: { $eq: ["$nftId", "$$tokenId"] }}},
+              { $match: {remaining: {$lte : +remaining} }}
+            ],
             as: "tankUser",
           }
         },
@@ -462,7 +472,7 @@ class TankService {
           $project: {
             _id:"$tankUser._id",
             name: "$tank.name", price: 1, createdAt: "$createdAt",
-            remaining: "$tank.remaining", tank: "$tank", tankUser: "$tankUser",
+            remaining: "$tankUser.remaining", tank: "$tank", tankUser: "$tankUser",
           }
         },
         { $sort: { createdAt: -1 } },

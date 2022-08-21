@@ -8,7 +8,14 @@ const TankService = require('../hero/Tank.service')
 
 
 
-
+ // event NFTListed(
+  //     uint256 marketItemId,
+  //     address nftContract,
+  //     uint256 tokenId,
+  //     address seller,
+  //     address buyer,
+  //     uint256 price
+  // );
 class MarketPlaceItemService {
 
     async createAfterListed(marketPlace) {
@@ -29,6 +36,12 @@ class MarketPlaceItemService {
             }
             const tank = listTank[0].tanks[0];
             marketPlace.price = Number(marketPlace.price);
+            
+            const market = await MarketPlaceItem.findOne({tokenId: marketPlace.tokenId, isSelling: true});
+            if(market){
+                throw new Error("This transaction is already exist")
+            }
+
             const newMarketPlaceItem = { ...marketPlace, finishedAt: null, createdAt: new Date(), isSelling: true };
             const marketPlaceItem = await new MarketPlaceItem(newMarketPlaceItem).save();
             if (marketPlaceItem) {
@@ -52,7 +65,7 @@ class MarketPlaceItemService {
             return marketPlaceItem;
         } catch (error) {
             console.log(error);
-            throw new Error(error.message);
+
         }
     }
 
@@ -70,14 +83,15 @@ class MarketPlaceItemService {
             if(marketPlace.price <= 0){
                 throw new Error("Price must greater than 0");
             }
-            const TankUser = await TankUserService.updateData({ nftId: marketPlace.tokenId, userId: seller._id.toString() },
+
+            const TankUser = await TankUserService.updateData({ nftId: marketPlace.tokenId, userId: seller._id.toString(),  },
                 { userId: buyer._id.toString(), boughtDate: new Date() });
             if (!TankUser) {
                 throw new Error("Sold fail");
             }
             const Tank = await TankService.getByTankId(TankUser._id.toString(), TankUser.userId);
             const marketItemId = marketPlace.marketItemId;
-            const marketPlaceItem = await MarketPlaceItem.findOneAndUpdate({ seller: seller._id.toString(), tokenId: marketPlace.tokenId },
+            const marketPlaceItem = await MarketPlaceItem.findOneAndUpdate({ seller: seller._id.toString(), tokenId: marketPlace.tokenId, isSelling: true},
                 {
                     buyer: buyer._id.toString(), marketItemId: marketItemId, finishedAt: new Date(),
                     isSelling: false, price: marketPlace.price
@@ -117,7 +131,6 @@ class MarketPlaceItemService {
             return marketPlaceItem;
         } catch (error) {
             console.log(error);
-            throw new Error(error.message);
         }
     }
 
@@ -159,7 +172,7 @@ class MarketPlaceItemService {
             return marketPlaceItem;
         } catch (error) {
             console.log(error);
-            throw new Error(error.message);
+
         }
     }
     async getTotalTransactionsByDay(day) {
@@ -191,8 +204,9 @@ class MarketPlaceItemService {
             throw new Error(error.message);
         }
     }
-    async getSucceedTransaction(id) {
+    async getSucceedTransaction(id, day) {
         try {
+            day--;
             return await MarketPlaceItem.aggregate([
                 {
                     $match: {
@@ -202,6 +216,8 @@ class MarketPlaceItemService {
                         ]
                     }
                 },
+                { $set: { diffDate: { $dateDiff: { startDate: "$finishedAt", endDate: new Date(), unit: "day" } }, price: 1 } },
+                { $match: { diffDate: { $lte: day } } },
                 { $set: { RoleOfCurrentUser: { $cond: [{ $eq: ["$seller", id] }, "seller", "buyer"] } } },
                 { $sort: { finishedAt: -1 } }
 

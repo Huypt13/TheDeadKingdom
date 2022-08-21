@@ -1,6 +1,9 @@
-const validator = require("validator");
 
-const test = require("./src/api/marketPlaceItem/test");
+
+const teste = require("./src/api/marketPlaceItem/teste");
+
+
+
 
 
 const express = require("express");
@@ -92,3 +95,4 @@ app.use("/history", Authentication, HistoryRouter);
 app.use("/marketPlace", MarketPlaceRouter);
 Database.connect(app);
 server.listen(8080);
+

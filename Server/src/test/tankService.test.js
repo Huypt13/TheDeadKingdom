@@ -4,7 +4,7 @@ const UserService = require("../api/user/User.service");
 const MarketPlaceItem = require('../api/marketPlaceItem/MarketPlaceItem.schema');
 
 
-const Box = require("../api/Box/Box.schema");
+const Box = require("../api/box/Box.schema");
 
 
 const TankUser = require("../api/hero/TankUser.schema");

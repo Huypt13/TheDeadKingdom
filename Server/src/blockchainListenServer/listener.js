@@ -7,13 +7,21 @@ const MarketPlaceItem = require("../api/marketPlaceItem/MarketPlaceItem.Service"
 const TankUserService = require("../api/hero/TankUser.service");
 
 const TankNFT = require("../../../Contract/demo-client/contracts/TankNFT.json");
+const Marketplace = require("../../../Contract/demo-client/contracts/Marketplace.json");
+const DeathKingdomCoin = require("../../../Contract/demo-client/contracts/DeathKingdomCoin.json");
 
 const Database = require("../../src/api/database/Database");
 const BoxService = require("../api/box/Box.service");
 
+
 const init = async () => {
-  const web3 = new Web3("ws://127.0.0.1:7545");
+  // const web3 = new Web3("ws://127.0.0.1:7545");
+  const web3 = new Web3(
+    "wss://rinkeby.infura.io/ws/v3/fe3e4b587cc84ddb8f281f9bfdf3df6c"
+  );
   const networkId = await web3.eth.net.getId();
+
+  console.log("networkId" + networkId);
   const accounts = await web3.eth.getAccounts();
   const tankNFTContract = new web3.eth.Contract(
     TankNFT.abi,
@@ -27,7 +35,7 @@ const init = async () => {
     .BoxSold({})
     .on("data", async function (event) {
       console.log("===============BoxSold=================");
-      // console.log(event.returnValues);
+      console.log("create",event.returnValues);
       const { listTokenId, tokenOwner, boxId } = event.returnValues;
       const newBox = await TankUserService.createTankUser(
         listTokenId,
@@ -36,6 +44,9 @@ const init = async () => {
       );
     })
     .on("error", console.error);
+
+    // Web3.utils.toWei("1", "ether") => 10^18
+    // Web3.utils.fromWei("10^18", "ether") => 1
 
   // event NFTListed(
   //     uint256 marketItemId,

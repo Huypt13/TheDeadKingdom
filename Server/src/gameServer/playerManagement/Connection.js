@@ -52,8 +52,10 @@ class Connection {
       }
     });
     socket.on("collisionDestroy", (data) => {
-      if (connection.lobby instanceof GameLobby)
+      if (connection.lobby instanceof GameLobby) {
+        console.log("trung dan", data);
         this.lobby.onCollisionDestroy(this, data);
+      }
     });
     socket.on("updatePosition", ({ position }) => {
       if (connection.lobby instanceof GameLobby) {
@@ -87,8 +89,9 @@ class Connection {
         this.lobby.onCollisionDestroyHpBox(this, data);
     });
     socket.on("collisionDestroyBox", (data) => {
-      if (connection.lobby instanceof GameLobby)
-        this.lobby.onCollisionDestroyBox(this, data);
+      if (connection.lobby instanceof GameLobby) {
+      }
+      this.lobby.onCollisionDestroyBox(this, data);
     });
     socket.on("PlayerTouchItem", (data) => {
       if (connection.lobby instanceof GameLobby) {
@@ -103,7 +106,7 @@ class Connection {
     socket.on("sendMessage", (data) => {
       if (connection.lobby instanceof GameLobby)
         this.lobby.SendMessage(this, data);
-    })
+    });
   }
 }
 

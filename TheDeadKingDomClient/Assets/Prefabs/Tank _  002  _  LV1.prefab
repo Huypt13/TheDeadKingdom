@@ -155,7 +155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcc4b4838b11f4eb5aedfaaa3d24af3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bullet: {fileID: 4585879017614522170, guid: 12f26a1ff2f094fb184c234dbd92d01d, type: 3}
+  bullet: {fileID: 4254847838113579267, guid: 2a9dff84a5690462ca1bb2908f1d9b95, type: 3}
   effectZone: {fileID: 5996830720812398036}
   skill1: {fileID: 4971197194558508880, guid: 9076b3c702d174b9b9d87fb3ad44dcbc, type: 3}
   skill2: {fileID: 5995263339635518846, guid: fd66b0c3453064ba1894f41500e9e39b, type: 3}

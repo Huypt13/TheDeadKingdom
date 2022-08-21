@@ -1,4 +1,5 @@
-const testInsert = require("./testInsert");
+const mongoose = require("mongoose");
+const UserService = require("../api/user/User.service");
 
 const MarketPlaceItem = require('../api/marketPlaceItem/MarketPlaceItem.schema');
 
@@ -17,18 +18,21 @@ const TankService = require("../api/hero/Tank.service");
 
 process.env.NODE_ENV = "test";
 
-const bcrypt = require("bcrypt");
+const testInsert = require("./testInsert");
+const TankUser = require("../api/hero/TankUser.schema");
+const History = require("../api/history/History.schema");
+
 const Tank = require("../api/hero/Tank.schema");
 
 const Database = require("../api/database/Database");
 const User = require("../api/user/User.schema");
-const UserService = require("../api/user/User.service");
-const mongoose = require("mongoose");
 
 // npm i -g jest  // global
-Database.connect();
 
-describe("Test Tank Service", () => {
+describe("Test tank Service", () => {
+  beforeAll(() => {
+    Database.connect();
+  });
   jest.setTimeout(30000);
   beforeEach(async () => {
     await testInsert.insertTankData();
@@ -389,5 +393,8 @@ describe("Test Tank Service", () => {
     await User.deleteMany({});
     await Box.deleteMany({});
     await MarketPlaceItem.deleteMany({});
+  });
+  afterAll(() => {
+    mongoose.disconnect();
   });
 });

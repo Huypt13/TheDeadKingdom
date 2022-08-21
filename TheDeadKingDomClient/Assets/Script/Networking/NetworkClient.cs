@@ -938,7 +938,7 @@ public class NetworkClient : SocketIOComponent
         On("someoneLoginYourAccount", (E) =>
         {
             SceneManagement.Instance.UnLoadLevel(myMap);
-            SceneManagement.Instance.UnLoadLevel(SceneList.ONLINE);
+            SceneManagement.Instance.UnLoadLevel(SceneList.LOBBY_SCREEN);
             SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
             {
                 FindObjectOfType<MenuManager>().message.text = "Your account is logged in somewhere else";

@@ -53,6 +53,10 @@ class Player {
   }
   dealDamage(amount) {
     console.log(`DealDame ${GameMechanism.getDame(this.tank, amount)}`, amount);
+    if (!amount) {
+      console.log("amount null");
+      amount = 0;
+    }
     this.health -= GameMechanism.getDame(this.tank, amount);
     if (this.health <= 0) {
       this.isDead = true;

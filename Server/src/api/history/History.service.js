@@ -10,6 +10,18 @@ class HistoryService {
     time,
   }) {
     try {
+      if (teamWin != 1 && teamWin != 2) {
+        throw new Error("Wrong team");
+      }
+      if (gameMode == "CountKill") {
+        if (team1Kill > team2Kill && teamWin != 1) {
+          throw new Error("Wrong team win");
+        }
+
+        if (team1Kill < team2Kill && teamWin != 2) {
+          throw new Error("Wrong team win");
+        }
+      }
       return await new History({
         teamWin,
         team1Kill,
@@ -19,7 +31,7 @@ class HistoryService {
         time,
       }).save();
     } catch (error) {
-      throw new Error("Can not insert match history");
+      throw new Error(error.message);
     }
   }
   async getUserHistory(_id, top) {

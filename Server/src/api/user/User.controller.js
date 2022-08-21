@@ -20,7 +20,7 @@ class UserController {
             "Please confirm email to active your account"
           );
         }
-        if (userinfor?.inWeb) {
+        if (!userinfor?.inWeb) {
           if (gameServer.connections[user._id]) {
             gameServer.connections[user._id].socket.emit(
               "someoneLoginYourAccount",
@@ -84,7 +84,7 @@ class UserController {
 
   async connectWalletAddress(req, res) {
     try {
-      const userId  = res.locals.user._id.tostring();
+      const userId = res.locals.user._id.tostring();
       const { walletAddress } = req.query;
       if(!walletAddress){
         return ApiResponse.serverErrorResponse(res, "WalletAddress invalid");
@@ -145,6 +145,11 @@ class UserController {
   async getTopRank(req, res) {
     try {
       const { top } = req.query;
+      if (!Number.isInteger(top)) {
+        top = 20;
+      } else if (top < 1) {
+        top = 20;
+      }
       const topRank = await UserService.getTopRank(top);
       return ApiResponse.successResponseWithData(res, "Success", topRank);
     } catch (error) {
@@ -185,8 +190,8 @@ class UserController {
   async forgotPassword(req, res) {
     try {
       const { email } = req.body;
-      if(!emailValidator.validate(email)){
-        return ApiResponse.badRequestResponse(res, "Invalid email");
+      if (!emailValidator.validate(email)) {
+        return ApiResponse.badRequestResponse(res, "Wrong email");
       }
       await UserService.forgotPassword(email);
       return ApiResponse.successResponse(

@@ -1154,9 +1154,8 @@ module.exports = class GameLobby extends LobbyBase {
   onCollisionDestroy(connection = Connection, data) {
     const lobby = this;
     const returnBullet = this.bullets.filter((e) => e.id == data.id);
+    console.log("bullet get", returnBullet);
     returnBullet.forEach((bullet) => {
-      //new
-
       bullet.isDestroyed = true;
       let enemyId = data?.enemyId;
 
@@ -1169,7 +1168,6 @@ module.exports = class GameLobby extends LobbyBase {
       });
 
       const subjectOfAttack = connection1?.player ? connection1?.player : ai;
-
       if (!subjectOfAttack) {
         return;
       }
@@ -1292,6 +1290,7 @@ module.exports = class GameLobby extends LobbyBase {
   }
 
   despawnBullet(bullet = Bullet) {
+    console.log("de bullet", bullet.id);
     let index = this.bullets.indexOf(bullet);
     if (index > -1) {
       this.bullets.splice(index, 1);
@@ -1416,7 +1415,9 @@ module.exports = class GameLobby extends LobbyBase {
         return false;
       }
       for (const tankRemain of tankList[0]?.tankList) {
-        if (tankRemain.remaining > 0) {
+        // dang ban
+
+        if (tankRemain.remaining > 0 && !tankRemain?.isSelling) {
           tank = tankRemain.tank;
           connection.player.startTank = JSON.parse(JSON.stringify(tank));
           connection.player.startTank.tankUserId = tankRemain._id;
@@ -1435,7 +1436,7 @@ module.exports = class GameLobby extends LobbyBase {
       connection.player._id
     );
 
-    if (!tankUser || tankUser?.remaining <= 0) {
+    if (!tankUser || tankUser?.remaining <= 0 || tankUser?.isSelling) {
       console.log("chon tank check remain fail", connection.player.id);
       return false;
     }

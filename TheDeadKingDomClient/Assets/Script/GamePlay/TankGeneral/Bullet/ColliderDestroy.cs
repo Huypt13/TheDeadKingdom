@@ -54,54 +54,50 @@ public class ColliderDestroy : MonoBehaviour
                 {
                     return;
                 }
-                // destroy luon vi neu cho server tra ve se bi delay
+
                 Destroy(gameObject);
-                // client bi ban , thi client trung dan gui request
 
-                if (ni.IsControlling())
+                // nguoi ban nguoi , firer gui reques
+
+                if ((niActive.IsControlling() && ni.GetComponent<TankGeneral>() != null) // nguoi trung dan
+                    || (niActive.IsControlling() && ni.GetComponent<AiManager>() != null) // ai trung dan
+                    || (niActive.IsControlling() && ni.tag == "MainHouse")  // main house trung dan
+                    || (ni.IsControlling() && niActive.GetComponent<AiManager>() != null))  // ai ban nguoi nguoi bi ban gui request 
                 {
-                    NetworkClient.serverObjects.Remove(networkIdentity.GetId());
                     networkIdentity.GetSocket().Emit("collisionDestroy", new JSONObject(JsonUtility.ToJson(new IDData()
                     {
                         id = networkIdentity.GetId(),
                         enemyId = ni.GetId()
                     })));
-                    return;
-                }
-
-                //  ai trung dan , firer gui request
-
-                if ((niActive.IsControlling() && ni.GetComponent<AiManager>() != null) || ni.tag == "MainHouse")
-                {
                     NetworkClient.serverObjects.Remove(networkIdentity.GetId());
-                    networkIdentity.GetSocket().Emit("collisionDestroy", new JSONObject(JsonUtility.ToJson(new IDData()
-                    {
-                        id = networkIdentity.GetId(),
-                        enemyId = ni.GetId()
-                    })));
+                    Debug.Log("trung dan");
+
                     return;
                 }
 
                 // ban trung hop mau firer gui reques
                 if (ni.tag == "HpBox" && niActive.IsControlling())
                 {
-                    NetworkClient.serverObjects.Remove(networkIdentity.GetId());
                     networkIdentity.GetSocket().Emit("collisionDestroyHpBox", new JSONObject(JsonUtility.ToJson(new IDData()
                     {
                         id = networkIdentity.GetId(),
                         enemyId = ni.GetId()
                     })));
+                    NetworkClient.serverObjects.Remove(networkIdentity.GetId());
+
                     return;
                 }
 
                 if (ni.tag == "Box" && niActive.IsControlling())
                 {
-                    NetworkClient.serverObjects.Remove(networkIdentity.GetId());
                     networkIdentity.GetSocket().Emit("collisionDestroyBox", new JSONObject(JsonUtility.ToJson(new IDData()
                     {
                         id = networkIdentity.GetId(),
                         enemyId = ni.GetId()
                     })));
+                    NetworkClient.serverObjects.Remove(networkIdentity.GetId());
+
+                    return;
 
                 }
 

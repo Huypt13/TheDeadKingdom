@@ -66,6 +66,7 @@ module.exports = class GameLobby extends LobbyBase {
 
     if (this.lobbyState.currentState == this.lobbyState.GAME) {
       lobby.updateBullets();
+      lobby.updateBulletsRemove();
       lobby.updateSkills();
       lobby.updateDeadPlayers();
       lobby.updateAIDead();
@@ -677,13 +678,27 @@ module.exports = class GameLobby extends LobbyBase {
       }
     });
   }
+  updateBulletsRemove() {
+    let lobby = this;
+    let bullets = lobby.bullets;
+    for (var i = bullets.length - 1; i >= 0; i--) {
+      const isRemove = bullets[i].onUpdate2();
+      if (isRemove) {
+        this.bullets.splice(i, 1);
+      }
+    }
+  }
 
   updateSkills() {
     // skill 1 type 001
-    this.skill.forEach((skill) => {
+    for (let i = this.skill.length - 1; i >= 0; i--) {
+      let skill = this.skill[i];
       if (skill instanceof SkillOrientation) {
         if (skill.onUpdate()) {
           this.despawnSkill(skill);
+        }
+        if (skill.onUpdate2()) {
+          this.destroySkill(skill);
         }
       }
       if (skill instanceof SkillBuff) {
@@ -694,9 +709,10 @@ module.exports = class GameLobby extends LobbyBase {
       if (skill instanceof SkillRegion) {
         if (skill.onUpdate()) {
           this.despawnSkill(skill);
+          this.destroySkill(skill);
         }
       }
-    });
+    }
   }
 
   onFireBullet3Tia(connection, data) {
@@ -1290,11 +1306,6 @@ module.exports = class GameLobby extends LobbyBase {
   }
 
   despawnBullet(bullet = Bullet) {
-    console.log("de bullet", bullet.id);
-    let index = this.bullets.indexOf(bullet);
-    if (index > -1) {
-      this.bullets.splice(index, 1);
-    }
     let returnData = { id: bullet.id };
     const lobby = this;
     lobby.connections.forEach((connection) => {
@@ -1302,15 +1313,17 @@ module.exports = class GameLobby extends LobbyBase {
     });
   }
   despawnSkill(skill) {
-    let index = this.skill.indexOf(skill);
-    if (index > -1) {
-      this.skill.splice(index, 1);
-    }
     this.connections.forEach((connection) => {
       connection.socket.emit("severUnspawnSkill", {
         id: skill.id,
       });
     });
+  }
+  destroySkill(skill) {
+    let index = this.skill.indexOf(skill);
+    if (index > -1) {
+      this.skill.splice(index, 1);
+    }
   }
   despawnItem(item) {
     const index = this.serverItems.indexOf(item);

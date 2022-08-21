@@ -21,6 +21,7 @@ public class NetworkClient : SocketIOComponent
         set;
     }
     public static float MyTeam;
+    public static string curState;
 
     [SerializeField]
     private ServerObjects serverSpawnables;
@@ -913,7 +914,7 @@ public class NetworkClient : SocketIOComponent
         On("lobbyUpdate", (e) =>
         {
             Debug.Log("Lobby update " + e.data["state"].str);
-
+            curState = e.data["state"].str;
             OnGameStateChange.Invoke(e);
 
 
@@ -937,8 +938,20 @@ public class NetworkClient : SocketIOComponent
 
         On("someoneLoginYourAccount", (E) =>
         {
-            SceneManagement.Instance.UnLoadLevel(myMap);
-            SceneManagement.Instance.UnLoadLevel(SceneList.LOBBY_SCREEN);
+            List<string> sceneout = new List<string>();
+            foreach (var i in SceneManagement.Instance.CurrentlyLoadedScenes)
+            {
+                if (i != "Intro" || i != SceneList.ONLINE)
+                {
+                    sceneout.Add(i);
+                }
+            }
+            foreach (var s in sceneout)
+            {
+                SceneManagement.Instance.UnLoadLevel(s);
+
+            }
+
             SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
             {
                 FindObjectOfType<MenuManager>().message.text = "Your account is logged in somewhere else";

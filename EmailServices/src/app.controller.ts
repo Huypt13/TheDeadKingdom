@@ -121,6 +121,21 @@ export class AppController {
     })
 
   }
+  @EventPattern('boughtBox')
+  async boughtBoxNotify(data) {
+    const { email,url, message, price } = data;
+    console.log(data);
+
+    await this.mailerService.sendMail({
+      to: `${email}`,
+      subject: "Bought Box Notification",
+      template: './boughtBox',
+      context: {
+        url, message, price
+      },
+    })
+
+  }
 
   // @MessagePattern('test')
   // async test(@Payload() data: any, @Ctx() context: RmqContext) {

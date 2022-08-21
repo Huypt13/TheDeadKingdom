@@ -19,7 +19,7 @@ const TankService = require("../api/hero/Tank.service");
 process.env.NODE_ENV = "test";
 
 const testInsert = require("./testInsert");
-const TankUser = require("../api/hero/TankUser.schema");
+
 const History = require("../api/history/History.schema");
 
 const Tank = require("../api/hero/Tank.schema");

@@ -54,14 +54,6 @@ describe("Test box service", () => {
             expect(error).not.toBe(null)
         }
     });
-    test("test get all box", async () => {
-        const box = await BoxService.getAllBoxes();
-        expect(box.length).toBeGreaterThanOrEqual(0);
-    })
-    test("test get all box id", async () => {
-        const box = await BoxService.getAllBoxeId();
-        expect(box.length).toBeGreaterThanOrEqual(0);
-    })
     test('test unbox success', async () => {
         const tankId = await BoxService.unbox("62f20d4b70d1f15ecd11c37a");
         expect(tankId).not.toBe(null)
@@ -109,7 +101,8 @@ describe("Test box service", () => {
     })
     test("test get all boxes owner and paging success", async ()=>{
         const listBox = await BoxService.getAllBoxOwnerAndPaging({pageNumbers:1, limit:1},"6296d13fb263c0630e920031");
-        expect(listBox.length).toBeGreaterThanOrEqual(0)
+        console.log("listBox", listBox);
+        expect(listBox).not.toBe(null)
     })
     test("test get all boxes owner and paging fail with id not found", async ()=>{
         try{

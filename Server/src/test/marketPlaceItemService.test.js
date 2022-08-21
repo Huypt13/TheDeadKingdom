@@ -112,7 +112,7 @@ describe("Test marketplaceitem service", () => {
     test("test after sold tank success", async () => {
         const marketPlace = {
             marketItemId: "1231", nftContract: "012312", tokenId: "1",
-            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: "0xBa39437b944378c9bD385c1082828C9c2dE1383E", price: 100
+            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: "0x0c3DFD77D632BebC1E27927FD39a6579CDa54f03", price: 100
         }
         const result = await MarketPlaceItemService.updateAfterSold(marketPlace);
         expect(result.buyer).not.toBe(null);
@@ -157,7 +157,7 @@ describe("Test marketplaceitem service", () => {
     test("test after sold tank fail with tokenId not exist", async () => {
         const marketPlace = {
             marketItemId: "62f20d4b", nftContract: "12234", tokenId: "10",
-            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: "0xBa39437b944378c9bD385c1082828C9c2dE1383E", price: 120
+            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: "0x0c3DFD77D632BebC1E27927FD39a6579CDa54f03", price: 120
         }
         try {
             const result = await MarketPlaceItemService.updateAfterSold(marketPlace);

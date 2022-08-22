@@ -53,7 +53,7 @@ class TankUserService {
         await RabbitMq.boughtBoxNotify({
           message: `You bought ${listToken.length} box success`,
           email: owner.email,
-          price: `${box.price * listToken.length} DKC`,
+          price: `${box.price * listToken.length}`,
           url: `${process.env.WEB_URL}/user/login`,
         })
       } else {

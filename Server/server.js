@@ -1,7 +1,5 @@
 
 
-const teste = require("./src/api/marketPlaceItem/teste");
-
 
 
 
@@ -95,4 +93,3 @@ app.use("/history", Authentication, HistoryRouter);
 app.use("/marketPlace", MarketPlaceRouter);
 Database.connect(app);
 server.listen(8080);
-

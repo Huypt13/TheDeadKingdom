@@ -1,4 +1,6 @@
 const validator = require('validator')
+const web3 = require('web3')
+
 
 const MarketPlaceItem = require('./MarketPlaceItem.schema')
 const UserService = require('../user/User.service')
@@ -8,37 +10,35 @@ const TankService = require('../hero/Tank.service')
 
 
 
- // event NFTListed(
-  //     uint256 marketItemId,
-  //     address nftContract,
-  //     uint256 tokenId,
-  //     address seller,
-  //     address buyer,
-  //     uint256 price
-  // );
+// event NFTListed(
+//     uint256 marketItemId,
+//     address nftContract,
+//     uint256 tokenId,
+//     address seller,
+//     address buyer,
+//     uint256 price
+// );
 class MarketPlaceItemService {
 
     async createAfterListed(marketPlace) {
+        const seller = await UserService.getByWalletAddress(marketPlace.seller);
         try {
-            const seller = await UserService.getByWalletAddress(marketPlace.seller);
+            this.validateInput(marketPlace);
             if (!seller) {
                 throw new Error("Seller is not connect wallet!");
             }
             marketPlace.seller = seller._id.toString();
             marketPlace.buyer = null;
             marketPlace.price = Number(marketPlace.price);
-            if(marketPlace.price <= 0){
-                throw new Error("Price must greater than 0");
-            }
             const listTank = await TankUserService.getTankByUserIdAndnftId(marketPlace.seller, marketPlace.tokenId);
-            if(listTank.length <= 0){
+            if (listTank.length <= 0) {
                 throw new Error("This tank is not exist")
             }
             const tank = listTank[0].tanks[0];
             marketPlace.price = Number(marketPlace.price);
-            
-            const market = await MarketPlaceItem.findOne({tokenId: marketPlace.tokenId, isSelling: true});
-            if(market){
+
+            const market = await MarketPlaceItem.findOne({ tokenId: marketPlace.tokenId, isSelling: true });
+            if (market) {
                 throw new Error("This transaction is already exist")
             }
 
@@ -64,41 +64,45 @@ class MarketPlaceItemService {
             }
             return marketPlaceItem;
         } catch (error) {
+            await RabbitMq.listedNotify({
+                message: "Listed fail",
+                email: seller.email,
+                price: marketPlace?.price || 0,
+                tankName: "",
+                url: `${process.env.WEB_URL}/user/login`,
+            })
             console.log(error);
 
         }
     }
 
     async updateAfterSold(marketPlace) {
+        const buyer = await UserService.getByWalletAddress(marketPlace.buyer);
         try {
-            if(marketPlace.buyer == marketPlace.seller){
+            this.validateInput(marketPlace);
+            if (marketPlace.buyer == marketPlace.seller) {
                 throw new Error("Buyer address must different seller")
             }
-            const buyer = await UserService.getByWalletAddress(marketPlace.buyer);
             const seller = await UserService.getByWalletAddress(marketPlace.seller);
             if (!buyer || !seller) {
                 throw new Error("Buyer Or seller is not connect wallet");
             }
             marketPlace.price = Number(marketPlace.price);
-            if(marketPlace.price <= 0){
-                throw new Error("Price must greater than 0");
-            }
-
-            const TankUser = await TankUserService.updateData({ nftId: marketPlace.tokenId, userId: seller._id.toString(),  },
+            const TankUser = await TankUserService.updateData({ nftId: marketPlace.tokenId, userId: seller._id.toString(), },
                 { userId: buyer._id.toString(), boughtDate: new Date() });
             if (!TankUser) {
                 throw new Error("Sold fail");
             }
             const Tank = await TankService.getByTankId(TankUser._id.toString(), TankUser.userId);
             const marketItemId = marketPlace.marketItemId;
-            const marketPlaceItem = await MarketPlaceItem.findOneAndUpdate({ seller: seller._id.toString(), tokenId: marketPlace.tokenId, isSelling: true},
+            const marketPlaceItem = await MarketPlaceItem.findOneAndUpdate({ seller: seller._id.toString(), tokenId: marketPlace.tokenId, isSelling: true },
                 {
                     buyer: buyer._id.toString(), marketItemId: marketItemId, finishedAt: new Date(),
                     isSelling: false, price: marketPlace.price
                 },
                 { new: true }
             )
-            
+
             if (marketPlaceItem) {
                 await RabbitMq.soldNotify({
                     message: "Congratulations on your successful sale",
@@ -120,7 +124,7 @@ class MarketPlaceItemService {
                 await RabbitMq.boughtNotify({
                     message: "Bought failed",
                     email: buyer.email,
-                    seller: "",
+                    seller: marketPlace?.seller || "0x000000000",
                     price: marketPlace.price,
                     tankName: Tank.name + " level" + Tank.level,
                     url: `${process.env.WEB_URL}/user/login`,
@@ -130,19 +134,28 @@ class MarketPlaceItemService {
             }
             return marketPlaceItem;
         } catch (error) {
+            await RabbitMq.boughtNotify({
+                message: "Bought failed",
+                email: buyer.email,
+                seller: marketPlace?.seller || "0x000000000",
+                price: marketPlace?.price || 0,
+                tankName: "",
+                url: `${process.env.WEB_URL}/user/login`,
+            })
             console.log(error);
         }
     }
 
     async updateAfterSellCanceled(marketPlace) {
+        const seller = await UserService.getByWalletAddress(marketPlace.seller);
         try {
-            const seller = await UserService.getByWalletAddress(marketPlace.seller);
+            this.validateInput(marketPlace)
             if (!seller) {
                 throw new Error("Seller is not connect wallet");
             }
             const listTank = await TankUserService.getTankByUserIdAndnftId(seller._id.toString(), marketPlace.tokenId);
             const tank = listTank[0].tanks[0];
-            if(listTank.length <= 0){
+            if (listTank.length <= 0) {
                 throw new Error("This tank is not exist")
             }
             const marketItemId = marketPlace.marketItemId;
@@ -171,13 +184,20 @@ class MarketPlaceItemService {
             }
             return marketPlaceItem;
         } catch (error) {
+            await RabbitMq.cancelNotify({
+                message: "Cancel selling failed",
+                email: seller.email,
+                price: marketPlace?.price || 0,
+                tankName: "",
+                url: `${process.env.WEB_URL}/user/login`,
+            })
             console.log(error);
-
         }
     }
     async getTotalTransactionsByDay(day) {
         try {
-            if(day >= 32){
+            const MAX_DAYS = 32;
+            if (day >= MAX_DAYS) {
                 throw new Error("Day exceed the allowed amount")
             }
             day--;
@@ -229,8 +249,8 @@ class MarketPlaceItemService {
             throw new Error(error.message);
         }
     }
-    async validateInput(marketPlace){
-          // event NFTListed(
+    async validateInput(marketPlace) {
+        // event NFTListed(
         //     uint256 marketItemId,
         //     address nftContract,
         //     uint256 tokenId,
@@ -241,13 +261,28 @@ class MarketPlaceItemService {
         let marketItemId = marketPlace.marketItemId;
         let nftContract = marketPlace.nftContract;
         let tokenId = marketPlace.tokenId;
-        let seller = marketPlace.seller;
-        let buyer = marketPlace.buyer;
         let price = marketPlace.price;
-         if(marketPlaceId || marketItemId){
-             
-         }
-       
+        if (!marketItemId || marketItemId.trim().length === 0) {
+            throw new Error("MarketItemId is invalid");
+        }
+        if (!nftContract || marketItemId.trim().length == 0) {
+            throw new Error("nftContract is invalid");
+        }
+        if (!tokenId || tokenId.trim().length === 0) {
+            throw new Error("tokenId is invalid");
+        }
+        if (!validator.isFloat(price)) {
+            // Web3.utils.toWei("1", "ether") => 10^18
+            // Web3.utils.fromWei("10^18", "ether") => 1
+            throw new Error("Invalid price")
+        } else {
+            marketPlace.price = web3.utils.fromWei(marketPlace.price, "ether")
+            if (marketPlace.price <= 0) {
+                throw new Error("Price must be greater than 0")
+            }
+        }
+
+
     }
 }
 

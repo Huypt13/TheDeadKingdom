@@ -698,18 +698,32 @@ public class NetworkClient : SocketIOComponent
         // update pos player
         On("updatePosition", (E) =>
         {
-            OnUpdatePosition.Invoke(E);
 
             string id = E.data["id"].ToString().RemoveQuotes();
             float x = E.data["position"]["x"].f;
             float y = E.data["position"]["y"].f;
 
-
             NetworkIdentity ni = serverObjects[id];
-            StartCoroutine(AIPositionSmoothing(ni.transform, new Vector3(x, y, 0)));
+            if (ni.GetComponent<TankGeneral>() != null)
+            {
+                float type = E.data["type"].f;
+                float speed = E.data["tank"]["speed"].f;
+                if (type == 1)
+                    ni.GetComponent<TankGeneral>().Rb.position = Vector3.MoveTowards(transform.position, new Vector3(x, y, 0), speed * Time.deltaTime);
+                else
+                {
+                    StartCoroutine(AIPositionSmoothing(ni.transform, new Vector3(x, y, 0)));
+                }
+            }
+            else
+            {
+                StartCoroutine(AIPositionSmoothing(ni.transform, new Vector3(x, y, 0)));
+
+            }
 
 
-            //   ni.transform.position = new Vector3(x, y, 0);
+
+            //   
         });
 
         // update player rotation
@@ -987,6 +1001,7 @@ public class NetworkClient : SocketIOComponent
 
         yield return null;
     }
+
     public void OnQuit()
     {
         Emit("quitGame");

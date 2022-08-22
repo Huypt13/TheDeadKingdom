@@ -60,7 +60,9 @@ class Connection {
     socket.on("updatePosition", ({ position }) => {
       if (connection.lobby instanceof GameLobby) {
         player.position = new Vector2(position.x, position.y);
-        socket.broadcast.to(this.lobby.id).emit("updatePosition", player);
+        socket.broadcast
+          .to(this.lobby.id)
+          .emit("updatePosition", { ...player, type: 1 });
       }
     });
     socket.on("stopAutoMoving", () => {

@@ -101,10 +101,10 @@ class Player {
       endEf.push(this.effect.focusOn);
       this.effect.focusOn = null;
     } else {
-      lobby.connections[0].socket.emit("updatePosition", this);
+      lobby.connections[0].socket.emit("updatePosition", { ...this, type: 0 });
       lobby.connections[0].socket.broadcast
         .to(lobby.id)
-        .emit("updatePosition", this);
+        .emit("updatePosition", { ...this, type: 0 });
     }
 
     return { endEf: endEf };

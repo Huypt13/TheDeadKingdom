@@ -422,7 +422,6 @@ class TankService {
 
     try {
       const { levels, classTypes, typeIds, limit, pageNumbers, sortBy, remaining, maxPrice, minPrice } = filter;
-      console.log("filter",filter);
       const tanks = await this.getTopListedLastedWithFilter(filter);
       const total = tanks[0]?.total || 0;
       const displayedTankNumber = (pageNumbers - 1) * limit;

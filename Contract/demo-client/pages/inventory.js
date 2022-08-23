@@ -70,7 +70,7 @@ export default function MyAssets() {
         router.push(`/resell-nft?id=${nft.tokenId}&tokenURI=${nft.tokenURI}`)
     }
 
-    async function sellNFT(tokenId, price = 100) {
+    async function sellNFT(tokenId, price = 101) {
         await setWeb3Value();
 
         await marketplaceContract.methods.listNft(TankNFT.networks[networkId].address, tokenId, Web3.utils.toWei(price.toString(), "ether")).send({ from: accounts[0] })

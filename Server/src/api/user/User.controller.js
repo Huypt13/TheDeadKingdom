@@ -20,7 +20,7 @@ class UserController {
             "Please confirm email to active your account"
           );
         }
-        if (userinfor?.inWeb) {
+        if (!userinfor?.inWeb) {
           if (gameServer.connections[user._id]) {
             gameServer.connections[user._id].socket.emit(
               "someoneLoginYourAccount",
@@ -45,10 +45,7 @@ class UserController {
           username: user?.username,
         });
       }
-      return ApiResponse.serverErrorResponse(
-        res,
-        "Invalid username or password"
-      );
+      return ApiResponse.badRequestResponse(res, "Email or password incorrect");
     } catch (error) {
       return ApiResponse.serverErrorResponse(res, error.message);
     }
@@ -75,7 +72,7 @@ class UserController {
       }
       return ApiResponse.serverErrorResponse(
         res,
-        "Invalid username or password"
+        "Email or password incorrect"
       );
     } catch (error) {
       return ApiResponse.serverErrorResponse(res, error.message);
@@ -86,6 +83,9 @@ class UserController {
     try {
       const userId = res.locals.user._id.tostring();
       const { walletAddress } = req.query;
+      if (!walletAddress) {
+        return ApiResponse.serverErrorResponse(res, "WalletAddress invalid");
+      }
       const user = UserService.connectWallet(walletAddress, userId);
       if (!user) {
         return ApiResponse.badRequestResponse(res, "Wallet address existed");
@@ -99,7 +99,7 @@ class UserController {
     try {
       let token = req.header("x-access-token");
       await Redis.saveWithTtl(token, "", 0);
-      return ApiResponse.successResponse(res, "Login success");
+      return ApiResponse.successResponse(res, "Logout success");
     } catch (error) {
       return ApiResponse.serverErrorResponse(res, error.message);
     }
@@ -169,9 +169,24 @@ class UserController {
   }
   async changePassword(req, res) {
     try {
-      const infor = req.body;
+      const { newPassword, password } = req.body;
       const email = res.locals.user.email;
-      const user = await UserService.changePassword(infor, email);
+      if (newPassword.length > 30 || newPassword.length < 8) {
+        return ApiResponse.badRequestResponse(
+          res,
+          "newPassword must >= 8 and <=30"
+        );
+      }
+      if (password.length > 30 || password.length < 8) {
+        return ApiResponse.badRequestResponse(
+          res,
+          "Password must >= 8 and <=30"
+        );
+      }
+      const user = await UserService.changePassword(
+        { password, newPassword },
+        email
+      );
       if (!user) throw new Error(`Cannot change password`);
       return ApiResponse.successResponse(res, "Change password success");
     } catch (error) {
@@ -195,8 +210,14 @@ class UserController {
   }
   async changePasswordToken(req, res) {
     try {
-      const { token, ...infor } = req.body;
-      await UserService.changePasswordToken(token, infor);
+      const { token, newPassword } = req.body;
+      if (newPassword.length > 30 || newPassword.length < 8) {
+        return ApiResponse.badRequestResponse(
+          res,
+          "Password must >= 8 and <=30"
+        );
+      }
+      await UserService.changePasswordToken(token, newPassword);
       return ApiResponse.successResponse(res, "Change password success");
     } catch (error) {
       return ApiResponse.serverErrorResponse(res, error.message);

@@ -307,7 +307,7 @@ describe("Test User Service", () => {
   test("Test change password token success", async () => {
     await UserService.changePasswordToken(
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiaHV5ZHRyIiwiaWF0IjoxNjYwODM3MTY0LCJleHAiOjE2NjM0MjkxNjR9.gb4ZvdES2PTdh72KOAgBDSMZj9Evy1yifl96oy1CJ38",
-      { newPassword: "321" }
+      "321" 
     );
     const user = await UserService.getUser({ email: "huy", password: "321" });
     expect(user).not.toBe(null);

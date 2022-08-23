@@ -53,6 +53,10 @@ class Player {
   }
   dealDamage(amount) {
     console.log(`DealDame ${GameMechanism.getDame(this.tank, amount)}`, amount);
+    if (!amount) {
+      console.log("amount null");
+      amount = 0;
+    }
     this.health -= GameMechanism.getDame(this.tank, amount);
     if (this.health <= 0) {
       this.isDead = true;
@@ -95,12 +99,17 @@ class Player {
 
     if (this.position.Distance(focus.player.position) <= 0.5) {
       endEf.push(this.effect.focusOn);
-      this.effect.focusOn = null;
-    } else {
-      lobby.connections[0].socket.emit("updatePosition", this);
+      lobby.connections[0].socket.emit("endFocusOn", { id: this.id });
       lobby.connections[0].socket.broadcast
         .to(lobby.id)
-        .emit("updatePosition", this);
+        .emit("endFocusOn", { id: this.id });
+
+      this.effect.focusOn = null;
+    } else {
+      lobby.connections[0].socket.emit("updatePosition", { ...this, type: 0 });
+      lobby.connections[0].socket.broadcast
+        .to(lobby.id)
+        .emit("updatePosition", { ...this, type: 0 });
     }
 
     return { endEf: endEf };

@@ -32,8 +32,8 @@ public class Skill2_003 : MonoBehaviour
                 return;
             }
 
-            // client trung dan gui request
-            if (ni.IsControlling())
+            // trung nguoi 
+            if (niActive.IsControlling() && ni.GetComponent<TankGeneral>() != null)
             {
                 gameObject.SetActive(false);
                 networkIdentity.GetSocket().Emit("touchSkill", new JSONObject(JsonUtility.ToJson(new TouchData()

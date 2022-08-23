@@ -19,40 +19,7 @@ export default function Home() {
 
   const [boxAmount, setBoxAmount] = useState(1);
 
-  async function setWeb3Value(btn) {
-
-    if (window.ethereum) {
-      try {
-        // check if the chain to connect to is installed
-        await window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: '0x539' }], // chainId must be in hexadecimal numbers
-        });
-      } catch (error) {
-        // This error code indicates that the chain has not been added to MetaMask
-        // if it is not, then install it into the user MetaMask
-        if (error.code === 4902) {
-          try {
-            await window.ethereum.request({
-              method: 'wallet_addEthereumChain',
-              params: [
-                {
-                  chainId: '0x539',
-                  rpcUrl: 'http://127.0.0.1:7545',
-                },
-              ],
-            });
-          } catch (addError) {
-            console.error(addError);
-          }
-        }
-        console.error(error);
-      }
-    } else {
-      // if no window.ethereum then MetaMask is not installed
-      alert('MetaMask is not installed. Please consider installing it: https://metamask.io/download.html');
-    }
-
+  async function setWeb3Value() {
 
     const web3Modal = new Web3Modal();
     const provider = await web3Modal.connect();
@@ -74,24 +41,24 @@ export default function Home() {
 
   }
 
-  // setWeb3Value();
+  setWeb3Value();
 
   async function buyBoxes() {
     const amount = boxAmount;
-    const boxPrice = (await tankNFTContract.methods.boxPrice().call({ from: accounts[0] }));
+    const boxPrice = (await tankNFTContract.methods.getBoxPrice("62f20d4b70d1f15ecd11c37a").call({ from: accounts[0] }));
 
     let allowance = await deathKingdomCoinContract.methods.allowance(accounts[0], TankNFT.networks[networkId].address).call({ from: accounts[0] })
 
     console.log((boxPrice), (allowance));
 
     if (BigNumber(allowance).lt(BigNumber(boxPrice).mult(amount))) {
-      await deathKingdomCoinContract.methods.approve(TankNFT.networks[networkId].address, (BigNumber(boxPrice).mult(amount)).minus(BigNumber(allowance))).send({ from: accounts[0] })
+      await deathKingdomCoinContract.methods.approve(TankNFT.networks[networkId].address, (BigNumber(boxPrice).mult(amount))).send({ from: accounts[0] })
         .on('receipt', function (receipt) {
           console.log("Approve: " + receipt.status);
         });
     }
 
-    await tankNFTContract.methods.buyBoxes(amount).send({ from: accounts[0] })
+    await tankNFTContract.methods.buyBoxes("62f20d4b70d1f15ecd11c37a",amount).send({ from: accounts[0] })
       .on('receipt', function (receipt) {
         console.log(receipt.status);
         console.log(receipt.events);
@@ -148,6 +115,38 @@ export default function Home() {
     console.log(myNfts);
   }
 
+  async function setBoxPrice(){
+    const address = "0xA338b617517AFF6ca572B0D5Be5A64b64DabCA2d";
+    const privateKey =
+      "c5da068700edd9097b7a4ad79db5bd61021b9ecef75f112c01e3e1d9272dee92";
+
+    web3.eth.accounts.wallet.add(privateKey);
+
+    const tx = tankNFTContract.methods.setBoxPrice(
+      "62f20d4b70d1f15ecd11c37a",
+      Web3.utils.toWei("100", "ether")
+    );
+    const gas = await tx.estimateGas({ from: address });
+    const gasPrice = await web3.eth.getGasPrice();
+    const data = tx.encodeABI();
+    const nonce = await web3.eth.getTransactionCount(address);
+    const txData = {
+      from: address,
+      to: tankNFTContract.options.address,
+      data: data,
+      gas,
+      gasPrice,
+      nonce,
+      // chain: 'rinkeby',
+      // hardfork: 'istanbul'
+    };
+
+    const receipt = await web3.eth.sendTransaction(txData);
+    console.log(receipt);
+  }
+
+  
+
 
   return (
     <div className={styles.container}>
@@ -170,7 +169,7 @@ export default function Home() {
       <br></br>
       <br></br>
       <br></br>
-      <button type="button" className="mt-4 w-full bg-teal-400 text-white font-bold py-2 px-12 rounded" onClick={() => widthdrawal()}>Widthdrawal</button>
+      <button type="button" className="mt-4 w-full bg-teal-400 text-white font-bold py-2 px-12 rounded" onClick={() => setBoxPrice()}>SetBoxPrice</button>
       <button type="button" className="mt-4 w-full bg-teal-400 text-white font-bold py-2 px-12 rounded" onClick={() => setWeb3Value(this)}>Connect to metamask</button>
 
     </div>

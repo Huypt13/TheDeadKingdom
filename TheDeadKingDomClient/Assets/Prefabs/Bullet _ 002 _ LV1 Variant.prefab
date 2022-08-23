@@ -13,11 +13,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4147309264590899287, guid: 8feef1f7a520743cea78725034208de2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.02
       objectReference: {fileID: 0}
     - target: {fileID: 4147309264590899287, guid: 8feef1f7a520743cea78725034208de2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.497
+      value: -0.08
       objectReference: {fileID: 0}
     - target: {fileID: 4147309264590899287, guid: 8feef1f7a520743cea78725034208de2, type: 3}
       propertyPath: m_LocalPosition.z
@@ -54,6 +54,14 @@ PrefabInstance:
     - target: {fileID: 4147309264590899289, guid: 8feef1f7a520743cea78725034208de2, type: 3}
       propertyPath: m_Name
       value: Bullet _ 002 _ LV1 Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 7787227297416949685, guid: 8feef1f7a520743cea78725034208de2, type: 3}
+      propertyPath: m_Size.y
+      value: 0.71200246
+      objectReference: {fileID: 0}
+    - target: {fileID: 7787227297416949685, guid: 8feef1f7a520743cea78725034208de2, type: 3}
+      propertyPath: m_Offset.y
+      value: 0.013866107
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8feef1f7a520743cea78725034208de2, type: 3}

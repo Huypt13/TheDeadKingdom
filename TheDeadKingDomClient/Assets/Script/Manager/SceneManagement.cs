@@ -10,11 +10,13 @@ public class SceneManagement : Singleton<SceneManagement>
     private List<LevelLoadingData> levelsLoading;
     private List<string> currentlyLoadedScenes;
 
+    public List<string> CurrentlyLoadedScenes { get => currentlyLoadedScenes; set => currentlyLoadedScenes = value; }
+
     public override void Awake()
     {
         base.Awake();
         levelsLoading = new List<LevelLoadingData>();
-        currentlyLoadedScenes = new List<string>();
+        CurrentlyLoadedScenes = new List<string>();
     }
 
     public void Update()
@@ -31,7 +33,7 @@ public class SceneManagement : Singleton<SceneManagement>
             {
                 levelsLoading[i].ao.allowSceneActivation = true; //Needed to make sure the scene while fully loaded gets turned on for the player
                 levelsLoading[i].onLevelLoaded.Invoke(levelsLoading[i].sceneName);
-                currentlyLoadedScenes.Add(levelsLoading[i].sceneName);
+                CurrentlyLoadedScenes.Add(levelsLoading[i].sceneName);
                 levelsLoading.RemoveAt(i);
                 //Hide your loading screen here
                 //ApplicationManager.Instance.HideLoadingScreen();
@@ -41,7 +43,7 @@ public class SceneManagement : Singleton<SceneManagement>
 
     public void LoadLevel(string levelName, Action<string> onLevelLoaded, bool isShowingLoadingScreen = false)
     {
-        bool value = currentlyLoadedScenes.Any(x => x == levelName);
+        bool value = CurrentlyLoadedScenes.Any(x => x == levelName);
 
         if (value)
         {
@@ -64,12 +66,12 @@ public class SceneManagement : Singleton<SceneManagement>
 
     public void UnLoadLevel(string levelName)
     {
-        foreach (string item in currentlyLoadedScenes)
+        foreach (string item in CurrentlyLoadedScenes)
         {
             if (item == levelName)
             {
                 SceneManager.UnloadSceneAsync(levelName);
-                currentlyLoadedScenes.Remove(item);
+                CurrentlyLoadedScenes.Remove(item);
                 return;
             }
         }

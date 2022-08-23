@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 // const Schema = mongoose.Schema;
 const marketPlaceItemShema = new mongoose.Schema({
-    marketPlaceItemId: { type: String, require: true },
+    marketItemId: { type: String, require: true },
     tokenId: { type: String, require: true },
     price: { type: Number, min: 1 },
     seller: { type: String },

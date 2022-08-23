@@ -161,9 +161,8 @@ class UserService {
     }
     return null;
   }
-  async changePassword(infor, email) {
+  async changePassword({password, newPassword}, email) {
     try {
-      const { password, newPassword } = infor;
       const user = await this.getByEmail(email);
       if (!user) {
         throw new Error(`Invalid email`);
@@ -211,8 +210,7 @@ class UserService {
       throw new Error(error.message);
     }
   }
-  async changePasswordToken(token, infor) {
-    const { newPassword } = infor;
+  async changePasswordToken(token, newPassword) {
     try {
       let passCheck;
       try {

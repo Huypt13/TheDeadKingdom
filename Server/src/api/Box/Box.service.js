@@ -1,12 +1,13 @@
+const Box = require("./Box.schema");
+
 const TankUser = require("../hero/TankUser.schema");
 const mongoose = require("mongoose");
-const Box = require("./Box.schema");
 
 const ObjectId = mongoose.Types.ObjectId;
 
 class BoxService {
   async getByBoxId(boxId) {
-    return await Box.findOne({ boxId });
+    return await Box.findById(boxId);
   }
 
   async getAllBoxes() {
@@ -17,8 +18,13 @@ class BoxService {
   }
 
   async unbox(boxId) {
-    const boxRate = await this.getByBoxId(boxId);
-    return await this.randomTank(boxRate.rate);
+    try {
+      const boxRate = await this.getByBoxId(boxId);
+      if (!boxRate) return null;
+      return await this.randomTank(boxRate.rate);
+    } catch (err) {
+      throw new Error("Unbox Fail")
+    }
   }
 
   async randomBoxId() {
@@ -27,23 +33,20 @@ class BoxService {
     return listBoxId[index]._id.toString();
   }
 
-  async getAllBoxes() {
-    return await Box.find({});
-  }
-
   async randomTank(boxRate) {
+    if(!boxRate)return null;
     let random = Math.random();
-    let arr = boxRate; //[{tankId:"a",ratio:0.6},{tankId:"b",ratio:0.3},{tankId:"c",ratio:0.1}]
+    let boxArray = boxRate; //[{tankId:"a",ratio:0.6},{tankId:"b",ratio:0.3},{tankId:"c",ratio:0.1}]
     let pre = 0;
-    let arr2 = [];
-    for (var k of arr) {
+    let newArray = [];
+    for (var k of boxArray) {
       k.ratio += pre;
-      arr2.push(k);
+      newArray.push(k);
       pre = k.ratio;
     }
     let first = 0;
     let result = {};
-    for (var i of arr2) {
+    for (var i of newArray) {
       if (first <= random && random < i.ratio) {
         result = i;
         break;
@@ -58,17 +61,42 @@ class BoxService {
       return await TankUser.aggregate([
         { $match: { tankId: null, userId: id } },
         {
-          $group: { _id: "$boxId", quantity: { $count: {} } },
-        },
-        {
           $lookup: {
             from: "boxes",
-            let: { boxId: { $toObjectId: "$_id" } },
+            let: { boxId: { $toObjectId: "$boxId" } },
             pipeline: [{ $match: { $expr: { $eq: ["$_id", "$$boxId"] } } }],
             as: "box",
           },
         },
       ]);
+    } catch (err) {
+      console.log(err);
+      throw new Error(err.message);
+    }
+  }
+  async getAllBoxOwnerAndPaging({pageNumbers,limit},id){
+    try {
+      const listBox = await this.getAllBoxOwner(id);
+      console.log("object",listBox);
+      const total = listBox.length;
+      const displayedBoxNumber = (pageNumbers-1)*limit;
+      if(total<= displayedBoxNumber){
+        throw new Error("Don't have box")
+      }
+      const listBoxes = await TankUser.aggregate([
+        { $match: { tankId: null, userId: id } },
+        {
+          $lookup: {
+            from: "boxes",
+            let: { boxId: { $toObjectId: "$boxId" } },
+            pipeline: [{ $match: { $expr: { $eq: ["$_id", "$$boxId"] } } }],
+            as: "box",
+          },
+        },
+        {$skip: displayedBoxNumber},
+        {$limit:+limit}
+      ]);
+      return {listBoxes,total}
     } catch (err) {
       console.log(err);
       throw new Error(err.message);

@@ -1,4 +1,13 @@
 const User = require("../api/user/User.schema");
+
+const MarketPlaceItem = require("../api/marketPlaceItem/MarketPlaceItem.schema");
+
+
+const Box = require("../api/box/Box.schema");
+
+
+
+
 const mongoose = require("mongoose");
 const Tank = require("../api/hero/Tank.schema");
 const TankUser = require("../api/hero/TankUser.schema");
@@ -197,15 +206,165 @@ module.exports.insertTankUserData = async () => {
       nftId: "1",
     },
     {
-      _id: mongoose.Types.ObjectId("62ef8e9da0b3eafa898cabd3"),
+      _id: mongoose.Types.ObjectId("62ef8e9da0b3eafa898cabd5")
+      ,
+      userId: "6296d14fb263c0630e920036",
+      tankId: "62e11132105338549ed69871",
+      remaining: 98,
+      boxId: "62f20d4b70d1f15ecd11c37a",
+      nftId: "3",
+    },
+    {
+      _id: mongoose.Types.ObjectId("62ef8e9da0b3eafa898cabd6")
+      ,
+      userId: "6296d14fb263c0630e920036",
+      tankId: "62e11132105338549ed69871",
+      remaining: 98,
+      boxId: "62f20d4b70d1f15ecd11c37a",
+      nftId: "2",
+    },
+    {
+      _id: mongoose.Types.ObjectId("62ef8e9da0b3eafa898cabd3")
+      ,
       userId: "6296d13fb263c0630e920031",
       tankId: "62e11132105338549ed69870",
       boxId: "62f20d4b70d1f15ecd11c37a",
       nftId: "2",
       remaining: 100,
     },
-  ]);
-};
+    {
+      _id: mongoose.Types.ObjectId("62ef8e9da0b3eafa898cabd9")
+      ,
+      userId: "6296d13fb263c0630e920031",
+      tankId: null,
+      boxId: "62f20d4b70d1f15ecd11c37a",
+      nftId: "1",
+      remaining: 100,
+    }
+  ])
+}
+
+module.exports.insertBoxData = async () => {
+  await Box.insertMany([
+    {
+      "_id": mongoose.Types.ObjectId("62f20d4b70d1f15ecd11c37a"),
+      "price": 100,
+      "image": null,
+      "rate": [
+        {
+          "tankId": "62e11132105338549ed69870",
+          "ratio": 0.2
+        },
+        {
+          "tankId": "62e1115b105338549ed6a5c2",
+          "ratio": 0.2
+        },
+        {
+          "tankId": "62e11319105338549ed7398e",
+          "ratio": 0.2
+        },
+        {
+          "tankId": "62e11149105338549ed69fab",
+          "ratio": 0.1
+        },
+        {
+          "tankId": "62e4b62d105338549e07e2dd",
+          "ratio": 0.1
+        },
+        {
+          "tankId": "62e4b715105338549e083485",
+          "ratio": 0.1
+        },
+        {
+          "tankId": "62e4b4a2105338549e0758ec",
+          "ratio": 0.03
+        },
+        {
+          "tankId": "62e4b67b105338549e07fe3e",
+          "ratio": 0.03
+        },
+        {
+          "tankId": "62e4b758105338549e084bb1",
+          "ratio": 0.04
+        }
+      ],
+      "name": "Strange Box"
+    }
+  ])
+}
+
+module.exports.insertMarketPlaceItemData = async () => {
+  await MarketPlaceItem.insertMany([{
+    "_id": mongoose.Types.ObjectId("62f387a2f62fd1f6f4d367de"),
+    "tokenId": "1",
+    "marketItemId": "1231",
+    "price": 103.4,
+    "seller": "6296d14fb263c0630e920036",
+    "buyer": "6296d13fb263c0630e920031",
+    "nftContract": "ad123",
+    "isSelling": false,
+    "createdAt": "2022-08-11T16:58:22.331+00:00",
+    "finishedAt": "2022-08-11T16:58:22.331+00:00"
+    },{
+    "_id": mongoose.Types.ObjectId("62f387a2f62fd1f6f4d367dc"),
+    "tokenId": "2",
+    "marketItemId": "1233",
+    "price": 103.4,
+    "seller": "6296d14fb263c0630e920036",
+    "buyer": null,
+    "nftContract": "ad123",
+    "isSelling": true,
+    "createdAt": "2022-08-11T16:58:22.331+00:00",
+    "finishedAt": null
+    }
+    ,{
+    "_id": mongoose.Types.ObjectId("62f387a2f62fd1f6f4d367da"),
+    "tokenId": "3",
+    "price": 103.4,
+    "marketItemId": "131",
+    "seller": "6296d14fb263c0630e920036",
+    "buyer": null,
+    "nftContract": "ad123",
+    "isSelling": true,
+    "createdAt": "2022-08-11T16:58:22.331+00:00",
+    "finishedAt": null
+    }
+  // },{
+  //   "_id": mongoose.Types.ObjectId("62f388e2daaf8c24bb428f98"),
+  //   "marketPlaceItemId": "111",
+  //   "tokenId": "1",
+  //   "price": 103.4,
+  //   "seller": "62ef89a859f656820c803044",
+  //   "buyer": "62ef8a6859f656820c803045",
+  //   "nftContract": "ad123",
+  //   "isSelling": true,
+  //   "createdAt": {
+  //     "$date": {
+  //       "$numberLong": "1660127458103"
+  //     }
+  //   }
+  // },{
+  //   "_id": mongoose.Types.ObjectId("62f5352f58497eb270526d01"),
+  //   "marketPlaceItemId": "111",
+  //   "tokenId": "3",
+  //   "price": 103.4,
+  //   "seller": "62ef89a859f656820c803044",
+  //   "buyer": "62ef8a6859f656820c803045",
+  //   "nftContract": "ad123",
+  //   "isSelling": false,
+  //   "createdAt": {
+  //     "$date": {
+  //       "$numberLong": "1660237102331"
+  //     }
+  //   },
+  //   "finishedAt": {
+  //     "$date": {
+  //       "$numberLong": "1660237937150"
+  //     }
+  //   }
+  ])
+}
+
 module.exports.insertHistory = async () => {
   await History.insertMany([
     {

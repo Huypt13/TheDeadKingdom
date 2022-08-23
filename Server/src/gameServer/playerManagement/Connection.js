@@ -52,18 +52,24 @@ class Connection {
       }
     });
     socket.on("collisionDestroy", (data) => {
-      if (connection.lobby instanceof GameLobby)
+      if (connection.lobby instanceof GameLobby) {
+        console.log("trung dan", data);
         this.lobby.onCollisionDestroy(this, data);
+      }
     });
     socket.on("updatePosition", ({ position }) => {
       if (connection.lobby instanceof GameLobby) {
         player.position = new Vector2(position.x, position.y);
-        socket.broadcast.to(this.lobby.id).emit("updatePosition", player);
+        socket.broadcast
+          .to(this.lobby.id)
+          .emit("updatePosition", { ...player, type: 1 });
       }
     });
     socket.on("stopAutoMoving", () => {
       if (connection.lobby instanceof GameLobby) {
         player.effect.autoMove = null;
+        player.tank.speed = player.startTank.speed;
+        console.log("stop Moving", player.tank.speed);
       }
     });
     socket.on("updateRotation", (data) => {
@@ -87,8 +93,9 @@ class Connection {
         this.lobby.onCollisionDestroyHpBox(this, data);
     });
     socket.on("collisionDestroyBox", (data) => {
-      if (connection.lobby instanceof GameLobby)
-        this.lobby.onCollisionDestroyBox(this, data);
+      if (connection.lobby instanceof GameLobby) {
+      }
+      this.lobby.onCollisionDestroyBox(this, data);
     });
     socket.on("PlayerTouchItem", (data) => {
       if (connection.lobby instanceof GameLobby) {
@@ -103,7 +110,7 @@ class Connection {
     socket.on("sendMessage", (data) => {
       if (connection.lobby instanceof GameLobby)
         this.lobby.SendMessage(this, data);
-    })
+    });
   }
 }
 

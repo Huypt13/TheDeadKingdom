@@ -12,6 +12,9 @@ public class NetworkTransform : MonoBehaviour
 
     private float stillCounter = 0;
 
+    private bool isFocusOn;
+    public bool IsFocusOn { get => isFocusOn; set => isFocusOn = value; }
+
     public void Start()
     {
         networkIdentity = GetComponent<NetworkIdentity>();
@@ -31,22 +34,26 @@ public class NetworkTransform : MonoBehaviour
     {
         if (networkIdentity.IsControlling())
         {
-            if (oldPosition != transform.position)
+            if (!isFocusOn)
             {
-                oldPosition = transform.position;
-                stillCounter = 0;
-                sendData();
-            }
-            else
-            {
-                stillCounter += Time.deltaTime;
 
-                if (stillCounter >= 1)
+                if (transform.position != oldPosition)
                 {
-                    stillCounter = 0;
                     sendData();
                 }
+                else
+                {
+                    stillCounter += Time.deltaTime;
+
+                    if (stillCounter >= 0.1f)
+                    {
+                        stillCounter = 0;
+                        sendData();
+                    }
+                }
+
             }
+
         }
     }
 

@@ -5,7 +5,7 @@ const validator = require('validator')
 
 module.exports.validateReqQuery = async (req, res, next) => {
     convertStringToObject(req)
-    console.log("object",req.query);
+    // console.log("object",req.query);
     const { levels, classTypes, typeIds, limit, pageNumbers, sortBy, status, remaining, maxPrice, minPrice, number} = req.query;
     if (limit >= 100 || limit <= 0 || !limit) {
         req.query.limit = 1;
@@ -46,7 +46,7 @@ module.exports.validateReqQuery = async (req, res, next) => {
     }
  
     next();
-    console.log("object2",req.query);
+    // console.log("object2",req.query);
 }
 
 

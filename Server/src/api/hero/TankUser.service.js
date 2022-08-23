@@ -18,18 +18,18 @@ class TankUserService {
     }
   }
   async createTankUser(listToken, tokenOwner, boxId) {
+    const owner = await UserService.getByWalletAddress(tokenOwner);
     try {
+      if (!owner) {
+        throw new Error("buyer is not connect wallet");
+      }
       const listTankUser = [];
       if (listToken.length <= 0) {
-        throw new Error("Buy box failed")
+        throw new Error("Buy box failed") 
       }
       const tankUser = await TankUser.find({ nftId: { $in: listToken } })
       if (tankUser.length >= 1) {
         throw new Error("boxId is already existed!");
-      }
-      const owner = await UserService.getByWalletAddress(tokenOwner);
-      if (!owner) {
-        throw new Error("buyer is not connect wallet");
       }
       const box = await BoxService.getByBoxId(boxId);
       if (!box) {
@@ -67,6 +67,12 @@ class TankUserService {
       return result;
 
     } catch (err) {
+      await RabbitMq.boughtBoxNotify({
+        message: `You bought box failed`,
+        email: owner.email,
+        price: "",
+        url: `${process.env.WEB_URL}/user/login`,
+      })
       console.log(err);
      
     }

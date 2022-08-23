@@ -249,7 +249,7 @@ class MarketPlaceItemService {
             throw new Error(error.message);
         }
     }
-    async validateInput(marketPlace) {
+    validateInput(marketPlace) {
         // event NFTListed(
         //     uint256 marketItemId,
         //     address nftContract,
@@ -274,7 +274,7 @@ class MarketPlaceItemService {
         if (!validator.isFloat(price)) {
             // Web3.utils.toWei("1", "ether") => 10^18
             // Web3.utils.fromWei("10^18", "ether") => 1
-            throw new Error("Invalid price")
+            throw new Error("Invalid price");
         } else {
             marketPlace.price = web3.utils.fromWei(marketPlace.price, "ether")
             if (marketPlace.price <= 0) {

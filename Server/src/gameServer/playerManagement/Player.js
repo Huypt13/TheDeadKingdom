@@ -99,8 +99,8 @@ class Player {
 
     if (this.position.Distance(focus.player.position) <= 0.5) {
       endEf.push(this.effect.focusOn);
-      this.effect.focusOn = null;
       lobby.connections[0].socket.emit("endFocusOn", { id: this.id });
+      this.effect.focusOn = null;
     } else {
       lobby.connections[0].socket.emit("updatePosition", { ...this, type: 0 });
       lobby.connections[0].socket.broadcast

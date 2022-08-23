@@ -1042,11 +1042,11 @@ module.exports = class GameLobby extends LobbyBase {
     } else if (typeId == "003" && num === 2) {
       if (activeBy.player.tank.skill2.activeId != "") {
         // bay den activeid
+        activeBy.socket.emit("startFocusOn", { id: activeBy.player.id });
         activeBy.player.effect.focusOn = {
           focusId: activeBy.player.tank.skill2.activeId,
           speed: activeBy.player.tank.skill2.enemySpeed,
         };
-        activeBy.socket.emit("startFocusOn", { id: activeBy.player.id });
         activeBy.player.tank.skill2.activeId = "";
       } else {
         data.position.x -= data.direction.x * 0.5;

@@ -15,7 +15,7 @@ class UserController {
 
       if (user) {
         if (!user.active) {
-          return ApiResponse.serverErrorResponse(
+          return ApiResponse.successResponse(
             res,
             "Please confirm email to active your account"
           );
@@ -45,7 +45,7 @@ class UserController {
           username: user?.username,
         });
       }
-      return ApiResponse.serverErrorResponse(
+      return ApiResponse.badRequestResponse(
         res,
         "Invalid username or password"
       );

@@ -708,7 +708,7 @@ public class NetworkClient : SocketIOComponent
             {
                 float type = E.data["type"].f;
                 float speed = E.data["tank"]["speed"].f;
-                Debug.Log(type);
+                Debug.Log(type + "  " + speed);
                 if (type == 1)
                 {
                     var targetDistance = Vector3.Distance(new Vector3(x, y, 0), ni.transform.position);
@@ -874,6 +874,7 @@ public class NetworkClient : SocketIOComponent
                 if (hit.collider == null)
                 {
                     StartCoroutine(AIPositionSmoothing(ni.transform, ni.transform.position - range * new Vector3(x, y, 0)));
+                    Invoke("StopFocus", 0.2f);
                     return;
                 }
             }
@@ -1047,7 +1048,10 @@ public class NetworkClient : SocketIOComponent
 
         yield return null;
     }
-
+    public void StopFocus()
+    {
+        Emit("stopAutoMoving");
+    }
     public void OnQuit()
     {
         Emit("quitGame");

@@ -137,6 +137,7 @@ public class TankGeneral : MonoBehaviour
                 transform.position -= new Vector3(AutoDirection.x, AutoDirection.y, 0) * AutoSpeed * Time.deltaTime;
                 if (Vector3.Distance(transform.position, new Vector3(StartPos.x, StartPos.y, 0)) >= Range)
                 {
+
                     IsAutoMove = false;
                     networkIdentity.GetSocket().Emit("stopAutoMoving");
                 }

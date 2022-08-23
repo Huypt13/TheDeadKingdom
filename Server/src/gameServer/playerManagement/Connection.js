@@ -69,6 +69,7 @@ class Connection {
       if (connection.lobby instanceof GameLobby) {
         player.effect.autoMove = null;
         player.tank.speed = player.startTank.speed;
+        console.log("stop Moving", player.tank.speed);
       }
     });
     socket.on("updateRotation", (data) => {

@@ -1027,6 +1027,14 @@ module.exports = class GameLobby extends LobbyBase {
         range: activeBy?.player?.tank?.skill1?.range,
         rotate: false,
       });
+      activeBy.socket.broadcast.to(this.id).emit("startAutoMove", {
+        id: activeBy.player.id,
+        direction: data.direction,
+        speed: 30, // toc bien
+        startPos: data.position,
+        range: activeBy?.player?.tank?.skill1?.range,
+        rotate: false,
+      });
 
       this.createBuffSkill(
         connection,

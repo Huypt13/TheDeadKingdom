@@ -1018,6 +1018,7 @@ module.exports = class GameLobby extends LobbyBase {
         direction: data.direction,
         range: activeBy?.player?.tank?.skill1?.range,
       };
+      activeBy.player.tank.speed = 30;
       activeBy.socket.emit("startAutoMove", {
         id: activeBy.player.id,
         direction: data.direction,

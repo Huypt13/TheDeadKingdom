@@ -711,10 +711,11 @@ public class NetworkClient : SocketIOComponent
                 Debug.Log(type);
                 if (type == 1)
                 {
-                    //var targetDistance = Vector3.Distance(new Vector3(x, y, 0), ni.transform.position);
+                    var targetDistance = Vector3.Distance(new Vector3(x, y, 0), ni.transform.position);
+                    var time = targetDistance / speed;
                     //Vector3 direction = (new Vector3(x, y, 0) - transform.position).normalized;
                     //ni.GetComponent<TankGeneral>().Rb.MovePosition(transform.position + direction * speed * Time.deltaTime);
-                    StartCoroutine(MoveSmoothing(ni.transform, new Vector3(x, y, 0)));
+                    StartCoroutine(MoveSmoothing(ni.transform, new Vector3(x, y, 0), time));
 
                 }
                 else
@@ -869,8 +870,6 @@ public class NetworkClient : SocketIOComponent
                     var fl = Instantiate(flashEf, networkContainer);
                     Destroy(fl, 0.3f);
                 }
-                Debug.Log(ni.transform.position);
-                Debug.Log(ni.transform.position - range * new Vector3(x, y, 0));
                 RaycastHit2D hit = Physics2D.BoxCast(ni.transform.position - range * new Vector3(x, y, 0), new Vector2(tankgen.boxCollider.size.x, tankgen.boxCollider.size.y), 0, -new Vector2(x, y), 0, LayerMask.GetMask("Wall"));
                 if (hit.collider == null)
                 {
@@ -897,7 +896,9 @@ public class NetworkClient : SocketIOComponent
 
         On("endFocusOn", (E) =>
         {
+            Debug.Log("haha");
             string id = E.data["id"].str;
+            Debug.Log("haha");
             NetworkIdentity ni = serverObjects[id];
             ni.GetComponent<NetworkTransform>().IsFocusOn = false;
 
@@ -1021,9 +1022,8 @@ public class NetworkClient : SocketIOComponent
         yield return null;
     }
 
-    private IEnumerator MoveSmoothing(Transform aiTransform, Vector3 goalPosition)
+    private IEnumerator MoveSmoothing(Transform aiTransform, Vector3 goalPosition, float count)
     {
-        float count = 0.03f; //In sync with server update
         float currentTime = 0.0f;
         Vector3 startPosition = aiTransform.position;
 
@@ -1031,7 +1031,7 @@ public class NetworkClient : SocketIOComponent
         {
             currentTime += Time.deltaTime;
 
-            if (currentTime < count)
+            if (currentTime <= count)
             {
                 aiTransform.position = Vector3.Lerp(startPosition, goalPosition, currentTime / count);
             }

@@ -12,7 +12,7 @@ public class NetworkTransform : MonoBehaviour
 
     private float stillCounter = 0;
 
-    private bool isFocusOn = false;
+    private bool isFocusOn;
     public bool IsFocusOn { get => isFocusOn; set => isFocusOn = value; }
 
     public void Start()
@@ -36,17 +36,22 @@ public class NetworkTransform : MonoBehaviour
         {
             if (!isFocusOn)
             {
-                stillCounter += Time.deltaTime;
 
-                if (stillCounter >= 0.03f)
+                if (transform.position != oldPosition)
                 {
-                    stillCounter = 0;
                     sendData();
                 }
-            }
-            else
-            {
-                stillCounter = 0;
+                else
+                {
+                    stillCounter += Time.deltaTime;
+
+                    if (stillCounter >= 0.1f)
+                    {
+                        stillCounter = 0;
+                        sendData();
+                    }
+                }
+
             }
 
         }

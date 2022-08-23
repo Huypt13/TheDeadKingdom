@@ -7,8 +7,7 @@ let config = {
 };
 if (process.env.NODE_ENV == "test") {
   config = {
-    host: "localhost",
-    port: 6379,
+    url: "redis://default:9nLt8fIbpgnTRVhfDoJrmChoxRJ0AJeG@redis-17401.c80.us-east-1-2.ec2.cloud.redislabs.com:17401",
   };
 }
 const redisClient = redis.createClient(config);

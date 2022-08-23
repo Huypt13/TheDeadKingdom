@@ -19,9 +19,10 @@ class BoxController {
       const tankId = await BoxService.unbox(boxId);
       await TankUserService.updateData(
         { _id: tankUserId },
-        { tankId, remaining: 100 }
+        { tankId, remaining: 100, openedDate: new Date()}
       );
-      const tank = await TankService.getByTankId(tankId);
+      const tank = await TankService.getTankInfo(tankId);
+      if(!tank) return ApiResponse.serverErrorResponse(res, "Unbox Fail!");
       return ApiResponse.successResponseWithData(res, "Unbox Success", tank);
     } catch (err) {
       console.log(err);
@@ -47,10 +48,11 @@ class BoxController {
       ApiResponse.serverErrorResponse(res, err.message);
     }
   }
-  async getAllBoxOwner(req, res) {
+  async getAllBoxOwnerAndPaging(req, res) {
     try {
       const { _id } = res.locals.user;
-      const allBox = await BoxService.getAllBoxOwner(_id.toStirng());
+      const { pageNumbers, limit } = req.query;
+      const allBox = await BoxService.getAllBoxOwnerAndPaging({pageNumbers, limit},_id.toString());
       return ApiResponse.successResponseWithData(res, "Ok", allBox);
     } catch (err) {
       console.log(err);

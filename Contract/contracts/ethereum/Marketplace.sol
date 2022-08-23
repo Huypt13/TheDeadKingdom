@@ -59,6 +59,15 @@ contract Marketplace is ReentrancyGuard, Ownable {
         uint256 price
     );
 
+    modifier marketplaceItemExist(uint256 _marketplaceItemId) {
+        require(_marketplaceItemId > 0, "MarketItemId should be > 0");
+        require(
+            _marketplaceItemId <= _marketItemIds.current(),
+            "MarketItemId should be exist"
+        );
+        _;
+    }
+
     function listNft(
         address _nftContract,
         uint256 _tokenId,
@@ -92,7 +101,10 @@ contract Marketplace is ReentrancyGuard, Ownable {
         );
     }
 
-    function cancelSellNft(uint256 _marketItemId) public {
+    function cancelSellNft(uint256 _marketItemId)
+        public
+        marketplaceItemExist(_marketItemId)
+    {
         NFTMarketItem storage nftMarketItem = marketItems[_marketItemId];
         require(msg.sender == nftMarketItem.seller, "You are not NFT's Owner");
         require(nftMarketItem.isSelling == true, "NFT is not Selling");
@@ -102,6 +114,7 @@ contract Marketplace is ReentrancyGuard, Ownable {
             msg.sender,
             nftMarketItem.tokenId
         );
+        _nftSold.increment();
         emit NFTSaleCanceled(
             nftMarketItem.marketItemId,
             nftMarketItem.nftContract,
@@ -112,7 +125,11 @@ contract Marketplace is ReentrancyGuard, Ownable {
         );
     }
 
-    function buyNft(uint256 _marketItemId) public payable {
+    function buyNft(uint256 _marketItemId)
+        public
+        payable
+        marketplaceItemExist(_marketItemId)
+    {
         NFTMarketItem storage nftMarketItem = marketItems[_marketItemId];
         require(nftMarketItem.isSelling == true, "NFT is not Selling");
         require(
@@ -123,11 +140,20 @@ contract Marketplace is ReentrancyGuard, Ownable {
         uint256 price = nftMarketItem.price;
         uint256 marketFee = (price * platformFee) / deno;
 
+        uint256 senderBalance = deathKingdomCoin.balanceOf(msg.sender);
+        require(
+            senderBalance >= price,
+            "You do not have enough DKC to buy this NFT"
+        );
+
         uint256 allowance = deathKingdomCoin.allowance(
             msg.sender,
             address(this)
         );
-        require(allowance >= price, "Do not have enough DKC to buy NFT");
+        require(
+            allowance >= price,
+            "You do not approve enough DKC to buy this NFT"
+        );
 
         deathKingdomCoin.transferFrom(msg.sender, address(this), price);
 
@@ -158,6 +184,15 @@ contract Marketplace is ReentrancyGuard, Ownable {
             nftMarketItem.buyer,
             price
         );
+    }
+
+    function getMarketItem(uint256 _marketItemId)
+        public
+        view
+        marketplaceItemExist(_marketItemId)
+        returns (NFTMarketItem memory)
+    {
+        return marketItems[_marketItemId];
     }
 
     function getListingNfts() public view returns (NFTMarketItem[] memory) {

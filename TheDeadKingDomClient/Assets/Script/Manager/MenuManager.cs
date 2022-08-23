@@ -121,8 +121,36 @@ public class MenuManager : MonoBehaviour
         }
     }
 
+    bool IsValidEmail(string email)
+    {
+        var trimmedEmail = email.Trim();
+
+        if (trimmedEmail.EndsWith("."))
+        {
+            return false; // suggested by @TK-421
+        }
+        try
+        {
+            var addr = new System.Net.Mail.MailAddress(email);
+            return addr.Address == trimmedEmail;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     public void Login()
     {
+        //if (IsValidEmail(inputUsername.text))
+        //{
+        //    StartCoroutine(LoginRequest(uri));
+        //}
+        //else
+        //{
+        //    NotificationManager.Instance.DisplayNotification("Email is not valid", SceneList.MAIN_MENU);
+        //}
+
         StartCoroutine(LoginRequest(uri));
     }
 
@@ -183,34 +211,34 @@ public class MenuManager : MonoBehaviour
         });
     }
 
-    public void CreateAccount()
-    {
-        StartCoroutine(CreateRequest($"{uri}/user/create"));
+    //public void CreateAccount()
+    //{
+    //    StartCoroutine(CreateRequest($"{uri}/user/create"));
 
-    }
+    //}
 
 
-    private IEnumerator CreateRequest(string uri)
-    {
-        var userInfor = new UserInfor();
-        userInfor.username = inputUsername.text;
-        userInfor.password = inputPassword.text;
-        using (UnityWebRequest request = UnityWebRequest.Post(uri, new JSONObject(JsonUtility.ToJson(userInfor))))
-        {
-            yield return request.SendWebRequest();
+    //private IEnumerator CreateRequest(string uri)
+    //{
+    //    var userInfor = new UserInfor();
+    //    userInfor.username = inputUsername.text;
+    //    userInfor.password = inputPassword.text;
+    //    using (UnityWebRequest request = UnityWebRequest.Post(uri, new JSONObject(JsonUtility.ToJson(userInfor))))
+    //    {
+    //        yield return request.SendWebRequest();
 
-            if (request.isNetworkError)
-            {
-                Debug.Log("Error: " + request.error);
-            }
-            else
-            {
-                var jo = JObject.Parse(request.downloadHandler.text);
+    //        if (request.isNetworkError)
+    //        {
+    //            Debug.Log("Error: " + request.error);
+    //        }
+    //        else
+    //        {
+    //            var jo = JObject.Parse(request.downloadHandler.text);
 
-                message.gameObject.SetActive(true);
-                message.text = jo["message"].ToString();
-            }
-        }
-    }
+    //            message.gameObject.SetActive(true);
+    //            message.text = jo["message"].ToString();
+    //        }
+    //    }
+    //}
 
 }

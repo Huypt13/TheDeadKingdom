@@ -17,14 +17,14 @@ function MyApp({ Component, pageProps }) {
               Marketplace
             </a>
           </Link>
-          {/* <Link href="/buy-box">
-            <a className="mr-6 text-teal-400">
-              Buy Box
-            </a>
-          </Link> */}
           <Link href="/inventory">
             <a className="mr-6 text-teal-400">
               Inventory
+            </a>
+          </Link>
+          <Link href="/buy-box">
+            <a className="mr-6 text-teal-400">
+              Selling Nft
             </a>
           </Link>
         </div>

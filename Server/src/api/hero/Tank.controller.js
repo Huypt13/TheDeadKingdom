@@ -23,10 +23,10 @@ class TankController {
       return ApiResponse.serverErrorResponse(res, error.message);
     }
   }
-  async getTopTankListedLasted(req, res) {
+  async getTopTankListedLastedAndPaging(req, res) {
     try {
-      const { number } = req.params;
-      const listTopTank = await TankService.getTopTankListedLasted(number);
+      const {pageNumbers, limit, number} = req.query;
+      const listTopTank = await TankService.getTopTankListedLastedAndPaging(pageNumbers, limit, number);
       return ApiResponse.successResponseWithData(res, "Ok", listTopTank);
     } catch (error) {
       return ApiResponse.serverErrorResponse(res, error.message);
@@ -34,9 +34,9 @@ class TankController {
   }
   async getTankSoldLastedAndPaging(req, res) {
     try {
-      const { pageNumber, limit } = req.query;
+      const { pageNumbers, limit } = req.query;
       const listTank = await TankService.getTankSoldLastedAndPaging(
-        pageNumber,
+        pageNumbers,
         limit
       );
       return ApiResponse.successResponseWithData(res, "Ok", listTank);
@@ -62,12 +62,12 @@ class TankController {
       return ApiResponse.serverErrorResponse(res, error.message);
     }
   }
-  async getTopListedLastedWithFilter(req, res) {
+  async getTopListedLastedWithFilterAndPaging(req, res) {
     try {
-      const { filter } = req.body;
-      // { levels: [1, 2, 3], classTypes: [1, 2, 3], typeIds: ["001", "002", "003"],
-      //  sortBy: { name: -1 } }
-      const details = await TankService.getTopListedLastedWithFilter(filter);
+      const filter = req.query;
+      // { "levels": [1, 2, 3], "classTypes": [1, 2, 3], "typeIds": ["001", "002", "003"],
+      // "sortBy": { "createdAt": -1 }, "pageNumbers": 1, "limit" : 2, "remaining":100, "minPrice":120, "maxPrice":190 }
+      const details = await TankService.getTopListedLastedWithFilterAndPaging(filter);
       return ApiResponse.successResponseWithData(res, "Ok", details);
     } catch (error) {
       return ApiResponse.serverErrorResponse(res, error.message);
@@ -76,7 +76,7 @@ class TankController {
   async getTotalTankOwnerWithStatusAndPaging(req, res) {
     try {
       const { _id } = res.locals.user;
-      const { filter } = req.body;
+      const filter = req.query;
       const totalTankOwner =
         await TankService.getTotalTankOwnerWithStatusAndPaging(
           filter,

@@ -35,4 +35,22 @@ module.exports = class SkillOrientation extends ServerObject {
 
     return this.isDestroyed;
   }
+
+  onUpdate2() {
+    this.position.x += this.direction.x * this.speed;
+    this.position.y += this.direction.y * this.speed;
+
+    if (
+      MethodExtensions.TwoDecimals(
+        new Vector2(this.position.x, this.position.y).Distance(
+          new Vector2(this.oldPosition.x, this.oldPosition.y)
+        )
+      ) >=
+      10 * this.shootingRange - 0.1
+    ) {
+      return true;
+    }
+
+    return false;
+  }
 };

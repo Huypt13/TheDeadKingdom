@@ -21,6 +21,7 @@ public class NetworkClient : SocketIOComponent
         set;
     }
     public static float MyTeam;
+    public static string curState;
 
     [SerializeField]
     private ServerObjects serverSpawnables;
@@ -697,18 +698,38 @@ public class NetworkClient : SocketIOComponent
         // update pos player
         On("updatePosition", (E) =>
         {
-            OnUpdatePosition.Invoke(E);
 
             string id = E.data["id"].ToString().RemoveQuotes();
             float x = E.data["position"]["x"].f;
             float y = E.data["position"]["y"].f;
 
-
             NetworkIdentity ni = serverObjects[id];
-            StartCoroutine(AIPositionSmoothing(ni.transform, new Vector3(x, y, 0)));
+            if (ni.GetComponent<TankGeneral>() != null)
+            {
+                float type = E.data["type"].f;
+                float speed = E.data["tank"]["speed"].f;
+                Debug.Log(type + "  " + speed);
+                if (type == 1)
+                {
+                    var targetDistance = Vector3.Distance(new Vector3(x, y, 0), ni.transform.position);
+                    var time = targetDistance / speed;
+                    //Vector3 direction = (new Vector3(x, y, 0) - transform.position).normalized;
+                    //ni.GetComponent<TankGeneral>().Rb.MovePosition(transform.position + direction * speed * Time.deltaTime);
+                    StartCoroutine(MoveSmoothing(ni.transform, new Vector3(x, y, 0), time));
 
+                }
+                else
+                {
+                    StartCoroutine(AIPositionSmoothing(ni.transform, new Vector3(x, y, 0)));
+                }
 
-            //   ni.transform.position = new Vector3(x, y, 0);
+            }
+            else
+            {
+                StartCoroutine(AIPositionSmoothing(ni.transform, new Vector3(x, y, 0)));
+
+            }
+
         });
 
         // update player rotation
@@ -849,12 +870,11 @@ public class NetworkClient : SocketIOComponent
                     var fl = Instantiate(flashEf, networkContainer);
                     Destroy(fl, 0.3f);
                 }
-                Debug.Log(ni.transform.position);
-                Debug.Log(ni.transform.position - range * new Vector3(x, y, 0));
                 RaycastHit2D hit = Physics2D.BoxCast(ni.transform.position - range * new Vector3(x, y, 0), new Vector2(tankgen.boxCollider.size.x, tankgen.boxCollider.size.y), 0, -new Vector2(x, y), 0, LayerMask.GetMask("Wall"));
                 if (hit.collider == null)
                 {
                     StartCoroutine(AIPositionSmoothing(ni.transform, ni.transform.position - range * new Vector3(x, y, 0)));
+                    Invoke("StopFocus", 0.2f);
                     return;
                 }
             }
@@ -868,6 +888,22 @@ public class NetworkClient : SocketIOComponent
 
         });
 
+        On("startFocusOn", (E) =>
+        {
+            string id = E.data["id"].str;
+            NetworkIdentity ni = serverObjects[id];
+            ni.GetComponent<NetworkTransform>().IsFocusOn = true;
+        });
+
+        On("endFocusOn", (E) =>
+        {
+            Debug.Log("haha");
+            string id = E.data["id"].str;
+            Debug.Log("haha");
+            NetworkIdentity ni = serverObjects[id];
+            ni.GetComponent<NetworkTransform>().IsFocusOn = false;
+
+        });
         // update ai pos and rotation
         On("updateAI", (E) =>
         {
@@ -913,7 +949,7 @@ public class NetworkClient : SocketIOComponent
         On("lobbyUpdate", (e) =>
         {
             Debug.Log("Lobby update " + e.data["state"].str);
-
+            curState = e.data["state"].str;
             OnGameStateChange.Invoke(e);
 
 
@@ -937,8 +973,20 @@ public class NetworkClient : SocketIOComponent
 
         On("someoneLoginYourAccount", (E) =>
         {
-            SceneManagement.Instance.UnLoadLevel(myMap);
-            SceneManagement.Instance.UnLoadLevel(SceneList.LOBBY_SCREEN);
+            List<string> sceneout = new List<string>();
+            foreach (var i in SceneManagement.Instance.CurrentlyLoadedScenes)
+            {
+                if (i != "Intro" || i != SceneList.ONLINE)
+                {
+                    sceneout.Add(i);
+                }
+            }
+            foreach (var s in sceneout)
+            {
+                SceneManagement.Instance.UnLoadLevel(s);
+
+            }
+
             SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
             {
                 FindObjectOfType<MenuManager>().message.text = "Your account is logged in somewhere else";
@@ -973,6 +1021,36 @@ public class NetworkClient : SocketIOComponent
         }
 
         yield return null;
+    }
+
+    private IEnumerator MoveSmoothing(Transform aiTransform, Vector3 goalPosition, float count)
+    {
+        float currentTime = 0.0f;
+        Vector3 startPosition = aiTransform.position;
+
+        while (currentTime < count)
+        {
+            currentTime += Time.deltaTime;
+
+            if (currentTime <= count)
+            {
+                aiTransform.position = Vector3.Lerp(startPosition, goalPosition, currentTime / count);
+            }
+
+            yield return new WaitForEndOfFrame();
+
+            if (aiTransform == null)
+            {
+                currentTime = count;
+                yield return null;
+            }
+        }
+
+        yield return null;
+    }
+    public void StopFocus()
+    {
+        Emit("stopAutoMoving");
     }
     public void OnQuit()
     {

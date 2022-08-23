@@ -66,6 +66,7 @@ module.exports = class GameLobby extends LobbyBase {
 
     if (this.lobbyState.currentState == this.lobbyState.GAME) {
       lobby.updateBullets();
+      lobby.updateBulletsRemove();
       lobby.updateSkills();
       lobby.updateDeadPlayers();
       lobby.updateAIDead();
@@ -677,13 +678,27 @@ module.exports = class GameLobby extends LobbyBase {
       }
     });
   }
+  updateBulletsRemove() {
+    let lobby = this;
+    let bullets = lobby.bullets;
+    for (var i = bullets.length - 1; i >= 0; i--) {
+      const isRemove = bullets[i].onUpdate2();
+      if (isRemove) {
+        this.bullets.splice(i, 1);
+      }
+    }
+  }
 
   updateSkills() {
     // skill 1 type 001
-    this.skill.forEach((skill) => {
+    for (let i = this.skill.length - 1; i >= 0; i--) {
+      let skill = this.skill[i];
       if (skill instanceof SkillOrientation) {
         if (skill.onUpdate()) {
           this.despawnSkill(skill);
+        }
+        if (skill.onUpdate2()) {
+          this.destroySkill(skill);
         }
       }
       if (skill instanceof SkillBuff) {
@@ -694,9 +709,10 @@ module.exports = class GameLobby extends LobbyBase {
       if (skill instanceof SkillRegion) {
         if (skill.onUpdate()) {
           this.despawnSkill(skill);
+          this.destroySkill(skill);
         }
       }
-    });
+    }
   }
 
   onFireBullet3Tia(connection, data) {
@@ -1002,7 +1018,16 @@ module.exports = class GameLobby extends LobbyBase {
         direction: data.direction,
         range: activeBy?.player?.tank?.skill1?.range,
       };
+      activeBy.player.tank.speed = 30;
       activeBy.socket.emit("startAutoMove", {
+        id: activeBy.player.id,
+        direction: data.direction,
+        speed: 30, // toc bien
+        startPos: data.position,
+        range: activeBy?.player?.tank?.skill1?.range,
+        rotate: false,
+      });
+      activeBy.socket.broadcast.to(this.id).emit("startAutoMove", {
         id: activeBy.player.id,
         direction: data.direction,
         speed: 30, // toc bien
@@ -1026,6 +1051,7 @@ module.exports = class GameLobby extends LobbyBase {
     } else if (typeId == "003" && num === 2) {
       if (activeBy.player.tank.skill2.activeId != "") {
         // bay den activeid
+        activeBy.socket.emit("startFocusOn", { id: activeBy.player.id });
         activeBy.player.effect.focusOn = {
           focusId: activeBy.player.tank.skill2.activeId,
           speed: activeBy.player.tank.skill2.enemySpeed,
@@ -1051,7 +1077,6 @@ module.exports = class GameLobby extends LobbyBase {
 
       towerAI.aiId = "003_3";
       towerAI.oldPosition = new Vector2(data.position.x, data.position.y);
-      console.log("xxxx1", new Vector2(data.position.x, data.position.y));
 
       towerAI.timeRemain = connection.player.tank.skill3.timeEffect;
       if (
@@ -1062,7 +1087,6 @@ module.exports = class GameLobby extends LobbyBase {
         connection.player.tank.skill3.timeCounter = 0;
         return;
       }
-      console.log("xxxx2");
 
       this.onServerSpawn(
         towerAI,
@@ -1290,11 +1314,6 @@ module.exports = class GameLobby extends LobbyBase {
   }
 
   despawnBullet(bullet = Bullet) {
-    console.log("de bullet", bullet.id);
-    let index = this.bullets.indexOf(bullet);
-    if (index > -1) {
-      this.bullets.splice(index, 1);
-    }
     let returnData = { id: bullet.id };
     const lobby = this;
     lobby.connections.forEach((connection) => {
@@ -1302,15 +1321,17 @@ module.exports = class GameLobby extends LobbyBase {
     });
   }
   despawnSkill(skill) {
-    let index = this.skill.indexOf(skill);
-    if (index > -1) {
-      this.skill.splice(index, 1);
-    }
     this.connections.forEach((connection) => {
       connection.socket.emit("severUnspawnSkill", {
         id: skill.id,
       });
     });
+  }
+  destroySkill(skill) {
+    let index = this.skill.indexOf(skill);
+    if (index > -1) {
+      this.skill.splice(index, 1);
+    }
   }
   despawnItem(item) {
     const index = this.serverItems.indexOf(item);

@@ -15,7 +15,7 @@ class UserController {
 
       if (user) {
         if (!user.active) {
-          return ApiResponse.successResponse(
+          return ApiResponse.serverErrorResponse(
             res,
             "Please confirm email to active your account"
           );
@@ -47,7 +47,7 @@ class UserController {
       }
       return ApiResponse.badRequestResponse(
         res,
-        "Invalid username or password"
+        "Email or password incorrect"
       );
     } catch (error) {
       return ApiResponse.serverErrorResponse(res, error.message);
@@ -75,7 +75,7 @@ class UserController {
       }
       return ApiResponse.serverErrorResponse(
         res,
-        "Invalid username or password"
+        "Email or password incorrect"
       );
     } catch (error) {
       return ApiResponse.serverErrorResponse(res, error.message);
@@ -102,7 +102,7 @@ class UserController {
     try {
       let token = req.header("x-access-token");
       await Redis.saveWithTtl(token, "", 0);
-      return ApiResponse.successResponse(res, "Login success");
+      return ApiResponse.successResponse(res, "Logout success");
     } catch (error) {
       return ApiResponse.serverErrorResponse(res, error.message);
     }

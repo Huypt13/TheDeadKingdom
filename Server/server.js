@@ -1,6 +1,5 @@
 
 
-const test1 = require("./src/api/marketPlaceItem/test1");
 
 
 

@@ -190,7 +190,7 @@ module.exports.props = {
     currentTime: 0,
   },
   BlueTeamBigTurret: {
-    AIBase: [{ ...tankAi }, 2],
+    AIBase: [{ ...tankAi }, 1],
     aiId: "01",
     username: "AI_TOWER",
     hasTarget: false,

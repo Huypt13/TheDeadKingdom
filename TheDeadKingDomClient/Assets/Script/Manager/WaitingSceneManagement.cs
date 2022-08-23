@@ -71,7 +71,7 @@ public class WaitingSceneManagement : MonoBehaviour
     }
     void Start()
     {
-        AudioManager.Instance.PlayBackgroundSound("pickTank");
+        AudioManager.Instance.PlayEffectSoundOneShot("pickTank");
         InvokeRepeating("SetTime", 0f, 1f);
 
         LoadListTank();

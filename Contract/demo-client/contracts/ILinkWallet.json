@@ -1,0 +1,384 @@
+{
+  "contractName": "ILinkWallet",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_walletAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "_userId",
+          "type": "string"
+        }
+      ],
+      "name": "linkWallet",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_walletAddress",
+          "type": "address"
+        }
+      ],
+      "name": "getUserIdByWalletAddress",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_userId",
+          "type": "string"
+        }
+      ],
+      "name": "getWalletAddressByUserId",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.13+commit.abaa5c0e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_walletAddress\",\"type\":\"address\"}],\"name\":\"getUserIdByWalletAddress\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_userId\",\"type\":\"string\"}],\"name\":\"getWalletAddressByUserId\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_walletAddress\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"_userId\",\"type\":\"string\"}],\"name\":\"linkWallet\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/ethereum/ILinkWallet.sol\":\"ILinkWallet\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/ethereum/ILinkWallet.sol\":{\"keccak256\":\"0xde41c6901f94efe1c446e5501953f0956d92c39f0b02ba1a8339f226b07678e0\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://278851d54e7b0b56a05b75c2f0c1dec8e624a3322118ff8b700aaf2748b57576\",\"dweb:/ipfs/QmYqKVVNPneXD6CoSGM5wBhuHKRwDFeHCBbXr2hk4bs7EE\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "// SPDX-License-Identifier: MIT\r\n\r\npragma solidity ^0.8.13;\r\n\r\ninterface ILinkWallet {\r\n    function linkWallet(address _walletAddress, string memory _userId) external;\r\n\r\n    function getUserIdByWalletAddress(address _walletAddress)\r\n        external\r\n        view\r\n        returns (string memory);\r\n\r\n    function getWalletAddressByUserId(string memory _userId)\r\n        external\r\n        view\r\n        returns (address);\r\n}\r\n",
+  "sourcePath": "D:\\code\\TheDeadKingdom\\contract\\contracts\\ethereum\\ILinkWallet.sol",
+  "ast": {
+    "absolutePath": "project:/contracts/ethereum/ILinkWallet.sol",
+    "exportedSymbols": {
+      "ILinkWallet": [
+        2542
+      ]
+    },
+    "id": 2543,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 2520,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".13"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "35:24:16"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "ILinkWallet",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 2542,
+        "linearizedBaseContracts": [
+          2542
+        ],
+        "name": "ILinkWallet",
+        "nameLocation": "73:11:16",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "functionSelector": "d729e284",
+            "id": 2527,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "linkWallet",
+            "nameLocation": "101:10:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2525,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2522,
+                  "mutability": "mutable",
+                  "name": "_walletAddress",
+                  "nameLocation": "120:14:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2527,
+                  "src": "112:22:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 2521,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "112:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 2524,
+                  "mutability": "mutable",
+                  "name": "_userId",
+                  "nameLocation": "150:7:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2527,
+                  "src": "136:21:16",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 2523,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "136:6:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "111:47:16"
+            },
+            "returnParameters": {
+              "id": 2526,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "167:0:16"
+            },
+            "scope": 2542,
+            "src": "92:76:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "03fb0114",
+            "id": 2534,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getUserIdByWalletAddress",
+            "nameLocation": "185:24:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2530,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2529,
+                  "mutability": "mutable",
+                  "name": "_walletAddress",
+                  "nameLocation": "218:14:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2534,
+                  "src": "210:22:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 2528,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "210:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "209:24:16"
+            },
+            "returnParameters": {
+              "id": 2533,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2532,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2534,
+                  "src": "284:13:16",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 2531,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "284:6:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "283:15:16"
+            },
+            "scope": 2542,
+            "src": "176:123:16",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "5cfff117",
+            "id": 2541,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getWalletAddressByUserId",
+            "nameLocation": "316:24:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2537,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2536,
+                  "mutability": "mutable",
+                  "name": "_userId",
+                  "nameLocation": "355:7:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2541,
+                  "src": "341:21:16",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 2535,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "341:6:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "340:23:16"
+            },
+            "returnParameters": {
+              "id": 2540,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2539,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2541,
+                  "src": "414:7:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 2538,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "414:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "413:9:16"
+            },
+            "scope": 2542,
+            "src": "307:116:16",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 2543,
+        "src": "63:363:16",
+        "usedErrors": []
+      }
+    ],
+    "src": "35:393:16"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.13+commit.abaa5c0e.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.7",
+  "updatedAt": "2022-08-23T15:27:54.001Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}

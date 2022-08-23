@@ -1046,6 +1046,7 @@ module.exports = class GameLobby extends LobbyBase {
           focusId: activeBy.player.tank.skill2.activeId,
           speed: activeBy.player.tank.skill2.enemySpeed,
         };
+        activeBy.socket.emit("startFocusOn", { id: activeBy.player.id });
         activeBy.player.tank.skill2.activeId = "";
       } else {
         data.position.x -= data.direction.x * 0.5;
@@ -1067,7 +1068,6 @@ module.exports = class GameLobby extends LobbyBase {
 
       towerAI.aiId = "003_3";
       towerAI.oldPosition = new Vector2(data.position.x, data.position.y);
-      console.log("xxxx1", new Vector2(data.position.x, data.position.y));
 
       towerAI.timeRemain = connection.player.tank.skill3.timeEffect;
       if (
@@ -1078,7 +1078,6 @@ module.exports = class GameLobby extends LobbyBase {
         connection.player.tank.skill3.timeCounter = 0;
         return;
       }
-      console.log("xxxx2");
 
       this.onServerSpawn(
         towerAI,

@@ -47,7 +47,7 @@ public class NetworkRotation : MonoBehaviour
             {
                 stillCounter += Time.deltaTime;
 
-                if (stillCounter >= 1)
+                if (stillCounter >= 0.1f)
                 {
                     stillCounter = 0;
                     sendData();

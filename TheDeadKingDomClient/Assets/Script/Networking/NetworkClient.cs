@@ -708,12 +708,20 @@ public class NetworkClient : SocketIOComponent
             {
                 float type = E.data["type"].f;
                 float speed = E.data["tank"]["speed"].f;
+                Debug.Log(type);
                 if (type == 1)
-                    ni.GetComponent<TankGeneral>().Rb.position = Vector3.MoveTowards(transform.position, new Vector3(x, y, 0), speed * Time.deltaTime);
+                {
+                    //var targetDistance = Vector3.Distance(new Vector3(x, y, 0), ni.transform.position);
+                    //Vector3 direction = (new Vector3(x, y, 0) - transform.position).normalized;
+                    //ni.GetComponent<TankGeneral>().Rb.MovePosition(transform.position + direction * speed * Time.deltaTime);
+                    StartCoroutine(MoveSmoothing(ni.transform, new Vector3(x, y, 0)));
+
+                }
                 else
                 {
                     StartCoroutine(AIPositionSmoothing(ni.transform, new Vector3(x, y, 0)));
                 }
+
             }
             else
             {
@@ -721,9 +729,6 @@ public class NetworkClient : SocketIOComponent
 
             }
 
-
-
-            //   
         });
 
         // update player rotation
@@ -883,6 +888,20 @@ public class NetworkClient : SocketIOComponent
 
         });
 
+        On("startFocusOn", (E) =>
+        {
+            string id = E.data["id"].str;
+            NetworkIdentity ni = serverObjects[id];
+            ni.GetComponent<NetworkTransform>().IsFocusOn = true;
+        });
+
+        On("endFocusOn", (E) =>
+        {
+            string id = E.data["id"].str;
+            NetworkIdentity ni = serverObjects[id];
+            ni.GetComponent<NetworkTransform>().IsFocusOn = false;
+
+        });
         // update ai pos and rotation
         On("updateAI", (E) =>
         {
@@ -978,6 +997,33 @@ public class NetworkClient : SocketIOComponent
     private IEnumerator AIPositionSmoothing(Transform aiTransform, Vector3 goalPosition)
     {
         float count = 0.1f; //In sync with server update
+        float currentTime = 0.0f;
+        Vector3 startPosition = aiTransform.position;
+
+        while (currentTime < count)
+        {
+            currentTime += Time.deltaTime;
+
+            if (currentTime < count)
+            {
+                aiTransform.position = Vector3.Lerp(startPosition, goalPosition, currentTime / count);
+            }
+
+            yield return new WaitForEndOfFrame();
+
+            if (aiTransform == null)
+            {
+                currentTime = count;
+                yield return null;
+            }
+        }
+
+        yield return null;
+    }
+
+    private IEnumerator MoveSmoothing(Transform aiTransform, Vector3 goalPosition)
+    {
+        float count = 0.03f; //In sync with server update
         float currentTime = 0.0f;
         Vector3 startPosition = aiTransform.position;
 

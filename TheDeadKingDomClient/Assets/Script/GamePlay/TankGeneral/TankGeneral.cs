@@ -57,6 +57,7 @@ public class TankGeneral : MonoBehaviour
     public float AutoSpeed { get => autoSpeed; set => autoSpeed = value; }
     public Vector2 StartPos { get => startPos; set => startPos = value; }
     public float Range { get => range; set => range = value; }
+    public Rigidbody2D Rb { get => rb; set => rb = value; }
 
     void Start()
     {
@@ -67,8 +68,9 @@ public class TankGeneral : MonoBehaviour
         bulletData.position = new Position();
         bulletData.direction = new Position();
         boxCollider = GetComponent<BoxCollider2D>();
-
     }
+
+
 
     public void SetInitValue(float speed1, float rotation1, float attackSpeed1, float health1)
     {

@@ -1,6 +1,7 @@
 const DeathKingdomCoin = artifacts.require("DeathKingdomCoin");
 const Marketplace = artifacts.require("Marketplace");
 const TankNFT = artifacts.require("TankNFT");
+const LinkWallet = artifacts.require("LinkWallet");
 // const BigNumber = require("big-number");
 const Web3 = require("web3");
 const toBN = Web3.utils.toBN;
@@ -10,6 +11,7 @@ contract("SmartContract Testing", (accounts) => {
   let marketplace;
   let tankNFT;
   let deathKingdomCoin;
+  let linkWallet;
   let boxId1 = "2316215421354612";
   let priceBoxId1 = Web3.utils.toWei("10", "ether");
 
@@ -23,6 +25,7 @@ contract("SmartContract Testing", (accounts) => {
     marketplace = await Marketplace.deployed();
     tankNFT = await TankNFT.deployed();
     deathKingdomCoin = await DeathKingdomCoin.deployed();
+    linkWallet = await LinkWallet.deployed();
     // console.log("================================= brfore each");
     // deathKingdomCoin = await DeathKingdomCoin.new();
     // marketplace = await Marketplace.new(deathKingdomCoin.address);
@@ -179,30 +182,65 @@ contract("SmartContract Testing", (accounts) => {
     });
 
     describe("Buy Box", () => {
+      it("Buy Box with unLink address", async () => {
+        await truffleAssert.reverts(
+          tankNFT.buyBoxes(boxId1, 1, { from: accounts[1] }),
+          "Wallet Address must be linked with user account before buyBoxes"
+        );
+      });
+
+      it("Link Wallet with empty userId", async () => {
+        await truffleAssert.reverts(
+          linkWallet.linkWallet(accounts[1], "", { from: accounts[0] }),
+          "UserId should not empty"
+        );
+      });
+
+      it("Link Wallet when caller is not owner", async () => {
+        await truffleAssert.reverts(
+          linkWallet.linkWallet(accounts[1], "userId1", { from: accounts[1] }),
+          "caller is not the owner"
+        );
+      });
+      
+      it("Link Wallet", async () => {
+        await truffleAssert.passes(
+          linkWallet.linkWallet(accounts[1], "userId1", { from: accounts[0] }),
+          "passes"
+        );
+      });
+
+      it("Link Wallet again with same wallet address", async () => {
+        await truffleAssert.reverts(
+          linkWallet.linkWallet(accounts[1], "userId2", { from: accounts[0] }),
+          "Wallet Address is already linked to another UserId"
+        );
+      });
+
       it("Buy Box with empty boxId", async () => {
         await truffleAssert.reverts(
-          tankNFT.buyBoxes("", 1, { from: accounts[2] }),
+          tankNFT.buyBoxes("", 1, { from: accounts[1] }),
           "BoxId should not empty"
         );
       });
 
       it("Buy Box with wrong boxId", async () => {
         await truffleAssert.reverts(
-          tankNFT.buyBoxes("wrongBoxId", 0, { from: accounts[2] }),
+          tankNFT.buyBoxes("wrongBoxId", 0, { from: accounts[1] }),
           "Box should be selling"
         );
       });
 
       it("Buy Box with amount = 0", async () => {
         await truffleAssert.reverts(
-          tankNFT.buyBoxes(boxId1, 0, { from: accounts[2] }),
+          tankNFT.buyBoxes(boxId1, 0, { from: accounts[1] }),
           "BoxAmount should be > 0"
         );
       });
 
       it("Buy Box with amount < 0", async () => {
         await truffleAssert.fails(
-          tankNFT.buyBoxes("wrongBoxId", -1, { from: accounts[2] }),
+          tankNFT.buyBoxes("wrongBoxId", -1, { from: accounts[1] }),
           "value out-of-bounds"
         );
       });
@@ -235,10 +273,10 @@ contract("SmartContract Testing", (accounts) => {
 
       it("Approve TankNFT contract to use DKC when do not have DKC", async () => {
         await deathKingdomCoin.approve(tankNFT.address, priceBoxId1, {
-          from: accounts[2],
+          from: accounts[4],
         });
         let allowance = await deathKingdomCoin.allowance(
-          accounts[2],
+          accounts[4],
           tankNFT.address
         );
         assert.equal(allowance.toString(), priceBoxId1);
@@ -246,7 +284,17 @@ contract("SmartContract Testing", (accounts) => {
 
       it("Buy Box with allowance but without DKC", async () => {
         await truffleAssert.reverts(
-          tankNFT.buyBoxes(boxId1, 1, { from: accounts[2] }),
+          linkWallet.linkWallet(accounts[4], "userId1", { from: accounts[0] }),
+          "UserId is already linked to another Wallet Address"
+        );
+
+        await truffleAssert.passes(
+          linkWallet.linkWallet(accounts[4], "userId4", { from: accounts[0] }),
+          "passes"
+        );
+
+        await truffleAssert.reverts(
+          tankNFT.buyBoxes(boxId1, 1, { from: accounts[4] }),
           "You do not have enough DKC to buy Boxes"
         );
       });
@@ -326,7 +374,7 @@ contract("SmartContract Testing", (accounts) => {
 
       it("List NFT with wrong owner", async () => {
         await truffleAssert.reverts(
-          marketplace.listNft(tankNFT.address, 1, 10, { from: accounts[2] }),
+          marketplace.listNft(tankNFT.address, 1, 10, { from: accounts[4] }),
           "You are not NFT's owner"
         );
       });
@@ -538,7 +586,19 @@ contract("SmartContract Testing", (accounts) => {
         assert.equal(listingNFTs.length, 1);
       });
 
+      it("Buy NFT without link wallet", async () => {
+        await truffleAssert.reverts(
+          marketplace.buyNft(2, { from: accounts[2] }),
+          "Wallet Address must be linked with user account before buyNft"
+        );
+      });
+
       it("Buy NFT without DKC", async () => {
+        await truffleAssert.passes(
+          linkWallet.linkWallet(accounts[2], "userId2", { from: accounts[0] }),
+          "passes"
+        );
+
         await truffleAssert.reverts(
           marketplace.buyNft(2, { from: accounts[2] }),
           "You do not have enough DKC to buy this NFT"
@@ -636,6 +696,39 @@ contract("SmartContract Testing", (accounts) => {
       it("Get NFT Sell History on Marketplace after account 2 buy Tank 1 on Marketplace", async () => {
         let listingNFTs = await marketplace.getNftSellHistory(1);
         assert.equal(listingNFTs.length, 2);
+      });
+
+      it("Check approval for all", async () => {
+        assert.equal((await tankNFT.ownerOf(1)).toString(), accounts[2]);
+        assert.equal(
+          (
+            await tankNFT.isApprovedForAll(accounts[2], marketplace.address)
+          ).toString(),
+          "false"
+        );
+
+        await truffleAssert.passes(
+          tankNFT.setApprovalForAll(marketplace.address, "true", {
+            from: accounts[2],
+          }),
+          "passes"
+        );
+
+        assert.equal(
+          (
+            await tankNFT.isApprovedForAll(accounts[2], marketplace.address)
+          ).toString(),
+          "true"
+        );
+      });
+
+      it("Account 2 sell tank 1 after buy", async () => {
+        await truffleAssert.passes(
+          marketplace.listNft(tankNFT.address, 1, DKCToWei("11"), {
+            from: accounts[2],
+          }),
+          "passes"
+        );
       });
     });
   });

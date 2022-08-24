@@ -7,7 +7,7 @@ const ObjectId = mongoose.Types.ObjectId;
 
 class BoxService {
   async getByBoxId(boxId) {
-    return await Box.findById(boxId);
+    return await Box.findById(boxId).lean();
   }
 
   async getAllBoxes() {
@@ -23,7 +23,7 @@ class BoxService {
       if (!boxRate) return null;
       return await this.randomTank(boxRate.rate);
     } catch (err) {
-      throw new Error("Unbox Fail")
+      throw new Error("Unbox Fail");
     }
   }
 
@@ -34,7 +34,7 @@ class BoxService {
   }
 
   async randomTank(boxRate) {
-    if(!boxRate)return null;
+    if (!boxRate) return null;
     let random = Math.random();
     let boxArray = boxRate; //[{tankId:"a",ratio:0.6},{tankId:"b",ratio:0.3},{tankId:"c",ratio:0.1}]
     let pre = 0;
@@ -74,14 +74,14 @@ class BoxService {
       throw new Error(err.message);
     }
   }
-  async getAllBoxOwnerAndPaging({pageNumbers,limit},id){
+  async getAllBoxOwnerAndPaging({ pageNumbers, limit }, id) {
     try {
       const listBox = await this.getAllBoxOwner(id);
-      console.log("object",listBox);
+      console.log("object", listBox);
       const total = listBox.length;
-      const displayedBoxNumber = (pageNumbers-1)*limit;
-      if(total<= displayedBoxNumber){
-        throw new Error("Don't have box")
+      const displayedBoxNumber = (pageNumbers - 1) * limit;
+      if (total <= displayedBoxNumber) {
+        throw new Error("Don't have box");
       }
       const listBoxes = await TankUser.aggregate([
         { $match: { tankId: null, userId: id } },
@@ -93,10 +93,10 @@ class BoxService {
             as: "box",
           },
         },
-        {$skip: displayedBoxNumber},
-        {$limit:+limit}
+        { $skip: displayedBoxNumber },
+        { $limit: +limit },
       ]);
-      return {listBoxes,total}
+      return { listBoxes, total };
     } catch (err) {
       console.log(err);
       throw new Error(err.message);

@@ -710,22 +710,24 @@ public class NetworkClient : SocketIOComponent
             NetworkIdentity ni = serverObjects[id];
             if (ni.GetComponent<TankGeneral>() != null)
             {
-                //float type = E.data["type"].f;
-                //float speed = E.data["tank"]["speed"].f;
-                //Debug.Log(type + "  " + speed);
-                //if (type == 1)
-                //{
-                //    var targetDistance = Vector3.Distance(new Vector3(x, y, 0), ni.transform.position);
-                //    var time = targetDistance / speed;
-                //    //Vector3 direction = (new Vector3(x, y, 0) - transform.position).normalized;
-                //    //ni.GetComponent<TankGeneral>().Rb.MovePosition(transform.position + direction * speed * Time.deltaTime);
-                //    StartCoroutine(MoveSmoothing(ni.transform, new Vector3(x, y, 0), time));
+                float type = E.data["type"].f;
+                float speed = E.data["tank"]["speed"].f;
+                if (speed >= 30)
+                {
+                    speed = 30;
+                }
+                Debug.Log(type + "  " + speed);
+                if (type == 1)
+                {
+                    var targetDistance = Vector3.Distance(new Vector3(x, y, 0), ni.transform.position);
+                    var time = targetDistance / speed;
+                    StartCoroutine(MoveSmoothing(ni.transform, new Vector3(x, y, 0), time));
 
-                //}
-                //else
-                //{
-                StartCoroutine(AIPositionSmoothing(ni.transform, new Vector3(x, y, 0)));
-                //   }
+                }
+                else
+                {
+                    StartCoroutine(AIPositionSmoothing(ni.transform, new Vector3(x, y, 0)));
+                }
 
             }
             else
@@ -862,22 +864,29 @@ public class NetworkClient : SocketIOComponent
             float range = E.data["range"].f;
             bool rotate = E.data["rotate"].b;
             NetworkIdentity ni = serverObjects[id];
+
             var tankgen = ni.GetComponent<TankGeneral>();
             Debug.Log(autoSpeed + " xx");
             //toc bien
-            if (autoSpeed == 30)
+            if (autoSpeed >= 30)
             {
+                autoSpeed = 30;
                 var flashEf = ni.GetFlash();
                 if (flashEf != null)
                 {
                     flashEf.transform.position = ni.transform.position - range * new Vector3(x, y, 0);
+
                     var fl = Instantiate(flashEf, networkContainer);
                     Destroy(fl, 0.3f);
+                }
+                if (!ni.IsControlling())
+                {
+                    return;
                 }
                 RaycastHit2D hit = Physics2D.BoxCast(ni.transform.position - range * new Vector3(x, y, 0), new Vector2(tankgen.boxCollider.size.x, tankgen.boxCollider.size.y), 0, -new Vector2(x, y), 0, LayerMask.GetMask("Wall"));
                 if (hit.collider == null)
                 {
-                    StartCoroutine(AIPositionSmoothing(ni.transform, ni.transform.position - range * new Vector3(x, y, 0)));
+                    StartCoroutine(MoveSmoothing(ni.transform, ni.transform.position - range * new Vector3(x, y, 0), range / 30));
                     Invoke("StopFocus", 0.2f);
                     return;
                 }

@@ -22,7 +22,7 @@ module.exports = class LobbyBase {
     );
 
     lobby.connections.push(connection);
-    player.team = 2 - (this.connections.length % 2); // team 1 2
+    //  player.team = 2 - (this.connections.length % 2); // team 1 2
     player.lobby = lobby.id;
     connection.lobby = lobby;
   }

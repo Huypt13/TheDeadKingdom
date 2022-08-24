@@ -1,5 +1,4 @@
-const Vector2 = require('../../dto/Vector2')
-
+const Vector2 = require("../../dto/Vector2");
 
 const tankAi = {
   speed: 0.15,
@@ -8,7 +7,7 @@ const tankAi = {
   health: 1000,
   attackSpeed: 1,
   bulletSpeed: 1,
-  shootingRange: 4,
+  shootingRange: 7,
 };
 module.exports.map = {
   IcexLavaMap: {
@@ -316,17 +315,19 @@ module.exports.map = {
     Helipad1: [
       {
         position: { x: -5.999, y: 0.276 },
-      }
+      },
     ],
 
-    Helipad2: [{
-      position: { x: -0.99, y: -2.99 },
-    }
+    Helipad2: [
+      {
+        position: { x: -0.99, y: -2.99 },
+      },
     ],
 
-    Helipad3: [{
-      position: { x: 4, y: -6.004 },
-    }
+    Helipad3: [
+      {
+        position: { x: 4, y: -6.004 },
+      },
     ],
 
     PileBox: [
@@ -393,19 +394,55 @@ module.exports.map = {
     ],
     RedTeamTankAI: [
       {
-        position: { x: -3, y: 4 }
-      }
+        position: { x: -3, y: 4 },
+      },
     ],
-  }
-}
+  },
+};
 
 module.exports.props = {
-  WoodBox: { type: "Wood", health: 250, isDead: false, maxHealth: 250, armor: 5 },
-  PileBox: { type: "Pile", health: 300, isDead: false, maxHealth: 270, armor: 15 },
-  IronBox: { type: "Iron", health: 350, isDead: false, maxHealth: 280, armor: 20 },
-  Helipad1: { username: "Helipad", itemSpawnTicker: 0, itemSpawnTime: 0, coolDownTime: 9, isActive: false },
-  Helipad2: { username: "Helipad", itemSpawnTicker: 0, itemSpawnTime: 0, coolDownTime: 13, isActive: false },
-  Helipad3: { username: "Helipad", itemSpawnTicker: 0, itemSpawnTime: 0, coolDownTime: 17, isActive: false },
+  WoodBox: {
+    type: "Wood",
+    health: 250,
+    isDead: false,
+    maxHealth: 250,
+    armor: 5,
+  },
+  PileBox: {
+    type: "Pile",
+    health: 300,
+    isDead: false,
+    maxHealth: 270,
+    armor: 15,
+  },
+  IronBox: {
+    type: "Iron",
+    health: 350,
+    isDead: false,
+    maxHealth: 280,
+    armor: 20,
+  },
+  Helipad1: {
+    username: "Helipad",
+    itemSpawnTicker: 0,
+    itemSpawnTime: 0,
+    coolDownTime: 9,
+    isActive: false,
+  },
+  Helipad2: {
+    username: "Helipad",
+    itemSpawnTicker: 0,
+    itemSpawnTime: 0,
+    coolDownTime: 13,
+    isActive: false,
+  },
+  Helipad3: {
+    username: "Helipad",
+    itemSpawnTicker: 0,
+    itemSpawnTime: 0,
+    coolDownTime: 17,
+    isActive: false,
+  },
   BlueTeamPotion: {
     username: "Hp_Potion",
     reHealTime: 10,
@@ -423,7 +460,7 @@ module.exports.props = {
       value: -20,
       times: 15,
       waiting: 0.3,
-    }
+    },
   },
   RedTeamPotion: {
     username: "Hp_Potion",
@@ -442,7 +479,7 @@ module.exports.props = {
       value: -20,
       times: 15,
       waiting: 0.3,
-    }
+    },
   },
   RedTeamTankAI: {
     AIBase: [2, { ...tankAi }, 2],
@@ -510,7 +547,7 @@ module.exports.props = {
     canShoot: false,
     currentTime: 0,
   },
-}
+};
 
 module.exports.buffItem = {
   BuffArmorItem: {
@@ -518,30 +555,28 @@ module.exports.buffItem = {
     armorUp: {
       value: 1,
       time: 8,
-    }
+    },
   },
   BuffDamageItem: {
     type: "Damage",
     damageUp: {
       value: 1,
       time: 7,
-    }
+    },
   },
   FastSpeedItem: {
     type: "Speed",
     speedUp: {
       value: -0.5,
       time: 8,
-    }
+    },
   },
   HealHpItem: {
     type: "Hp",
     healing: {
       value: -240,
       waiting: 0.3,
-      times: 2
-    }
-  }
-}
-
-
+      times: 2,
+    },
+  },
+};

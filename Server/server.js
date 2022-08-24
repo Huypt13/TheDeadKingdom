@@ -1,11 +1,3 @@
-
-
-
-
-
-
-
-
 const express = require("express");
 
 const MarketPlaceRouter = require("./src/api/marketPlaceItem/MarketPlace.router");
@@ -38,9 +30,15 @@ app.get("/", (req, res) => {
 const io = require("socket.io")(server);
 const gameServer = new GameServer();
 // update game server
-setInterval(async () => {
-  await gameServer.onUpdate();
-}, 100);
+const gameSeverLoop = (() => {
+  try {
+    setInterval(async () => {
+      await gameServer.onUpdate();
+    }, 100);
+  } catch (e) {
+    console.log(e);
+  }
+})();
 
 io.on("connection", (socket) => {
   console.log(`${socket.id} join room`);

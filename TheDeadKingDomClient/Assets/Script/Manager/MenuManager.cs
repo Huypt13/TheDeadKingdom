@@ -57,6 +57,10 @@ public class MenuManager : MonoBehaviour
             queueButton.interactable = true;
         });
 
+        if (PlayerPrefs.HasKey("lastUser"))
+        {
+            inputUsername.text = PlayerPrefs.GetString("lastUser");
+        }
     }
 
 
@@ -192,6 +196,9 @@ public class MenuManager : MonoBehaviour
                     ci.username = myName;
                     NetworkClient.ClientName = myName;
                     SocketReference.Emit("clientJoin", new JSONObject(JsonUtility.ToJson(ci)));
+
+                    PlayerPrefs.SetString("lastUser", inputUsername.text);
+
                     OnSignInComplete();
                 }
             }

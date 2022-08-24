@@ -5,7 +5,7 @@ using UnityEngine;
 public class AudioManager : Singleton<AudioManager>
 {
     [SerializeField]
-    private AudioClip pickTank, countDownFight, hitSound;
+    private AudioClip pickTank, countDownFight, gameBackground;
 
     private AudioSource backgroundAudioSource;
     private AudioSource effectAudioSource;
@@ -30,9 +30,9 @@ public class AudioManager : Singleton<AudioManager>
     {
         switch (soundType)
         {
-            //case "pickTank":
-            //    effectAudioSource.PlayOneShot(pickTank);
-            //    break;
+            case "pickTank":
+                effectAudioSource.PlayOneShot(pickTank);
+                break;
             case "countDownFight":
                 effectAudioSource.PlayOneShot(countDownFight);
                 break;
@@ -46,18 +46,16 @@ public class AudioManager : Singleton<AudioManager>
     {
         switch (soundType)
         {
-            case "pickTank":
-                backgroundAudioSource.clip = pickTank;
-                //backgroundAudioSource.Play();
-                backgroundAudioSource.PlayOneShot(pickTank);
+            case "gameBackground":
+                backgroundAudioSource.clip = gameBackground;
+                backgroundAudioSource.Play();
                 break;
-                //case "countDownFight":
-                //    backgroundAudioSource.PlayOneShot(countDownFight);
-                //    break;
-                //case "hitSound":
-                //    backgroundAudioSource.PlayOneShot(hitSound);
-                //    break;
         }
+    }
+
+    public void StopBackgroundSound()
+    {
+        backgroundAudioSource.Stop();
     }
 
     // Update is called once per frame

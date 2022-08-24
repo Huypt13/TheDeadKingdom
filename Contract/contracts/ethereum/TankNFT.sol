@@ -2,23 +2,28 @@
 
 pragma solidity ^0.8.13;
 
+import "./ILinkWallet.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract TankNFT is ERC721, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     address public marketAddress;
-    ERC20 public deathKingdomCoin;
+    IERC20 public deathKingdomCoin;
+    ILinkWallet public linkWallet;
     mapping(string => uint256) boxPrices;
 
-    constructor(address _mrketplaceContract, address _deathKingdomCoinContract)
-        ERC721("TankNFTToken", "DKT")
-    {
-        marketAddress = _mrketplaceContract;
-        deathKingdomCoin = ERC20(_deathKingdomCoinContract);
+    constructor(
+        address _marketplaceContract,
+        address _deathKingdomCoinContract,
+        address _linkWalletAddress
+    ) ERC721("TankNFTToken", "DKT") {
+        marketAddress = _marketplaceContract;
+        deathKingdomCoin = IERC20(_deathKingdomCoinContract);
+        linkWallet = ILinkWallet(_linkWalletAddress);
     }
 
     function _baseURI() internal pure override returns (string memory) {
@@ -30,7 +35,6 @@ contract TankNFT is ERC721, Ownable {
         onlyOwner
     {
         require(bytes(_boxId).length > 0, "BoxId should not empty");
-        // require(_price > 10);
         boxPrices[_boxId] = _price;
     }
 
@@ -45,6 +49,10 @@ contract TankNFT is ERC721, Ownable {
         public
         returns (uint256[] memory)
     {
+        require(
+            bytes(linkWallet.getUserIdByWalletAddress(msg.sender)).length > 0,
+            "Wallet Address must be linked with user account before buyBoxes"
+        );
         require(bytes(_boxId).length > 0, "BoxId should not empty");
         require(boxPrices[_boxId] > 0, "Box should be selling");
         require(_amount > 0, "BoxAmount should be > 0");

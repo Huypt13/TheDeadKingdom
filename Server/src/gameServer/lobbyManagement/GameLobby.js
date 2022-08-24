@@ -504,7 +504,12 @@ module.exports = class GameLobby extends LobbyBase {
       console.log("We have enough players we can start choose hero");
       lobby.lobbyState.currentState = lobby.lobbyState.WAITING;
       const returnData1 = {
-        players: lobby.connections.map((e) => {
+        players: lobby.connections.map((e, i) => {
+          if (i % 2 == 0) {
+            e.player.team = 1;
+          } else {
+            e.player.team = 2;
+          }
           return {
             username: e.player.username,
             id: e.player.id,

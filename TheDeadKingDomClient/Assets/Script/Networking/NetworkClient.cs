@@ -1015,7 +1015,8 @@ public class NetworkClient : SocketIOComponent
 
             SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
             {
-                FindObjectOfType<MenuManager>().message.text = "Your account is logged in somewhere else";
+                //FindObjectOfType<MenuManager>().message.text = "Your account is logged in somewhere else";
+                NotificationManager.Instance.DisplayNotification("Your account is logged in somewhere else", SceneList.MAIN_MENU);
 
             });
         });
@@ -1121,7 +1122,8 @@ public class NetworkClient : SocketIOComponent
         SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
         {
             SceneManagement.Instance.UnLoadLevel(myMap);
-            FindObjectOfType<MenuManager>().message.text = error;
+            //FindObjectOfType<MenuManager>().message.text = error;
+            NotificationManager.Instance.DisplayNotification(error, SceneList.MAIN_MENU);
         });
     }
 

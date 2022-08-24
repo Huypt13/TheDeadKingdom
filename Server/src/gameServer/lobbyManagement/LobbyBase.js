@@ -22,7 +22,7 @@ module.exports = class LobbyBase {
     );
 
     lobby.connections.push(connection);
-    player.team = 2 - (this.connections.length % 2); // team 1 2
+    //  player.team = 2 - (this.connections.length % 2); // team 1 2
     player.lobby = lobby.id;
     connection.lobby = lobby;
   }
@@ -52,20 +52,8 @@ module.exports = class LobbyBase {
         maxPoint: item?.maxPoint,
         team: item?.team || 0,
         position,
-        type: item?.type,
+        type: item?.type,                                                                                     
       });
-    });
-    console.log("server spawn", {
-      id: item.id,
-      aiId: item?.aiId,
-      name: item.username,
-      health: item?.health,
-      maxHealth: item?.maxHealth,
-      point: item?.point,
-      maxPoint: item?.maxPoint,
-      team: item?.team || 0,
-      position,
-      type: item?.type,
     });
   }
   onServerUnspawn(item = ServerItem) {

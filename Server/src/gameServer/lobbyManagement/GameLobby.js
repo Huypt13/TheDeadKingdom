@@ -504,7 +504,12 @@ module.exports = class GameLobby extends LobbyBase {
       console.log("We have enough players we can start choose hero");
       lobby.lobbyState.currentState = lobby.lobbyState.WAITING;
       const returnData1 = {
-        players: lobby.connections.map((e) => {
+        players: lobby.connections.map((e, i) => {
+          if (i % 2 == 0) {
+            e.player.team = 1;
+          } else {
+            e.player.team = 2;
+          }
           return {
             username: e.player.username,
             id: e.player.id,
@@ -1475,13 +1480,13 @@ module.exports = class GameLobby extends LobbyBase {
     );
     const returnData = {
       id: connection.player.id,
-      position: connection.player.position,
+      position: connection.player.spawnPos,
       team: connection.player.team,
       tank,
       health: tank?.health,
       maxHealth: connection?.player?.startTank?.health,
     };
-    console.log("sp player", connection?.startTank?.health);
+    console.log("sp player", connection.player.position , connection.player.spawnPos);
     socket.emit("spawn", returnData); //tell myself I have spawned
     socket.broadcast.to(lobby.id).emit("spawn", returnData); // Tell other
 
@@ -1525,8 +1530,8 @@ module.exports = class GameLobby extends LobbyBase {
           let returnData = {
             id: player.id,
             position: {
-              x: player.position.x,
-              y: player.position.y,
+              x: player.spawnPos.x,
+              y: player.spawnPos.y,
             },
             health: player.tank.health,
           };

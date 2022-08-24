@@ -68,7 +68,7 @@ describe("Test User Service", () => {
       "0x0c3DFD77D632BebC1E27927FD39a6579CDa54f035",
       "62fb177b81bd0dd14ece61d0"
     );
-    expect(user).toBe(null);
+    expect(user).not.toBe(null);
   });
   test("Test connect wallet fail wrong userid", async () => {
     const user = await UserService.connectWallet(
@@ -89,7 +89,7 @@ describe("Test User Service", () => {
       "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714",
       "6296d13fb263c0630e920031"
     );
-    expect(user).toBe(null);
+    expect(user).not.toBe(null);
   });
   test("Test connect wallet fail error not convert _id", async () => {
     try {

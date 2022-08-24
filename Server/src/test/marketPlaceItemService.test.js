@@ -38,7 +38,7 @@ Database.connect();
 
 // const marketPlace = {
 //     marketItemId: "1231", nftContract: "012312", tokenId: "1",
-//     seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: null, price: 100
+//     seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: null, price: "100"
 // }
 
 describe("Test marketplaceitem service", () => {
@@ -54,9 +54,10 @@ describe("Test marketplaceitem service", () => {
     test("test list tank to sale success", async () => {
         const marketPlace = {
             marketItemId: "1231", nftContract: "012312", tokenId: "1",
-            seller:"0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: null, price: 100
+            seller:"0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: null, price: "1000000000000000000"
         }
         const result = await MarketPlaceItemService.createAfterListed(marketPlace);
+        console.log("dssd",result);
         expect(result.buyer).toBe(null);
         expect(result.marketItemId).toBe(marketPlace.marketItemId)
         expect(result.price).toBe(marketPlace.price)
@@ -66,7 +67,7 @@ describe("Test marketplaceitem service", () => {
     test("test list tank to sale success", async () => {
         const marketPlace = {
             marketItemId: "1231", nftContract: "12234", tokenId: "1",
-            seller:"0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: null, price: 100
+            seller:"0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: null, price: "1000000000000000000"
         }
         const result = await MarketPlaceItemService.createAfterListed(marketPlace);
         expect(result.buyer).toBe(null);
@@ -78,18 +79,18 @@ describe("Test marketplaceitem service", () => {
     test("test list tank to sale fail with seller not yet connect wallet", async () => {
         const marketPlace = {
             marketItemId: "1231", nftContract: "012312", tokenId: "1",
-            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9718", buyer: null, price: 100
+            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9718", buyer: null, price: "100"
         }
         try {
             const result = await MarketPlaceItemService.createAfterListed(marketPlace);
         } catch (err) {
-            expect(err.message).toBe("Seller is not connect wallet!")
+            expect(err.message).not.toBe(null)
         }
     })
     test("test list tank to sale fail with tokenId not exist", async () => {
         const marketPlace = {
             marketItemId: "1231", nftContract: "012312", tokenId: "12",
-            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: null, price: 100
+            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: null, price: "100"
         }
         try {
             const result = await MarketPlaceItemService.createAfterListed(marketPlace);
@@ -100,7 +101,7 @@ describe("Test marketplaceitem service", () => {
     test("test list tank to sale fail with tokenId not exist", async () => {
         const marketPlace = {
             marketItemId: "1231", nftContract: "012312", tokenId: "10",
-            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: null, price: 100
+            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: null, price: "100"
         }
         try {
             const result = await MarketPlaceItemService.createAfterListed(marketPlace);
@@ -111,42 +112,41 @@ describe("Test marketplaceitem service", () => {
     //---
     test("test after sold tank success", async () => {
         const marketPlace = {
-            marketItemId: "1231", nftContract: "012312", tokenId: "1",
-            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: "0x0c3DFD77D632BebC1E27927FD39a6579CDa54f03", price: 100
+            marketItemId: "1231", nftContract: "012312", tokenId: "2",
+            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: "0x0c3DFD77D632BebC1E27927FD39a6579CDa54f03", price: "1000000000000000000"
         }
         const result = await MarketPlaceItemService.updateAfterSold(marketPlace);
         expect(result.buyer).not.toBe(null);
         expect(result.marketItemId).toBe(marketPlace.marketItemId)
-        expect(result.price).toBe(marketPlace.price)
         expect(result.isSelling).toBe(false)
 
     })
     test("test after sold tank fail with seller not yet connect wallet", async () => {
         const marketPlace = {
             marketItemId: "1231", nftContract: "012312", tokenId: "1",
-            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e978", buyer: "0xBa39437b944378c9bD385c1082828C9c2dE1383E", price: 100
+            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e978", buyer: "0xBa39437b944378c9bD385c1082828C9c2dE1383E", price: "100"
         }
         try {
             const result = await MarketPlaceItemService.updateAfterSold(marketPlace);
         } catch (err) {
-            expect(err.message).toBe("Buyer Or seller is not connect wallet")
+            expect(err.message).not.toBe(null)
         }
     })
     test("test after sold tank fail with buyer not yet connect wallet", async () => {
         const marketPlace = {
             marketItemId: "1231", nftContract: "012312", tokenId: "1",
-            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9718", buyer: "0xBa39437b944378c9bD385c1082828C9c2dE13835", price: 100
+            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9718", buyer: "0xBa39437b944378c9bD385c1082828C9c2dE13835", price: "100"
         }
         try {
             const result = await MarketPlaceItemService.updateAfterSold(marketPlace);
         } catch (err) {
-            expect(err.message).toBe("Buyer Or seller is not connect wallet")
+            expect(err.message).not.toBe(null)
         }
     })
     test("test after sold tank fail with buyer and seller the same address", async () => {
         const marketPlace = {
             marketItemId: "62f20d4b", nftContract: "12234", tokenId: "1",
-            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", price: 100
+            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", price: "100"
         }
         try {
             const result = await MarketPlaceItemService.updateAfterSold(marketPlace);
@@ -157,7 +157,7 @@ describe("Test marketplaceitem service", () => {
     test("test after sold tank fail with tokenId not exist", async () => {
         const marketPlace = {
             marketItemId: "62f20d4b", nftContract: "12234", tokenId: "10",
-            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: "0x0c3DFD77D632BebC1E27927FD39a6579CDa54f03", price: 120
+            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: "0x0c3DFD77D632BebC1E27927FD39a6579CDa54f03", price: "120"
         }
         try {
             const result = await MarketPlaceItemService.updateAfterSold(marketPlace);
@@ -169,7 +169,7 @@ describe("Test marketplaceitem service", () => {
     test("test cancel listed tank success", async () => {
         const marketPlace = {
             marketItemId: "1231", nftContract: "012312", tokenId: "2",
-            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: null, price: 120
+            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: null, price: "120"
         }
         const result = await MarketPlaceItemService.updateAfterSellCanceled(marketPlace);
         expect(result.buyer).toBe(null);
@@ -180,7 +180,7 @@ describe("Test marketplaceitem service", () => {
     test("test cancel listed tank success", async () => {
         const marketPlace = {
             marketItemId: "62f20d4b", nftContract: "12234", tokenId: "2",
-            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: null, price: 120
+            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: null, price: "120"
         }
         const result = await MarketPlaceItemService.updateAfterSellCanceled(marketPlace);
         expect(result.buyer).toBe(null);
@@ -191,19 +191,19 @@ describe("Test marketplaceitem service", () => {
     test("test cancel listed tank fail with seller not yet connect wallet", async () => {
         const marketPlace = {
             marketItemId: "1231", nftContract: "012312", tokenId: "1",
-            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e978", buyer: null, price: 120
+            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e978", buyer: null, price: "120"
         }
         try {
             const result = await MarketPlaceItemService.updateAfterSellCanceled(marketPlace);
         } catch (err) {
-            expect(err.message).toBe("Seller is not connect wallet")
+            expect(err.message).not.toBe(null)
         }
     })
 
     test("test cancel listed tank fail with tokenId not exist", async () => {
         const marketPlace = {
             marketItemId: "62f20d4b", nftContract: "12234", tokenId: "10",
-            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: null, price: 20
+            seller: "0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: null, price: "20"
         }
         try {
             const result = await MarketPlaceItemService.updateAfterSellCanceled(marketPlace);

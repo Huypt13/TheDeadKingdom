@@ -89,7 +89,7 @@ describe("test tankuser service", () => {
             const {listToken, tokenOwner, boxId} = {listToken:["5"], tokenOwner:"0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9764", boxId:"62f20d4b70d1f15ecd11c37a"}
             const tankUser = await TankUserService.createTankUser(listToken, tokenOwner, boxId);
         } catch(e){
-            expect(e.message).toBe("buyer is not connect wallet")
+            expect(e.message).not.toBe(null)
         }
     })
     test("test buy box fail with boxId not found", async()=>{

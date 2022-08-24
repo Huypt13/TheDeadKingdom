@@ -23,6 +23,7 @@ class Player {
     this.kill = 0;
     this.dead = 0;
     this.maxHealth = 800;
+    this.spawnPos = new Vector2(0,0);
     this.effect = {
       // bat loi
       slowled: [], // lam cham  vd {id : xxx ,value : 0.2 , time : 10}

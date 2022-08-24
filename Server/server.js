@@ -1,4 +1,5 @@
 const express = require("express");
+const fs = require("fs");
 
 const MarketPlaceRouter = require("./src/api/marketPlaceItem/MarketPlace.router");
 
@@ -20,8 +21,13 @@ const HistoryRouter = require("./src/api/history/History.router");
 const BoxRouter = require("./src/api/box/Box.router");
 
 const app = express();
-const server = require("http").createServer(app);
-
+const server = require("https").createServer(
+  {
+    key: fs.readFileSync("key.pem"),
+    cert: fs.readFileSync("cert.pem"),
+  },
+  app
+);
 dotenv.config();
 app.get("/", (req, res) => {
   res.send("lala");
@@ -92,4 +98,5 @@ app.use("/box", BoxRouter);
 app.use("/history", Authentication, HistoryRouter);
 app.use("/marketPlace", MarketPlaceRouter);
 Database.connect(app);
-server.listen(8080);
+server.listen(8080, "0.0.0.0");
+// server.listen(8080);

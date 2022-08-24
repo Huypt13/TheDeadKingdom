@@ -107,6 +107,7 @@ class UserController {
       }
       return ApiResponse.successResponseWithData(res, "success", user);
     } catch (error) {
+      console.log(error);
       return ApiResponse.serverErrorResponse(res, "Connect to Wallet failed");
     }
   }
@@ -129,7 +130,7 @@ class UserController {
         await registerNotify({
           email: user?.email,
           username: user?.username,
-          url: `${process.env.WEB_URL}/user/verify/${user?.activeCode}`,
+          url: `https://www.thedeathkingdom.tk/verify/${user?.activeCode}`,
         });
         return ApiResponse.successResponse(
           res,

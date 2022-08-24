@@ -19,10 +19,10 @@ class BoxController {
       const tankId = await BoxService.unbox(boxId);
       await TankUserService.updateData(
         { _id: tankUserId },
-        { tankId, remaining: 100, openedDate: new Date()}
+        { tankId, remaining: 100, openedDate: new Date() }
       );
       const tank = await TankService.getTankInfo(tankId);
-      if(!tank) return ApiResponse.serverErrorResponse(res, "Unbox Fail!");
+      if (!tank) return ApiResponse.serverErrorResponse(res, "Unbox Fail!");
       return ApiResponse.successResponseWithData(res, "Unbox Success", tank);
     } catch (err) {
       console.log(err);
@@ -38,11 +38,25 @@ class BoxController {
       ApiResponse.serverErrorResponse(res, err.message);
     }
   }
-  async getBoxDetails(req, res) {
+  async getBoxDetails2(req, res) {
     try {
       const { id } = req.params;
       const allBox = await BoxService.getByBoxId(id);
-      return ApiResponse.successResponseWithData(res, "Ok", allBox);
+      allBox.rate = [
+        { level: 1, ratio: 60 },
+        { level: 2, ratio: 30 },
+        { level: 3, ratio: 10 },
+      ];
+      return ApiResponse.successResponseWithData(res, "Ok", { ...allBox });
+    } catch (err) {
+      console.log(err);
+      ApiResponse.serverErrorResponse(res, err.message);
+    }
+  }
+  async getBoxDetails(req, res) {
+    try {
+      const { id } = req.params;
+      return ApiResponse.successResponseWithData(res, "Ok", [{level:1,ratio:60},{level:2,ratio:30},{level:3,ratio:10}]);
     } catch (err) {
       console.log(err);
       ApiResponse.serverErrorResponse(res, err.message);
@@ -52,7 +66,10 @@ class BoxController {
     try {
       const { _id } = res.locals.user;
       const { pageNumbers, limit } = req.query;
-      const allBox = await BoxService.getAllBoxOwnerAndPaging({pageNumbers, limit},_id.toString());
+      const allBox = await BoxService.getAllBoxOwnerAndPaging(
+        { pageNumbers, limit },
+        _id.toString()
+      );
       return ApiResponse.successResponseWithData(res, "Ok", allBox);
     } catch (err) {
       console.log(err);

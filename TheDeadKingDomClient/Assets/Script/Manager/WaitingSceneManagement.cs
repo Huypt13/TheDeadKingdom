@@ -111,7 +111,10 @@ public class WaitingSceneManagement : MonoBehaviour
             AudioManager.Instance.PlayEffectSoundOneShot("countDownFight");
         }
         timeText.text = time.ToString();  //  time
-        time--;
+        if (time > 0)
+        {
+            time--;
+        }
     }
 
     private void ChangeHero(SocketIOEvent e)

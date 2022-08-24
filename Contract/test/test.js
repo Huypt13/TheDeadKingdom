@@ -120,6 +120,11 @@ contract("SmartContract Testing", (accounts) => {
       let listingNFTs = await marketplace.getNftSellHistory(1);
       assert.equal(listingNFTs.length, 0);
     });
+
+    it("Get Box Price after deploy", async () => {
+      let boxPrice = await tankNFT.getBoxPrice("62f20d4b70d1f15ecd11c37a");
+      assert.equal(boxPrice.toString(), Web3.utils.toWei("200", "ether"));
+    });
   });
 
   describe("Buy Box state", () => {

@@ -137,6 +137,7 @@ public class NetworkClient : SocketIOComponent
             tg.Speed = speed;
             tg.AttackSpeed = attackSpeed;
             tg.Stunned = false;
+            tg.TiedUp = false;
             tg.IsAutoMove = false;
 
             var ntr = ni.GetComponent<NetworkTransform>();

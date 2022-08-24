@@ -49,6 +49,10 @@ public class LobbyScreenManager : MonoBehaviour
     [SerializeField]
     private Text txtPlayerName;
 
+    [SerializeField]
+    private GameObject loadingCover;
+    private int countLoading = 2;
+
 
     public SocketIOComponent SocketReference
     {
@@ -66,6 +70,7 @@ public class LobbyScreenManager : MonoBehaviour
         SetupSetting();
 
         myTankList = new List<TankRemain>();
+        loadingCover.SetActive(true);
     }
 
     // Update is called once per frame
@@ -134,6 +139,7 @@ public class LobbyScreenManager : MonoBehaviour
                         canJoin = true;
                     }
                 });
+                if (--countLoading <= 0) loadingCover.SetActive(false);
             }
         }
     }
@@ -169,6 +175,7 @@ public class LobbyScreenManager : MonoBehaviour
                     imageSingleStar.gameObject.SetActive(true);
                     txtMasterStar.text = (playerStar % 100) + "";
                 }
+                if (--countLoading <= 0) loadingCover.SetActive(false);
             }
         }
     }
@@ -215,9 +222,10 @@ public class LobbyScreenManager : MonoBehaviour
 
     public void ChangeResolution(int option)
     {
-        int[] width = { 1920, 1366, 1280 };
-        int[] height = { 1080, 768, 720 };
-        Screen.SetResolution(width[option], height[option], FullScreenMode.Windowed);
+        int[] width = { 1920, 1366, 1280, 640 };
+        int[] height = { 1080, 768, 720, 360 };
+        FullScreenMode[] fullScreenModes = { FullScreenMode.ExclusiveFullScreen, FullScreenMode.Windowed, FullScreenMode.Windowed, FullScreenMode.Windowed };
+        Screen.SetResolution(width[option], height[option], fullScreenModes[option]);
 
         PlayerPrefs.SetInt("gameResolution", option);
     }

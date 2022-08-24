@@ -24,15 +24,6 @@ class UserService {
   }
   async connectWallet(walletAddress, userId) {
     try {
-      const user = await this.getByWalletAddress(walletAddress);
-      const user1 = await this.getById(userId);
-      if (!user1) {
-        return null;
-      }
-      if (user1 && user1?.walletAddress) {
-        return null;
-      }
-      if (user) return null;
       return User.findByIdAndUpdate(
         userId,
         { walletAddress: walletAddress },
@@ -154,7 +145,7 @@ class UserService {
     }
     return null;
   }
-  async changePassword({password, newPassword}, email) {
+  async changePassword({ password, newPassword }, email) {
     try {
       const user = await this.getByEmail(email);
       if (!user) {

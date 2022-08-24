@@ -81,15 +81,31 @@ class UserController {
 
   async connectWalletAddress(req, res) {
     try {
-      const userId = res.locals.user._id.tostring();
+      const userId = res.locals.user._id.toString();
       const { walletAddress } = req.query;
+      const userA = await UserService.getByWalletAddress(walletAddress);
+      const user1 = await UserService.getById(userId);
+      if (!user1) {
+        return ApiResponse.unauthorizeResponse(res, "wrong id");
+      }
+      if (user1 && user1?.walletAddress) {
+        return ApiResponse.badRequestResponse(res, "wallet has been connected");
+      }
+      if (userA)
+        return ApiResponse.badRequestResponse(res, "wallet has been used");
+
       if (!walletAddress) {
         return ApiResponse.serverErrorResponse(res, "WalletAddress invalid");
       }
-      const user = UserService.connectWallet(walletAddress, userId);
+
+      const user = await UserService.connectWallet(walletAddress, userId);
       if (!user) {
-        return ApiResponse.badRequestResponse(res, "Wallet address existed");
+        return ApiResponse.badRequestResponse(
+          res,
+          "Connect to Wallet failed 1"
+        );
       }
+      return ApiResponse.successResponseWithData(res, "success", user);
     } catch (error) {
       return ApiResponse.serverErrorResponse(res, "Connect to Wallet failed");
     }

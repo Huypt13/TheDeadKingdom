@@ -48,6 +48,7 @@ public class GameUI : MonoBehaviour
 
     [SerializeField]
     private GameObject panelDead;
+    private string strMaxTime;
 
     private float deadTime;
 
@@ -74,9 +75,12 @@ public class GameUI : MonoBehaviour
         OnChatBoxViewUpdate();
     }
 
-    private void LoadGameMode(string gameMode, string map)
+    private void LoadGameMode(string gameMode, string map, float maxTime)
     {
         txtGameMode.text = gameMode;
+        TimeSpan t = TimeSpan.FromSeconds(maxTime);
+        DateTime dateTime = DateTime.Today.Add(t);
+        strMaxTime = dateTime.ToString("mm:ss");
     }
 
     private void ChangeTankUI(SocketIOEvent E)
@@ -192,7 +196,7 @@ public class GameUI : MonoBehaviour
         Text text = timeTransform.GetComponent<Text>();
         TimeSpan t = TimeSpan.FromSeconds(time);
         DateTime dateTime = DateTime.Today.Add(t);
-        text.text = dateTime.ToString("mm:ss");
+        text.text = dateTime.ToString("mm:ss") + " / " + strMaxTime;
     }
 
     private void OnTimeSKillUpdate(SocketIOEvent E)

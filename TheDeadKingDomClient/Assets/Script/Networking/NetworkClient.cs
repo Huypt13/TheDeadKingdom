@@ -46,7 +46,7 @@ public class NetworkClient : SocketIOComponent
     public static Action<SocketIOEvent> OnSpawnMyTank = (E) => { };
     public static Action<float> OnPlayerDied = (time) => { };
     public static Action OnPlayerRespawn = () => { };
-    public static Action<string, string> OnLoadGameMode = (gameMode, map) => { };
+    public static Action<string, string, float> OnLoadGameMode = (gameMode, map, maxTime) => { };
 
     public static Action<SocketIOEvent> OnUpdatePosition = (E) => { };
 
@@ -835,7 +835,8 @@ public class NetworkClient : SocketIOComponent
             Debug.Log("reload game");
             string map = E.data["map"].str;
             string gameMode = E.data["gameMode"].str;
-            OnLoadGameMode.Invoke(gameMode, map);
+            float maxTime = E.data["time"].f;
+            OnLoadGameMode.Invoke(gameMode, map, maxTime);
             myMap = map;
             OnStartChat.Invoke(E);
             SceneManagement.Instance.LoadLevel(map, (levelName) =>
@@ -848,7 +849,9 @@ public class NetworkClient : SocketIOComponent
             Debug.Log("Join game");
             string map = E.data["map"].str;
             string gameMode = E.data["gameMode"].str;
-            OnLoadGameMode.Invoke(gameMode, map);
+            float maxTime = E.data["time"].f;
+
+            OnLoadGameMode.Invoke(gameMode, map, maxTime);
             myMap = map;
             OnStartChat.Invoke(E);
             SceneManagement.Instance.LoadLevel(map, (levelName) =>

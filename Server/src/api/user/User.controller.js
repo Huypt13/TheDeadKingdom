@@ -157,7 +157,7 @@ class UserController {
 
   async getTopRank(req, res) {
     try {
-      const { top } = req.query;
+      let { top } = req.query;
       if (!Number.isInteger(top)) {
         top = 20;
       } else if (top < 1) {

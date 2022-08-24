@@ -11,16 +11,25 @@ const tankAi = {
   shootingRange: 4,
 };
 module.exports.map = {
-IcexLavaMap:{
-    TankSpawnPosition:[
+  IcexLavaMap: {
+    TankSpawnPosition: [
       {
-        position: { x: 1.88, y: -7.43},
+        position: { x: 1.88, y: -7.43 },
+      },
+      {
+        position: { x: -10.52818, y: 5.392758 },
       },
       {
         position: { x: 2.01, y: -4.82 },
       },
       {
+        position: { x: -10.52818, y: 3.201224 },
+      },
+      {
         position: { x: 5.12, y: -4.63 },
+      },
+      {
+        position: { x: -13.30769, y: 3.201224 },
       },
     ],
     BaseRed: [
@@ -30,7 +39,7 @@ IcexLavaMap:{
     ],
     RedTeamBigTurret: [
       {
-        position: { x: 4.06, y: -6.19},
+        position: { x: 4.06, y: -6.19 },
       },
     ],
     RedTeamSmallTurret: [
@@ -49,10 +58,10 @@ IcexLavaMap:{
     ],
     RedTeamPotion: [
       {
-        position: { x: 7.17, y: -5.33},
+        position: { x: 7.17, y: -5.33 },
       },
       {
-        position: { x: 2.59, y: -9.1},
+        position: { x: 2.59, y: -9.1 },
       },
     ],
     BaseBlue: [
@@ -68,7 +77,7 @@ IcexLavaMap:{
         position: { x: -10.09, y: 7.06 },
       },
       {
-        position: { x: -13.92297, y: -2.911003},
+        position: { x: -13.92297, y: -2.911003 },
       },
       {
         position: { x: -1.99, y: 6.01 },
@@ -81,7 +90,7 @@ IcexLavaMap:{
     ],
     BlueTeamPotion: [
       {
-        position: { x: -15.16, y: 3.5},
+        position: { x: -15.16, y: 3.5 },
       },
       {
         position: { x: -11.5, y: 7.02 },

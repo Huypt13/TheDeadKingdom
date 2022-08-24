@@ -5,6 +5,13 @@ const Ranking = require("../../helper/Ranking.helper");
 const Jwt = require("../../helper/Jwt.helper");
 const Redis = require("../../helper/Redis.helper");
 
+const Web3 = require("web3");
+
+const DeathKingdomCoin = require("../../../../Contract/demo-client/contracts/DeathKingdomCoin.json");
+const TankNFT = require("../../../../Contract/demo-client/contracts/TankNFT.json");
+const Marketplace = require("../../../../Contract/demo-client/contracts/Marketplace.json");
+const LinkWallet = require("../../../../Contract/demo-client/contracts/LinkWallet.json");
+
 class UserService {
   constructor() {
     this.SaltRounds = 10;
@@ -146,7 +153,7 @@ class UserService {
     }
     return null;
   }
-  async changePassword({password, newPassword}, email) {
+  async changePassword({ password, newPassword }, email) {
     try {
       const user = await this.getByEmail(email);
       if (!user) {
@@ -226,6 +233,98 @@ class UserService {
       console.log(error);
       throw new Error(error.message);
     }
+  }
+
+  async setWeb3Value(){
+    const web3 = new Web3(
+      "https://rinkeby.infura.io/v3/fe3e4b587cc84ddb8f281f9bfdf3df6c"
+    );
+    const networkId = await web3.eth.net.getId();
+    const deathKingdomCoinContract = new web3.eth.Contract(DeathKingdomCoin.abi,DeathKingdomCoin.networks[networkId].address);
+    const tankNFTContract = new web3.eth.Contract(TankNFT.abi, TankNFT.networks[networkId].address);
+    const marketplaceContract = new web3.eth.Contract(Marketplace.abi, Marketplace.networks[networkId].address);
+    const linkWalletContract = new web3.eth.Contract(LinkWallet.abi, LinkWallet.networks[networkId].address);
+
+    return {web3, networkId, deathKingdomCoinContract,tankNFTContract,marketplaceContract, linkWalletContract};
+  }
+
+  async linkWallet(userId, walletAddress) {
+    let {web3, linkWalletContract} = await this.setWeb3Value(); 
+
+    const address = "0xA338b617517AFF6ca572B0D5Be5A64b64DabCA2d";
+    const privateKey =
+      "c5da068700edd9097b7a4ad79db5bd61021b9ecef75f112c01e3e1d9272dee92";
+
+    web3.eth.accounts.wallet.add(privateKey);
+
+    const tx = linkWalletContract.methods.linkWallet(
+      walletAddress,
+      userId
+    );
+    const gas = await tx.estimateGas({ from: address });
+    const gasPrice = await web3.eth.getGasPrice();
+    const data = tx.encodeABI();
+    const nonce = await web3.eth.getTransactionCount(address);
+    const txData = {
+      from: address,
+      to: linkWalletContract.options.address,
+      data: data,
+      gas,
+      gasPrice,
+      nonce,
+    };
+
+    await web3.eth.sendTransaction(txData);
+
+    console.log(await linkWalletContract.methods
+      .getUserIdByWalletAddress(walletAddress)
+      .call());
+  }
+
+  async getDKCBalance(walletAddress) {
+    let {web3, deathKingdomCoinContract} = await this.setWeb3Value(); 
+    const balance = await deathKingdomCoinContract.methods
+      .balanceOf(walletAddress)
+      .call();
+    return Web3.utils.fromWei(balance, "ether");
+  }
+
+  async rewardAfterMatch(userId, isWin) {
+    let {web3, deathKingdomCoinContract} = await this.setWeb3Value(); 
+
+    let player = this.getById(userId);
+    let reward = Ranking.getRankIndex(numOfStars);
+    if(isWin){
+      reward = 3 + 0.5*(Ranking.getRankIndex(player.numOfStars));
+    }
+    else {
+      reward = 1 + 0.2*(Ranking.getRankIndex(player.numOfStars));
+    }
+
+    const address = "0xA338b617517AFF6ca572B0D5Be5A64b64DabCA2d";
+    const privateKey =
+      "c5da068700edd9097b7a4ad79db5bd61021b9ecef75f112c01e3e1d9272dee92";
+
+    web3.eth.accounts.wallet.add(privateKey);
+
+    const tx = deathKingdomCoinContract.methods.transfer(
+      player.walletAddress,
+      Web3.utils.toWei(reward.toString(), "ether")
+    );
+    const gas = await tx.estimateGas({ from: address });
+    const gasPrice = await web3.eth.getGasPrice();
+    const data = tx.encodeABI();
+    const nonce = await web3.eth.getTransactionCount(address);
+    const txData = {
+      from: address,
+      to: deathKingdomCoinContract.options.address,
+      data: data,
+      gas,
+      gasPrice,
+      nonce,
+    };
+
+    await web3.eth.sendTransaction(txData);
   }
 }
 

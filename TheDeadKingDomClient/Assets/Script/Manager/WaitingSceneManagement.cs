@@ -71,7 +71,7 @@ public class WaitingSceneManagement : MonoBehaviour
     }
     void Start()
     {
-        AudioManager.Instance.PlayBackgroundSound("pickTank");
+        AudioManager.Instance.PlayEffectSoundOneShot("pickTank");
         InvokeRepeating("SetTime", 0f, 1f);
 
         LoadListTank();
@@ -111,7 +111,10 @@ public class WaitingSceneManagement : MonoBehaviour
             AudioManager.Instance.PlayEffectSoundOneShot("countDownFight");
         }
         timeText.text = time.ToString();  //  time
-        time--;
+        if (time > 0)
+        {
+            time--;
+        }
     }
 
     private void ChangeHero(SocketIOEvent e)

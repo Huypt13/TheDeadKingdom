@@ -45,10 +45,7 @@ class UserController {
           username: user?.username,
         });
       }
-      return ApiResponse.badRequestResponse(
-        res,
-        "Email or password incorrect"
-      );
+      return ApiResponse.badRequestResponse(res, "Email or password incorrect");
     } catch (error) {
       return ApiResponse.serverErrorResponse(res, error.message);
     }
@@ -84,17 +81,31 @@ class UserController {
 
   async connectWalletAddress(req, res) {
     try {
-      
       const userId = res.locals.user._id.toString();
       const { walletAddress } = req.query;
-      if(!walletAddress){
+      const userA = await UserService.getByWalletAddress(walletAddress);
+      const user1 = await UserService.getById(userId);
+      if (!user1) {
+        return ApiResponse.unauthorizeResponse(res, "wrong id");
+      }
+      if (user1 && user1?.walletAddress) {
+        return ApiResponse.badRequestResponse(res, "wallet has been connected");
+      }
+      if (userA)
+        return ApiResponse.badRequestResponse(res, "wallet has been used");
+
+      if (!walletAddress) {
         return ApiResponse.serverErrorResponse(res, "WalletAddress invalid");
       }
+
       const user = await UserService.connectWallet(walletAddress, userId);
       if (!user) {
-        return ApiResponse.badRequestResponse(res, "Connect to Wallet failed");
+        return ApiResponse.badRequestResponse(
+          res,
+          "Connect to Wallet failed 1"
+        );
       }
-       return ApiResponse.successResponseWithData(res,"Connect to wallet successfully", user)
+      return ApiResponse.successResponseWithData(res, "success", user);
     } catch (error) {
       console.log(error);
       return ApiResponse.serverErrorResponse(res, "Connect to Wallet failed");
@@ -147,7 +158,7 @@ class UserController {
 
   async getTopRank(req, res) {
     try {
-      const { top } = req.query;
+      let { top } = req.query;
       if (!Number.isInteger(top)) {
         top = 20;
       } else if (top < 1) {
@@ -175,15 +186,24 @@ class UserController {
   }
   async changePassword(req, res) {
     try {
-      const {newPassword, password} = req.body;
+      const { newPassword, password } = req.body;
       const email = res.locals.user.email;
       if (newPassword.length > 30 || newPassword.length < 8) {
-        return ApiResponse.badRequestResponse(res, "newPassword must >= 8 and <=30");
+        return ApiResponse.badRequestResponse(
+          res,
+          "newPassword must >= 8 and <=30"
+        );
       }
       if (password.length > 30 || password.length < 8) {
-        return ApiResponse.badRequestResponse(res, "Password must >= 8 and <=30");
+        return ApiResponse.badRequestResponse(
+          res,
+          "Password must >= 8 and <=30"
+        );
       }
-      const user = await UserService.changePassword({password, newPassword},email);
+      const user = await UserService.changePassword(
+        { password, newPassword },
+        email
+      );
       if (!user) throw new Error(`Cannot change password`);
       return ApiResponse.successResponse(res, "Change password success");
     } catch (error) {
@@ -209,7 +229,10 @@ class UserController {
     try {
       const { token, newPassword } = req.body;
       if (newPassword.length > 30 || newPassword.length < 8) {
-        return ApiResponse.badRequestResponse(res, "Password must >= 8 and <=30");
+        return ApiResponse.badRequestResponse(
+          res,
+          "Password must >= 8 and <=30"
+        );
       }
       await UserService.changePasswordToken(token, newPassword);
       return ApiResponse.successResponse(res, "Change password success");

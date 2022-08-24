@@ -157,9 +157,12 @@ public class GameUI : MonoBehaviour
         {
             case "Game":
                 gameLobbyContainer.SetActive(true);
+                AudioManager.Instance.PlayBackgroundSound("gameBackground");
                 break;
             case "EndGame":
                 gameLobbyContainer.SetActive(false);
+                RemoveDeadPanel();
+                AudioManager.Instance.StopBackgroundSound();
                 break;
             case "Lobby":
                 gameLobbyContainer.SetActive(false);

@@ -2,6 +2,7 @@
 
 pragma solidity ^0.8.13;
 
+import "./ILinkWallet.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
@@ -13,13 +14,15 @@ contract Marketplace is ReentrancyGuard, Ownable {
     Counters.Counter private _marketItemIds;
     Counters.Counter private _nftSold;
     IERC20 public deathKingdomCoin;
+    ILinkWallet public linkWallet;
     uint256 public platformFee = 25;
     uint256 public deno = 1000;
 
     mapping(uint256 => NFTMarketItem) private marketItems;
 
-    constructor(address _deathKingdomCoinContract) {
+    constructor(address _deathKingdomCoinContract, address _linkWalletAddress) {
         deathKingdomCoin = IERC20(_deathKingdomCoinContract);
+        linkWallet = ILinkWallet(_linkWalletAddress);
     }
 
     struct NFTMarketItem {
@@ -73,6 +76,10 @@ contract Marketplace is ReentrancyGuard, Ownable {
         uint256 _tokenId,
         uint256 _price
     ) public {
+        require(
+            bytes(linkWallet.getUserIdByWalletAddress(msg.sender)).length > 0,
+            "Wallet Address must be linked with user account before listNft"
+        );
         require(_price > 0, "Price must > 0");
         require(
             IERC721(_nftContract).ownerOf(_tokenId) == msg.sender,
@@ -130,6 +137,10 @@ contract Marketplace is ReentrancyGuard, Ownable {
         payable
         marketplaceItemExist(_marketItemId)
     {
+        require(
+            bytes(linkWallet.getUserIdByWalletAddress(msg.sender)).length > 0,
+            "Wallet Address must be linked with user account before buyNft"
+        );
         NFTMarketItem storage nftMarketItem = marketItems[_marketItemId];
         require(nftMarketItem.isSelling == true, "NFT is not Selling");
         require(

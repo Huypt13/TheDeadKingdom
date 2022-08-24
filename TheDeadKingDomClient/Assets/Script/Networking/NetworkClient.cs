@@ -136,7 +136,11 @@ public class NetworkClient : SocketIOComponent
             TankGeneral tg = ni.GetComponent<TankGeneral>();
             tg.Speed = speed;
             tg.AttackSpeed = attackSpeed;
+            tg.Stunned = false;
+            tg.IsAutoMove = false;
 
+            var ntr = ni.GetComponent<NetworkTransform>();
+            ntr.IsFocusOn = false;
         });
 
 
@@ -885,6 +889,15 @@ public class NetworkClient : SocketIOComponent
             tankgen.StartPos = new Vector2(startx, starty);
             tankgen.Range = range;
             // quay huong
+
+        });
+
+        On("resetPlayer", (E) =>
+        {
+            string id = E.data["id"].str;
+            float speed = E.data["tank"]["speed"].f;
+            NetworkIdentity ni = serverObjects[id];
+
 
         });
 

@@ -115,6 +115,7 @@ public class RsMatchSceneManagement : MonoBehaviour
 
         float kill1 = e.data["kill1"].f;
         float kill2 = e.data["kill2"].f;
+        txtCoinReward.text = "x" + e.data["reward"].f;
 
         team1TotalKill.text = kill1.ToString();
         team2TotalKill.text = kill2.ToString();
@@ -152,7 +153,6 @@ public class RsMatchSceneManagement : MonoBehaviour
 
                 imgTankEndgame.GetComponent<Image>().sprite = ImageManager.Instance.GetImage(tankType, tankLevel, ImageManager.ImageType.TankEndMatch);
 
-                txtCoinReward.text = "x3";
             }
         });
     }

@@ -98,11 +98,19 @@ class UserController {
         return ApiResponse.serverErrorResponse(res, "WalletAddress invalid");
       }
 
+      const isSuccess = await UserService.linkWallet(userId, walletAddress);
+      if (!isSuccess) {
+        return ApiResponse.badRequestResponse(
+          res,
+          "Connect to Wallet failed when call to blockchain"
+        );
+      }
+
       const user = await UserService.connectWallet(walletAddress, userId);
       if (!user) {
         return ApiResponse.badRequestResponse(
           res,
-          "Connect to Wallet failed 1"
+          "Connect to Wallet failed when save data to Database"
         );
       }
       return ApiResponse.successResponseWithData(res, "success", user);
@@ -150,6 +158,9 @@ class UserController {
         _id = req.query.userId;
       }
       const userInfor = await UserService.getUserInfor(_id);
+      if (userInfor.walletAddress) {
+        userInfor.balance = await UserService.getDKCBalance(userInfor.walletAddress);
+      }
       return ApiResponse.successResponseWithData(res, "Success", userInfor);
     } catch (error) {
       return ApiResponse.serverErrorResponse(res, error.message);

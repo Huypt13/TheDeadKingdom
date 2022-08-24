@@ -9,6 +9,7 @@ TagManager:
   - Box
   - MainHouse
   - EfDestroy
+  - Flag
   layers:
   - Default
   - TransparentFX

@@ -28,6 +28,10 @@ public class NetworkClient : SocketIOComponent
 
     [SerializeField]
     private GameObject healthComponent;
+
+    [SerializeField]
+    private GameObject prefabFlagHealthBar;
+
     [SerializeField]
     private Transform networkContainer;
     public static Action<SocketIOEvent> OnGameStateChange = (E) => { };
@@ -464,7 +468,7 @@ public class NetworkClient : SocketIOComponent
                     ni1.SetControllerId(id);
                     ni1.SetSocketReference(this);
                     serverObjects.Add(id, ni1);
-                    GameObject h = Instantiate(healthComponent, networkContainer);
+                    GameObject h = Instantiate(prefabFlagHealthBar, networkContainer);
                     h.SetActive(true);
                     var healthBar = h.transform.GetComponentInChildren<HealthBar>();
                     if (ClientID == id)

@@ -788,6 +788,7 @@ MonoBehaviour:
   pingTimeout: 60
   serverSpawnables: {fileID: 11400000, guid: d75d0eadca12147309fc5ab7eb5cdf3e, type: 2}
   healthComponent: {fileID: 8083527502334416079, guid: 7643330dc513c1c43b579eeee6c0beb3, type: 3}
+  prefabFlagHealthBar: {fileID: 5106114516459535329, guid: 2fa5d0a14cfd32343a12972ae84d00e0, type: 3}
   networkContainer: {fileID: 109464434}
 --- !u!4 &183631610
 Transform:

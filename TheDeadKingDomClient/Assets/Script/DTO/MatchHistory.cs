@@ -10,6 +10,7 @@ public class MatchHistory
     public float team1Kill;
     public float team2Kill;
     public string time;
+    public string gameMode;
 
 }
 

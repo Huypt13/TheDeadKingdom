@@ -29,7 +29,6 @@ const BoxRouter = require("./src/api/box/Box.router");
 
 const app = express();
 const server = require("http").createServer(app);
-
 dotenv.config();
 app.get("/", (req, res) => {
   res.send("lala");
@@ -94,4 +93,6 @@ app.use("/box", BoxRouter);
 app.use("/history", Authentication, HistoryRouter);
 app.use("/marketPlace", MarketPlaceRouter);
 Database.connect(app);
-server.listen(8080);
+server.listen(8080,"0.0.0.0");
+// server.listen(8080);
+

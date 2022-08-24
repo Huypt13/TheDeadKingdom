@@ -87,8 +87,7 @@ class MarketPlaceItemService {
             if (!buyer || !seller) {
                 throw new Error("Buyer Or seller is not connect wallet");
             }
-            marketPlace.price = Number(marketPlace.price);
-            const TankUser = await TankUserService.updateData({ nftId: marketPlace.tokenId, userId: seller._id.toString(), },
+            const TankUser = await TankUserService.updateData({ nftId: marketPlace.tokenId, userId: seller._id.toString()},
                 { userId: buyer._id.toString(), boughtDate: new Date() });
             if (!TankUser) {
                 throw new Error("Sold fail");

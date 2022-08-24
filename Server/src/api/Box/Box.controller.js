@@ -41,8 +41,7 @@ class BoxController {
   async getBoxDetails(req, res) {
     try {
       const { id } = req.params;
-      const allBox = await BoxService.getByBoxId(id);
-      return ApiResponse.successResponseWithData(res, "Ok", allBox);
+      return ApiResponse.successResponseWithData(res, "Ok", [{level:1,ratio:60},{level:2,ratio:30},{level:3,ratio:10}]);
     } catch (err) {
       console.log(err);
       ApiResponse.serverErrorResponse(res, err.message);

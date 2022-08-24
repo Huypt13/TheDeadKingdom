@@ -1,5 +1,5 @@
 module.exports = {
-  CountKillMaxPlayer: 1,
+  CountKillMaxPlayer: 4,
   CountKillMinPlayer: 1,
   CountKillTime: 150,
 

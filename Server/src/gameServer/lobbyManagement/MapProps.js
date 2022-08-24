@@ -14,22 +14,22 @@ module.exports.map = {
   IcexLavaMap: {
     TankSpawnPosition: [
       {
-        position: { x: 1.88, y: -7.43 },
+        position: new Vector2(1.88, -7.43),
       },
       {
-        position: { x: -10.52818, y: 5.392758 },
+        position: new Vector2(-10.52818, 5.392758),
       },
       {
-        position: { x: 2.01, y: -4.82 },
+        position: new Vector2(2.01, -4.82),
       },
       {
-        position: { x: -10.52818, y: 3.201224 },
+        position: new Vector2(-10.52818, 3.201224),
       },
       {
-        position: { x: 5.12, y: -4.63 },
+        position: new Vector2(5.12, -4.63),
       },
       {
-        position: { x: -13.30769, y: 3.201224 },
+        position: new Vector2(-13.30769, 3.201224),
       },
     ],
     BaseRed: [
@@ -172,6 +172,26 @@ module.exports.map = {
 
   },
   IceMap: {
+    TankSpawnPosition: [
+      {
+        position: new Vector2( -14,-6 ),
+      },
+      {
+        position: new Vector2(-14, -8 ),
+      },
+      {
+        position: new Vector2(-13, -6 ),
+      },
+      {
+        position: new Vector2(-13, -8),
+      },
+      {
+        position: new Vector2(-12, -6 ),
+      },
+      {
+        position: new Vector2(-12, -8 ),
+      },
+    ],
     WoodBox: [
       {
         position: { x: 6.51, y: -7.52 }
@@ -253,6 +273,27 @@ module.exports.map = {
     ],
   },
   FarmMap: {
+    TankSpawnPosition: [
+      {
+        position: new Vector2(-10,-8),
+      },
+      {
+        position: new Vector2(8,2),
+      },
+      {
+        position: new Vector2(-8.5,-9),
+      },
+      {
+        position: new Vector2(6.5,3),
+      },
+      {
+        position: new Vector2(-10,-10),
+      },
+      {
+        position: new Vector2(8,4),
+      },
+      
+    ],
     WoodBox: [
       {
         position: { x: -9.43, y: 4.56 },
@@ -327,12 +368,15 @@ module.exports.map = {
     BlueTeamSmallTurret: [
       {
         position: { x: -11.37, y: 1.05 },
+        position: { x: -6, y: -10 }
+        
       },
     ],
 
     RedTeamSmallTurret: [
       {
         position: { x: 9.46, y: -7.3 },
+        position: { x: 4, y: 4 }
       },
     ],
 

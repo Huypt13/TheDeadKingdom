@@ -126,6 +126,7 @@ class HistoryService {
           members: {
             $push: "$members",
           },
+          gameMode: { $first: "$gameMode" },
           teamWin: { $first: "$teamWin" },
           team1Kill: { $first: "$team1Kill" },
           team2Kill: { $first: "$team2Kill" },

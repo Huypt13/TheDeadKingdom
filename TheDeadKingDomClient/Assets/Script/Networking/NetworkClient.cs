@@ -710,22 +710,22 @@ public class NetworkClient : SocketIOComponent
             NetworkIdentity ni = serverObjects[id];
             if (ni.GetComponent<TankGeneral>() != null)
             {
-                float type = E.data["type"].f;
-                float speed = E.data["tank"]["speed"].f;
-                Debug.Log(type + "  " + speed);
-                if (type == 1)
-                {
-                    var targetDistance = Vector3.Distance(new Vector3(x, y, 0), ni.transform.position);
-                    var time = targetDistance / speed;
-                    //Vector3 direction = (new Vector3(x, y, 0) - transform.position).normalized;
-                    //ni.GetComponent<TankGeneral>().Rb.MovePosition(transform.position + direction * speed * Time.deltaTime);
-                    StartCoroutine(MoveSmoothing(ni.transform, new Vector3(x, y, 0), time));
+                //float type = E.data["type"].f;
+                //float speed = E.data["tank"]["speed"].f;
+                //Debug.Log(type + "  " + speed);
+                //if (type == 1)
+                //{
+                //    var targetDistance = Vector3.Distance(new Vector3(x, y, 0), ni.transform.position);
+                //    var time = targetDistance / speed;
+                //    //Vector3 direction = (new Vector3(x, y, 0) - transform.position).normalized;
+                //    //ni.GetComponent<TankGeneral>().Rb.MovePosition(transform.position + direction * speed * Time.deltaTime);
+                //    StartCoroutine(MoveSmoothing(ni.transform, new Vector3(x, y, 0), time));
 
-                }
-                else
-                {
-                    StartCoroutine(AIPositionSmoothing(ni.transform, new Vector3(x, y, 0)));
-                }
+                //}
+                //else
+                //{
+                StartCoroutine(AIPositionSmoothing(ni.transform, new Vector3(x, y, 0)));
+                //   }
 
             }
             else

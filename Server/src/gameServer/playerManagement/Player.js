@@ -135,7 +135,7 @@ class Player {
           this.health -= GameMechanism.getDame(this.tank, burn.value);
           if (this.health <= 0) {
             this.isDead = true;
-            this.setInitValue();
+            this.deadResetEffect();
             const activator = lobby.skill.find((sk) => {
               sk.id == burn.id;
             })?.activator;

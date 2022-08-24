@@ -31,7 +31,7 @@ class UserService {
   }
   async connectWallet(walletAddress, userId) {
     try {
-      return User.findByIdAndUpdate(
+      return await User.findByIdAndUpdate(
         userId,
         { walletAddress: walletAddress },
         { new: true }
@@ -234,21 +234,40 @@ class UserService {
     }
   }
 
-  async setWeb3Value(){
+  async setWeb3Value() {
     const web3 = new Web3(
       "https://rinkeby.infura.io/v3/fe3e4b587cc84ddb8f281f9bfdf3df6c"
     );
     const networkId = await web3.eth.net.getId();
-    const deathKingdomCoinContract = new web3.eth.Contract(DeathKingdomCoin.abi,DeathKingdomCoin.networks[networkId].address);
-    const tankNFTContract = new web3.eth.Contract(TankNFT.abi, TankNFT.networks[networkId].address);
-    const marketplaceContract = new web3.eth.Contract(Marketplace.abi, Marketplace.networks[networkId].address);
-    const linkWalletContract = new web3.eth.Contract(LinkWallet.abi, LinkWallet.networks[networkId].address);
+    const deathKingdomCoinContract = new web3.eth.Contract(
+      DeathKingdomCoin.abi,
+      DeathKingdomCoin.networks[networkId].address
+    );
+    const tankNFTContract = new web3.eth.Contract(
+      TankNFT.abi,
+      TankNFT.networks[networkId].address
+    );
+    const marketplaceContract = new web3.eth.Contract(
+      Marketplace.abi,
+      Marketplace.networks[networkId].address
+    );
+    const linkWalletContract = new web3.eth.Contract(
+      LinkWallet.abi,
+      LinkWallet.networks[networkId].address
+    );
 
-    return {web3, networkId, deathKingdomCoinContract,tankNFTContract,marketplaceContract, linkWalletContract};
+    return {
+      web3,
+      networkId,
+      deathKingdomCoinContract,
+      tankNFTContract,
+      marketplaceContract,
+      linkWalletContract,
+    };
   }
 
   async linkWallet(userId, walletAddress) {
-    let {web3, linkWalletContract} = await this.setWeb3Value(); 
+    let { web3, linkWalletContract } = await this.setWeb3Value();
 
     const address = "0xA338b617517AFF6ca572B0D5Be5A64b64DabCA2d";
     const privateKey =
@@ -256,10 +275,7 @@ class UserService {
 
     web3.eth.accounts.wallet.add(privateKey);
 
-    const tx = linkWalletContract.methods.linkWallet(
-      walletAddress,
-      userId
-    );
+    const tx = linkWalletContract.methods.linkWallet(walletAddress, userId);
     const gas = await tx.estimateGas({ from: address });
     const gasPrice = await web3.eth.getGasPrice();
     const data = tx.encodeABI();
@@ -275,13 +291,15 @@ class UserService {
 
     await web3.eth.sendTransaction(txData);
 
-    console.log(await linkWalletContract.methods
-      .getUserIdByWalletAddress(walletAddress)
-      .call());
+    console.log(
+      await linkWalletContract.methods
+        .getUserIdByWalletAddress(walletAddress)
+        .call()
+    );
   }
 
   async getDKCBalance(walletAddress) {
-    let {web3, deathKingdomCoinContract} = await this.setWeb3Value(); 
+    let { web3, deathKingdomCoinContract } = await this.setWeb3Value();
     const balance = await deathKingdomCoinContract.methods
       .balanceOf(walletAddress)
       .call();
@@ -289,15 +307,14 @@ class UserService {
   }
 
   async rewardAfterMatch(userId, isWin) {
-    let {web3, deathKingdomCoinContract} = await this.setWeb3Value(); 
+    let { web3, deathKingdomCoinContract } = await this.setWeb3Value();
 
     let player = this.getById(userId);
     let reward = Ranking.getRankIndex(numOfStars);
-    if(isWin){
-      reward = 3 + 0.5*(Ranking.getRankIndex(player.numOfStars));
-    }
-    else {
-      reward = 1 + 0.2*(Ranking.getRankIndex(player.numOfStars));
+    if (isWin) {
+      reward = 3 + 0.5 * Ranking.getRankIndex(player.numOfStars);
+    } else {
+      reward = 1 + 0.2 * Ranking.getRankIndex(player.numOfStars);
     }
 
     const address = "0xA338b617517AFF6ca572B0D5Be5A64b64DabCA2d";

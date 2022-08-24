@@ -21,13 +21,7 @@ const HistoryRouter = require("./src/api/history/History.router");
 const BoxRouter = require("./src/api/box/Box.router");
 
 const app = express();
-const server = require("https").createServer(
-  {
-    key: fs.readFileSync("key.pem"),
-    cert: fs.readFileSync("cert.pem"),
-  },
-  app
-);
+const server = require("http").createServer(app);
 dotenv.config();
 app.get("/", (req, res) => {
   res.send("lala");

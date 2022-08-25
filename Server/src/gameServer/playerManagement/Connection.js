@@ -95,8 +95,8 @@ class Connection {
       });
       socket.on("collisionDestroyBox", (data) => {
         if (connection.lobby instanceof GameLobby) {
+          this.lobby.onCollisionDestroyBox(this, data);
         }
-        this.lobby.onCollisionDestroyBox(this, data);
       });
       socket.on("PlayerTouchItem", (data) => {
         if (connection.lobby instanceof GameLobby) {

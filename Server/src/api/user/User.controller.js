@@ -89,7 +89,7 @@ class UserController {
         return ApiResponse.unauthorizeResponse(res, "wrong id");
       }
       if (user1 && user1?.walletAddress) {
-        return ApiResponse.badRequestResponse(res, "wallet has been connected");
+        return ApiResponse.badRequestResponse(res, "You already linked to Metamask");
       }
       if (userA)
         return ApiResponse.badRequestResponse(res, "wallet has been used");
@@ -152,14 +152,18 @@ class UserController {
   }
 
   async getUserInfor(req, res) {
+    console.log("xx");
     try {
       let _id = res.locals?.user?._id.toString();
+
       if (req.query?.userId) {
         _id = req.query.userId;
       }
       const userInfor = await UserService.getUserInfor(_id);
-      if (userInfor.walletAddress) {
-        userInfor.balance = await UserService.getDKCBalance(userInfor.walletAddress);
+      if (userInfor?.walletAddress) {
+        userInfor.balance = await UserService.getDKCBalance(
+          userInfor?.walletAddress
+        );
       }
       return ApiResponse.successResponseWithData(res, "Success", userInfor);
     } catch (error) {

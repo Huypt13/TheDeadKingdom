@@ -236,35 +236,39 @@ class UserService {
   }
 
   async setWeb3Value() {
-    const web3 = new Web3(
-      "https://rinkeby.infura.io/v3/fe3e4b587cc84ddb8f281f9bfdf3df6c"
-    );
-    const networkId = await web3.eth.net.getId();
-    const deathKingdomCoinContract = new web3.eth.Contract(
-      DeathKingdomCoin.abi,
-      DeathKingdomCoin.networks[networkId].address
-    );
-    const tankNFTContract = new web3.eth.Contract(
-      TankNFT.abi,
-      TankNFT.networks[networkId].address
-    );
-    const marketplaceContract = new web3.eth.Contract(
-      Marketplace.abi,
-      Marketplace.networks[networkId].address
-    );
-    const linkWalletContract = new web3.eth.Contract(
-      LinkWallet.abi,
-      LinkWallet.networks[networkId].address
-    );
+    try {
+      const web3 = new Web3(
+        "https://rinkeby.infura.io/v3/fe3e4b587cc84ddb8f281f9bfdf3df6c"
+      );
+      const networkId = await web3.eth.net.getId();
+      const deathKingdomCoinContract = new web3.eth.Contract(
+        DeathKingdomCoin.abi,
+        DeathKingdomCoin.networks[networkId].address
+      );
+      const tankNFTContract = new web3.eth.Contract(
+        TankNFT.abi,
+        TankNFT.networks[networkId].address
+      );
+      const marketplaceContract = new web3.eth.Contract(
+        Marketplace.abi,
+        Marketplace.networks[networkId].address
+      );
+      const linkWalletContract = new web3.eth.Contract(
+        LinkWallet.abi,
+        LinkWallet.networks[networkId].address
+      );
 
-    return {
-      web3,
-      networkId,
-      deathKingdomCoinContract,
-      tankNFTContract,
-      marketplaceContract,
-      linkWalletContract,
-    };
+      return {
+        web3,
+        networkId,
+        deathKingdomCoinContract,
+        tankNFTContract,
+        marketplaceContract,
+        linkWalletContract,
+      };
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async linkWallet(userId, walletAddress) {
@@ -299,19 +303,22 @@ class UserService {
       //     .call()
       // );
       return true;
-    }
-    catch (e) {
+    } catch (e) {
       console.log(e);
       return false;
     }
   }
 
   async getDKCBalance(walletAddress) {
-    let { web3, deathKingdomCoinContract } = await this.setWeb3Value();
-    const balance = await deathKingdomCoinContract.methods
-      .balanceOf(walletAddress)
-      .call();
-    return Web3.utils.fromWei(balance, "ether");
+    try {
+      let { web3, deathKingdomCoinContract } = await this.setWeb3Value();
+      const balance = await deathKingdomCoinContract.methods
+        .balanceOf(walletAddress)
+        .call();
+      let bl = Web3.utils.fromWei(balance, "ether");
+      if (bl) return bl;
+      return null;
+    } catch (error) {}
   }
 
   async rewardAfterMatch(userId, isWin) {
@@ -354,8 +361,7 @@ class UserService {
       }
 
       return reward;
-    }
-    catch (e) {
+    } catch (e) {
       console.log(e);
       return 0;
     }

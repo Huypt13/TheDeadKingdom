@@ -56,7 +56,7 @@ module.exports = class GameLobby extends LobbyBase {
     this.ai1Kill = 0;
     this.ai2Kill = 0;
     this.isSendRs = 0;
-    this.endGameLobby = function () { };
+    this.endGameLobby = function () {};
     this.listItem = [];
   }
   async onUpdate() {
@@ -343,7 +343,10 @@ module.exports = class GameLobby extends LobbyBase {
           };
         } else {
           await User.updateStar(-1, connection.player._id);
-          let reward = await User.rewardAfterMatch(connection.player._id, false);
+          let reward = await User.rewardAfterMatch(
+            connection.player._id,
+            false
+          );
           members.push({
             tank: connection.player.startTank.tankUserId,
             userId: connection.player._id,
@@ -745,7 +748,7 @@ module.exports = class GameLobby extends LobbyBase {
       activator,
       direction,
       position,
-      bulletSpeed: activeBy?.player?.tank?.bulletSpeed || bullet.speed,
+      bulletSpeed: activeBy?.player?.tank?.bulletSpeed || 6,
     };
     connection.socket.emit("serverSpawn", returnData1);
     connection.socket.broadcast.to(this.id).emit("serverSpawn", returnData1);
@@ -991,7 +994,7 @@ module.exports = class GameLobby extends LobbyBase {
       );
       Skill001.Skill3Handler(
         connection,
-        connection.player.startTank.skill3,
+        connection.player.startTank?.skill3,
         this
       );
     } else if (typeId === "002" && num === 1) {

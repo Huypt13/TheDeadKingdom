@@ -1,17 +1,17 @@
 const Vector2 = require("../../dto/Vector2");
 
 const tankAi = {
-  speed: 0.15,
-  rotationSpeed: 0.3,
+  speed: 0.25,
+  rotationSpeed: 0.5,
   damage: 80,
-  health: 1000,
-  attackSpeed: 1,
+  health: 2000,
+  attackSpeed: 0.5,
   bulletSpeed: 1,
   shootingRange: 7,
 };
 module.exports.map = {
   IcexLavaMap: {
-    TankSpawnPosition: [ 
+    TankSpawnPosition: [
       {
         position: new Vector2(-13.30769, 3.201224),
       },
@@ -106,17 +106,19 @@ module.exports.map = {
     Helipad1: [
       {
         position: { x: -5.8, y: 6.08 },
-      }
+      },
     ],
 
-    Helipad2: [{
-      position: { x: -4.04, y: -1.01 },
-    }
+    Helipad2: [
+      {
+        position: { x: -4.04, y: -1.01 },
+      },
     ],
 
-    Helipad3: [{
-      position: { x: -2.22, y: -8.038598 },
-    }
+    Helipad3: [
+      {
+        position: { x: -2.22, y: -8.038598 },
+      },
     ],
     WoodBox: [
       {
@@ -168,32 +170,31 @@ module.exports.map = {
         position: { x: 5.52, y: -9.26 },
       },
     ],
-
   },
   IceMap: {
     TankSpawnPosition: [
       {
-        position: new Vector2( -14,-6 ),
+        position: new Vector2(-14, -6),
       },
       {
-        position: new Vector2(-14, -8 ),
+        position: new Vector2(-14, -8),
       },
       {
-        position: new Vector2(-13, -6 ),
+        position: new Vector2(-13, -6),
       },
       {
         position: new Vector2(-13, -8),
       },
       {
-        position: new Vector2(-12, -6 ),
+        position: new Vector2(-12, -6),
       },
       {
-        position: new Vector2(-12, -8 ),
+        position: new Vector2(-12, -8),
       },
     ],
     WoodBox: [
       {
-        position: { x: 6.51, y: -7.52 }
+        position: { x: 6.51, y: -7.52 },
       },
       {
         position: { x: -11.52, y: 3.59 },
@@ -230,7 +231,6 @@ module.exports.map = {
       {
         position: { x: -0.4186823, y: -1.98 },
       },
-
     ],
     PileBox: [
       {
@@ -243,21 +243,24 @@ module.exports.map = {
     Helipad1: [
       {
         position: { x: -3.93, y: -7.02125 },
-      }
+      },
     ],
 
-    Helipad2: [{
-      position: { x: 5.02, y: 0 },
-    }
+    Helipad2: [
+      {
+        position: { x: 5.02, y: 0 },
+      },
     ],
 
-    Helipad3: [{
-      position: { x: -3.93, y: 5.93 },
-    }
+    Helipad3: [
+      {
+        position: { x: -3.93, y: 5.93 },
+      },
     ],
-    Helipad4: [{
-      position: { x: -12.71063, y: 0 },
-    }
+    Helipad4: [
+      {
+        position: { x: -12.71063, y: 0 },
+      },
     ],
     BlueTeamSmallTurret: [
       {
@@ -274,24 +277,23 @@ module.exports.map = {
   FarmMap: {
     TankSpawnPosition: [
       {
-        position: new Vector2(-10,-8),
+        position: new Vector2(-10, -8),
       },
       {
-        position: new Vector2(8,2),
+        position: new Vector2(8, 2),
       },
       {
-        position: new Vector2(-8.5,-9),
+        position: new Vector2(-8.5, -9),
       },
       {
-        position: new Vector2(6.5,3),
+        position: new Vector2(6.5, 3),
       },
       {
-        position: new Vector2(-10,-10),
+        position: new Vector2(-10, -10),
       },
       {
-        position: new Vector2(8,4),
+        position: new Vector2(8, 4),
       },
-      
     ],
     WoodBox: [
       {
@@ -369,15 +371,14 @@ module.exports.map = {
     BlueTeamSmallTurret: [
       {
         position: { x: -11.37, y: 1.05 },
-        position: { x: -6, y: -10 }
-        
+        position: { x: -6, y: -10 },
       },
     ],
 
     RedTeamSmallTurret: [
       {
         position: { x: 9.46, y: -7.3 },
-        position: { x: 4, y: 4 }
+        position: { x: 4, y: 4 },
       },
     ],
 

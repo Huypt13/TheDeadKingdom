@@ -91,8 +91,7 @@ module.exports = class TowerAI extends AIBase {
       }
     }
     if (
-      minConnection.position.Distance(this.position) >
-      this.tank.shootingRange + 1
+      minConnection.position.Distance(this.position) > this.tank.shootingRange
     ) {
       this.target = null;
       this.hasTarget = false;

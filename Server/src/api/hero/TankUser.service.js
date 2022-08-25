@@ -75,9 +75,19 @@ class TankUserService {
     try {
       const tankUser = await TankUser.findById(tankUserId);
       if (!tankUser) throw new Error("TankUser not found");
-      return tankUser.boxId;
+      return tankUser?.boxId;
     } catch (err) {
       console.log(err);
+      throw new Error(err.message);
+    }
+  }
+  async getNftId(tankUserId) {
+    try {
+      console.log(tankUserId);
+      const tankUser = await TankUser.findById(tankUserId);
+      if (!tankUser) throw new Error("TankUser not found");
+      return tankUser?.nftId;
+    } catch (err) {
       throw new Error(err.message);
     }
   }

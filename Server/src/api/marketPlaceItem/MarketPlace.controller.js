@@ -6,8 +6,11 @@ class MarketPlaceItemController {
     try {
       let { day } = req.params;
       day = parseInt(day);
-      if (!Number.isInteger(day)||day <= 0) {
-        return ApiResponse.badRequestResponse(res, "Day must be integer number greater than zero")
+      if (!Number.isInteger(day) || day <= 0) {
+        return ApiResponse.badRequestResponse(
+          res,
+          "Day must be integer number greater than zero"
+        );
       }
       const statisticalTransaction =
         await MarketPlaceItemService.getTotalTransactionsByDay(day);
@@ -25,16 +28,31 @@ class MarketPlaceItemController {
       const { _id } = res.locals.user;
       let { day } = req.params;
       day = parseInt(day);
-      if (!Number.isInteger(day)||day <= 0) {
-        return ApiResponse.badRequestResponse(res, "Day must be integer number greater than zero")
+      if (!Number.isInteger(day) || day <= 0) {
+        return ApiResponse.badRequestResponse(
+          res,
+          "Day must be integer number greater than zero"
+        );
       }
       const Transaction = await MarketPlaceItemService.getSucceedTransaction(
-        _id.toString(), day
+        _id.toString(),
+        day
       );
       return ApiResponse.successResponseWithData(res, "Ok", Transaction);
     } catch (e) {
       console.log(e);
       ApiResponse.serverErrorResponse(res, e.message);
+    }
+  }
+
+  async checkInMarket(req, res) {
+    try {
+      const { tankUserId } = req.params;
+      return ApiResponse.successResponseWithData(res, "suceess", {
+        status: await MarketPlaceItemService.checkInMarket(tankUserId),
+      });
+    } catch (error) {
+      ApiResponse.serverErrorResponse(res, error.message);
     }
   }
 }

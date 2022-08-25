@@ -34,7 +34,11 @@ const gameServer = new GameServer();
 const gameSeverLoop = (() => {
   try {
     setInterval(async () => {
-      await gameServer.onUpdate();
+      try {
+        await gameServer.onUpdate();
+      } catch (error) {
+        console.log(error);
+      }
     }, 100);
   } catch (e) {
     console.log(e);

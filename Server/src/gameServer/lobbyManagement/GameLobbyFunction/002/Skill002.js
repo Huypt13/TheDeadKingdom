@@ -175,11 +175,11 @@ function Skill3Handler(connection, data, lobby) {
 
   let isDead = false;
   if (subjectOfAttack?.team != skillObject?.team) {
-    isDead = subjectOfAttack.dealDamage(skillEffect.damage);
+    isDead = subjectOfAttack.dealDamage(skillEffect?.damage);
   } else {
     if (typeEnemy == "Player") {
       subjectOfAttack.health = Math.min(
-        subjectOfAttack.health + skillEffect.healing,
+        subjectOfAttack.health + skillEffect?.healing,
         subjectOfAttack.startTank.health
       );
 

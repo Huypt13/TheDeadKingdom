@@ -70,7 +70,7 @@ class TankService {
       },
     ]);
     if (!_.isEmpty(tankUser)) {
-      return tankUser[0].tank;
+      return tankUser[0];
     }
     return null;
   }

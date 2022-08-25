@@ -48,9 +48,11 @@ class MarketPlaceItemController {
   async checkInMarket(req, res) {
     try {
       const { tankUserId } = req.params;
-      return ApiResponse.successResponseWithData(res, "suceess", {
-        status: await MarketPlaceItemService.checkInMarket(tankUserId),
-      });
+      return ApiResponse.successResponseWithData(
+        res,
+        "suceess",
+        await MarketPlaceItemService.checkInMarket(tankUserId)
+      );
     } catch (error) {
       ApiResponse.serverErrorResponse(res, error.message);
     }

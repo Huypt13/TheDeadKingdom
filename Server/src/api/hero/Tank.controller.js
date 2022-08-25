@@ -26,7 +26,6 @@ class TankController {
 
   async getTankByTankUser1(req, res) {
     try {
-      const { user } = res.locals;
       const { _id } = req.query;
       const tank = await TankService.getByTankUserId(_id);
       return ApiResponse.successResponseWithData(res, "Ok", tank);

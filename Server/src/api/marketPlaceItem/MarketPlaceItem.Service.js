@@ -358,12 +358,10 @@ class MarketPlaceItemService {
   async checkInMarket(tankUserId) {
     try {
       const nftId = await TankUserService.getNftId(tankUserId);
-      const inMarket = await MarketPlaceItem.findOne({
+      return await MarketPlaceItem.findOne({
         tokenId: nftId,
         isSelling: true,
       }).lean();
-      if (inMarket) return true;
-      return false;
     } catch (error) {
       throw new Error(error.message);
     }

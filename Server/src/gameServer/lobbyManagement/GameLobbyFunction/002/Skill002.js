@@ -14,7 +14,7 @@ function Skill1Handler(connection, data, lobby) {
     return e.id == id;
   });
 
-  const skillEffect = skillObject.skill;
+  const skillEffect = skillObject?.skill;
   if (!subjectOfAttack) {
     return;
   }

@@ -994,7 +994,7 @@ module.exports = class GameLobby extends LobbyBase {
       );
       Skill001.Skill3Handler(
         connection,
-        connection.player.startTank.skill3,
+        connection.player.startTank?.skill3,
         this
       );
     } else if (typeId === "002" && num === 1) {

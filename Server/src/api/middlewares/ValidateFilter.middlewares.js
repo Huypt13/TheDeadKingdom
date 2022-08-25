@@ -1,22 +1,10 @@
-<<<<<<< HEAD
-const validator = require("validator");
-const ApiResponse = require("../../utility/ApiResponse");
-
-module.exports.validateReqQuery = async (req, res, next) => {
-  try {
-    convertStringToObject(req);
-=======
 const validator = require('validator')
 const ApiResponse = require('../../utility/ApiResponse')
-
-
-
 
 
 module.exports.validateReqQuery = async (req, res, next) => {
     try {
     convertStringToObject(req)
->>>>>>> c638e2a12ee2f8c7432b6f63bb815f27a1e46070
     // console.log("object",req.query);
     const {
       levels,

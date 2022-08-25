@@ -1,12 +1,8 @@
-const TankUser = require('./TankUser.schema')
-const BoxService = require('../box/Box.service')
-const UserService = require('../user/User.service')
-const Box = require('../box/Box.service')
-const RabbitMq = require('../../helper/RabbitMq.helper')
-
-
-
-
+const TankUser = require("./TankUser.schema");
+const BoxService = require("../box/Box.service");
+const UserService = require("../user/User.service");
+const Box = require("../box/Box.service");
+const RabbitMq = require("../../helper/RabbitMq.helper");
 
 class TankUserService {
   async updateData(filter, data) {
@@ -25,15 +21,15 @@ class TankUserService {
       }
       const listTankUser = [];
       if (listToken.length <= 0) {
-        throw new Error("Buy box failed") 
+        throw new Error("Buy box failed");
       }
-      const tankUser = await TankUser.find({ nftId: { $in: listToken } })
+      const tankUser = await TankUser.find({ nftId: { $in: listToken } });
       if (tankUser.length >= 1) {
         throw new Error("boxId is already existed!");
       }
       const box = await BoxService.getByBoxId(boxId);
       if (!box) {
-        throw new Error("Box type not found")
+        throw new Error("Box type not found");
       }
       for (let token of listToken) {
         const tankUser = {
@@ -44,8 +40,7 @@ class TankUserService {
           openedDate: null,
           boughtDate: new Date(),
           boxId: boxId,
-
-        }
+        };
         listTankUser.push(tankUser);
       }
       const result = await TankUser.insertMany(listTankUser);
@@ -55,26 +50,24 @@ class TankUserService {
           email: owner.email,
           price: `${box.price * listToken.length}`,
           url: `${process.env.WEB_URL}/user/login`,
-        })
+        });
       } else {
         await RabbitMq.boughtBoxNotify({
           message: `You bought box failed`,
           email: owner.email,
           price: "",
           url: `${process.env.WEB_URL}/user/login`,
-        })
+        });
       }
       return result;
-
     } catch (err) {
       await RabbitMq.boughtBoxNotify({
         message: `You bought box failed`,
         email: owner.email,
         price: "",
         url: `${process.env.WEB_URL}/user/login`,
-      })
+      });
       console.log(err);
-     
     }
   }
 
@@ -96,14 +89,11 @@ class TankUserService {
           $lookup: {
             from: "tanks",
             let: { tankId: { $toObjectId: "$tankId" } },
-            pipeline: [
-              { $match: { $expr: { $eq: ["$_id", "$$tankId"] } } }
-            ],
-            as: "tanks"
-          }
-        }
-
-      ])
+            pipeline: [{ $match: { $expr: { $eq: ["$_id", "$$tankId"] } } }],
+            as: "tanks",
+          },
+        },
+      ]);
       if (tank.length == 0) {
         throw new Error("This tank is not exist");
       }

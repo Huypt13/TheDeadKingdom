@@ -603,21 +603,21 @@ module.exports = class GameLobby extends LobbyBase {
       shootingRange: 6,
     };
 
-    if (this.settings.gameMode == "Destroy") {
-      let house1 = new MainHouse();
-      house1.team = 1;
-      house1.health = 2000;
-      house1.maxHealth = 2000;
-      this.onServerSpawn(house1, new Vector2(7, -8));
+    // if (this.settings.gameMode == "Destroy") {
+    //   let house1 = new MainHouse();
+    //   house1.team = 1;
+    //   house1.health = 2000;
+    //   house1.maxHealth = 2000;
+    //   this.onServerSpawn(house1, new Vector2(7, -8));
 
-      let house2 = new MainHouse();
-      house2.team = 2;
-      house2.health = 2000;
-      house1.maxHealth = 2000;
+    //   let house2 = new MainHouse();
+    //   house2.team = 2;
+    //   house2.health = 2000;
+    //   house1.maxHealth = 2000;
 
-      console.log(house2);
-      this.onServerSpawn(house2, new Vector2(7, 1));
-    }
+    //   console.log(house2);
+    //   this.onServerSpawn(house2, new Vector2(7, 1));
+    // }
   
     let objectWithName = [];
     objectWithName["BlueTeamPotion"] = Potion;
@@ -627,6 +627,8 @@ module.exports = class GameLobby extends LobbyBase {
     objectWithName["PileBox"] = PileBox;
     // objectWithName["BlueTeamTankAI"] = TankAI;
     objectWithName["RedTeamTankAI"] = TankAI;
+    objectWithName["BlueTeamTankAI"] = TankAI;
+    objectWithName["BaseTankAI"] = TankAI;
     objectWithName["BlueTeamBigTurret"] = TowerAI;
     objectWithName["RedTeamBigTurret"] = TowerAI;
     objectWithName["BlueTeamSmallTurret"] = TowerAI;
@@ -635,6 +637,8 @@ module.exports = class GameLobby extends LobbyBase {
     objectWithName["Helipad2"] = Helipad;
     objectWithName["Helipad3"] = Helipad;
     objectWithName["Flag"] = Flag;
+    objectWithName["BaseRed"] = MainHouse;
+    objectWithName["BaseBlue"] = MainHouse;
     let currentMap = this.settings.map;
     let objectPositions = MapProp.map[currentMap];
     let objectProperties = MapProp.props;
@@ -646,6 +650,17 @@ module.exports = class GameLobby extends LobbyBase {
           flag.maxPoint = objectProperties.Flag.maxPoint;
           this.onServerSpawn(flag, new Vector2(pos.position.x, pos.position.y));
           continue;
+        }
+        if (this.settings.gameMode == "Destroy"){
+          if(objectName == "BaseRed" || objectName == "BaseBlue"){       
+            let gameObject = new objectWithName[objectName]();
+            for (let property in objectProperties[objectName]){
+              gameObject[property] = objectProperties[objectName][property]
+            }
+            console.log("object",gameObject);
+            this.onServerSpawn(gameObject, new Vector2(pos.position.x, pos.position.y));
+            continue;
+          }
         }
         let objectPosition = new Vector2(pos.position.x, pos.position.y);
         let gameObject = null;

@@ -77,7 +77,6 @@ class BoxService {
   async getAllBoxOwnerAndPaging({ pageNumbers, limit }, id) {
     try {
       const listBox = await this.getAllBoxOwner(id);
-      console.log("object", listBox);
       const total = listBox.length;
       const displayedBoxNumber = (pageNumbers - 1) * limit;
       if (total <= displayedBoxNumber) {

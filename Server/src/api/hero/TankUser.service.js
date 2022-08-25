@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+
 const TankUser = require("./TankUser.schema");
 const BoxService = require("../box/Box.service");
 const UserService = require("../user/User.service");
@@ -81,13 +83,35 @@ class TankUserService {
       throw new Error(err.message);
     }
   }
-  async getNftId(tankUserId) {
+
+  async getBoxOwnerDetail(tankUserId) {
     try {
-      console.log(tankUserId);
-      const tankUser = await TankUser.findById(tankUserId);
-      if (!tankUser) throw new Error("TankUser not found");
-      return tankUser?.nftId;
+      const tankUser = await TankUser.aggregate([
+        { $match: { _id: mongoose.Types.ObjectId(tankUserId), tankId: null } },
+        {
+          $lookup: {
+            from: "boxes",
+            let: { boxId: { $toObjectId: "$boxId" }, id: "$_id" },
+            pipeline: [
+              { $match: { $expr: { $eq: ["$_id", "$$boxId"] } } },
+              { $project: { _id: 0 } },
+              { $set: { _id: "$$id" } },
+            ],
+            as: "box",
+          },
+        },
+        { $unwind: "$box" },
+        { $project: { box: 1 } },
+      ]);
+      if (tankUser.length == 0) throw new Error("TankUser not found");
+      tankUser[0].box.rate = [
+        { level: 1, ratio: 60 },
+        { level: 2, ratio: 30 },
+        { level: 3, ratio: 10 },
+      ];
+      return tankUser[0].box;
     } catch (err) {
+      console.log(err);
       throw new Error(err.message);
     }
   }
@@ -110,6 +134,16 @@ class TankUserService {
       return tank;
     } catch (err) {
       console.log(err);
+      throw new Error(err.message);
+    }
+  }
+  async getNftId(tankUserId) {
+    try {
+      console.log(tankUserId);
+      const tankUser = await TankUser.findById(tankUserId);
+      if (!tankUser) throw new Error("TankUser not found");
+      return tankUser?.nftId;
+    } catch (err) {
       throw new Error(err.message);
     }
   }

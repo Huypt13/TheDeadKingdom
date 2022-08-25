@@ -11,7 +11,10 @@ const tankAi = {
 };
 module.exports.map = {
   IcexLavaMap: {
-    TankSpawnPosition: [
+    TankSpawnPosition: [ 
+      {
+        position: new Vector2(-13.30769, 3.201224),
+      },
       {
         position: new Vector2(1.88, -7.43),
       },
@@ -19,16 +22,13 @@ module.exports.map = {
         position: new Vector2(-10.52818, 5.392758),
       },
       {
-        position: new Vector2(2.01, -4.82),
+        position: new Vector2(4.86, -1.88),
       },
       {
         position: new Vector2(-10.52818, 3.201224),
       },
       {
         position: new Vector2(5.12, -4.63),
-      },
-      {
-        position: new Vector2(-13.30769, 3.201224),
       },
     ],
     BaseRed: [
@@ -397,6 +397,11 @@ module.exports.map = {
         position: { x: -3, y: 4 },
       },
     ],
+    // BlueTeamTankAI: [
+    //   {
+    //     position: { x: -3, y: 4 },
+    //   },
+    // ],
   },
 };
 

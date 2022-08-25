@@ -152,6 +152,7 @@ class GameServer {
       );
       // random map
       gamelobby.settings.map = _.shuffle(Maps[type])[0];
+      console.log("map",gamelobby.settings.map);
       gamelobby.settings.tankSpawnPosition = MapProps.map[gamelobby.settings.map].TankSpawnPosition;
       connection.player.spawnPos = gamelobby.settings.tankSpawnPosition[0]?.position || new Vector2(0,0);
       connection.player.position =  new Vector2(connection.player.spawnPos.x,connection.player.spawnPos.y);

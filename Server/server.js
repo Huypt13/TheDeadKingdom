@@ -1,6 +1,8 @@
 const express = require("express");
 const fs = require("fs");
 
+
+
 const MarketPlaceRouter = require("./src/api/marketPlaceItem/MarketPlace.router");
 
 const listener = require("./src/blockchainListenServer/listener");
@@ -32,7 +34,7 @@ app.get("/", (req, res) => {
 const io = require("socket.io")(server);
 const gameServer = new GameServer();
 // update game server
-const gameSeverLoop = (() => {
+const gameSeverLoop = (async () => {
   try {
     setInterval(async () => {
       try {

@@ -78,3 +78,9 @@ module.exports.validateReqQuery = async (req, res, next) => {
   }
   // console.log("object2",req.query);
 };
+
+function convertStringToObject(req) {
+  for (property in req.query) {
+    req.query[property] = JSON.parse(req.query[property]);
+  }
+}

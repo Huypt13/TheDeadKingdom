@@ -1,5 +1,6 @@
 using Newtonsoft.Json.Linq;
 using SocketIO;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -48,6 +49,9 @@ public class LobbyScreenManager : MonoBehaviour
 
     [SerializeField]
     private Text txtPlayerName;
+
+    [SerializeField]
+    private Text txtPlayerBalance;
 
     [SerializeField]
     private GameObject loadingCover;
@@ -158,8 +162,16 @@ public class LobbyScreenManager : MonoBehaviour
             else
             {
                 var jo = JObject.Parse(request.downloadHandler.text);
+                Debug.Log("xxx");
                 playerStar = jo["data"]["numOfStars"].ToObject<int>();
                 playerName = jo["data"]["username"].ToObject<string>();
+                Debug.Log("xxx");
+
+                if (jo["data"]["balance"] != null)
+                {
+                    float balance = jo["data"]["balance"].ToObject<float>();
+                    txtPlayerBalance.text = Math.Round(balance, 2).ToString();
+                }
 
                 txtPlayerName.text = playerName;
 

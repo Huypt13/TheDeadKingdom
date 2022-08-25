@@ -4076,6 +4076,7 @@ MonoBehaviour:
   txtMasterStar: {fileID: 791880410}
   imageSingleStar: {fileID: 531516070}
   txtPlayerName: {fileID: 763107726}
+  txtPlayerBalance: {fileID: 1958235345}
   loadingCover: {fileID: 446229091}
 --- !u!4 &1153119710
 Transform:

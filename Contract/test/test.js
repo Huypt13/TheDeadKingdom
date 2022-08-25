@@ -4,6 +4,7 @@ const TankNFT = artifacts.require("TankNFT");
 const LinkWallet = artifacts.require("LinkWallet");
 // const BigNumber = require("big-number");
 const Web3 = require("web3");
+
 const toBN = Web3.utils.toBN;
 const truffleAssert = require("truffle-assertions");
 
@@ -120,6 +121,11 @@ contract("SmartContract Testing", (accounts) => {
       let listingNFTs = await marketplace.getNftSellHistory(1);
       assert.equal(listingNFTs.length, 0);
     });
+
+    it("Get Box Price after deploy", async () => {
+      let boxPrice = await tankNFT.getBoxPrice("62f20d4b70d1f15ecd11c37a");
+      assert.equal(boxPrice.toString(), Web3.utils.toWei("200", "ether"));
+    });
   });
 
   describe("Buy Box state", () => {
@@ -202,7 +208,7 @@ contract("SmartContract Testing", (accounts) => {
           "caller is not the owner"
         );
       });
-      
+
       it("Link Wallet", async () => {
         await truffleAssert.passes(
           linkWallet.linkWallet(accounts[1], "userId1", { from: accounts[0] }),

@@ -204,7 +204,7 @@ public class PlayerProfileManager : MonoBehaviour
             txtTankName.GetComponent<Text>().text = myself.tank.name + "";
 
             GameObject txtMatchType = matchHistoryGameObject.transform.GetChild(5).gameObject;
-            txtMatchType.GetComponent<Text>().text = "Summoner Rift";
+            txtMatchType.GetComponent<Text>().text = matchData.gameMode;
 
             GameObject txtTime = matchHistoryGameObject.transform.GetChild(6).gameObject;
             txtTime.GetComponent<Text>().text = matchData.time + "";

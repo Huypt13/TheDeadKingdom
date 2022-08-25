@@ -236,112 +236,135 @@ class UserService {
   }
 
   async setWeb3Value() {
-    const web3 = new Web3(
-      "https://rinkeby.infura.io/v3/fe3e4b587cc84ddb8f281f9bfdf3df6c"
-    );
-    const networkId = await web3.eth.net.getId();
-    const deathKingdomCoinContract = new web3.eth.Contract(
-      DeathKingdomCoin.abi,
-      DeathKingdomCoin.networks[networkId].address
-    );
-    const tankNFTContract = new web3.eth.Contract(
-      TankNFT.abi,
-      TankNFT.networks[networkId].address
-    );
-    const marketplaceContract = new web3.eth.Contract(
-      Marketplace.abi,
-      Marketplace.networks[networkId].address
-    );
-    const linkWalletContract = new web3.eth.Contract(
-      LinkWallet.abi,
-      LinkWallet.networks[networkId].address
-    );
+    try {
+      const web3 = new Web3(
+        "https://rinkeby.infura.io/v3/fe3e4b587cc84ddb8f281f9bfdf3df6c"
+      );
+      const networkId = await web3.eth.net.getId();
+      const deathKingdomCoinContract = new web3.eth.Contract(
+        DeathKingdomCoin.abi,
+        DeathKingdomCoin.networks[networkId].address
+      );
+      const tankNFTContract = new web3.eth.Contract(
+        TankNFT.abi,
+        TankNFT.networks[networkId].address
+      );
+      const marketplaceContract = new web3.eth.Contract(
+        Marketplace.abi,
+        Marketplace.networks[networkId].address
+      );
+      const linkWalletContract = new web3.eth.Contract(
+        LinkWallet.abi,
+        LinkWallet.networks[networkId].address
+      );
 
-    return {
-      web3,
-      networkId,
-      deathKingdomCoinContract,
-      tankNFTContract,
-      marketplaceContract,
-      linkWalletContract,
-    };
+      return {
+        web3,
+        networkId,
+        deathKingdomCoinContract,
+        tankNFTContract,
+        marketplaceContract,
+        linkWalletContract,
+      };
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async linkWallet(userId, walletAddress) {
-    let { web3, linkWalletContract } = await this.setWeb3Value();
+    try {
+      let { web3, linkWalletContract } = await this.setWeb3Value();
 
-    const address = "0xA338b617517AFF6ca572B0D5Be5A64b64DabCA2d";
-    const privateKey =
-      "c5da068700edd9097b7a4ad79db5bd61021b9ecef75f112c01e3e1d9272dee92";
+      const address = "0xA338b617517AFF6ca572B0D5Be5A64b64DabCA2d";
+      const privateKey =
+        "c5da068700edd9097b7a4ad79db5bd61021b9ecef75f112c01e3e1d9272dee92";
 
-    web3.eth.accounts.wallet.add(privateKey);
+      web3.eth.accounts.wallet.add(privateKey);
 
-    const tx = linkWalletContract.methods.linkWallet(walletAddress, userId);
-    const gas = await tx.estimateGas({ from: address });
-    const gasPrice = await web3.eth.getGasPrice();
-    const data = tx.encodeABI();
-    const nonce = await web3.eth.getTransactionCount(address);
-    const txData = {
-      from: address,
-      to: linkWalletContract.options.address,
-      data: data,
-      gas,
-      gasPrice,
-      nonce,
-    };
+      const tx = linkWalletContract.methods.linkWallet(walletAddress, userId);
+      const gas = await tx.estimateGas({ from: address });
+      const gasPrice = await web3.eth.getGasPrice();
+      const data = tx.encodeABI();
+      const nonce = await web3.eth.getTransactionCount(address);
+      const txData = {
+        from: address,
+        to: linkWalletContract.options.address,
+        data: data,
+        gas,
+        gasPrice,
+        nonce,
+      };
 
-    await web3.eth.sendTransaction(txData);
+      await web3.eth.sendTransaction(txData);
 
-    console.log(
-      await linkWalletContract.methods
-        .getUserIdByWalletAddress(walletAddress)
-        .call()
-    );
+      // console.log(
+      //   await linkWalletContract.methods
+      //     .getUserIdByWalletAddress(walletAddress)
+      //     .call()
+      // );
+      return true;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
   }
 
   async getDKCBalance(walletAddress) {
-    let { web3, deathKingdomCoinContract } = await this.setWeb3Value();
-    const balance = await deathKingdomCoinContract.methods
-      .balanceOf(walletAddress)
-      .call();
-    return Web3.utils.fromWei(balance, "ether");
+    try {
+      let { web3, deathKingdomCoinContract } = await this.setWeb3Value();
+      const balance = await deathKingdomCoinContract.methods
+        .balanceOf(walletAddress)
+        .call();
+      let bl = Web3.utils.fromWei(balance, "ether");
+      if (bl) return bl;
+      return null;
+    } catch (error) {}
   }
 
   async rewardAfterMatch(userId, isWin) {
-    let { web3, deathKingdomCoinContract } = await this.setWeb3Value();
+    try {
+      let { web3, deathKingdomCoinContract } = await this.setWeb3Value();
 
-    let player = this.getById(userId);
-    let reward = Ranking.getRankIndex(numOfStars);
-    if (isWin) {
-      reward = 3 + 0.5 * Ranking.getRankIndex(player.numOfStars);
-    } else {
-      reward = 1 + 0.2 * Ranking.getRankIndex(player.numOfStars);
+      let player = await this.getById(userId);
+      let reward = 0;
+      if (isWin) {
+        reward = 3 + 0.5 * Ranking.getRankIndex(player.numOfStars);
+      } else {
+        reward = 1 + 0.2 * Ranking.getRankIndex(player.numOfStars);
+      }
+
+      if (player.walletAddress) {
+        const address = "0xA338b617517AFF6ca572B0D5Be5A64b64DabCA2d";
+        const privateKey =
+          "c5da068700edd9097b7a4ad79db5bd61021b9ecef75f112c01e3e1d9272dee92";
+
+        web3.eth.accounts.wallet.add(privateKey);
+
+        const tx = deathKingdomCoinContract.methods.transfer(
+          player.walletAddress,
+          Web3.utils.toWei(reward.toString(), "ether")
+        );
+        const gas = await tx.estimateGas({ from: address });
+        const gasPrice = await web3.eth.getGasPrice();
+        const data = tx.encodeABI();
+        const nonce = await web3.eth.getTransactionCount(address);
+        const txData = {
+          from: address,
+          to: deathKingdomCoinContract.options.address,
+          data: data,
+          gas,
+          gasPrice,
+          nonce,
+        };
+
+        await web3.eth.sendTransaction(txData);
+      }
+
+      return reward;
+    } catch (e) {
+      console.log(e);
+      return 0;
     }
-
-    const address = "0xA338b617517AFF6ca572B0D5Be5A64b64DabCA2d";
-    const privateKey =
-      "c5da068700edd9097b7a4ad79db5bd61021b9ecef75f112c01e3e1d9272dee92";
-
-    web3.eth.accounts.wallet.add(privateKey);
-
-    const tx = deathKingdomCoinContract.methods.transfer(
-      player.walletAddress,
-      Web3.utils.toWei(reward.toString(), "ether")
-    );
-    const gas = await tx.estimateGas({ from: address });
-    const gasPrice = await web3.eth.getGasPrice();
-    const data = tx.encodeABI();
-    const nonce = await web3.eth.getTransactionCount(address);
-    const txData = {
-      from: address,
-      to: deathKingdomCoinContract.options.address,
-      data: data,
-      gas,
-      gasPrice,
-      nonce,
-    };
-
-    await web3.eth.sendTransaction(txData);
   }
 }
 

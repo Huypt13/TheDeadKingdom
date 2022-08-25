@@ -28,6 +28,10 @@ public class NetworkClient : SocketIOComponent
 
     [SerializeField]
     private GameObject healthComponent;
+
+    [SerializeField]
+    private GameObject prefabFlagHealthBar;
+
     [SerializeField]
     private Transform networkContainer;
     public static Action<SocketIOEvent> OnGameStateChange = (E) => { };
@@ -42,7 +46,7 @@ public class NetworkClient : SocketIOComponent
     public static Action<SocketIOEvent> OnSpawnMyTank = (E) => { };
     public static Action<float> OnPlayerDied = (time) => { };
     public static Action OnPlayerRespawn = () => { };
-    public static Action<string, string> OnLoadGameMode = (gameMode, map) => { };
+    public static Action<string, string, float> OnLoadGameMode = (gameMode, map, maxTime) => { };
 
     public static Action<SocketIOEvent> OnUpdatePosition = (E) => { };
 
@@ -137,6 +141,7 @@ public class NetworkClient : SocketIOComponent
             tg.Speed = speed;
             tg.AttackSpeed = attackSpeed;
             tg.Stunned = false;
+            tg.TiedUp = false;
             tg.IsAutoMove = false;
 
             var ntr = ni.GetComponent<NetworkTransform>();
@@ -464,7 +469,7 @@ public class NetworkClient : SocketIOComponent
                     ni1.SetControllerId(id);
                     ni1.SetSocketReference(this);
                     serverObjects.Add(id, ni1);
-                    GameObject h = Instantiate(healthComponent, networkContainer);
+                    GameObject h = Instantiate(prefabFlagHealthBar, networkContainer);
                     h.SetActive(true);
                     var healthBar = h.transform.GetComponentInChildren<HealthBar>();
                     if (ClientID == id)
@@ -830,7 +835,8 @@ public class NetworkClient : SocketIOComponent
             Debug.Log("reload game");
             string map = E.data["map"].str;
             string gameMode = E.data["gameMode"].str;
-            OnLoadGameMode.Invoke(gameMode, map);
+            float maxTime = E.data["time"].f;
+            OnLoadGameMode.Invoke(gameMode, map, maxTime);
             myMap = map;
             OnStartChat.Invoke(E);
             SceneManagement.Instance.LoadLevel(map, (levelName) =>
@@ -843,7 +849,9 @@ public class NetworkClient : SocketIOComponent
             Debug.Log("Join game");
             string map = E.data["map"].str;
             string gameMode = E.data["gameMode"].str;
-            OnLoadGameMode.Invoke(gameMode, map);
+            float maxTime = E.data["time"].f;
+
+            OnLoadGameMode.Invoke(gameMode, map, maxTime);
             myMap = map;
             OnStartChat.Invoke(E);
             SceneManagement.Instance.LoadLevel(map, (levelName) =>
@@ -1011,7 +1019,8 @@ public class NetworkClient : SocketIOComponent
 
             SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
             {
-                FindObjectOfType<MenuManager>().message.text = "Your account is logged in somewhere else";
+                //FindObjectOfType<MenuManager>().message.text = "Your account is logged in somewhere else";
+                NotificationManager.Instance.DisplayNotification("Your account is logged in somewhere else", SceneList.MAIN_MENU);
 
             });
         });
@@ -1117,7 +1126,8 @@ public class NetworkClient : SocketIOComponent
         SceneManagement.Instance.LoadLevel(SceneList.MAIN_MENU, (levelName) =>
         {
             SceneManagement.Instance.UnLoadLevel(myMap);
-            FindObjectOfType<MenuManager>().message.text = error;
+            //FindObjectOfType<MenuManager>().message.text = error;
+            NotificationManager.Instance.DisplayNotification(error, SceneList.MAIN_MENU);
         });
     }
 

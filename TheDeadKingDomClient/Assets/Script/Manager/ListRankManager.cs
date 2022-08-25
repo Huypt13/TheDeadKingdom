@@ -30,6 +30,10 @@ public class ListRankManager : MonoBehaviour
 
             GameObject imgTankIcon = tankInventory.transform.GetChild(0).GetChild(2).gameObject;
             imgTankIcon.GetComponent<Image>().sprite = ImageManager.Instance.GetRankImage(star);
+            if (ImageManager.Instance.GetRankName(star) == ImageManager.Instance.GetRankName(LobbyScreenManager.playerStar))
+            {
+                imgTankIcon.transform.localScale = new Vector3(45f, 45f, 45f);
+            }
 
             GameObject txtTankLevel = tankInventory.transform.GetChild(0).GetChild(1).gameObject;
             txtTankLevel.GetComponent<Text>().text = ImageManager.Instance.GetRankName(star);

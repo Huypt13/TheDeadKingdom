@@ -160,7 +160,7 @@ module.exports = class GameLobby extends LobbyBase {
     }
 
     // het time
-    if (this.matchTime >= GameInfor.DestroyTime - 0.1) {
+    if (this.matchTime >= GameInfor.FlagTime - 0.1) {
       this.lobbyState.currentState = this.lobbyState.ENDGAME;
       if (team1point > team2point) {
         this.teamWin = 1;
@@ -322,6 +322,7 @@ module.exports = class GameLobby extends LobbyBase {
       for (const connection of this.connections) {
         if (connection.player.team == this.teamWin) {
           await User.updateStar(1, connection.player._id);
+          let reward = await User.rewardAfterMatch(connection.player._id, true);
 
           members.push({
             tank: connection.player.startTank.tankUserId,
@@ -338,9 +339,14 @@ module.exports = class GameLobby extends LobbyBase {
             result: "win",
             kill1: team1Kill + this.ai1Kill,
             kill2: team2Kill + this.ai2Kill,
+            reward: reward,
           };
         } else {
           await User.updateStar(-1, connection.player._id);
+          let reward = await User.rewardAfterMatch(
+            connection.player._id,
+            false
+          );
           members.push({
             tank: connection.player.startTank.tankUserId,
             userId: connection.player._id,
@@ -354,6 +360,7 @@ module.exports = class GameLobby extends LobbyBase {
             result: "lose",
             kill1: team1Kill + this.ai1Kill,
             kill2: team2Kill + this.ai2Kill,
+            reward: reward,
           };
         }
         connection.socket.emit("rsmatch", returnData);
@@ -389,10 +396,12 @@ module.exports = class GameLobby extends LobbyBase {
           this.connections[0].socket.emit("loadGame", {
             map: this.settings.map,
             gameMode: this.settings.gameMode,
+            time: GameInfor[`${this.settings.gameMode}Time`],
           });
           this.connections[0].socket.broadcast.to(this.id).emit("loadGame", {
             map: this.settings.map,
             gameMode: this.settings.gameMode,
+            time: GameInfor[`${this.settings.gameMode}Time`],
           });
           const returnData = {
             state: this.lobbyState.currentState,
@@ -739,7 +748,7 @@ module.exports = class GameLobby extends LobbyBase {
       activator,
       direction,
       position,
-      bulletSpeed: activeBy?.player?.tank?.bulletSpeed || bullet.speed,
+      bulletSpeed: activeBy?.player?.tank?.bulletSpeed || 6,
     };
     connection.socket.emit("serverSpawn", returnData1);
     connection.socket.broadcast.to(this.id).emit("serverSpawn", returnData1);
@@ -1486,7 +1495,11 @@ module.exports = class GameLobby extends LobbyBase {
       health: tank?.health,
       maxHealth: connection?.player?.startTank?.health,
     };
-    console.log("sp player", connection.player.position , connection.player.spawnPos);
+    console.log(
+      "sp player",
+      connection.player.position,
+      connection.player.spawnPos
+    );
     socket.emit("spawn", returnData); //tell myself I have spawned
     socket.broadcast.to(lobby.id).emit("spawn", returnData); // Tell other
 

@@ -82,7 +82,7 @@ public class HealthBar : MonoBehaviour
     {
         // transform.localPosition = new Vector3(-960, -540, 0);
 
-        if (myGameTransform != null)
+        if (myGameTransform != null && !gameObject.CompareTag("Flag"))
         {
             Vector3 monsterPosition = new Vector3(myGameTransform.position.x, myGameTransform.position.y, myGameTransform.position.z); // we need to correct the position of the bar
             slider.transform.position = Camera.main.WorldToScreenPoint(monsterPosition + new Vector3(0, 0.9f, 0)); // we say that the position of the bar is a conversion of the position of the monster in my UI units.

@@ -67,7 +67,7 @@
   "sourceMap": "",
   "deployedSourceMap": "",
   "source": "// SPDX-License-Identifier: MIT\r\n\r\npragma solidity ^0.8.13;\r\n\r\ninterface ILinkWallet {\r\n    function linkWallet(address _walletAddress, string memory _userId) external;\r\n\r\n    function getUserIdByWalletAddress(address _walletAddress)\r\n        external\r\n        view\r\n        returns (string memory);\r\n\r\n    function getWalletAddressByUserId(string memory _userId)\r\n        external\r\n        view\r\n        returns (address);\r\n}\r\n",
-  "sourcePath": "D:\\code\\TheDeadKingdom\\contract\\contracts\\ethereum\\ILinkWallet.sol",
+  "sourcePath": "D:\\code\\TheDeadKingdom\\Contract\\contracts\\ethereum\\ILinkWallet.sol",
   "ast": {
     "absolutePath": "project:/contracts/ethereum/ILinkWallet.sol",
     "exportedSymbols": {
@@ -370,7 +370,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.7",
-  "updatedAt": "2022-08-23T15:27:54.001Z",
+  "updatedAt": "2022-08-24T10:37:11.766Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},

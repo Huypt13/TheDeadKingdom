@@ -1,4 +1,5 @@
 const express = require("express");
+const fs = require("fs");
 
 
 
@@ -20,6 +21,7 @@ const TankRouter = require("./src/api/hero/Tank.router");
 const SocketAuthen = require("./src/api/middlewares/SocketAuthen.middleware");
 const HistoryRouter = require("./src/api/history/History.router");
 const BoxRouter = require("./src/api/box/Box.router");
+const Tank = require("./src/api/hero/Tank.service");
 
 const app = express();
 const server = require("http").createServer(app);
@@ -35,51 +37,54 @@ const gameServer = new GameServer();
 const gameSeverLoop = (async () => {
   try {
     setInterval(async () => {
-      try { 
+      try {
         await gameServer.onUpdate();
-        
       } catch (error) {
-        console.log("hero");
+        console.log("game update error ", error);
       }
-     
     }, 100);
-
     io.on("connection", (socket) => {
-      console.log(`${socket.id} join room`);
-      socket.on("clientJoin", async ({ username, id }) => {
-        let _id = await SocketAuthen.getUserId(id);
-        // neu chua trong game
-        if (!gameServer.connections[_id]) {
-          const connection = gameServer.onConnected(socket, { username, id, _id });
-          connection.createEvents();
-          socket.emit("register", { id: connection.player.id });
-        } else {
-          console.log("vao lai game");
-          let connection = gameServer.connections[_id];
-          socket.emit("register", { id: connection.player.id });
-    
-          connection.socket = socket;
-          connection.createEvents();
-    
-          // neu dang trong tran
-          connection.player.isOnline = true;
-          const currentLobbyId = connection.player.lobby;
-          socket.join(currentLobbyId);
-    
-          // neu dang o general lobby thi leave
-          if (currentLobbyId != gameServer.generalServerID) {
-            // reload game
-            connection.lobby.reloadGame(connection);
+      try {
+        console.log(`${socket.id} join room`);
+        socket.on("clientJoin", async ({ username, id }) => {
+          let _id = await SocketAuthen.getUserId(id);
+          // neu chua trong game
+          if (!gameServer.connections[_id]) {
+            const connection = gameServer.onConnected(socket, {
+              username,
+              id,
+              _id,
+            });
+            connection.createEvents();
+            socket.emit("register", { id: connection.player.id });
+          } else {
+            console.log("vao lai game");
+            let connection = gameServer.connections[_id];
+            socket.emit("register", { id: connection.player.id });
+
+            connection.socket = socket;
+            connection.createEvents();
+
+            // neu dang trong tran
+            connection.player.isOnline = true;
+            const currentLobbyId = connection.player.lobby;
+            socket.join(currentLobbyId);
+
+            // neu dang o general lobby thi leave
+            if (currentLobbyId != gameServer.generalServerID) {
+              // reload game
+              connection.lobby.reloadGame(connection);
+            }
           }
-        }
-      });
+        });
+      } catch (error) {
+        console.log("connection error", error);
+      }
     });
   } catch (e) {
     console.log(e);
   }
 })();
-
-
 
 // listen blockchain events
 // listener.init()
@@ -101,6 +106,5 @@ app.use("/box", BoxRouter);
 app.use("/history", Authentication, HistoryRouter);
 app.use("/marketPlace", MarketPlaceRouter);
 Database.connect(app);
-server.listen(8080,"0.0.0.0");
+server.listen(8080, "0.0.0.0");
 // server.listen(8080);
-

@@ -90,7 +90,7 @@ class TankUserService {
   async getBoxOwnerDetail(tankUserId) {
     try {
       const tankUser = await TankUser.aggregate([
-        {$match: { _id:mongoose.Types.ObjectId(tankUserId)}},
+        {$match: { _id:mongoose.Types.ObjectId(tankUserId), tankId:null}},
         {$lookup:{
           from : "boxes",
           let : {boxId : {$toObjectId: "$boxId"},id:"$_id"},

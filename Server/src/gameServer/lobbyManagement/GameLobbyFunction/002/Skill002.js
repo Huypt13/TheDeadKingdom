@@ -13,6 +13,7 @@ function Skill1Handler(connection, data, lobby) {
   const skillObject = lobby.skill.find((e) => {
     return e.id == id;
   });
+  if (!skillObject) return;
 
   const skillEffect = skillObject?.skill;
   if (!subjectOfAttack) {
@@ -73,6 +74,7 @@ function Skill2Handler(connection, data, lobby) {
   const skillObject = lobby.skill.find((e) => {
     return e.id == id;
   });
+  if (!skillObject) return;
   let connection1 = lobby.connections.find((c) => {
     return c.player.id === enemyId;
   });
@@ -94,7 +96,7 @@ function Skill2Handler(connection, data, lobby) {
     subjectOfAttack.effect.burned.push({
       id,
       countTime: 0,
-      ...skillEffect.burned,
+      ...skillEffect?.burned,
     });
     subjectOfAttack.effect.slowled.push({
       id,
@@ -167,6 +169,7 @@ function Skill3Handler(connection, data, lobby) {
   const skillObject = lobby.skill.find((e) => {
     return e.id == id;
   });
+  if (!skillObject) return;
 
   const skillEffect = skillObject?.skill;
   if (!subjectOfAttack) {

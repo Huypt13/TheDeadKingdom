@@ -33,6 +33,7 @@ function Skill2Handler(connection, data, lobby) {
   const skillObject = lobby.skill.find((e) => {
     return e.id == id;
   });
+  if (!skillObject) return;
 
   const skillEffect = skillObject?.skill;
   if (!subjectOfAttack) {

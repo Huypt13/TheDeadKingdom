@@ -1,9 +1,12 @@
 const validator = require('validator')
+const ApiResponse = require('../../utility/ApiResponse')
+
 
 
 
 
 module.exports.validateReqQuery = async (req, res, next) => {
+    try {
     convertStringToObject(req)
     // console.log("object",req.query);
     const { levels, classTypes, typeIds, limit, pageNumbers, sortBy, status, remaining, maxPrice, minPrice, number} = req.query;
@@ -44,8 +47,12 @@ module.exports.validateReqQuery = async (req, res, next) => {
     if(!number || !Number.isInteger(number) || number < 0 || number > 200){
         req.query.number = 100;
     }
- 
+    
     next();
+} catch (error) {
+    console.log(error);
+    ApiResponse.serverErrorResponse(res, error.message);
+}
     // console.log("object2",req.query);
 }
 

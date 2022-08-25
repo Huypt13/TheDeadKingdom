@@ -618,11 +618,7 @@ module.exports = class GameLobby extends LobbyBase {
       console.log(house2);
       this.onServerSpawn(house2, new Vector2(7, 1));
     }
-    if (this.settings.gameMode == "Flag") {
-      let flag = new Flag();
-      flag.maxPoint = 50;
-      this.onServerSpawn(flag, new Vector2(0, 0));
-    }
+  
     let objectWithName = [];
     objectWithName["BlueTeamPotion"] = Potion;
     objectWithName["RedTeamPotion"] = Potion;
@@ -638,13 +634,19 @@ module.exports = class GameLobby extends LobbyBase {
     objectWithName["Helipad1"] = Helipad;
     objectWithName["Helipad2"] = Helipad;
     objectWithName["Helipad3"] = Helipad;
+    objectWithName["Flag"] = Flag;
     let currentMap = this.settings.map;
     let objectPositions = MapProp.map[currentMap];
     let objectProperties = MapProp.props;
     for (let objectName in objectPositions) {
       if (!objectWithName[objectName]) continue;
-
       for (let pos of objectPositions[objectName]) {
+        if (this.settings.gameMode == "Flag" && objectName == "Flag") {
+          let flag = new Flag();
+          flag.maxPoint = objectProperties.Flag.maxPoint;
+          this.onServerSpawn(flag, new Vector2(pos.position.x, pos.position.y));
+          continue;
+        }
         let objectPosition = new Vector2(pos.position.x, pos.position.y);
         let gameObject = null;
         if (

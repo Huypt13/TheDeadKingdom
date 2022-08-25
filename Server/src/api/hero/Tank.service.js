@@ -318,6 +318,7 @@ class TankService {
   }
   //*
   async getTankSoldDetailsById(id) {
+    console.log('xxx');
     const tankDetails = await TankUser.aggregate([
       { $match: { _id: ObjectId(id) } },
       {
@@ -489,24 +490,48 @@ class TankService {
   async getTotalTankOwnerWithStatus(filter, _id) {
     try {
       let { limit, pageNumbers, sortBy, status } = filter
-      let listTankOwner;
+      let listTankOwner = null;
+      listTankOwner = await TankUser.aggregate([
+        { $match: { userId: _id, tankId: { $ne: null }, nftId: { $ne: null } } },
+        {
+          $lookup: {
+            from: "marketplaceitems",
+            let: { nftId: "$nftId" },
+            pipeline: [
+              { $match: { $expr: { $eq: ["$tokenId", "$$nftId"] } } },
+              { $match: { $expr: { $eq: ["$isSelling", true] } } }
+            ],
+            as: "marketplaceItem"
+          }
+        },
+        { $unwind: "$marketplaceItem" },
+        {
+          $lookup: {
+            from: "tanks",
+            let: { id: { $toObjectId: "$tankId" } },
+            pipeline: [
+              { $match: { $expr: { $eq: ["$_id", "$$id"] } } }
+            ],
+            as: "tank"
+          }
+        },
+        { $unwind: "$tank" },
+        {
+          $project: {
+            _id: 1,
+            name: "$tank.name", price: "$marketplaceItem.price", boughtDate: "$boughtDate",
+            remaining: "$remaining", tank: "$tank", tankUser: "$tankUser", marketplaceItem: "$marketplaceItem"
+          }
+        },
+        { $sort: sortBy },
+      ])
       if (status == "Owned") {
-        listTankOwner = await TankUser.aggregate([
-          { $match: { userId: _id, tankId: { $ne: null }, nftId: { $ne: null } } },
-          {
-            $lookup: {
-              from: "marketplaceitems",
-              let: { nftId: "$nftId" },
-              pipeline: [
-                { $match: { $expr: { $eq: ["$tokenId", "$$nftId"] } } },
-                { $match: { $expr: { $eq: ["$isSelling", false] } } },
-                { $sort: { finishedAt: -1 } },
-                { $limit: 1 }
-              ],
-              as: "marketplaceItem"
-            }
-          },
-          { $unwind: "$marketplaceItem" },
+        let listIsSelling = []
+        for(let tank of listTankOwner){
+          listIsSelling.push(tank._id)
+        }
+        const listTank = await TankUser.aggregate([
+          { $match: { userId: _id, tankId: { $ne: null }, nftId: { $ne: null }, _id: {$nin: listIsSelling} } },
           {
             $lookup: {
               from: "tanks",
@@ -520,50 +545,17 @@ class TankService {
           { $unwind: "$tank" },
           {
             $project: {
+              _id: 1,
               name: "$tank.name", price: "$marketplaceItem.price", boughtDate: "$boughtDate",
               remaining: "$tank.remaining", tank: "$tank", tankUser: "$tankUser", marketplaceItem: "$marketplaceItem"
             }
           },
           { $sort: sortBy },
         ])
+       return listTank
       } else {
-        listTankOwner = await TankUser.aggregate([
-          { $match: { userId: _id, tankId: { $ne: null }, nftId: { $ne: null } } },
-          {
-            $lookup: {
-              from: "marketplaceitems",
-              let: { nftId: "$nftId" },
-              pipeline: [
-                { $match: { $expr: { $eq: ["$tokenId", "$$nftId"] } } },
-                { $match: { $expr: { $eq: ["$isSelling", true] } } }
-              ],
-              as: "marketplaceItem"
-            }
-          },
-          { $unwind: "$marketplaceItem" },
-          {
-            $lookup: {
-              from: "tanks",
-              let: { id: { $toObjectId: "$tankId" } },
-              pipeline: [
-                { $match: { $expr: { $eq: ["$_id", "$$id"] } } }
-              ],
-              as: "tank"
-            }
-          },
-          { $unwind: "$tank" },
-          {
-            $project: {
-              name: "$tank.name", price: "$marketplaceItem.price", boughtDate: "$boughtDate",
-              remaining: "$tank.remaining", tank: "$tank", tankUser: "$tankUser", marketplaceItem: "$marketplaceItem"
-            }
-          },
-          { $sort: sortBy },
-
-        ])
+        return listTankOwner;
       }
-
-      return listTankOwner;
     } catch (err) {
       console.log(err);
       throw new Error(err.message)
@@ -579,23 +571,49 @@ class TankService {
         throw new Error("Don't have tank");
       }
       let listTankOwner = null;
+      listTankOwner = await TankUser.aggregate([
+        { $match: { userId: _id, tankId: { $ne: null }, nftId: { $ne: null } } },
+        {
+          $lookup: {
+            from: "marketplaceitems",
+            let: { nftId: "$nftId" },
+            pipeline: [
+              { $match: { $expr: { $eq: ["$tokenId", "$$nftId"] } } },
+              { $match: { $expr: { $eq: ["$isSelling", true] } } }
+            ],
+            as: "marketplaceItem"
+          }
+        },
+        { $unwind: "$marketplaceItem" },
+        {
+          $lookup: {
+            from: "tanks",
+            let: { id: { $toObjectId: "$tankId" } },
+            pipeline: [
+              { $match: { $expr: { $eq: ["$_id", "$$id"] } } }
+            ],
+            as: "tank"
+          }
+        },
+        { $unwind: "$tank" },
+        {
+          $project: {
+            _id: 1,
+            name: "$tank.name", price: "$marketplaceItem.price", boughtDate: "$boughtDate",
+            remaining: "$remaining", tank: "$tank", tankUser: "$tankUser", marketplaceItem: "$marketplaceItem"
+          }
+        },
+        { $sort: sortBy },
+        { $skip: displayedTankNumber },
+        { $limit: limit },
+      ])
       if (status == "Owned") {
-        listTankOwner = await TankUser.aggregate([
-          { $match: { userId: _id, tankId: { $ne: null }, nftId: { $ne: null } } },
-          {
-            $lookup: {
-              from: "marketplaceitems",
-              let: { nftId: "$nftId" },
-              pipeline: [
-                { $match: { $expr: { $eq: ["$tokenId", "$$nftId"] } } },
-                { $match: { $expr: { $eq: ["$isSelling", false] } } },
-                { $sort: { finishedAt: -1 } },
-                { $limit: 1 }
-              ],
-              as: "marketplaceItem"
-            }
-          },
-          { $unwind: "$marketplaceItem" },
+        let listIsSelling = []
+        for(let tank of listTankOwner){
+          listIsSelling.push(tank._id)
+        }
+        const listTank = await TankUser.aggregate([
+          { $match: { userId: _id, tankId: { $ne: null }, nftId: { $ne: null }, _id: {$nin: listIsSelling} } },
           {
             $lookup: {
               from: "tanks",
@@ -609,54 +627,21 @@ class TankService {
           { $unwind: "$tank" },
           {
             $project: {
+              _id: 1,
               name: "$tank.name", price: "$marketplaceItem.price", boughtDate: "$boughtDate",
-              remaining: "$tank.remaining", tank: "$tank", tankUser: "$tankUser", marketplaceItem: "$marketplaceItem"
+              remaining: "$remaining", tank: "$tank", tankUser: "$tankUser", marketplaceItem: "$marketplaceItem"
             }
           },
           { $sort: sortBy },
           { $skip: displayedTankNumber },
           { $limit: limit },
-
         ])
+       return {listTank , totalTank}
       } else {
-        listTankOwner = await TankUser.aggregate([
-          { $match: { userId: _id, tankId: { $ne: null }, nftId: { $ne: null } } },
-          {
-            $lookup: {
-              from: "marketplaceitems",
-              let: { nftId: "$nftId" },
-              pipeline: [
-                { $match: { $expr: { $eq: ["$tokenId", "$$nftId"] } } },
-                { $match: { $expr: { $eq: ["$isSelling", true] } } }
-              ],
-              as: "marketplaceItem"
-            }
-          },
-          { $unwind: "$marketplaceItem" },
-          {
-            $lookup: {
-              from: "tanks",
-              let: { id: { $toObjectId: "$tankId" } },
-              pipeline: [
-                { $match: { $expr: { $eq: ["$_id", "$$id"] } } }
-              ],
-              as: "tank"
-            }
-          },
-          { $unwind: "$tank" },
-          {
-            $project: {
-              name: "$tank.name", price: "$marketplaceItem.price", boughtDate: "$boughtDate",
-              remaining: "$tank.remaining", tank: "$tank", tankUser: "$tankUser", marketplaceItem: "$marketplaceItem"
-            }
-          },
-          { $sort: sortBy },
-          { $skip: displayedTankNumber },
-          { $limit: limit },
-        ])
+        return {listTankOwner, totalTank};
       }
 
-      return { listTankOwner, totalTank };
+     
     } catch (err) {
       console.log(err);
       throw new Error(err.message)

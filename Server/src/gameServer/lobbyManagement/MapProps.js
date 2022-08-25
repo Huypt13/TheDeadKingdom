@@ -1,4 +1,6 @@
 const Vector2 = require("../../dto/Vector2");
+// -4,-0.6  
+// 0.4609557
 
 const tankAi = {
   speed: 0.15,
@@ -11,7 +13,7 @@ const tankAi = {
 };
 module.exports.map = {
   IcexLavaMap: {
-    TankSpawnPosition: [ 
+    TankSpawnPosition: [
       {
         position: new Vector2(-13.30769, 3.201224),
       },
@@ -173,22 +175,22 @@ module.exports.map = {
   IceMap: {
     TankSpawnPosition: [
       {
-        position: new Vector2( -14,-6 ),
+        position: new Vector2(-14, -6),
       },
       {
-        position: new Vector2(-14, -8 ),
+        position: new Vector2(-14, -8),
       },
       {
-        position: new Vector2(-13, -6 ),
+        position: new Vector2(-13, -6),
       },
       {
         position: new Vector2(-13, -8),
       },
       {
-        position: new Vector2(-12, -6 ),
+        position: new Vector2(-12, -6),
       },
       {
-        position: new Vector2(-12, -8 ),
+        position: new Vector2(-12, -8),
       },
     ],
     WoodBox: [
@@ -264,7 +266,11 @@ module.exports.map = {
         position: { x: -1.9, y: -1.911464 },
       },
     ],
-
+    Flag: [
+      {
+        position: { x: -4, y: -0.6 }
+      }
+    ],
     RedTeamSmallTurret: [
       {
         position: { x: -1.95, y: 1.120174 },
@@ -274,24 +280,24 @@ module.exports.map = {
   FarmMap: {
     TankSpawnPosition: [
       {
-        position: new Vector2(-10,-8),
+        position: new Vector2(-10, -8),
       },
       {
-        position: new Vector2(8,2),
+        position: new Vector2(8, 2),
       },
       {
-        position: new Vector2(-8.5,-9),
+        position: new Vector2(-8.5, -9),
       },
       {
-        position: new Vector2(6.5,3),
+        position: new Vector2(6.5, 3),
       },
       {
-        position: new Vector2(-10,-10),
+        position: new Vector2(-10, -10),
       },
       {
-        position: new Vector2(8,4),
+        position: new Vector2(8, 4),
       },
-      
+
     ],
     WoodBox: [
       {
@@ -370,7 +376,7 @@ module.exports.map = {
       {
         position: { x: -11.37, y: 1.05 },
         position: { x: -6, y: -10 }
-        
+
       },
     ],
 
@@ -406,6 +412,9 @@ module.exports.map = {
 };
 
 module.exports.props = {
+  Flag: {
+    maxPoint: 50
+  },
   WoodBox: {
     type: "Wood",
     health: 250,

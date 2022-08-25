@@ -11,6 +11,15 @@ const tankAi = {
   bulletSpeed: 1,
   shootingRange: 7,
 };
+const tankAi2 = {
+  speed: 0.15,
+  rotationSpeed: 0.3,
+  damage: 30,
+  health: 1000,
+  attackSpeed: 1,
+  bulletSpeed: 1,
+  shootingRange: 7,
+};
 module.exports.map = {
   IcexLavaMap: {
     TankSpawnPosition: [
@@ -174,6 +183,14 @@ module.exports.map = {
     ],
   },
   IceMap: {
+    BaseTankAI: [
+      {
+        position: new Vector2(6.03, 5.9),
+      },
+      {
+        position: new Vector2(5.12, -7.62),
+      }
+    ],
     TankSpawnPosition: [
       {
         position: new Vector2(-14, -6),
@@ -404,15 +421,29 @@ module.exports.map = {
         position: { x: -3, y: 4 },
       },
     ],
-    // BlueTeamTankAI: [
-    //   {
-    //     position: { x: -3, y: 4 },
-    //   },
-    // ],
+    BlueTeamTankAI: [
+      {
+        position: { x: 0.07, y: -10.08 },
+      },
+    ],
   },
 };
 
 module.exports.props = {
+  BaseRed: {
+    username: "MainHouse",
+    team: 2,
+    isDead: false,
+    health: 3000,
+    maxHealth: 3000
+  },
+  BaseBlue: {
+    username: "MainHouse",
+    team: 1,
+    isDead: false,
+    health: 3000,
+    maxHealth: 3000
+  },
   Flag: {
     maxPoint: 50,
   },
@@ -497,7 +528,17 @@ module.exports.props = {
     },
   },
   RedTeamTankAI: {
-    AIBase: [2, { ...tankAi }, 2],
+    AIBase: [2, { ...tankAi2 }, 2],
+    aiId: "01",
+    username: "AI_Tank",
+    hasTarget: false,
+    iscommback: false,
+    rotation: 0,
+    canShoot: false,
+    currentTime: 0,
+  },
+  BaseTankAI: {
+    AIBase: [2, { ...tankAi2 }, 0],
     aiId: "01",
     username: "AI_Tank",
     hasTarget: false,
@@ -507,7 +548,7 @@ module.exports.props = {
     currentTime: 0,
   },
   BlueTeamTankAI: {
-    AIBase: [2, { ...tankAi }, 1],
+    AIBase: [2, { ...tankAi2 }, 1],
     aiId: "01",
     username: "AI_Tank",
     hasTarget: false,

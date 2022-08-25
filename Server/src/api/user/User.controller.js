@@ -89,7 +89,7 @@ class UserController {
         return ApiResponse.unauthorizeResponse(res, "wrong id");
       }
       if (user1 && user1?.walletAddress) {
-        return ApiResponse.badRequestResponse(res, "wallet has been connected");
+        return ApiResponse.badRequestResponse(res, "You already linked to Metamask");
       }
       if (userA)
         return ApiResponse.badRequestResponse(res, "wallet has been used");

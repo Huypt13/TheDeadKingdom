@@ -1,13 +1,13 @@
 module.exports = {
-  CountKillMaxPlayer: 4,
+  CountKillMaxPlayer: 1,
   CountKillMinPlayer: 1,
   CountKillTime: 150,
 
-  DestroyMaxPlayer: 1,
+  DestroyMaxPlayer: 3,
   DestroyMinPlayer: 1,
   DestroyTime: 600,
 
-  FlagMaxPlayer: 4,
+  FlagMaxPlayer: 1,
   FlagMinPlayer: 1,
   FlagTime: 300,
 

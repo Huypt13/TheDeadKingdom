@@ -3,6 +3,8 @@ const ApiResponse = require("../../utility/ApiResponse");
 const TankUserService = require("../hero/TankUser.service");
 const TankService = require("../hero/Tank.service");
 
+
+
 class BoxController {
   async unbox(req, res) {
     try {
@@ -56,7 +58,7 @@ class BoxController {
   async getBoxDetails(req, res) {
     try {
       const { id } = req.params;
-      return ApiResponse.successResponseWithData(res, "Ok", [{level:1,ratio:60},{level:2,ratio:30},{level:3,ratio:10}]);
+      return ApiResponse.successResponseWithData(res, "Ok", [{ level: 1, ratio: 60 }, { level: 2, ratio: 30 }, { level: 3, ratio: 10 }]);
     } catch (err) {
       console.log(err);
       ApiResponse.serverErrorResponse(res, err.message);
@@ -71,6 +73,16 @@ class BoxController {
         _id.toString()
       );
       return ApiResponse.successResponseWithData(res, "Ok", allBox);
+    } catch (err) {
+      console.log(err);
+      ApiResponse.serverErrorResponse(res, err.message);
+    }
+  }
+  async getBoxOwnerDetail(req, res) {
+    try {
+      const { id } = req.params;
+      const box = await TankUserService.getBoxOwnerDetail(id);
+      return ApiResponse.successResponseWithData(res, "Ok",box);
     } catch (err) {
       console.log(err);
       ApiResponse.serverErrorResponse(res, err.message);

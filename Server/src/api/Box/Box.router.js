@@ -6,6 +6,7 @@ const ValidateFilter = require("../middlewares/ValidateFilter.middlewares");
 router.get("/unbox/:tankUserId", Authentication, BoxController.unbox);
 router.get("/allBox", BoxController.getAllBoxes);
 router.get("/boxDetails/:id", BoxController.getBoxDetails2);
+router.get("/boxOwnerDetails/:id",Authentication, BoxController.getBoxOwnerDetail)
 router.get(
   "/allBoxOwner",
   Authentication,

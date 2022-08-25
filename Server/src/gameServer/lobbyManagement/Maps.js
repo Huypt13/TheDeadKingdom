@@ -3,6 +3,6 @@ module.exports = {
     // CountKill: [ "IceMap"]
    CountKill: ["FarmMap"],
   // Destroy: ["IcexLavaMap"],
-  // Flag: ["FarmMap"],
+  // Flag: ["IceMap"],
   // CountKill: [ "IcexLavaMap"]
 };

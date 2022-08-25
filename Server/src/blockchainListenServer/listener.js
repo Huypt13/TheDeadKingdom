@@ -35,18 +35,18 @@ const init = async () => {
     .BoxSold({})
     .on("data", async function (event) {
       console.log("===============BoxSold=================");
-      console.log("create",event.returnValues);
+      console.log("create", event.returnValues);
       const { listTokenId, tokenOwner, boxId } = event.returnValues;
       const newBox = await TankUserService.createTankUser(
         listTokenId,
-        tokenOwner,
+        tokenOwner.toLowerCase(),
         boxId
       );
     })
     .on("error", console.error);
 
-    // Web3.utils.toWei("1", "ether") => 10^18
-    // Web3.utils.fromWei("10^18", "ether") => 1
+  // Web3.utils.toWei("1", "ether") => 10^18
+  // Web3.utils.fromWei("10^18", "ether") => 1
 
   // event NFTListed(
   //     uint256 marketItemId,
@@ -62,6 +62,9 @@ const init = async () => {
     .on("data", async function (event) {
       console.log("===============NFTListed=================");
       console.log(event.returnValues);
+      event.returnValues.nftContract = event.returnValues.nftContract.toLowerCase();
+      event.returnValues.seller = event.returnValues.seller.toLowerCase();
+      event.returnValues.buyer = event.returnValues.buyer.toLowerCase();
       MarketPlaceItemService.createAfterListed(event.returnValues);
     })
     .on("error", console.error);
@@ -71,6 +74,9 @@ const init = async () => {
     .on("data", async function (event) {
       console.log("===============NFTSaleCanceled=================");
       console.log(event.returnValues);
+      event.returnValues.nftContract = event.returnValues.nftContract.toLowerCase();
+      event.returnValues.seller = event.returnValues.seller.toLowerCase();
+      event.returnValues.buyer = event.returnValues.buyer.toLowerCase();
       MarketPlaceItemService.updateAfterSellCanceled(event.returnValues);
     })
     .on("error", console.error);
@@ -80,6 +86,9 @@ const init = async () => {
     .on("data", async function (event) {
       console.log("===============NFTSold=================");
       console.log(event.returnValues);
+      event.returnValues.nftContract = event.returnValues.nftContract.toLowerCase();
+      event.returnValues.seller = event.returnValues.seller.toLowerCase();
+      event.returnValues.buyer = event.returnValues.buyer.toLowerCase();
       MarketPlaceItemService.updateAfterSold(event.returnValues);
     })
     .on("error", console.error);

@@ -1,6 +1,5 @@
 const express = require("express");
 
-const teste = require("./src/api/marketPlaceItem/teste");
 
 
 const MarketPlaceRouter = require("./src/api/marketPlaceItem/MarketPlace.router");

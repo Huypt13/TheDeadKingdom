@@ -19,6 +19,7 @@ const TankRouter = require("./src/api/hero/Tank.router");
 const SocketAuthen = require("./src/api/middlewares/SocketAuthen.middleware");
 const HistoryRouter = require("./src/api/history/History.router");
 const BoxRouter = require("./src/api/box/Box.router");
+const Tank = require("./src/api/hero/Tank.service");
 
 const app = express();
 const server = require("http").createServer(app);

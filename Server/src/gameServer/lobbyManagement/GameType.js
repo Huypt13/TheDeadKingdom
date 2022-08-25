@@ -1,4 +1,4 @@
 module.exports = {
-  types: ["CountKill"],
+  types: ["Destroy"],
   // types: ["CountKill", "Destroy","Flag"],
 };

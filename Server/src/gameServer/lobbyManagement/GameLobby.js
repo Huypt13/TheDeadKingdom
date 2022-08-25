@@ -1431,6 +1431,7 @@ module.exports = class GameLobby extends LobbyBase {
         aiId: item?.aiId,
         name: item.username,
         health: item?.health,
+        maxHealth: item?.maxHealth,
         team: item?.team || 0,
         position: item?.position,
         type: item?.type,
@@ -1542,7 +1543,11 @@ module.exports = class GameLobby extends LobbyBase {
         });
 
         let isRespawn = player.respawnCounter();
+
         if (isRespawn) {
+          player.position.x = player.spawnPos.x;
+          player.position.y = player.spawnPos.y;
+
           let returnData = {
             id: player.id,
             position: {

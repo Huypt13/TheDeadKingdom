@@ -618,7 +618,7 @@ module.exports = class GameLobby extends LobbyBase {
       console.log(house2);
       this.onServerSpawn(house2, new Vector2(7, 1));
     }
-  
+
     let objectWithName = [];
     objectWithName["BlueTeamPotion"] = Potion;
     objectWithName["RedTeamPotion"] = Potion;
@@ -1386,6 +1386,7 @@ module.exports = class GameLobby extends LobbyBase {
     connection.socket.emit("reloadGame", {
       map: this.settings.map,
       gameMode: this.settings.gameMode,
+      time: this.matchTime,
     });
     const returnData = {
       state: this.lobbyState.currentState,

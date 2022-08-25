@@ -721,7 +721,6 @@ public class NetworkClient : SocketIOComponent
                 {
                     speed = 30;
                 }
-                Debug.Log(type + "  " + speed);
                 if (type == 1)
                 {
                     var targetDistance = Vector3.Distance(new Vector3(x, y, 0), ni.transform.position);
@@ -834,13 +833,24 @@ public class NetworkClient : SocketIOComponent
         {
             Debug.Log("reload game");
             string map = E.data["map"].str;
+            Debug.Log("xxx");
             string gameMode = E.data["gameMode"].str;
+            Debug.Log("xxx");
+
             float maxTime = E.data["time"].f;
+            Debug.Log("xxx");
+
             OnLoadGameMode.Invoke(gameMode, map, maxTime);
+            Debug.Log("xxx");
+
             myMap = map;
             OnStartChat.Invoke(E);
+            Debug.Log("xxx");
+
             SceneManagement.Instance.LoadLevel(map, (levelName) =>
             {
+                Debug.Log("xxx");
+
                 SceneManagement.Instance.UnLoadLevel(SceneList.LOBBY_SCREEN);
             });
         });

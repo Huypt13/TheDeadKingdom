@@ -809,6 +809,7 @@ public class NetworkClient : SocketIOComponent
             string id = e.data["id"].str;
             float point = e.data["point"].f;
             float team = e.data["team"].f;
+            Debug.Log(team);
             var ni = serverObjects[id];
             //   ni.gameObject.SetActive(false);
             var healthBar = ni.getHealthBar();

@@ -866,12 +866,12 @@ module.exports = class GameLobby extends LobbyBase {
       name: `OrientationSkill`,
       num,
       typeId,
-      id: skillObject.id,
-      team: skillObject.team,
+      id: skillObject?.id,
+      team: skillObject?.team,
       activator,
       direction,
       position,
-      skillSpeed: skillObject.speed,
+      skillSpeed: skillObject?.speed,
     };
 
     connection.socket.emit("skillSpawn", returnData);

@@ -45,7 +45,7 @@ function Skill2Handler(connection, data, lobby) {
   }
   if (isDead) {
     // ng chet la player hoac tank ai
-    lobby.deadUpdate(connection, subjectOfAttack, skillObject.activator);
+    lobby.deadUpdate(connection, subjectOfAttack, skillObject?.activator);
   } else {
     // send dame cho client
     let returnData = {

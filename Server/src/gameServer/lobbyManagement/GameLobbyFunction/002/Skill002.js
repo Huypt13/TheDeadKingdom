@@ -55,7 +55,7 @@ function Skill1Handler(connection, data, lobby) {
   }
   if (isDead) {
     // ng chet la player hoac tank ai
-    lobby.deadUpdate(connection, subjectOfAttack, skillObject.activator);
+    lobby.deadUpdate(connection, subjectOfAttack, skillObject?.activator);
   } else {
     // send dame cho client
     let returnData = {
@@ -77,7 +77,7 @@ function Skill2Handler(connection, data, lobby) {
     return c.player.id === enemyId;
   });
   const subjectOfAttack = connection1.player;
-  const skillEffect = skillObject.skill;
+  const skillEffect = skillObject?.skill;
   if (subjectOfAttack?.team != skillObject?.team) {
     connection.socket.emit("skillEffectAnimation", {
       enemyId,
@@ -99,7 +99,7 @@ function Skill2Handler(connection, data, lobby) {
     subjectOfAttack.effect.slowled.push({
       id,
       ...skillEffect.slowled,
-      time: skillObject.timeRemain,
+      time: skillObject?.timeRemain,
     });
     connection.socket.emit("skillEffectAnimation", {
       enemyId,
@@ -253,7 +253,7 @@ function Skill3Handler(connection, data, lobby) {
   }
   if (isDead) {
     // ng chet la player hoac tank ai
-    lobby.deadUpdate(connection, subjectOfAttack, skillObject.activator);
+    lobby.deadUpdate(connection, subjectOfAttack, skillObject?.activator);
   } else {
     // send dame cho client
     let returnData = {

@@ -1,9 +1,22 @@
+<<<<<<< HEAD
 const validator = require("validator");
 const ApiResponse = require("../../utility/ApiResponse");
 
 module.exports.validateReqQuery = async (req, res, next) => {
   try {
     convertStringToObject(req);
+=======
+const validator = require('validator')
+const ApiResponse = require('../../utility/ApiResponse')
+
+
+
+
+
+module.exports.validateReqQuery = async (req, res, next) => {
+    try {
+    convertStringToObject(req)
+>>>>>>> c638e2a12ee2f8c7432b6f63bb815f27a1e46070
     // console.log("object",req.query);
     const {
       levels,
@@ -70,6 +83,7 @@ module.exports.validateReqQuery = async (req, res, next) => {
     if (!number || !Number.isInteger(number) || number < 0 || number > 200) {
       req.query.number = 100;
     }
+<<<<<<< HEAD
 
     next();
   } catch (error) {
@@ -83,4 +97,13 @@ function convertStringToObject(req) {
   for (property in req.query) {
     req.query[property] = JSON.parse(req.query[property]);
   }
+=======
+    
+    next();
+} catch (error) {
+    console.log(error);
+    ApiResponse.serverErrorResponse(res, error.message);
+}
+    // console.log("object2",req.query);
+>>>>>>> c638e2a12ee2f8c7432b6f63bb815f27a1e46070
 }

@@ -13,9 +13,15 @@ using UnityEngine.SceneManagement;
 public class MenuManager : MonoBehaviour
 {
     //[SerializeField]
+<<<<<<< HEAD
 
     public static string uri = "http://3.1.196.5:8080";
     // public static string uri = "http://localhost:8080";
+=======
+    //public static string uri = "http://13.229.142.75:8080";
+   // public static string uri = "http://13.215.224.211:8080";
+    public static string uri = "http://localhost:8080";
+>>>>>>> c638e2a12ee2f8c7432b6f63bb815f27a1e46070
     // public static string uri = "http://192.168.1.2:8080";
     public static string access_token = "";
     public static string myName = "";

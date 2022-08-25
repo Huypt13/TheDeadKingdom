@@ -1,4 +1,6 @@
 const Vector2 = require("../../dto/Vector2");
+// -4,-0.6
+// 0.4609557
 
 const tankAi = {
   speed: 0.25,
@@ -267,7 +269,11 @@ module.exports.map = {
         position: { x: -1.9, y: -1.911464 },
       },
     ],
-
+    Flag: [
+      {
+        position: { x: -4, y: -0.6 },
+      },
+    ],
     RedTeamSmallTurret: [
       {
         position: { x: -1.95, y: 1.120174 },
@@ -407,6 +413,9 @@ module.exports.map = {
 };
 
 module.exports.props = {
+  Flag: {
+    maxPoint: 50,
+  },
   WoodBox: {
     type: "Wood",
     health: 250,

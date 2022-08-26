@@ -16,7 +16,7 @@ function Skill1Handler(connection, data, lobby) {
   if (!skillObject) return;
 
   const skillEffect = skillObject?.skill;
-  if (!subjectOfAttack) {
+  if (!subjectOfAttack || subjectOfAttack?.isDead) {
     return;
   }
 
@@ -172,7 +172,7 @@ function Skill3Handler(connection, data, lobby) {
   if (!skillObject) return;
 
   const skillEffect = skillObject?.skill;
-  if (!subjectOfAttack) {
+  if (!subjectOfAttack || subjectOfAttack?.isDead) {
     return;
   }
 

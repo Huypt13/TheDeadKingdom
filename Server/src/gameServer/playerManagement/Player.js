@@ -23,7 +23,7 @@ class Player {
     this.kill = 0;
     this.dead = 0;
     this.maxHealth = 800;
-    this.spawnPos = new Vector2(0,0);
+    this.spawnPos = new Vector2(0, 0);
     this.effect = {
       // bat loi
       slowled: [], // lam cham  vd {id : xxx ,value : 0.2 , time : 10}
@@ -120,6 +120,9 @@ class Player {
   onBurnCounter(lobby) {
     let endEf = []; // list effect ket thuc trong lan update
     let healthChange = false;
+    if (isDead) {
+      return;
+    }
     this.effect.burned.forEach((burn) => {
       burn.countTime += 0.1;
       if (burn.countTime >= burn.waiting - 0.01) {

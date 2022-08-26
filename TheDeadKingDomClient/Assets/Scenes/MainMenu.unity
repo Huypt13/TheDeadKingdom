@@ -923,6 +923,7 @@ MonoBehaviour:
   message: {fileID: 1552559992}
   inputUsername: {fileID: 1231159841}
   inputPassword: {fileID: 117507003}
+  btnLogin: {fileID: 1822185506}
 --- !u!4 &527993504
 Transform:
   m_ObjectHideFlags: 0

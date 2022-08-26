@@ -55,6 +55,9 @@ public class GameUI : MonoBehaviour
     [SerializeField]
     private GameObject tooltip;
 
+    [SerializeField]
+    private GameObject loadingCover;
+
     public void Start()
     {
         InitKillDead();
@@ -152,6 +155,12 @@ public class GameUI : MonoBehaviour
         tooltip.GetComponent<Tooltip>().HideTooltip();
     }
 
+    public void ResetPanel()
+    {
+        loadingCover.SetActive(false);
+        gameLobbyContainer.SetActive(false);
+    }
+
     private void OnGameStateChange(SocketIOEvent e)
     {
         string state = e.data["state"].str;
@@ -162,11 +171,14 @@ public class GameUI : MonoBehaviour
             case "Game":
                 gameLobbyContainer.SetActive(true);
                 AudioManager.Instance.PlayBackgroundSound("gameBackground");
+                loadingCover.SetActive(false);
+                RemoveDeadPanel();
                 break;
             case "EndGame":
                 gameLobbyContainer.SetActive(false);
                 RemoveDeadPanel();
                 AudioManager.Instance.StopBackgroundSound();
+                loadingCover.SetActive(true);
                 break;
             case "Lobby":
                 gameLobbyContainer.SetActive(false);

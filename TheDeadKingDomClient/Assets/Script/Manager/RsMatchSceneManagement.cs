@@ -91,6 +91,8 @@ public class RsMatchSceneManagement : MonoBehaviour
 
     private void UpdateRs(SocketIOEvent e)
     {
+        GameObject.Find("Canvas [ GameLobby]").GetComponent<GameUI>().ResetPanel();
+
         foreach (Transform child in team1Container.transform)
         {
             GameObject.Destroy(child.gameObject);

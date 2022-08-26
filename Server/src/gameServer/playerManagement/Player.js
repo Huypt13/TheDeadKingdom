@@ -120,7 +120,7 @@ class Player {
   onBurnCounter(lobby) {
     let endEf = []; // list effect ket thuc trong lan update
     let healthChange = false;
-    if (isDead) {
+    if (this.isDead) {
       return;
     }
     this.effect.burned.forEach((burn) => {

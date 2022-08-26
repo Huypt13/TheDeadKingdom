@@ -51,14 +51,14 @@ class TankUserService {
           message: `You bought ${listToken.length} box success`,
           email: owner.email,
           price: `${box.price * listToken.length}`,
-          url: `${process.env.WEB_URL}/user/login`,
+          url: `https://www.thedeathkingdom.tk`,
         });
       } else {
         await RabbitMq.boughtBoxNotify({
           message: `You bought box failed`,
           email: owner.email,
           price: "",
-          url: `${process.env.WEB_URL}/user/login`,
+          url: `https://www.thedeathkingdom.tk`,
         });
       }
       return result;
@@ -67,7 +67,7 @@ class TankUserService {
         message: `You bought box failed`,
         email: owner.email,
         price: "",
-        url: `${process.env.WEB_URL}/user/login`,
+        url: `https://www.thedeathkingdom.tk`,
       });
       console.log(err);
     }

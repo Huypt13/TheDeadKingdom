@@ -42,6 +42,9 @@ public class MenuManager : MonoBehaviour
     [SerializeField]
     private InputField inputPassword;
 
+    [SerializeField]
+    private Button btnLogin;
+
     public SocketIOComponent SocketReference
     {
         get
@@ -158,6 +161,7 @@ public class MenuManager : MonoBehaviour
         //}
 
         StartCoroutine(LoginRequest(uri));
+        btnLogin.interactable = false;
     }
 
 
@@ -204,6 +208,7 @@ public class MenuManager : MonoBehaviour
                 }
             }
         }
+        btnLogin.interactable = true;
     }
     public void OnSignInComplete()
     {

@@ -105,7 +105,7 @@ public class LobbyScreenManager : MonoBehaviour
         {
             CancelInvoke("SetTime");
             time = 0;
-            findMatchText.text = "FindMatch";
+            findMatchText.text = "FIND MATCH";
             SocketReference.Emit("quitGame");
             isFinding = false;
         }

@@ -664,20 +664,6 @@ public class NetworkClient : SocketIOComponent
 
         On("rsmatch", (e) =>
         {
-
-            foreach (var keyValuePair in serverObjects)
-            {
-                if (keyValuePair.Value != null)
-                {
-                    Destroy(keyValuePair.Value.gameObject);
-                }
-            }
-            serverObjects.Clear();
-            foreach (Transform child in networkContainer)
-            {
-                GameObject.Destroy(child.gameObject);
-            }
-
             SceneManagement.Instance.LoadLevel(SceneList.MATCHRS, (levelName) =>
             {
                 OnResultMatch.Invoke(e);
@@ -986,6 +972,21 @@ public class NetworkClient : SocketIOComponent
             Debug.Log("Lobby update " + e.data["state"].str);
             curState = e.data["state"].str;
             OnGameStateChange.Invoke(e);
+            if (e.data["state"].str == "EndGame")
+            {
+                foreach (var keyValuePair in serverObjects)
+                {
+                    if (keyValuePair.Value != null)
+                    {
+                        Destroy(keyValuePair.Value.gameObject);
+                    }
+                }
+                serverObjects.Clear();
+                foreach (Transform child in networkContainer)
+                {
+                    GameObject.Destroy(child.gameObject);
+                }
+            }
 
 
         });

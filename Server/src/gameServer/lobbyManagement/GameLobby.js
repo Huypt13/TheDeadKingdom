@@ -489,6 +489,9 @@ module.exports = class GameLobby extends LobbyBase {
   async someOneChooseHero(connection, _id) {
     console.log("choose hero", connection.player._id);
     const tank = await TankService.getByTankId(_id, connection.player._id);
+    if(!tank){
+      return;
+    }
     console.log("choose tank", tank);
     connection.player.tank = JSON.parse(JSON.stringify(tank));
     connection.player.startTank = JSON.parse(JSON.stringify(tank));

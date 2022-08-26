@@ -36,7 +36,6 @@ public class NetworkTransform : MonoBehaviour
         {
             if (!isFocusOn)
             {
-
                 //if (transform.position != oldPosition)
                 //{
                 //    sendData();

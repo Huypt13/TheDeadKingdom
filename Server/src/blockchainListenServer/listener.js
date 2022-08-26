@@ -92,6 +92,10 @@ const init = async () => {
       MarketPlaceItemService.updateAfterSold(event.returnValues);
     })
     .on("error", console.error);
+
+  setInterval(async () => { console.log((new Date()) + ": " + await (web3.eth.net.isListening())); }, 30000);
+
+
 };
 
 module.exports = { init };

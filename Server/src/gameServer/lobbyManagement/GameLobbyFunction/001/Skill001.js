@@ -13,7 +13,7 @@ function Skill1Handler(connection, data, lobby) {
   const skillObject = lobby.skill.find((e) => {
     return e.id == id;
   });
-
+  if (!skillObject) return;
   const skillEffect = skillObject?.skill;
   if (!subjectOfAttack) {
   }
@@ -87,6 +87,7 @@ function Skill2Handler(connection, data, lobby) {
   const skillObject = lobby.skill.find((e) => {
     return e.id == id;
   });
+  if (!skillObject) return;
 
   const skillEffect = skillObject?.skill;
   if (!subjectOfAttack) {
@@ -99,7 +100,7 @@ function Skill2Handler(connection, data, lobby) {
   }
   if (isDead) {
     // ng chet la player hoac tank ai
-    lobby.deadUpdate(connection, subjectOfAttack, skillObject.activator);
+    lobby.deadUpdate(connection, subjectOfAttack, skillObject?.activator);
   } else {
     // send dame cho client
     let returnData = {

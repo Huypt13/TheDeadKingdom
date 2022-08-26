@@ -13,6 +13,7 @@ function Skill1Handler(connection, data, lobby) {
   const skillObject = lobby.skill.find((e) => {
     return e.id == id;
   });
+  if (!skillObject) return;
 
   const skillEffect = skillObject?.skill;
   if (!subjectOfAttack) {
@@ -55,7 +56,7 @@ function Skill1Handler(connection, data, lobby) {
   }
   if (isDead) {
     // ng chet la player hoac tank ai
-    lobby.deadUpdate(connection, subjectOfAttack, skillObject.activator);
+    lobby.deadUpdate(connection, subjectOfAttack, skillObject?.activator);
   } else {
     // send dame cho client
     let returnData = {
@@ -73,11 +74,12 @@ function Skill2Handler(connection, data, lobby) {
   const skillObject = lobby.skill.find((e) => {
     return e.id == id;
   });
+  if (!skillObject) return;
   let connection1 = lobby.connections.find((c) => {
     return c.player.id === enemyId;
   });
   const subjectOfAttack = connection1.player;
-  const skillEffect = skillObject.skill;
+  const skillEffect = skillObject?.skill;
   if (subjectOfAttack?.team != skillObject?.team) {
     connection.socket.emit("skillEffectAnimation", {
       enemyId,
@@ -94,12 +96,12 @@ function Skill2Handler(connection, data, lobby) {
     subjectOfAttack.effect.burned.push({
       id,
       countTime: 0,
-      ...skillEffect.burned,
+      ...skillEffect?.burned,
     });
     subjectOfAttack.effect.slowled.push({
       id,
       ...skillEffect.slowled,
-      time: skillObject.timeRemain,
+      time: skillObject?.timeRemain,
     });
     connection.socket.emit("skillEffectAnimation", {
       enemyId,
@@ -167,6 +169,7 @@ function Skill3Handler(connection, data, lobby) {
   const skillObject = lobby.skill.find((e) => {
     return e.id == id;
   });
+  if (!skillObject) return;
 
   const skillEffect = skillObject?.skill;
   if (!subjectOfAttack) {
@@ -253,7 +256,7 @@ function Skill3Handler(connection, data, lobby) {
   }
   if (isDead) {
     // ng chet la player hoac tank ai
-    lobby.deadUpdate(connection, subjectOfAttack, skillObject.activator);
+    lobby.deadUpdate(connection, subjectOfAttack, skillObject?.activator);
   } else {
     // send dame cho client
     let returnData = {

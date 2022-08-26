@@ -36,23 +36,23 @@ public class NetworkRotation : MonoBehaviour
     {
         if (networkIdentity.IsControlling())
         {
-            if (oldTankRotation != transform.localEulerAngles.z || oldBarrelRotation != tankGeneral.GetLastRotation())
+            //if (oldTankRotation != transform.localEulerAngles.z || oldBarrelRotation != tankGeneral.GetLastRotation())
+            //{
+            //    oldTankRotation = transform.localEulerAngles.z;
+            //    oldBarrelRotation = tankGeneral.GetLastRotation();
+            //    stillCounter = 0;
+            //    sendData();
+            //}
+            //else
+            //{
+            stillCounter += Time.deltaTime;
+
+            if (stillCounter >= 0.1f)
             {
-                oldTankRotation = transform.localEulerAngles.z;
-                oldBarrelRotation = tankGeneral.GetLastRotation();
                 stillCounter = 0;
                 sendData();
             }
-            else
-            {
-                stillCounter += Time.deltaTime;
-
-                if (stillCounter >= 0.1f)
-                {
-                    stillCounter = 0;
-                    sendData();
-                }
-            }
+            //  }
         }
     }
 

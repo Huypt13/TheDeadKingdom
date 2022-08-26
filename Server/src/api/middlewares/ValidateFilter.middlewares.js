@@ -73,9 +73,9 @@ module.exports.validateReqQuery = async (req, res, next) => {
 
     next();
   } catch (error) {
-    return ApiResponse.serverErrorResponse(res, error.message);
+    console.log(error);
+    ApiResponse.serverErrorResponse(res, error.message);
   }
-
   // console.log("object2",req.query);
 };
 

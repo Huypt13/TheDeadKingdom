@@ -603,26 +603,22 @@ module.exports = class GameLobby extends LobbyBase {
       shootingRange: 6,
     };
 
-    if (this.settings.gameMode == "Destroy") {
-      let house1 = new MainHouse();
-      house1.team = 1;
-      house1.health = 2000;
-      house1.maxHealth = 2000;
-      this.onServerSpawn(house1, new Vector2(7, -8));
+    // if (this.settings.gameMode == "Destroy") {
+    //   let house1 = new MainHouse();
+    //   house1.team = 1;
+    //   house1.health = 2000;
+    //   house1.maxHealth = 2000;
+    //   this.onServerSpawn(house1, new Vector2(7, -8));
 
-      let house2 = new MainHouse();
-      house2.team = 2;
-      house2.health = 2000;
-      house1.maxHealth = 2000;
+    //   let house2 = new MainHouse();
+    //   house2.team = 2;
+    //   house2.health = 2000;
+    //   house1.maxHealth = 2000;
 
-      console.log(house2);
-      this.onServerSpawn(house2, new Vector2(7, 1));
-    }
-    if (this.settings.gameMode == "Flag") {
-      let flag = new Flag();
-      flag.maxPoint = 50;
-      this.onServerSpawn(flag, new Vector2(0, 0));
-    }
+    //   console.log(house2);
+    //   this.onServerSpawn(house2, new Vector2(7, 1));
+    // }
+
     let objectWithName = [];
     objectWithName["BlueTeamPotion"] = Potion;
     objectWithName["RedTeamPotion"] = Potion;
@@ -631,6 +627,8 @@ module.exports = class GameLobby extends LobbyBase {
     objectWithName["PileBox"] = PileBox;
     // objectWithName["BlueTeamTankAI"] = TankAI;
     objectWithName["RedTeamTankAI"] = TankAI;
+    objectWithName["BlueTeamTankAI"] = TankAI;
+    objectWithName["BaseTankAI"] = TankAI;
     objectWithName["BlueTeamBigTurret"] = TowerAI;
     objectWithName["RedTeamBigTurret"] = TowerAI;
     objectWithName["BlueTeamSmallTurret"] = TowerAI;
@@ -638,13 +636,35 @@ module.exports = class GameLobby extends LobbyBase {
     objectWithName["Helipad1"] = Helipad;
     objectWithName["Helipad2"] = Helipad;
     objectWithName["Helipad3"] = Helipad;
+    objectWithName["Flag"] = Flag;
+    objectWithName["BaseRed"] = MainHouse;
+    objectWithName["BaseBlue"] = MainHouse;
     let currentMap = this.settings.map;
     let objectPositions = MapProp.map[currentMap];
     let objectProperties = MapProp.props;
     for (let objectName in objectPositions) {
       if (!objectWithName[objectName]) continue;
-
       for (let pos of objectPositions[objectName]) {
+        if (this.settings.gameMode == "Flag" && objectName == "Flag") {
+          let flag = new Flag();
+          flag.maxPoint = objectProperties.Flag.maxPoint;
+          this.onServerSpawn(flag, new Vector2(pos.position.x, pos.position.y));
+          continue;
+        }
+        if (this.settings.gameMode == "Destroy") {
+          if (objectName == "BaseRed" || objectName == "BaseBlue") {
+            let gameObject = new objectWithName[objectName]();
+            for (let property in objectProperties[objectName]) {
+              gameObject[property] = objectProperties[objectName][property];
+            }
+            console.log("object", gameObject);
+            this.onServerSpawn(
+              gameObject,
+              new Vector2(pos.position.x, pos.position.y)
+            );
+            continue;
+          }
+        }
         let objectPosition = new Vector2(pos.position.x, pos.position.y);
         let gameObject = null;
         if (
@@ -866,12 +886,12 @@ module.exports = class GameLobby extends LobbyBase {
       name: `OrientationSkill`,
       num,
       typeId,
-      id: skillObject.id,
-      team: skillObject.team,
+      id: skillObject?.id,
+      team: skillObject?.team,
       activator,
       direction,
       position,
-      skillSpeed: skillObject.speed,
+      skillSpeed: skillObject?.speed,
     };
 
     connection.socket.emit("skillSpawn", returnData);
@@ -1384,6 +1404,7 @@ module.exports = class GameLobby extends LobbyBase {
     connection.socket.emit("reloadGame", {
       map: this.settings.map,
       gameMode: this.settings.gameMode,
+      time: this.matchTime,
     });
     const returnData = {
       state: this.lobbyState.currentState,
@@ -1428,6 +1449,7 @@ module.exports = class GameLobby extends LobbyBase {
         aiId: item?.aiId,
         name: item.username,
         health: item?.health,
+        maxHealth: item?.maxHealth,
         team: item?.team || 0,
         position: item?.position,
         type: item?.type,
@@ -1539,7 +1561,11 @@ module.exports = class GameLobby extends LobbyBase {
         });
 
         let isRespawn = player.respawnCounter();
+
         if (isRespawn) {
+          player.position.x = player.spawnPos.x;
+          player.position.y = player.spawnPos.y;
+
           let returnData = {
             id: player.id,
             position: {

@@ -750,6 +750,7 @@ public class NetworkClient : SocketIOComponent
             float barrelRotation = E.data["barrelRotation"].f;
 
             NetworkIdentity ni = serverObjects[id];
+
             ni.transform.localEulerAngles = new Vector3(0, 0, tankRotation);
             ni.GetComponent<TankGeneral>().SetRotation(barrelRotation);
         });
@@ -1083,6 +1084,7 @@ public class NetworkClient : SocketIOComponent
 
         yield return null;
     }
+
     public void StopFocus()
     {
         Emit("stopAutoMoving");

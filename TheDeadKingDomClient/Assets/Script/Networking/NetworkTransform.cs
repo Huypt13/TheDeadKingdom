@@ -36,21 +36,20 @@ public class NetworkTransform : MonoBehaviour
         {
             if (!isFocusOn)
             {
-
                 //if (transform.position != oldPosition)
                 //{
                 //    sendData();
                 //}
                 //else
                 //{
-                    stillCounter += Time.deltaTime;
+                stillCounter += Time.deltaTime;
 
-                    if (stillCounter >= 0.1f)
-                    {
-                        stillCounter = 0;
-                        sendData();
-                    }
-             //   }
+                if (stillCounter >= 0.1f)
+                {
+                    stillCounter = 0;
+                    sendData();
+                }
+                //  }
 
             }
 

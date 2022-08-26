@@ -18,6 +18,9 @@ const TankService = require("../hero/Tank.service");
 class MarketPlaceItemService {
   async createAfterListed(marketPlace) {
     const seller = await UserService.getByWalletAddress(marketPlace.seller);
+    if (!seller) {
+      return;
+    }
     try {
       this.validateInput(marketPlace);
       if (!seller) {
@@ -86,6 +89,9 @@ class MarketPlaceItemService {
 
   async updateAfterSold(marketPlace) {
     const buyer = await UserService.getByWalletAddress(marketPlace.buyer);
+    if (!buyer) {
+      return;
+    }
     try {
       this.validateInput(marketPlace);
       if (marketPlace.buyer == marketPlace.seller) {
@@ -168,6 +174,9 @@ class MarketPlaceItemService {
 
   async updateAfterSellCanceled(marketPlace) {
     const seller = await UserService.getByWalletAddress(marketPlace.seller);
+    if (!seller) {
+      return;
+    }
     try {
       this.validateInput(marketPlace);
       if (!seller) {

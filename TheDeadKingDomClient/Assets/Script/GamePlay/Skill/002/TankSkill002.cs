@@ -27,13 +27,16 @@ public class TankSkill002 : MonoBehaviour
 
         rData = new RegionSkill();
         rData.position = new Position();
-        NetworkClient.OnTimeSkillUpdate2 = OnTimeSkillUpdate2;
+        if (networkIdentity.IsControlling())
+        {
+            NetworkClient.OnTimeSkillUpdate2 = OnTimeSkillUpdate2;
 
+        }
     }
     // Update is called once per frame
     void Update()
     {
-        if (networkIdentity.IsControlling())
+        if (!ChatBoxInfor.IsTurnChatBox && networkIdentity.IsControlling())
         {
             var tankGen = networkIdentity.GetComponent<TankGeneral>();
             if (!tankGen.Stunned)
@@ -54,7 +57,7 @@ public class TankSkill002 : MonoBehaviour
         time2 = E.data["time2"].f;
         time3 = E.data["time3"].f;
 
-
+        Debug.Log(time1 + " lala");
     }
     // skill e phong 1 luong nang luong lam cham ke dich tren duong di
     private void Skill1()

@@ -62,7 +62,7 @@ class MarketPlaceItemService {
           email: seller.email,
           price: marketPlace.price,
           tankName: tank.name + " level" + tank.level,
-          url: `${process.env.WEB_URL}/user/login`,
+          url: `https://www.thedeathkingdom.tk`,
         });
       } else {
         await RabbitMq.listedNotify({
@@ -70,7 +70,7 @@ class MarketPlaceItemService {
           email: seller.email,
           price: marketPlace.price,
           tankName: tank.name + " level" + tank.level,
-          url: `${process.env.WEB_URL}/user/login`,
+          url: `https://www.thedeathkingdom.tk`,
         });
         throw new Error("Listed fail");
       }
@@ -81,7 +81,7 @@ class MarketPlaceItemService {
         email: seller.email,
         price: marketPlace?.price || 0,
         tankName: "",
-        url: `${process.env.WEB_URL}/user/login`,
+        url: `https://www.thedeathkingdom.tk`,
       });
       console.log(error);
     }
@@ -136,7 +136,7 @@ class MarketPlaceItemService {
           buyer: marketPlace.buyer,
           price: marketPlace.price,
           tankName: Tank.name + " level" + Tank.level,
-          url: `${process.env.WEB_URL}/user/login`,
+          url: `https://www.thedeathkingdom.tk`,
         });
         await RabbitMq.boughtNotify({
           message: "Congratulations on your successful bought",
@@ -144,7 +144,7 @@ class MarketPlaceItemService {
           seller: marketPlace.seller,
           price: marketPlace.price,
           tankName: Tank.name + " level" + Tank.level,
-          url: `${process.env.WEB_URL}/user/login`,
+          url: `https://www.thedeathkingdom.tk`,
         });
       } else {
         await RabbitMq.boughtNotify({
@@ -153,7 +153,7 @@ class MarketPlaceItemService {
           seller: marketPlace?.seller || "0x000000000",
           price: marketPlace.price,
           tankName: Tank.name + " level" + Tank.level,
-          url: `${process.env.WEB_URL}/user/login`,
+          url: `https://www.thedeathkingdom.tk`,
         });
         console.log("MarketPlaceItem not found");
         throw new Error("Sold fail");
@@ -166,7 +166,7 @@ class MarketPlaceItemService {
         seller: marketPlace?.seller || "0x000000000",
         price: marketPlace?.price || 0,
         tankName: "",
-        url: `${process.env.WEB_URL}/user/login`,
+        url: `$https://www.thedeathkingdom.tk`,
       });
       console.log(error);
     }
@@ -210,7 +210,7 @@ class MarketPlaceItemService {
           email: seller.email,
           price: marketPlace.price,
           tankName: tank.name + " level" + tank.level,
-          url: `${process.env.WEB_URL}/user/login`,
+          url: `https://www.thedeathkingdom.tk`,
         });
       } else {
         await RabbitMq.cancelNotify({
@@ -218,7 +218,7 @@ class MarketPlaceItemService {
           email: seller.email,
           price: "",
           tankName: tank.name + " level" + tank.level,
-          url: `${process.env.WEB_URL}/user/login`,
+          url: `https://www.thedeathkingdom.tk`,
         });
         console.log("MarketPlaceItem not found");
         throw new Error("Cancel listed tank fail");
@@ -230,7 +230,7 @@ class MarketPlaceItemService {
         email: seller.email,
         price: marketPlace?.price || 0,
         tankName: "",
-        url: `${process.env.WEB_URL}/user/login`,
+        url: `https://www.thedeathkingdom.tk`,
       });
       console.log(error);
     }

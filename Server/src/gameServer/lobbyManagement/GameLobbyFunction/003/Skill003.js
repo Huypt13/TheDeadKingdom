@@ -36,7 +36,7 @@ function Skill2Handler(connection, data, lobby) {
   if (!skillObject) return;
 
   const skillEffect = skillObject?.skill;
-  if (!subjectOfAttack) {
+  if (!subjectOfAttack || subjectOfAttack?.isDead) {
     return;
   }
 

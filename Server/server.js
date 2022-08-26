@@ -1,3 +1,4 @@
+
 const express = require("express");
 
 
@@ -108,5 +109,3 @@ app.use("/marketPlace", MarketPlaceRouter);
 Database.connect(app);
 server.listen(8080, "0.0.0.0");
 // server.listen(8080);
-const date = new Date();
-console.log("date", date.getHours(), date.getMinutes(), date.getSeconds);

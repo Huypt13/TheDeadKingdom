@@ -17,6 +17,9 @@ class TankUserService {
   }
   async createTankUser(listToken, tokenOwner, boxId) {
     const owner = await UserService.getByWalletAddress(tokenOwner);
+    if (!owner) {
+      return;
+    }
     try {
       if (!owner) {
         throw new Error("buyer is not connect wallet");
@@ -56,7 +59,7 @@ class TankUserService {
       } else {
         await RabbitMq.boughtBoxNotify({
           message: `You bought box failed`,
-          email: owner.email,
+          email: owner?.email,
           price: "",
           url: `${process.env.WEB_URL}/user/login`,
         });
@@ -65,7 +68,7 @@ class TankUserService {
     } catch (err) {
       await RabbitMq.boughtBoxNotify({
         message: `You bought box failed`,
-        email: owner.email,
+        email: owner?.email,
         price: "",
         url: `${process.env.WEB_URL}/user/login`,
       });

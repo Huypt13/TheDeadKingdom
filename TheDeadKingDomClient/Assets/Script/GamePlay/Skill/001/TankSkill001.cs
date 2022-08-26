@@ -49,7 +49,6 @@ public class TankSkill001 : MonoBehaviour
         time1 = E.data["time1"].f;
         time2 = E.data["time2"].f;
         time3 = E.data["time3"].f;
-        Debug.Log("lala " + time1);
 
     }
 

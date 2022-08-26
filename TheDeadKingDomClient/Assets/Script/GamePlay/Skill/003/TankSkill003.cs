@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using SocketIO;
 
 public class TankSkill003 : MonoBehaviour
 {
@@ -15,6 +16,9 @@ public class TankSkill003 : MonoBehaviour
     RegionSkill rData;
 
     SkillBuff bdata;
+    float time1 = 0f;
+    float time2 = 0f;
+    float time3 = 0f;
 
     public bool OnSkill1 { get => onSkill1; set => onSkill1 = value; }
 
@@ -27,8 +31,9 @@ public class TankSkill003 : MonoBehaviour
 
         rData = new RegionSkill();
         rData.position = new Position();
-
         bdata = new SkillBuff();
+        NetworkClient.OnTimeSkillUpdate2 = OnTimeSkillUpdate2;
+
     }
 
 
@@ -40,13 +45,23 @@ public class TankSkill003 : MonoBehaviour
             var tankGen = networkIdentity.GetComponent<TankGeneral>();
             if (!tankGen.Stunned)
             {
-                Skill1();
-                Skill2();
+                if (time1 <= 0.3)
+                    Skill1();
+                if (time2 <= 0.3)
+                    Skill2();
             }
-            Skill3();
+            if (time3 <= 0.3)
+                Skill3();
         }
     }
+    private void OnTimeSkillUpdate2(SocketIOEvent E)
+    {
+        time1 = E.data["time1"].f;
+        time2 = E.data["time2"].f;
+        time3 = E.data["time3"].f;
 
+
+    }
 
     // skill e phong 1 luong nang luong lam cham ke dich tren duong di
     private void Skill1()

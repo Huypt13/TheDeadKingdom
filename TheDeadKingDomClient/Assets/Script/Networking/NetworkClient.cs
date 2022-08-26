@@ -39,6 +39,7 @@ public class NetworkClient : SocketIOComponent
     public static Action<SocketIOEvent> OnUpdatePlayer = (E) => { };
     public static Action<SocketIOEvent> OnTimeUpdate = (E) => { };
     public static Action<SocketIOEvent> OnTimeSkillUpdate = (E) => { };
+    public static Action<SocketIOEvent> OnTimeSkillUpdate2 = (E) => { };
     public static Action<SocketIOEvent> OnKillDeadUpdate = (E) => { };
     public static Action<SocketIOEvent> OnResultMatch = (E) => { };
     public static Action<SocketIOEvent> OnChat = (E) => { };
@@ -959,6 +960,7 @@ public class NetworkClient : SocketIOComponent
         On("updateTimeSkill", (E) =>
         {
             OnTimeSkillUpdate.Invoke(E);
+            OnTimeSkillUpdate2.Invoke(E);
         });
 
 

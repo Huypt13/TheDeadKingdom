@@ -1234,7 +1234,7 @@ module.exports = class GameLobby extends LobbyBase {
       });
 
       const subjectOfAttack = connection1?.player ? connection1?.player : ai;
-      if (!subjectOfAttack) {
+      if (!subjectOfAttack || subjectOfAttack?.isDead) {
         return;
       }
       let isDead = false;

@@ -13,7 +13,6 @@ const DeathKingdomCoin = require("../../../Contract/demo-client/contracts/DeathK
 const Database = require("../../src/api/database/Database");
 const BoxService = require("../api/box/Box.service");
 
-
 const init = async () => {
   // const web3 = new Web3("ws://127.0.0.1:7545");
   const web3 = new Web3(
@@ -62,7 +61,8 @@ const init = async () => {
     .on("data", async function (event) {
       console.log("===============NFTListed=================");
       console.log(event.returnValues);
-      event.returnValues.nftContract = event.returnValues.nftContract.toLowerCase();
+      event.returnValues.nftContract =
+        event.returnValues.nftContract.toLowerCase();
       event.returnValues.seller = event.returnValues.seller.toLowerCase();
       event.returnValues.buyer = event.returnValues.buyer.toLowerCase();
       MarketPlaceItemService.createAfterListed(event.returnValues);
@@ -74,7 +74,8 @@ const init = async () => {
     .on("data", async function (event) {
       console.log("===============NFTSaleCanceled=================");
       console.log(event.returnValues);
-      event.returnValues.nftContract = event.returnValues.nftContract.toLowerCase();
+      event.returnValues.nftContract =
+        event.returnValues.nftContract.toLowerCase();
       event.returnValues.seller = event.returnValues.seller.toLowerCase();
       event.returnValues.buyer = event.returnValues.buyer.toLowerCase();
       MarketPlaceItemService.updateAfterSellCanceled(event.returnValues);
@@ -86,12 +87,17 @@ const init = async () => {
     .on("data", async function (event) {
       console.log("===============NFTSold=================");
       console.log(event.returnValues);
-      event.returnValues.nftContract = event.returnValues.nftContract.toLowerCase();
+      event.returnValues.nftContract =
+        event.returnValues.nftContract.toLowerCase();
       event.returnValues.seller = event.returnValues.seller.toLowerCase();
       event.returnValues.buyer = event.returnValues.buyer.toLowerCase();
       MarketPlaceItemService.updateAfterSold(event.returnValues);
     })
     .on("error", console.error);
+
+  setInterval(async () => {
+    console.log(new Date() + ": " + (await web3.eth.net.isListening()));
+  }, 150000);
 };
 
 module.exports = { init };

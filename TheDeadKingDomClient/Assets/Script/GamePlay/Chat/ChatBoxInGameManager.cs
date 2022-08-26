@@ -19,6 +19,10 @@ public class ChatBoxInGameManager : MonoBehaviour
     private int maxMessages = 4;
     private float count;
     private bool toTeam = true;
+    private bool canSent = true;
+    private float timeChat = 2;
+    private float timeWait = 0;
+
     [SerializeField]
     private List<ChatMessage> messageList = new List<ChatMessage>();
 
@@ -41,6 +45,14 @@ public class ChatBoxInGameManager : MonoBehaviour
     void Update()
     {
         // box chat
+        if (!canSent)
+        {
+            timeWait += Time.deltaTime;
+            if (timeWait >= timeChat)
+            {
+                canSent = true;
+            }
+        }
 
         inputChatBox.ActivateInputField();
         if (inputChatBox.text != "")
@@ -78,7 +90,27 @@ public class ChatBoxInGameManager : MonoBehaviour
     {
         string text = NetworkClient.ClientName.ToString() + ": " + inputChatBox.text;
         if (!toTeam) text = "[All] " + text;
-        SendMessageToChat(text);
+        if (canSent)
+        {
+            SendMessageToChat(text);
+            canSent = false;
+            timeWait = 0;
+        }
+        else
+        {
+            if (messageList.Count >= maxMessages)
+            {
+                Destroy(messageList[0].textObject.gameObject);
+                messageList.Remove(messageList[0]);
+            }
+            ChatMessage newMessage = new ChatMessage();
+            newMessage.text = $"Wait {timeChat - Math.Ceiling(timeWait)}s";
+            GameObject newText = Instantiate(textObject, chatPanel.transform);
+            newMessage.textObject = newText.GetComponent<TextMeshProUGUI>();
+            newMessage.textObject.text = newMessage.text;
+            newMessage.textObject.color = Color.red;
+            messageList.Add(newMessage);
+        }
         inputChatBox.text = "";
     }
     private void ReceivedMessage(SocketIOEvent e)
@@ -98,10 +130,11 @@ public class ChatBoxInGameManager : MonoBehaviour
         ChatMessage newMessage = new ChatMessage();
         string text = e.data["text"].str;
         string id = e.data["id"].str;
-        if(NetworkClient.ClientID == id)
+        if (NetworkClient.ClientID == id)
         {
             messageType = ChatMessage.messageType.playerMessage;
-        }else
+        }
+        else
         {
             messageType = ChatMessage.messageType.info;
         }
@@ -132,7 +165,7 @@ public class ChatBoxInGameManager : MonoBehaviour
         {
             text = text,
             toTeam = toTeam,
-        }))) ;
+        })));
     }
 
     private Color MesssageTypeColor(ChatMessage.messageType messageType)

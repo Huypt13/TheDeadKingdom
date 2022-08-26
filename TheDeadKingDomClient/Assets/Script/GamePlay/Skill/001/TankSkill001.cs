@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using SocketIO;
 using UnityEngine;
 
 public class TankSkill001 : MonoBehaviour
@@ -12,12 +13,16 @@ public class TankSkill001 : MonoBehaviour
     [SerializeField]
     private NetworkIdentity networkIdentity;
     SkillOrientationData sk1;
+    float time1 = 0f;
+    float time2 = 0f;
+    float time3 = 0f;
     // Start is called before the first frame update
     void Start()
     {
         sk1 = new SkillOrientationData();
         sk1.direction = new Position();
         sk1.position = new Position();
+        NetworkClient.OnTimeSkillUpdate2 = OnTimeSkillUpdate2;
     }
 
 
@@ -29,19 +34,30 @@ public class TankSkill001 : MonoBehaviour
             var tankGen = networkIdentity.GetComponent<TankGeneral>();
             if (!tankGen.Stunned)
             {
-                Skill1();
-                Skill2();
-                Skill3();
+                if (time1 <= 0.3)
+                    Skill1();
+                if (time2 <= 0.3)
+                    Skill2();
+                if (time3 <= 0.3)
+                    Skill3();
             }
         }
     }
 
+    private void OnTimeSkillUpdate2(SocketIOEvent E)
+    {
+        time1 = E.data["time1"].f;
+        time2 = E.data["time2"].f;
+        time3 = E.data["time3"].f;
+
+    }
 
     // skill e phong 1 luong nang luong lam cham ke dich tren duong di
     private void Skill1()
     {
         if (!ChatBoxInfor.IsTurnChatBox && Input.GetKeyDown(KeyCode.E))
         {
+            Debug.Log("Sent skill 1");
             //Define skill1
             sk1.activator = NetworkClient.ClientID;
             sk1.num = 1;

@@ -179,7 +179,6 @@ public class TankGeneral : MonoBehaviour
             bulletData.direction.x = bulletSpawnPoint.up.x;
             bulletData.direction.y = bulletSpawnPoint.up.y;
 
-            Debug.Log("shooting 1");
             //Send Bullet
             networkIdentity.GetSocket().Emit("fireBullet", new JSONObject(JsonUtility.ToJson(bulletData)));
 

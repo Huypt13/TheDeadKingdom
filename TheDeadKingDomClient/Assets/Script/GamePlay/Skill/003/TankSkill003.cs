@@ -34,7 +34,7 @@ public class TankSkill003 : MonoBehaviour
         bdata = new SkillBuff();
         if (networkIdentity.IsControlling())
         {
-            NetworkClient.OnTimeSkillUpdate2 = OnTimeSkillUpdate2;
+            NetworkClient.OnTimeSkillUpdate2 += OnTimeSkillUpdate2;
         }
     }
 

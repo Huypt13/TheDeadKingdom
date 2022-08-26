@@ -29,7 +29,7 @@ public class TankSkill002 : MonoBehaviour
         rData.position = new Position();
         if (networkIdentity.IsControlling())
         {
-            NetworkClient.OnTimeSkillUpdate2 = OnTimeSkillUpdate2;
+            NetworkClient.OnTimeSkillUpdate2 += OnTimeSkillUpdate2;
 
         }
     }

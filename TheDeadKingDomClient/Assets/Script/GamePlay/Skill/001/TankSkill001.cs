@@ -19,10 +19,17 @@ public class TankSkill001 : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        time1 = 0f;
+        time2 = 0f;
+        time3 = 0f;
         sk1 = new SkillOrientationData();
         sk1.direction = new Position();
         sk1.position = new Position();
-        NetworkClient.OnTimeSkillUpdate2 = OnTimeSkillUpdate2;
+        if (networkIdentity.IsControlling())
+        {
+            NetworkClient.OnTimeSkillUpdate2 += OnTimeSkillUpdate2;
+
+        }
     }
 
 
@@ -34,8 +41,14 @@ public class TankSkill001 : MonoBehaviour
             var tankGen = networkIdentity.GetComponent<TankGeneral>();
             if (!tankGen.Stunned)
             {
+                Debug.Log("can user skill " + time1);
+
                 if (time1 <= 0.3)
+                {
+                    Debug.Log("can user skill");
                     Skill1();
+
+                }
                 if (time2 <= 0.3)
                     Skill2();
                 if (time3 <= 0.3)
@@ -49,6 +62,7 @@ public class TankSkill001 : MonoBehaviour
         time1 = E.data["time1"].f;
         time2 = E.data["time2"].f;
         time3 = E.data["time3"].f;
+        Debug.Log(time1 + " lala 1");
 
     }
 

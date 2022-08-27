@@ -194,7 +194,7 @@ class UserService {
       );
       await RabbitMq.resetPasswordNotify({
         email: email,
-        url: "https://www.thedeathkingdom.tk/login/" + resetToken,
+        url: "https://www.thedeathkingdom.tk/reset-password/" + resetToken,
       });
       return user;
     } catch (error) {

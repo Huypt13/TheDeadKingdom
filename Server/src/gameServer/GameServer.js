@@ -1,9 +1,8 @@
 const shortid = require("shortid");
 
-const Vector2 = require('../dto/Vector2');
+const Vector2 = require("../dto/Vector2");
 
-
-const MapProps = require('./lobbyManagement/MapProps');
+const MapProps = require("./lobbyManagement/MapProps");
 
 const _ = require("lodash");
 
@@ -130,8 +129,6 @@ class GameServer {
 
         if (canJoin) {
           lobbyFound = true;
-          connection.player.spawnPos = lobby.settings.tankSpawnPosition[lobby.connections.length] ?.position|| new Vector2(0,0);
-          connection.player.position =  new Vector2(connection.player.spawnPos.x,connection.player.spawnPos.y);
           this.onSwitchLobby(connection, lobby.id);
         }
       }
@@ -152,10 +149,9 @@ class GameServer {
       );
       // random map
       gamelobby.settings.map = _.shuffle(Maps[type])[0];
-      console.log("map",gamelobby.settings.map);
-      gamelobby.settings.tankSpawnPosition = MapProps.map[gamelobby.settings.map].TankSpawnPosition;
-      connection.player.spawnPos = gamelobby.settings.tankSpawnPosition[0]?.position || new Vector2(0,0);
-      connection.player.position =  new Vector2(connection.player.spawnPos.x,connection.player.spawnPos.y);
+      console.log("map", gamelobby.settings.map);
+      gamelobby.settings.tankSpawnPosition =
+        MapProps.map[gamelobby.settings.map].TankSpawnPosition;
       console.log(
         "random game",
         type,

@@ -16,9 +16,6 @@ public class Tooltip : MonoBehaviour
         //ShowTooltip("This is content of tooltip");
         HideTooltip();
 
-        GetComponentInParent<Canvas>().worldCamera = Camera.main;
-        GetComponentInParent<Canvas>().sortingLayerName = "GamePlay";
-        GetComponentInParent<Canvas>().sortingOrder = 1;
     }
 
     // Update is called once per frame
@@ -35,6 +32,11 @@ public class Tooltip : MonoBehaviour
 
     public void ShowTooltip(string content)
     {
+        GetComponentInParent<Canvas>().renderMode = RenderMode.ScreenSpaceCamera;
+        GetComponentInParent<Canvas>().worldCamera = Camera.main;
+        GetComponentInParent<Canvas>().sortingLayerName = "GamePlay";
+        GetComponentInParent<Canvas>().sortingOrder = 1;
+
         gameObject.SetActive(true);
         tooltipText.text = content;
         float textPaddingSize = 4f;
@@ -44,6 +46,7 @@ public class Tooltip : MonoBehaviour
 
     public void HideTooltip()
     {
+        GetComponentInParent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
         gameObject.SetActive(false);
     }
 }

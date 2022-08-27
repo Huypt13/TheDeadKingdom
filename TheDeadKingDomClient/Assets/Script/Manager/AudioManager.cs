@@ -7,6 +7,9 @@ public class AudioManager : Singleton<AudioManager>
     [SerializeField]
     private AudioClip pickTank, countDownFight, gameBackground;
 
+    [SerializeField]
+    private AudioClip shootingSound;
+
     private AudioSource backgroundAudioSource;
     private AudioSource effectAudioSource;
 
@@ -36,9 +39,9 @@ public class AudioManager : Singleton<AudioManager>
             case "countDownFight":
                 effectAudioSource.PlayOneShot(countDownFight);
                 break;
-                //case "hitSound":
-                //    effectAudioSource.PlayOneShot(hitSound);
-                //    break;
+            case "shootingSound":
+                effectAudioSource.PlayOneShot(shootingSound);
+                break;
         }
     }
 

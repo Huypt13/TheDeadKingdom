@@ -515,8 +515,17 @@ module.exports = class GameLobby extends LobbyBase {
     if (lobby.connections.length == lobby.settings.maxPlayers) {
       console.log("We have enough players we can start choose hero");
       lobby.lobbyState.currentState = lobby.lobbyState.WAITING;
+
       const returnData1 = {
         players: lobby.connections.map((e, i) => {
+          e.player.spawnPos =
+            this.settings.tankSpawnPosition[i]?.position || new Vector2(0, 0);
+
+          console.log("spawn pos s", i, e.player.spawnPos);
+          e.player.position = new Vector2(
+            e.player.spawnPos.x,
+            e.player.spawnPos.y
+          );
           if (i % 2 == 0) {
             e.player.team = 1;
           } else {

@@ -305,8 +305,10 @@ public class NetworkClient : SocketIOComponent
                     var spawnedObject = Instantiate(netIdenPlayer.GetBullet(), networkContainer);
 
                     spawnedObject.transform.position = new Vector3(x, y, 0);
-
-
+                    if (ClientID == activator)
+                    {
+                        AudioManager.Instance.PlayEffectSoundOneShot("shootingSound");
+                    }
                     var ni = spawnedObject.GetComponent<NetworkIdentity>();
                     ni.SetControllerId(id);
                     ni.SetSocketReference(this);

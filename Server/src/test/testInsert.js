@@ -262,7 +262,7 @@ module.exports.insertBoxData = async () => {
         {
           "tankId": "62e11319105338549ed7398e",
           "ratio": 0.2
-        },
+      },
         {
           "tankId": "62e11149105338549ed69fab",
           "ratio": 0.1

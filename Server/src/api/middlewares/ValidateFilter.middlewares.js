@@ -50,21 +50,19 @@ module.exports.validateReqQuery = async (req, res, next) => {
     if (
       !maxPrice ||
       maxPrice < 0 ||
-      !validator.isFloat(maxPrice + "") ||
-      maxPrice > 200
+      !validator.isFloat(maxPrice + "")
     ) {
-      req.query.maxPrice = 500;
+      req.query.maxPrice = Number.MAX_VALUE;;
     }
     if (
       !minPrice ||
       minPrice < 0 ||
-      !validator.isFloat(minPrice + "") ||
-      minPrice > 200
+      !validator.isFloat(minPrice + "")
     ) {
-      req.query.minPrice = 10;
+      req.query.minPrice = 1;
     }
     if (req.query.maxPrice < req.query.minPrice) {
-      req.query.maxPrice = 500;
+      req.query.maxPrice = Number.MAX_VALUE;
       req.query.minPrice = 10;
     }
     if (!number || !Number.isInteger(number) || number < 0 || number > 200) {

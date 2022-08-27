@@ -38,6 +38,7 @@ public class BoxManage : MonoBehaviour
                 transform.gameObject.SetActive(true);
                 transform.gameObject.GetComponent<SpriteRenderer>().sprite = listSprite[0];
                 gameObject.layer = 0;
+                transform.tag = "BulletThrough";
                 return;
             }
         }

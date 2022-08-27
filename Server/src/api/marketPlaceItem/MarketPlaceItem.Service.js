@@ -19,6 +19,7 @@ class MarketPlaceItemService {
   async createAfterListed(marketPlace) {
     const seller = await UserService.getByWalletAddress(marketPlace.seller);
     if (!seller) {
+      console.log("Can't listed. Seller is not connect wallet");
       return;
     }
     try {
@@ -90,6 +91,7 @@ class MarketPlaceItemService {
   async updateAfterSold(marketPlace) {
     const buyer = await UserService.getByWalletAddress(marketPlace.buyer);
     if (!buyer) {
+      console.log("Can't Sold. Buyer is not connect wallet");
       return;
     }
     try {
@@ -175,6 +177,7 @@ class MarketPlaceItemService {
   async updateAfterSellCanceled(marketPlace) {
     const seller = await UserService.getByWalletAddress(marketPlace.seller);
     if (!seller) {
+      console.log("Can't canceled listed. Seller is not connect wallet");
       return;
     }
     try {

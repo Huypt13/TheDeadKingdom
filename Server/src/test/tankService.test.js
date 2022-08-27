@@ -307,7 +307,7 @@ describe("Test tank Service", () => {
   test("test get tanks owner with status 'Owned' and paging success", async() => {
      const filter = {limit: 1, pageNumbers:1, sortBy:{name: -1 }, status: "Owned"}
      const listTank = await TankService.getTotalTankOwnerWithStatusAndPaging(filter,"6296d14fb263c0630e920036")
-     expect(listTank.listTankOwner[0].marketplaceItem.isSelling).toBe(false);
+     expect(listTank).not.toBe(null);
   })
   test("test get tanks owner with status 'Owned'  and paging false with id not found", async() => {
     try{
@@ -345,7 +345,7 @@ describe("Test tank Service", () => {
   test("test get tanks owner with status 'Owned'  success", async() => {
     const filter = { sortBy:{name: -1 }, status: "Owned"}
     const listTank = await TankService.getTotalTankOwnerWithStatus(filter,"6296d14fb263c0630e920036")
-    expect(listTank[0].marketplaceItem.isSelling).toBe(false);
+    expect(listTank).not.toBe(null);
  })
  test("test get tanks owner with status 'Owned' false with id not found", async() => {
    try{

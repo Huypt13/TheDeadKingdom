@@ -18,6 +18,7 @@ class TankUserService {
   async createTankUser(listToken, tokenOwner, boxId) {
     const owner = await UserService.getByWalletAddress(tokenOwner);
     if (!owner) {
+      console.log("Can't boy box. Owner is not connect wallet");
       return;
     }
     try {

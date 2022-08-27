@@ -57,7 +57,6 @@ describe("Test marketplaceitem service", () => {
             seller:"0x54a2998Bd96eEEEBc218aB5AAC4fBE357A2e9714", buyer: null, price: "1000000000000000000"
         }
         const result = await MarketPlaceItemService.createAfterListed(marketPlace);
-        console.log("dssd",result);
         expect(result.buyer).toBe(null);
         expect(result.marketItemId).toBe(marketPlace.marketItemId)
         expect(result.price).toBe(marketPlace.price)

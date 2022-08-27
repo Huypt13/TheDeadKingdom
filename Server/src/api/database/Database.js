@@ -9,6 +9,7 @@ module.exports.connect = async (app) => {
       useUnifiedTopology: true,
     },
     function (err, res) {
+  
       if (err) {
         console.log("Error connecting to the database.. " + err);
       } else {

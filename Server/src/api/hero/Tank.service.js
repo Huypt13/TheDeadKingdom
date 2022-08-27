@@ -448,8 +448,7 @@ class TankService {
             tankUser: "$tankUser",
           },
         },
-        { $sort: { createdAt: -1 } },
-        { $sort: sortBy },
+        // { $sort: { ...sortBy } },
         { $count: "total" },
       ]);
 
@@ -472,12 +471,14 @@ class TankService {
         maxPrice,
         minPrice,
       } = filter;
+      console.log("object", filter);
       const tanks = await this.getTopListedLastedWithFilter(filter);
       const total = tanks[0]?.total || 0;
       const displayedTankNumber = (pageNumbers - 1) * limit;
       if (displayedTankNumber >= total) {
         throw new Error("Don't have tank");
       }
+
       const listTank = await MarketPlaceItem.aggregate([
         {
           $match: {
@@ -528,8 +529,7 @@ class TankService {
             tankUser: "$tankUser",
           },
         },
-        { $sort: { createdAt: -1 } },
-        { $sort: sortBy },
+        { $sort:  {...sortBy , _id:1}   },
         { $skip: displayedTankNumber },
         { $limit: limit },
       ]);
@@ -539,6 +539,8 @@ class TankService {
       throw new Error(err.message);
     }
   }
+
+  
 
   async getTotalTankOwnerWithStatus(filter, _id) {
     try {
@@ -582,7 +584,7 @@ class TankService {
             level: "$tank.level"
           },
         },
-        { $sort: sortBy },
+        { $sort:  {...sortBy , _id:1}   },
       ]);
       if (status == "Owned") {
         let listIsSelling = [];
@@ -620,7 +622,7 @@ class TankService {
               level: "$tank.level"
             },
           },
-          { $sort: sortBy },
+          { $sort:  {...sortBy , _id:1}   },
         ]);
         return listTank;
       } else {
@@ -679,7 +681,7 @@ class TankService {
             level: "$tank.level"
           },
         },
-        { $sort: sortBy },
+        { $sort:  {...sortBy , _id:1}   },
         { $skip: displayedTankNumber },
         { $limit: limit },
       ]);
@@ -719,7 +721,7 @@ class TankService {
               level: "$tank.level"
             },
           },
-          { $sort: sortBy },
+          { $sort:  {...sortBy , _id:1}   },
           { $skip: displayedTankNumber },
           { $limit: limit },
         ]);

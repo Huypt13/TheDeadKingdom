@@ -282,6 +282,7 @@ MonoBehaviour:
   pickTank: {fileID: 8300000, guid: fcbc1660dbce90a4c806686199cfc760, type: 3}
   countDownFight: {fileID: 8300000, guid: 83339b27d1d61c94da2cafd8e6aead55, type: 3}
   gameBackground: {fileID: 8300000, guid: e60ea1790a8d7954cae8725ac98f3963, type: 3}
+  shootingSound: {fileID: 8300000, guid: 7d55745280786bf48801c5df0376bc1d, type: 3}
 --- !u!114 &954220404
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -6,15 +6,15 @@ const tankAi = {
   speed: 0.25,
   rotationSpeed: 0.5,
   damage: 80,
-  health: 2000,
+  health: 1500,
   attackSpeed: 0.5,
   bulletSpeed: 1,
   shootingRange: 7,
 };
 const tankAi2 = {
-  speed: 0.15,
+  speed: 0.35,
   rotationSpeed: 0.3,
-  damage: 30,
+  damage: 80,
   health: 1000,
   attackSpeed: 1,
   bulletSpeed: 1,
@@ -189,7 +189,7 @@ module.exports.map = {
       },
       {
         position: new Vector2(5.12, -7.62),
-      }
+      },
     ],
     TankSpawnPosition: [
       {
@@ -434,15 +434,15 @@ module.exports.props = {
     username: "MainHouse",
     team: 2,
     isDead: false,
-    health: 3000,
-    maxHealth: 3000
+    health: 2000,
+    maxHealth: 2000,
   },
   BaseBlue: {
     username: "MainHouse",
     team: 1,
     isDead: false,
-    health: 3000,
-    maxHealth: 3000
+    health: 2000,
+    maxHealth: 2000,
   },
   Flag: {
     maxPoint: 50,

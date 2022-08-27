@@ -5,11 +5,11 @@ module.exports = {
 
   DestroyMaxPlayer: 1,
   DestroyMinPlayer: 1,
-  DestroyTime: 600,
+  DestroyTime: 450,
 
   FlagMaxPlayer: 1,
   FlagMinPlayer: 1,
-  FlagTime: 600,
+  FlagTime: 450,
 
   WaitChoolseTime: 10,
   SECRET_KEY: "huydtr",

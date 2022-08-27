@@ -448,8 +448,7 @@ class TankService {
             tankUser: "$tankUser",
           },
         },
-        { $sort: { createdAt: -1 } },
-        { $sort: sortBy },
+        { $sort: { createdAt: -1, ...sortBy } },
         { $count: "total" },
       ]);
 
@@ -528,8 +527,7 @@ class TankService {
             tankUser: "$tankUser",
           },
         },
-        { $sort: { createdAt: -1 } },
-        { $sort: sortBy },
+        { $sort: { createdAt: -1, ...sortBy } },
         { $skip: displayedTankNumber },
         { $limit: limit },
       ]);
@@ -579,7 +577,7 @@ class TankService {
             tank: "$tank",
             tankUser: "$tankUser",
             marketplaceItem: "$marketplaceItem",
-            level: "$tank.level"
+            level: "$tank.level",
           },
         },
         { $sort: sortBy },
@@ -617,7 +615,7 @@ class TankService {
               tank: "$tank",
               tankUser: "$tankUser",
               marketplaceItem: "$marketplaceItem",
-              level: "$tank.level"
+              level: "$tank.level",
             },
           },
           { $sort: sortBy },
@@ -676,7 +674,7 @@ class TankService {
             tank: "$tank",
             tankUser: "$tankUser",
             marketplaceItem: "$marketplaceItem",
-            level: "$tank.level"
+            level: "$tank.level",
           },
         },
         { $sort: sortBy },
@@ -716,7 +714,7 @@ class TankService {
               tank: "$tank",
               tankUser: "$tankUser",
               marketplaceItem: "$marketplaceItem",
-              level: "$tank.level"
+              level: "$tank.level",
             },
           },
           { $sort: sortBy },

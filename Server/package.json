@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server",
+    "start2": "node --trace-warnings server",
     "start:dev": "nodemon server",
     "start:listen": "nodemon ./src/blockchainListenServer/listener.js",
     "test": "echo \"Error: no test specified\" && exit 1"

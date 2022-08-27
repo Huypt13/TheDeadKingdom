@@ -27,6 +27,7 @@ class MarketPlaceItemController {
     try {
       const { _id } = res.locals.user;
       let { day } = req.params;
+      let filter = req.query;
       day = parseInt(day);
       if (!Number.isInteger(day) || day <= 0) {
         return ApiResponse.badRequestResponse(
@@ -34,10 +35,12 @@ class MarketPlaceItemController {
           "Day must be integer number greater than zero"
         );
       }
-      const Transaction = await MarketPlaceItemService.getSucceedTransaction(
-        _id.toString(),
-        day
-      );
+      const Transaction =
+        await MarketPlaceItemService.getSucceedTransactionAndPaging(
+          _id.toString(),
+          day,
+          filter
+        );
       return ApiResponse.successResponseWithData(res, "Ok", Transaction);
     } catch (e) {
       console.log(e);

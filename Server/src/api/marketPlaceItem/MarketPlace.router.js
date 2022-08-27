@@ -1,6 +1,7 @@
 const MarketPlaceController = require("./MarketPlace.controller");
 const router = require("express").Router();
 const Authentication = require("../middlewares/Authentication.midleware");
+const ValidateFilter = require("../middlewares/ValidateFilter.middlewares");
 
 router.get(
   "/transaction/:day",
@@ -9,6 +10,7 @@ router.get(
 router.get(
   "/succeedTransaction/:day",
   Authentication,
+  ValidateFilter.validateReqQuery,
   MarketPlaceController.getSucceedTransaction
 );
 

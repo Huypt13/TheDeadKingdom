@@ -62,7 +62,7 @@ class MarketPlaceItemService {
           email: seller.email,
           price: marketPlace.price,
           tankName: tank.name + " level" + tank.level,
-          url: `https://www.thedeathkingdom.tk`,
+          url: `${process.env.WEB_URL}/user/login`,
         });
       } else {
         await RabbitMq.listedNotify({
@@ -70,7 +70,7 @@ class MarketPlaceItemService {
           email: seller.email,
           price: marketPlace.price,
           tankName: tank.name + " level" + tank.level,
-          url: `https://www.thedeathkingdom.tk`,
+          url: `${process.env.WEB_URL}/user/login`,
         });
         throw new Error("Listed fail");
       }
@@ -81,7 +81,7 @@ class MarketPlaceItemService {
         email: seller.email,
         price: marketPlace?.price || 0,
         tankName: "",
-        url: `https://www.thedeathkingdom.tk`,
+        url: `${process.env.WEB_URL}/user/login`,
       });
       console.log(error);
     }
@@ -136,7 +136,7 @@ class MarketPlaceItemService {
           buyer: marketPlace.buyer,
           price: marketPlace.price,
           tankName: Tank.name + " level" + Tank.level,
-          url: `https://www.thedeathkingdom.tk`,
+          url: `${process.env.WEB_URL}/user/login`,
         });
         await RabbitMq.boughtNotify({
           message: "Congratulations on your successful bought",
@@ -144,7 +144,7 @@ class MarketPlaceItemService {
           seller: marketPlace.seller,
           price: marketPlace.price,
           tankName: Tank.name + " level" + Tank.level,
-          url: `https://www.thedeathkingdom.tk`,
+          url: `${process.env.WEB_URL}/user/login`,
         });
       } else {
         await RabbitMq.boughtNotify({
@@ -153,7 +153,7 @@ class MarketPlaceItemService {
           seller: marketPlace?.seller || "0x000000000",
           price: marketPlace.price,
           tankName: Tank.name + " level" + Tank.level,
-          url: `https://www.thedeathkingdom.tk`,
+          url: `${process.env.WEB_URL}/user/login`,
         });
         console.log("MarketPlaceItem not found");
         throw new Error("Sold fail");
@@ -166,7 +166,7 @@ class MarketPlaceItemService {
         seller: marketPlace?.seller || "0x000000000",
         price: marketPlace?.price || 0,
         tankName: "",
-        url: `$https://www.thedeathkingdom.tk`,
+        url: `${process.env.WEB_URL}/user/login`,
       });
       console.log(error);
     }
@@ -210,7 +210,7 @@ class MarketPlaceItemService {
           email: seller.email,
           price: marketPlace.price,
           tankName: tank.name + " level" + tank.level,
-          url: `https://www.thedeathkingdom.tk`,
+          url: `${process.env.WEB_URL}/user/login`,
         });
       } else {
         await RabbitMq.cancelNotify({
@@ -218,7 +218,7 @@ class MarketPlaceItemService {
           email: seller.email,
           price: "",
           tankName: tank.name + " level" + tank.level,
-          url: `https://www.thedeathkingdom.tk`,
+          url: `${process.env.WEB_URL}/user/login`,
         });
         console.log("MarketPlaceItem not found");
         throw new Error("Cancel listed tank fail");
@@ -230,7 +230,7 @@ class MarketPlaceItemService {
         email: seller.email,
         price: marketPlace?.price || 0,
         tankName: "",
-        url: `https://www.thedeathkingdom.tk`,
+        url: `${process.env.WEB_URL}/user/login`,
       });
       console.log(error);
     }
@@ -313,7 +313,6 @@ class MarketPlaceItemService {
                 unit: "day",
               },
             },
-            price: 1,
           },
         },
         { $match: { diffDate: { $lte: day } } },
@@ -326,6 +325,53 @@ class MarketPlaceItemService {
         },
         { $sort: { finishedAt: -1 } },
       ]);
+    } catch (error) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+  }
+  async getSucceedTransactionAndPaging(id, day, { pageNumbers, limit }) {
+    try {
+      const listTank = await this.getSucceedTransaction(id, day);
+      const total = listTank.length;
+      const displayedTransactionNumber = (pageNumbers - 1) * limit;
+      if (displayedTransactionNumber >= total) {
+        throw new Error("Don't have transaction");
+      }
+      day--;
+      const listTransactions = await MarketPlaceItem.aggregate([
+        {
+          $match: {
+            $and: [
+              { $or: [{ seller: id }, { buyer: id }] },
+              { $and: [{ isSelling: false }, { buyer: { $ne: null } }] },
+            ],
+          },
+        },
+        {
+          $set: {
+            diffDate: {
+              $dateDiff: {
+                startDate: "$finishedAt",
+                endDate: new Date(),
+                unit: "day",
+              },
+            },
+          },
+        },
+        { $match: { diffDate: { $lte: day } } },
+        {
+          $set: {
+            RoleOfCurrentUser: {
+              $cond: [{ $eq: ["$seller", id] }, "seller", "buyer"],
+            },
+          },
+        },
+        { $sort: { finishedAt: -1 } },
+        { $skip: displayedTransactionNumber },
+        { $limit: limit },
+      ]);
+      return { listTransactions, total };
     } catch (error) {
       console.log(error);
       throw new Error(error.message);

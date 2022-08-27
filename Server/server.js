@@ -1,4 +1,3 @@
-
 const express = require("express");
 
 const fs = require("fs");
@@ -87,7 +86,7 @@ const gameSeverLoop = (async () => {
 })();
 
 // listen blockchain events
-// listener.init();
+listener.init();
 // rest api
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -108,4 +107,3 @@ app.use("/marketPlace", MarketPlaceRouter);
 Database.connect(app);
 server.listen(8080, "0.0.0.0");
 // server.listen(8080);
-

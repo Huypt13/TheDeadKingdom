@@ -89,7 +89,10 @@ class UserController {
         return ApiResponse.unauthorizeResponse(res, "wrong id");
       }
       if (user1 && user1?.walletAddress) {
-        return ApiResponse.badRequestResponse(res, "You already linked to Metamask");
+        return ApiResponse.badRequestResponse(
+          res,
+          "You already linked to Metamask"
+        );
       }
       if (userA)
         return ApiResponse.badRequestResponse(res, "wallet has been used");
@@ -219,7 +222,8 @@ class UserController {
         { password, newPassword },
         email
       );
-      if (!user) throw new Error(`Cannot change password`);
+      if (!user)
+        return ApiResponse.serverErrorResponse(res, "can not change password");
       return ApiResponse.successResponse(res, "Change password success");
     } catch (error) {
       return ApiResponse.serverErrorResponse(res, error.message);

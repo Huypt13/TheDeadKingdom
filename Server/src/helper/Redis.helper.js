@@ -25,6 +25,7 @@ async function saveWithTtl(key, value, ttlSeconds = 60) {
 
 async function delAllByValue(value) {
   let arr = await redisClient.keys("*");
+  console.log(arr.length);
   for (const key of arr) {
     let rdValue = await get(key);
     if (rdValue === value) {

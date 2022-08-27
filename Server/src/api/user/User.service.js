@@ -167,7 +167,7 @@ class UserService {
         throw new Error(`New password must be different old password`);
       }
       const bcryptPassword = await bcrypt.hash(newPassword, this.SaltRounds);
-      await Redis.delAllByValue(user._id.toString());
+      Redis.delAllByValue(user._id.toString());
       return await User.findOneAndUpdate(
         { email: email },
         { password: bcryptPassword },

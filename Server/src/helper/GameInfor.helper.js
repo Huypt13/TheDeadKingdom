@@ -11,10 +11,11 @@ module.exports = {
   FlagMinPlayer: 1,
   FlagTime: 450,
 
-  WaitChoolseTime: 10,
+  WaitChoolseTime: 30,
   SECRET_KEY: "huydtr",
   Ranking: ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Master"],
 
   AIRespawnTime: 10,
   PlayerRespawnTime: 4,
 };
+ 

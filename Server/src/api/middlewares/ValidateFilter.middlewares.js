@@ -52,7 +52,7 @@ module.exports.validateReqQuery = async (req, res, next) => {
       maxPrice < 0 ||
       !validator.isFloat(maxPrice + "")
     ) {
-      req.query.maxPrice = Number.MAX_VALUE;;
+      req.query.maxPrice = Number.MAX_VALUE;
     }
     if (
       !minPrice ||

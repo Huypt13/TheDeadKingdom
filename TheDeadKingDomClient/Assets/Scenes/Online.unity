@@ -780,7 +780,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a0bc66cc9ff548ff9d97e652d8c9b5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  url: ws://192.168.1.2:8080/socket.io/?EIO=3&transport=websocket
+  url: ws://3.1.196.5:8080/socket.io/?EIO=3&transport=websocket
   autoConnect: 1
   reconnectDelay: 5
   ackExpirationTime: 30
@@ -2365,9 +2365,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '30
-
-'
+  m_Text: 0
 --- !u!222 &827057843
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2715,7 +2713,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 23:15
+  m_Text: 00:00 / 00:00
 --- !u!222 &1003011971
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2737,15 +2735,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3365438560079035295, guid: 888a738eecf25d24b9cdfded685b60fe, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3365438560079035295, guid: 888a738eecf25d24b9cdfded685b60fe, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3365438560079035295, guid: 888a738eecf25d24b9cdfded685b60fe, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 105
       objectReference: {fileID: 0}
     - target: {fileID: 3467553345221379668, guid: 888a738eecf25d24b9cdfded685b60fe, type: 3}
       propertyPath: m_SizeDelta.x
@@ -5632,9 +5630,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '30
-
-'
+  m_Text: 0
 --- !u!222 &1849549877
 CanvasRenderer:
   m_ObjectHideFlags: 0

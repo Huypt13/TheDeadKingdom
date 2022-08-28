@@ -76,7 +76,7 @@ class UserService {
         email,
         username,
         password,
-        numOfStars: 0,
+        numOfStars: 1,
         walletAdress: null,
         balances: 0,
         activeCode,

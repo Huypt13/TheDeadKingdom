@@ -86,7 +86,7 @@ const gameSeverLoop = (async () => {
 })();
 
 // listen blockchain events
-listener.init();
+//listener.init();
 // rest api
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

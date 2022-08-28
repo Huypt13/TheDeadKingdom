@@ -16,6 +16,8 @@ contract TankNFT is ERC721, Ownable {
     ILinkWallet public linkWallet;
     mapping(string => uint256) boxPrices;
 
+    string public baseURI;
+
     constructor(
         address _marketplaceContract,
         address _deathKingdomCoinContract,
@@ -26,8 +28,12 @@ contract TankNFT is ERC721, Ownable {
         linkWallet = ILinkWallet(_linkWalletAddress);
     }
 
-    function _baseURI() internal pure override returns (string memory) {
-        return "http://44.204.11.10:8080/metadata/";
+    function _baseURI() internal view override returns (string memory) {
+        return baseURI;
+    }
+
+    function setBaseURI(string memory _baseURI) public onlyOwner {
+        baseURI = _baseURI;
     }
 
     function setBoxPrice(string memory _boxId, uint256 _price)

@@ -2365,7 +2365,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 0
+  m_Text: '0'
 --- !u!222 &827057843
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2713,7 +2713,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 00:00 / 00:00
+  m_Text: 00:00
 --- !u!222 &1003011971
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3233,7 +3233,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Tan cong chu luc tieu diet
+  m_Text: 
 --- !u!222 &1116031114
 CanvasRenderer:
   m_ObjectHideFlags: 0

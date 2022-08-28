@@ -3,8 +3,8 @@ const Vector2 = require("../../dto/Vector2");
 // 0.4609557
 
 const tankAi = {
-  speed: 0.25,
-  rotationSpeed: 0.5,
+  speed: 0.2,
+  rotationSpeed: 0.3,
   damage: 80,
   health: 1500,
   attackSpeed: 0.5,
@@ -12,7 +12,7 @@ const tankAi = {
   shootingRange: 7,
 };
 const tankAi2 = {
-  speed: 0.35,
+  speed: 0.2,
   rotationSpeed: 0.3,
   damage: 80,
   health: 1000,

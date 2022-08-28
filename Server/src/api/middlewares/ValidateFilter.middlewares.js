@@ -18,8 +18,8 @@ module.exports.validateReqQuery = async (req, res, next) => {
       minPrice,
       number,
     } = req.query;
-    if (limit >= 100 || limit <= 0 || !limit) {
-      req.query.limit = 1;
+    if (limit <= 0 || !limit) {
+      req.query.limit = 1000;
     }
     if (pageNumbers >= 100 || pageNumbers <= 0 || !pageNumbers) {
       req.query.pageNumbers = 1;

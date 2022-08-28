@@ -2365,9 +2365,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '0
-
-'
+  m_Text: '0'
 --- !u!222 &827057843
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2737,15 +2735,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3365438560079035295, guid: 888a738eecf25d24b9cdfded685b60fe, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3365438560079035295, guid: 888a738eecf25d24b9cdfded685b60fe, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3365438560079035295, guid: 888a738eecf25d24b9cdfded685b60fe, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 105
       objectReference: {fileID: 0}
     - target: {fileID: 3467553345221379668, guid: 888a738eecf25d24b9cdfded685b60fe, type: 3}
       propertyPath: m_SizeDelta.x

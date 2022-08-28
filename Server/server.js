@@ -1,10 +1,5 @@
 const express = require("express");
 
-
-
-
-
-
 const fs = require("fs");
 
 const MarketPlaceRouter = require("./src/api/marketPlaceItem/MarketPlace.router");
@@ -91,7 +86,7 @@ const gameSeverLoop = (async () => {
 })();
 
 // listen blockchain events
-// listener.init();
+listener.init();
 // rest api
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

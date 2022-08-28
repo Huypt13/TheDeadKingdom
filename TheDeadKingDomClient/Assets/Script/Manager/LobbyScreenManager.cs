@@ -121,7 +121,8 @@ public class LobbyScreenManager : MonoBehaviour
 
     private IEnumerator GetListTank(string uri)
     {
-        using (UnityWebRequest request = UnityWebRequest.Get(uri + "/tank"))
+        //using (UnityWebRequest request = UnityWebRequest.Get(uri + "/tank"))
+        using (UnityWebRequest request = UnityWebRequest.Get(uri + "/tank/totalTankOwner/status?pageNumbers=1&limit=99"))
         {
             request.SetRequestHeader("x-access-token", MenuManager.access_token);
             yield return request.SendWebRequest();
@@ -133,7 +134,8 @@ public class LobbyScreenManager : MonoBehaviour
             else
             {
                 var jo = JObject.Parse(request.downloadHandler.text);
-                myTankList = jo["data"]["tankList"].ToObject<List<TankRemain>>();
+                //myTankList = jo["data"]["tankList"].ToObject<List<TankRemain>>();
+                myTankList = jo["data"]["listTank"].ToObject<List<TankRemain>>();
                 Debug.Log(myTankList.Count);
                 canJoin = false;
                 myTankList.ForEach((e) =>

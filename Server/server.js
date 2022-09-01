@@ -80,13 +80,17 @@ const gameSeverLoop = (async () => {
         console.log("connection error", error);
       }
     });
+
+    io.on("error", (error) => {
+      console.log("error r", error);
+    });
   } catch (e) {
     console.log(e);
   }
 })();
 
 // listen blockchain events
-listener.init();
+// listener.init();
 // rest api
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

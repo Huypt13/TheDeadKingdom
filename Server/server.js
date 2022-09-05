@@ -105,5 +105,5 @@ app.use("/box", BoxRouter);
 app.use("/history", Authentication, HistoryRouter);
 app.use("/marketPlace", MarketPlaceRouter);
 Database.connect(app);
-server.listen(8080, "0.0.0.0");
+server.listen(process.env.PORT || 8080, "0.0.0.0");
 // server.listen(8080);
